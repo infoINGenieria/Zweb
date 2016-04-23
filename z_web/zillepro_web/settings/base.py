@@ -28,6 +28,7 @@ SITE_NAME = basename(DJANGO_ROOT)
 path.append(DJANGO_ROOT)
 ########## END PATH CONFIGURATION
 
+
 # LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/'
@@ -51,6 +52,7 @@ INSTALLED_APPS = (
     'pipeline',
     'bootstrap3',
     'compressor',
+    'import_export',
 
     'core',
     'indumentaria',
@@ -59,6 +61,8 @@ INSTALLED_APPS = (
     'documento',
     'costos',
     'zweb_utils',
+    'organizacion',
+    'asistencia',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -70,6 +74,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 )
 
 # List of finder classes that know how to find static files in
@@ -176,6 +181,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "django.core.context_processors.request",
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
             ],
         },
     },
@@ -204,6 +212,9 @@ LOCALE_PATHS = (normpath(join(DJANGO_ROOT, 'locale')), )
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+ESTADO_DEFAULT = 6  # AUSENTE SIN AVISO
+ESTADO_BAJA = ['B']
 
 JET_DEFAULT_THEME = 'default'
 

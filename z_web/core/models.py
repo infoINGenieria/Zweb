@@ -173,3 +173,30 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.user
+
+
+class PerfilTecnico(models.Model):
+    """
+    Extensión para los proyectos relacionados con la gestión en Oficina Técnica.
+
+    """
+    nombre = models.CharField("nombre", max_length=255)
+    tiene_comida = models.BooleanField("tiene comida", default=True)
+    tiene_vianda = models.BooleanField("tiene vianda", default=True)
+    tiene_desarraigo = models.BooleanField("tiene desarraigo", default=True)
+    limite_vianda_doble = models.FloatField("limite vianda doble", default=2)
+    tiene_registro = models.BooleanField("tiene registro", default=True)
+    tiene_equipo = models.BooleanField("tiene equipo", default=True)
+    descuenta_francos = models.BooleanField(verbose_name="Se utiliza para francos", default=False)
+    descuenta_licencias = models.BooleanField(verbose_name="Se utiliza para licencias anuales", default=False)
+    es_cc = models.BooleanField(verbose_name="Tratar como CC", default=False,
+                                help_text="Si está seleccionada, la obra es considerada un Centro de Costos (CC)")
+    prorratea_costos = models.BooleanField(verbose_name="¿Prorratea Costos?", default=False,
+                                           help_text="Si está seleccionada, los costos se prorratean en los demás CC")
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = "perfíl técnico"
+        verbose_name_plural = "perfiles técnicos"

@@ -1,0 +1,215 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import migrations, models
+import django.db.models.deletion
+from django.conf import settings
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('core', '0015_perfiltecnico'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('parametros', '0005_auto_20160423_1019'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='CCT',
+            fields=[
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('created_at', models.DateTimeField(verbose_name='Fecha de creación', auto_now_add=True)),
+                ('modified_at', models.DateTimeField(verbose_name='Fecha de modificación', auto_now=True)),
+                ('nombre', models.CharField(unique=True, verbose_name='nombre', max_length=255)),
+            ],
+            options={
+                'verbose_name_plural': 'CCTs',
+                'verbose_name': 'CCT',
+            },
+        ),
+        migrations.CreateModel(
+            name='HistoricalCCT',
+            fields=[
+                ('id', models.IntegerField(blank=True, db_index=True, verbose_name='ID', auto_created=True)),
+                ('created_at', models.DateTimeField(blank=True, editable=False, verbose_name='Fecha de creación')),
+                ('modified_at', models.DateTimeField(blank=True, editable=False, verbose_name='Fecha de modificación')),
+                ('nombre', models.CharField(db_index=True, verbose_name='nombre', max_length=255)),
+                ('history_id', models.AutoField(primary_key=True, serialize=False)),
+                ('history_date', models.DateTimeField()),
+                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=django.db.models.deletion.SET_NULL, related_name='+', null=True)),
+            ],
+            options={
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': 'history_date',
+                'verbose_name': 'historical CCT',
+            },
+        ),
+        migrations.CreateModel(
+            name='HistoricalPersona',
+            fields=[
+                ('id', models.IntegerField(blank=True, db_index=True, verbose_name='ID', auto_created=True)),
+                ('created_at', models.DateTimeField(blank=True, editable=False, verbose_name='Fecha de creación')),
+                ('modified_at', models.DateTimeField(blank=True, editable=False, verbose_name='Fecha de modificación')),
+                ('legajo', models.IntegerField(db_index=True, verbose_name='legajo')),
+                ('apellido', models.CharField(verbose_name='apellido', max_length=255)),
+                ('nombre', models.CharField(verbose_name='nombre', max_length=255)),
+                ('cuil', models.CharField(db_index=True, verbose_name='CUIL', max_length=15)),
+                ('observaciones', models.TextField(blank=True, null=True)),
+                ('desarraigo', models.BooleanField(default=False)),
+                ('fecha_ingreso', models.DateField(blank=True, null=True, verbose_name='fecha de ingreso')),
+                ('vto_carnet', models.DateField(blank=True, null=True, verbose_name='registro de conducir')),
+                ('vto_psicofisico', models.DateField(blank=True, null=True, verbose_name='exámen psicofísico')),
+                ('vto_cargagral', models.DateField(blank=True, null=True, verbose_name='permiso carga general')),
+                ('vto_cargapeligrosa', models.DateField(blank=True, null=True, verbose_name='permiso carga peligrosa')),
+                ('descripcion_vto1', models.CharField(blank=True, verbose_name='extra I', null=True, max_length=128)),
+                ('descripcion_vto2', models.CharField(blank=True, verbose_name='extra II', null=True, max_length=128)),
+                ('descripcion_vto3', models.CharField(blank=True, verbose_name='extra III', null=True, max_length=128)),
+                ('vto_otros1', models.DateField(blank=True, null=True, verbose_name='fecha extra I')),
+                ('vto_otros2', models.DateField(blank=True, null=True, verbose_name='fecha extra II')),
+                ('vto_otros3', models.DateField(blank=True, null=True, verbose_name='fecha extra III')),
+                ('fecha_baja', models.DateField(blank=True, null=True, verbose_name='fecha de baja')),
+                ('history_id', models.AutoField(primary_key=True, serialize=False)),
+                ('history_date', models.DateTimeField()),
+                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('cct', models.ForeignKey(blank=True, to='organizacion.CCT', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, null=True, related_name='+')),
+                ('funcion', models.ForeignKey(blank=True, to='parametros.Funcion', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, null=True, related_name='+')),
+                ('history_user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=django.db.models.deletion.SET_NULL, related_name='+', null=True)),
+            ],
+            options={
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': 'history_date',
+                'verbose_name': 'historical persona',
+            },
+        ),
+        migrations.CreateModel(
+            name='HistoricalProyecto',
+            fields=[
+                ('id', models.IntegerField(blank=True, db_index=True, verbose_name='ID', auto_created=True)),
+                ('created_at', models.DateTimeField(blank=True, editable=False, verbose_name='Fecha de creación')),
+                ('modified_at', models.DateTimeField(blank=True, editable=False, verbose_name='Fecha de modificación')),
+                ('nombre', models.CharField(db_index=True, verbose_name='nombre', max_length=255)),
+                ('codigo', models.CharField(db_index=True, verbose_name='código', max_length=15)),
+                ('contrato', models.CharField(blank=True, verbose_name='contrato', null=True, max_length=255)),
+                ('comitente', models.CharField(blank=True, verbose_name='comitente', null=True, max_length=255)),
+                ('lugar', models.CharField(blank=True, verbose_name='lugar', null=True, max_length=255)),
+                ('plazo', models.CharField(blank=True, verbose_name='plazo', null=True, max_length=255)),
+                ('fecha_inicio', models.DateField(blank=True, null=True, verbose_name='fecha de inicio')),
+                ('responsable', models.CharField(blank=True, verbose_name='responsable', null=True, max_length=255)),
+                ('cuit', models.CharField(blank=True, verbose_name='CUIT', null=True, max_length=13)),
+                ('fecha_baja', models.DateField(blank=True, null=True, verbose_name='fecha de baja')),
+                ('history_id', models.AutoField(primary_key=True, serialize=False)),
+                ('history_date', models.DateTimeField()),
+                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=django.db.models.deletion.SET_NULL, related_name='+', null=True)),
+                ('perfil_tecnico', models.ForeignKey(blank=True, to='core.PerfilTecnico', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, null=True, related_name='+')),
+            ],
+            options={
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': 'history_date',
+                'verbose_name': 'historical proyecto',
+            },
+        ),
+        migrations.CreateModel(
+            name='Persona',
+            fields=[
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('created_at', models.DateTimeField(verbose_name='Fecha de creación', auto_now_add=True)),
+                ('modified_at', models.DateTimeField(verbose_name='Fecha de modificación', auto_now=True)),
+                ('legajo', models.IntegerField(unique=True, verbose_name='legajo')),
+                ('apellido', models.CharField(verbose_name='apellido', max_length=255)),
+                ('nombre', models.CharField(verbose_name='nombre', max_length=255)),
+                ('cuil', models.CharField(unique=True, verbose_name='CUIL', max_length=15)),
+                ('observaciones', models.TextField(blank=True, null=True)),
+                ('desarraigo', models.BooleanField(default=False)),
+                ('fecha_ingreso', models.DateField(blank=True, null=True, verbose_name='fecha de ingreso')),
+                ('vto_carnet', models.DateField(blank=True, null=True, verbose_name='registro de conducir')),
+                ('vto_psicofisico', models.DateField(blank=True, null=True, verbose_name='exámen psicofísico')),
+                ('vto_cargagral', models.DateField(blank=True, null=True, verbose_name='permiso carga general')),
+                ('vto_cargapeligrosa', models.DateField(blank=True, null=True, verbose_name='permiso carga peligrosa')),
+                ('descripcion_vto1', models.CharField(blank=True, verbose_name='extra I', null=True, max_length=128)),
+                ('descripcion_vto2', models.CharField(blank=True, verbose_name='extra II', null=True, max_length=128)),
+                ('descripcion_vto3', models.CharField(blank=True, verbose_name='extra III', null=True, max_length=128)),
+                ('vto_otros1', models.DateField(blank=True, null=True, verbose_name='fecha extra I')),
+                ('vto_otros2', models.DateField(blank=True, null=True, verbose_name='fecha extra II')),
+                ('vto_otros3', models.DateField(blank=True, null=True, verbose_name='fecha extra III')),
+                ('fecha_baja', models.DateField(blank=True, null=True, verbose_name='fecha de baja')),
+                ('cct', models.ForeignKey(to='organizacion.CCT', related_name='personas', verbose_name='CCT')),
+                ('funcion', models.ForeignKey(to='parametros.Funcion', null=True)),
+            ],
+            options={
+                'ordering': ('apellido', 'nombre'),
+                'verbose_name_plural': 'personas',
+                'verbose_name': 'persona',
+            },
+        ),
+        migrations.CreateModel(
+            name='Proyecto',
+            fields=[
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('created_at', models.DateTimeField(verbose_name='Fecha de creación', auto_now_add=True)),
+                ('modified_at', models.DateTimeField(verbose_name='Fecha de modificación', auto_now=True)),
+                ('nombre', models.CharField(unique=True, verbose_name='nombre', max_length=255)),
+                ('codigo', models.CharField(unique=True, verbose_name='código', max_length=15)),
+                ('contrato', models.CharField(blank=True, verbose_name='contrato', null=True, max_length=255)),
+                ('comitente', models.CharField(blank=True, verbose_name='comitente', null=True, max_length=255)),
+                ('lugar', models.CharField(blank=True, verbose_name='lugar', null=True, max_length=255)),
+                ('plazo', models.CharField(blank=True, verbose_name='plazo', null=True, max_length=255)),
+                ('fecha_inicio', models.DateField(blank=True, null=True, verbose_name='fecha de inicio')),
+                ('responsable', models.CharField(blank=True, verbose_name='responsable', null=True, max_length=255)),
+                ('cuit', models.CharField(blank=True, verbose_name='CUIT', null=True, max_length=13)),
+                ('fecha_baja', models.DateField(blank=True, null=True, verbose_name='fecha de baja')),
+                ('perfil_tecnico', models.OneToOneField(blank=True, to='core.PerfilTecnico', null=True)),
+            ],
+            options={
+                'ordering': ['nombre'],
+                'verbose_name_plural': 'proyectos',
+                'verbose_name': 'proyecto',
+            },
+        ),
+        migrations.CreateModel(
+            name='UnidadNegocio',
+            fields=[
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('created_at', models.DateTimeField(verbose_name='Fecha de creación', auto_now_add=True)),
+                ('modified_at', models.DateTimeField(verbose_name='Fecha de modificación', auto_now=True)),
+                ('codigo', models.CharField(unique=True, verbose_name='código', max_length=12)),
+                ('nombre', models.CharField(verbose_name='nombre', max_length=255)),
+            ],
+            options={
+                'verbose_name_plural': 'unidades de negocio',
+                'verbose_name': 'unidad de negocio',
+            },
+        ),
+        migrations.AddField(
+            model_name='proyecto',
+            name='unidad_negocio',
+            field=models.ForeignKey(to='organizacion.UnidadNegocio', related_name='proyectos_de_la_unidad'),
+        ),
+        migrations.AddField(
+            model_name='persona',
+            name='proyecto',
+            field=models.ForeignKey(to='organizacion.Proyecto', related_name='personas_involucradas', verbose_name='proyecto'),
+        ),
+        migrations.AddField(
+            model_name='persona',
+            name='usuario',
+            field=models.OneToOneField(blank=True, related_name='persona', to=settings.AUTH_USER_MODEL, null=True, help_text='Al asociar un usuario a la persona, este puede ingresar al sistema.', verbose_name='Usuario'),
+        ),
+        migrations.AddField(
+            model_name='historicalproyecto',
+            name='unidad_negocio',
+            field=models.ForeignKey(blank=True, to='organizacion.UnidadNegocio', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, null=True, related_name='+'),
+        ),
+        migrations.AddField(
+            model_name='historicalpersona',
+            name='proyecto',
+            field=models.ForeignKey(blank=True, to='organizacion.Proyecto', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, null=True, related_name='+'),
+        ),
+        migrations.AddField(
+            model_name='historicalpersona',
+            name='usuario',
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, null=True, related_name='+'),
+        ),
+    ]

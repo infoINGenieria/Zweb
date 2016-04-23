@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from import_export.admin import ExportActionModelAdmin
+
 from core.models import (Equipos, EstServicio, FrancoLicencia, Obras,
                          Operarios, Usuario)
 
@@ -31,7 +33,7 @@ class EstacionServicioAdmin(admin.ModelAdmin):
 
 
 @admin.register(Obras)
-class ObrasAdmin(admin.ModelAdmin):
+class ObrasAdmin(ExportActionModelAdmin):
     list_display = ('codigo', 'obra', 'cuit', 'lugar', 'responsable', 'is_active', 'es_cc', 'prorratea_costos')
     list_filter = ('responsable', 'descuenta_francos', 'descuenta_licencias', "es_cc", 'prorratea_costos')
     search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', )

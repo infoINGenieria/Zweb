@@ -5,5 +5,15 @@ django-bower
 django-pipeline==1.6.4
 django-bootstrap3
 django-compressor
+django-libsass
 libsass
 xlsxwriter
+django-simple-history
+django-autocomplete-light==2.3.2
+django-suit
+django-mailer==1.1.0
+reportlab
+celery==3.1.20
+redis==2.10.5
+django-overextends
+django-import-export
