@@ -10,17 +10,27 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
+from os.path import abspath, basename, dirname, join, normpath
+from sys import path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+########## PATH CONFIGURATION
+# Absolute filesystem path to the Django project directory:
+DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 
-PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
+# Absolute filesystem path to the top-level project folder:
+SITE_ROOT = dirname(DJANGO_ROOT)
 
-ALLOWED_HOSTS = []
+# Site name:
+SITE_NAME = basename(DJANGO_ROOT)
 
+# Add our project to our pythonpath, this way we don't need to type our project
+# name in our dotted import paths:
+path.append(DJANGO_ROOT)
+########## END PATH CONFIGURATION
+
+# LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/'
 
 # Application definition
 
@@ -36,8 +46,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'debug_toolbar',
 
     'djangobower',
     'pipeline',
@@ -46,9 +54,9 @@ INSTALLED_APPS = (
 
     'core',
     'indumentaria',
-    'documento',
     'parametros',
     'registro',
+    'documento',
     'costos',
     'zweb_utils',
 )
@@ -75,66 +83,71 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+MEDIA_ROOT = normpath(join(SITE_ROOT, '../media'))
+STATIC_ROOT = normpath(join(SITE_ROOT, '../collected_static'))
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '../media/')
-STATIC_ROOT = os.path.join(BASE_DIR, '../collected_static/')
-BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '../components/')
+BOWER_COMPONENTS_ROOT = normpath(join(SITE_ROOT, '../components'))
 PIPELINE_SASS_ARGUMENTS = "-p 8 -I '%s' -I '%s'" % (
-         os.path.join(BOWER_COMPONENTS_ROOT, 'bower_components/bootstrap-sass/assets/stylesheets/'),
-         os.path.join(BOWER_COMPONENTS_ROOT, 'bower_components/bootstrap-sass/assets/fonts/')
+         join(BOWER_COMPONENTS_ROOT, 'bower_components/bootstrap-sass/assets/stylesheets/'),
+         join(BOWER_COMPONENTS_ROOT, 'bower_components/bootstrap-sass/assets/fonts/')
 )
 
-PIPELINE_CSS = {
-    'base': {
-        'source_filenames': (
-            'frontend/css/zweb.scss',
-            'font-awesome/css/font-awesome.min.css',
-        ),
-        'output_filename': 'css/base.css',
-        'extra_context': {
-            'media': 'screen,projection',
+PIPELINE = {
+    'PIPELINE_ENABLED': False,
+    'STORAGE': STATICFILES_STORAGE,
+    'STYLESHEETS': {
+        'base': {
+            'source_filenames': (
+                'frontend/css/zweb.scss',
+                'font-awesome/css/font-awesome.min.css',
+            ),
+            'output_filename': 'css/base.css',
+            'extra_context': {
+                'media': 'screen,projection',
+            },
         },
+        'plugins': {
+            'source_filenames': (
+                'datatables/media/css/jquery.dataTables.css',
+                'datatables/media/css/dataTables.bootstrap.css',
+            ),
+            'output_filename': 'css/plugin.css',
+        }
     },
-    'plugins': {
-        'source_filenames': (
-            'datatables/media/css/jquery.dataTables.css',
-            'datatables/media/css/dataTables.bootstrap.css',
-        ),
-        'output_filename': 'css/plugin.css',
-    }
+    'JAVASCRIPT': {
+        'base_js': {
+            'source_filenames': (
+                'jquery/dist/jquery.js',
+                'bootstrap-sass/assets/javascripts/bootstrap.js',
+            ),
+            'output_filename': 'js/base_js.js',
+        },
+        'plugins_js': {
+            'source_filenames': (
+                'datatables/media/js/jquery.dataTables.js',
+                'datatables/media/js/dataTables.bootstrap.js',
+            ),
+            'output_filename': 'js/plugins.js',
+        },
+        'graphics_js': {
+            'source_filenames': (
+                "d3/d3.min.js",
+                "nvd3/build/nv.d3.min.js",
+                'frontend/js/graphics.js',
+            ),
+            'output_filename': 'js/zille.graphics.js',
+        }
+    },
+    'COMPILERS': (
+        'pipeline.compilers.sass.SASSCompiler',
+    ),
+    'SASS_BINARY': 'sassc',
+    'CSS_COMPRESSOR': None,
+    'JS_COMPRESSOR': None,
+    'SASS_ARGUMENTS': PIPELINE_SASS_ARGUMENTS
 }
 
-PIPELINE_JS = {
-    'base_js': {
-        'source_filenames': (
-            'jquery/dist/jquery.js',
-            'bootstrap-sass/assets/javascripts/bootstrap.js',
-        ),
-        'output_filename': 'js/base_js.js',
-    },
-    'plugins_js': {
-        'source_filenames': (
-            'datatables/media/js/jquery.dataTables.js',
-            'datatables/media/js/dataTables.bootstrap.js',
-        ),
-        'output_filename': 'js/plugins.js',
-    },
-    'graphics_js': {
-        'source_filenames': (
-            "d3/d3.min.js",
-            "nvd3/build/nv.d3.min.js",
-            'frontend/js/graphics.js',
-        ),
-        'output_filename': 'js/zille.graphics.js',
-    }
-}
 
-PIPELINE_COMPILERS = (
-    'pipeline.compilers.sass.SASSCompiler',
-)
-PIPELINE_SASS_BINARY = 'sassc'
-PIPELINE_CSS_COMPRESSOR = None
-PIPELINE_JS_COMPRESSOR = None
 
 # django-compressor settings
 COMPRESS_PRECOMPILERS = (
@@ -184,12 +197,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOCALE_PATHS = (os.path.join(PROJECT_DIR, 'locale'), )
+LOCALE_PATHS = (normpath(join(DJANGO_ROOT, 'locale')), )
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 JET_DEFAULT_THEME = 'default'
 
@@ -215,9 +229,3 @@ JET_THEMES = [
         'title': 'Gris Claro'
     }
 ]
-
-try:  # import the local settings
-    from .settings_local import *  # noqa
-except ImportError:
-    print('You need to define a settings_local.py')
-    exit()

@@ -8,7 +8,7 @@
                 <tr>
                     {% for head in cc %}
                         <th>
-                            {{ head }}
+                            {{ head|slice:"30" }}
                         </th>
                     {% endfor %}
                 </tr>
@@ -65,7 +65,7 @@
                         <td>{{ costos_ventas_total.t_certif|money }}</td>
                     </tr>
                     <tr>
-                        <td>SERV. PRESTADOS A O/S:</td>
+                        <td>CERTIFICACIONES INTERNAS:</td>
                         <td>{{ costos_ventas_total.t_servicios|money }}</td>
                     </tr>
                     <tr>

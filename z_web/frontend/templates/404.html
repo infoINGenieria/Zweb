@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}Página no encontrada{% endblock %}
+
+
+{% block content %}
+  {% block error %}<h1>{% trans 'error'|capfirst %} 404</h1>{% endblock %}
+  No podemos encontrar lo que está bucando.
+{% endblock %}

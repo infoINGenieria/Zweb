@@ -1,6 +1,7 @@
 {% load frontend_tags %}
 <div>
     {% if resumen_costos %}
+
         <table class="table" id="table-resumen">
             {% for cc in resumen_costos %}
                 {% if forloop.first %}
@@ -8,7 +9,7 @@
                     <tr>
                         {% for head in cc %}
                             <th>
-                                {{ head }}
+                                {{ head|slice:"30" }}
                             </th>
                         {% endfor %}
                     </tr>

@@ -3,8 +3,6 @@ from functools import partial, wraps
 from django.forms.models import ModelForm, BaseInlineFormSet
 from django.forms.formsets import BaseFormSet, formset_factory
 
-
-from .models import CostoSubContrato
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
 
@@ -22,7 +20,6 @@ class CopiaCostoForm(forms.Form):
         ('reservereparaciones', 'Reserva de reparaciones'),
         ('costoposesion', 'Costos de posesión'),
         ('materialestotal', 'Costos de Materiales'),
-        ('servicioprestadoun', 'Servicio Prestados en otras UN'),
     )
     tipo_costos = forms.MultipleChoiceField(choices=TIPO_COSTO, widget=forms.CheckboxSelectMultiple())
     de_periodo = forms.ModelChoiceField(queryset=Periodo.objects.all(), label="Periodo origen")

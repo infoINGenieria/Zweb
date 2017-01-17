@@ -6,7 +6,7 @@ class ExportExcelMixin:
     LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     def get_c(self, col):
-        """ Convert given row and column number to an Excel-style cell name. """
+
         result = []
         while col:
             col, rem = divmod(col-1, 26)
@@ -116,13 +116,13 @@ class ExportPanelControl(ExportExcelMixin):
         # añadimos el gráfico
         chart = self.workbook.add_chart({'type': 'column'})
         # Configure the chart. In simplest case we add one or more data series.
-        categories = '={0}4:{1}4'.format(self.get_c(2), self.get_c(i+1))
-        chart.add_series({'values': '={0}5:{1}5'.format(self.get_c(2), self.get_c(i+1)), 'categories': categories,
-                          'name': 'Costos'})
-        chart.add_series({'values': '={0}6:{1}6'.format(self.get_c(2), self.get_c(i+1)), 'categories': categories,
-                          'name': 'Servicios a UN'})
-        chart.add_series({'values': '={0}7:{1}7'.format(self.get_c(2), self.get_c(i+1)), 'categories': categories,
-                          'name': "Ventas"})
+        categories = "='{2}'!${0}$4:${1}$4".format(self.get_c(2), self.get_c(i+1), worksheet_s_name)
+        chart.add_series({'values': "='{2}'!${0}$5:${1}$5".format(self.get_c(2), self.get_c(i+1), worksheet_s_name),
+                          'categories': categories, 'name': 'Costos'})
+        chart.add_series({'values': "='{2}'!${0}$6:${1}$6".format(self.get_c(2), self.get_c(i+1), worksheet_s_name),
+                          'categories': categories, 'name':"Ventas" })
+        chart.add_series({'values': "='{2}'!${0}$7:${1}$7".format(self.get_c(2), self.get_c(i+1), worksheet_s_name),
+                          'categories': categories, 'name': 'Certif. Internas' })
         chart.set_x_axis({
             'name': 'Centros de costos',
             'name_font': {'size': 14, 'bold': True},
@@ -132,7 +132,7 @@ class ExportPanelControl(ExportExcelMixin):
         chart.set_y_axis({'num_format': '$ #,##0.00'})
         chart.set_title({'name': 'Costos vs Ventas'})
         # Insert the chart into the worksheet.
-        worksheet_s.insert_chart('A10', chart, {'x_scale': 2, 'y_scale': 1.5})
+        worksheet_s.insert_chart('B10', chart, {'x_scale': 2, 'y_scale': 1.5})
 
     def fill_resumen_costos(self, context):
         ws_costos_name = "Resumen de costos"

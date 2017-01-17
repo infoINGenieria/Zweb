@@ -1,11 +1,8 @@
-from datetime import datetime
-
 from django.contrib import admin
-
 
 from .models import (CostoManoObra, CostoSubContrato, LubricanteFluidosHidro,
                      TrenRodaje, ReserveReparaciones, MaterialesTotal,
-                     CostoParametro, CostoPosesion, ServicioPrestadoUN)
+                     CostoParametro, CostoPosesion, ArchivosAdjuntosPeriodo)
 from zweb_utils.format import currency_format as cur
 
 
@@ -56,17 +53,6 @@ class MaterialesTotalAdmin(admin.ModelAdmin):
     monto_format.short_description = "Costo ($)"
 
 
-@admin.register(ServicioPrestadoUN)
-class ServicioPrestadoUNAdmin(admin.ModelAdmin):
-    list_display = ('obra', 'periodo', 'monto_format', )
-    list_filter = ('obra', 'periodo', )
-    ordering = ('-periodo__fecha_inicio', )
-
-    def monto_format(self, obj):
-        return cur(obj.monto)
-    monto_format.short_description = "Costo ($)"
-
-
 class AbstractAdmin(admin.ModelAdmin):
     list_display = ('familia_equipo', 'periodo', 'monto_hora_format', 'monto_mes_format', )
     list_filter = ('familia_equipo', 'periodo', )
@@ -101,3 +87,7 @@ class ReserveReparacionesAdmin(AbstractAdmin):
 class CostoPosesionAdmin(AbstractAdmin):
     pass
 
+
+@admin.register(ArchivosAdjuntosPeriodo)
+class ArchivosAdjuntosPeriodoAdmin(admin.ModelAdmin):
+    list_display = ('periodo', 'archivo', 'comentario')

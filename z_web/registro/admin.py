@@ -2,7 +2,8 @@ from datetime import datetime
 from django.contrib import admin
 
 from .models import (Alarma, Combustible, Partediario, Registro, Materiales,
-                     RegistroEquipo, PrecioHistorico, Certificacion)
+                     RegistroEquipo, PrecioHistorico, Certificacion, AjusteCombustible,
+                     CertificacionInterna)
 from zweb_utils.format import currency_format as cur
 
 
@@ -113,3 +114,24 @@ class CertificacionAdmin(admin.ModelAdmin):
     def valor_format(self, obj):
         return cur(obj.monto)
     valor_format.short_description = "Monto ($)"
+
+
+@admin.register(AjusteCombustible)
+class AjusteCombustibleAdmin(admin.ModelAdmin):
+    list_display = ('periodo', 'obra', 'valor_format', 'comentarios')
+    list_filter = ('periodo', 'obra', )
+
+    def valor_format(self, obj):
+        return cur(obj.valor)
+    valor_format.short_description = "Valor del ajuste ($)"
+
+
+@admin.register(CertificacionInterna)
+class CertificacionInternaAdmin(admin.ModelAdmin):
+    list_display = ('obra', 'periodo', 'monto_format', )
+    list_filter = ('obra', 'periodo', )
+    ordering = ('-periodo__fecha_inicio', )
+
+    def monto_format(self, obj):
+        return cur(obj.monto)
+    monto_format.short_description = "Costo ($)"

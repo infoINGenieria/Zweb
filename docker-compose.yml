@@ -1,5 +1,4 @@
 zweb_data:
-  restart: always
   image: busybox
   volumes:
     - /var/lib/mysql
@@ -7,7 +6,6 @@ zweb_data:
 
 db:
   image: mariadb
-  restart: always
   environment:
     MYSQL_DATABASE: zweb
     MYSQL_USER: zille

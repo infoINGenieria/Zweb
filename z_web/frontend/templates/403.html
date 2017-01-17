@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}Prohibido{% endblock %}
+
+{% block content %}
+{% block error %}<h1>{% trans 'error'|capfirst %} 403</h1>{% endblock %}
+  Lo sentimos, pero lo que intenta hacer no está permitido.
+{% endblock %}

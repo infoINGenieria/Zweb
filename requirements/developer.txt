@@ -1,0 +1,4 @@
+-r default.txt
+django-extensions
+Werkzeug
+django-debug-toolbar==1.4

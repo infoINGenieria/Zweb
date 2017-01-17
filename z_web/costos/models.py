@@ -1,7 +1,6 @@
 from django.db import models
-from django.db.models import Q
-from core.models import Obras
 
+from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
 
 
@@ -22,6 +21,7 @@ class CalculosMixin:
             self.monto_mes = nuevo_pd * self.monto_mes / viejo_pd
         elif hasattr(self, 'monto_hora'):
             self.monto_hora = nuevo_pd * self.monto_hora / viejo_pd
+
 
 class CostoManoObra(models.Model, CalculosMixin):
     """
@@ -178,11 +178,16 @@ class CostoParametro(models.Model):
     class Meta:
         verbose_name = "parametro de costo"
         verbose_name_plural = "parametros de costos"
+        permissions = (
+            ("can_view_panel_control", "Puede ver Panel de Control"),
+            ("can_add_costos_masivo", "Puede ingresar costos masivos"),
+            ("can_export_panel_control", "Puede exportar el panel de control")
+        )
 
 
 class ServicioPrestadoUN(models.Model, CalculosMixin):
     """
-    Servicios prestados a otras Unidades de Negocio
+    Este modelo pasa a registros, ya que no es un costo.
     """
     periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="costos_servicios_xperiodo")
     obra = models.ForeignKey(Obras, verbose_name="Centro de costo", related_name="costos_servicios_xobra",
@@ -196,3 +201,19 @@ class ServicioPrestadoUN(models.Model, CalculosMixin):
 
     def __str__(self):
         return "{} - {}".format(self.obra, self.periodo)
+
+
+class ArchivosAdjuntosPeriodo(models.Model):
+    """
+    Adjuntar archivos a un periodo para asociarlos al panel de control
+    """
+    periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="archivos")
+    archivo = models.FileField(verbose_name="archivo", upload_to="adjuntos")
+    comentario = models.TextField(verbose_name="comentario", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "archivo adjunto de periodo"
+        verbose_name_plural = "archivos adjunto de periodos"
+
+    def __str__(self):
+        return "{} ({})".format(self.archivo, self.periodo)

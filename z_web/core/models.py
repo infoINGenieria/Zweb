@@ -103,17 +103,8 @@ class Obras(models.Model):
     descuenta_licencias = models.BooleanField(verbose_name="Se utiliza para licencias anuales", db_column='DESCUENTA_LICENCIAS', default=False)
     es_cc = models.BooleanField(verbose_name="Tratar como CC", default=False,
                                 help_text="Si está seleccionada, la obra es considerada un Centro de Costos (CC)")
-    incluir_en_costos = models.BooleanField(verbose_name="Incluir en cálculos de costos", default=False,
-                                            help_text="Si está seleccionado, el CC será utilizado en el cálculos de costos.")
-    prorratea_combustible = models.BooleanField(verbose_name="¿Prorratea Combustible?", default=False,
-                                                help_text="Si está seleccionada, los costos de combustibles se "
-                                                          "prorratean en los demás CC")
-    prorratea_manoobra = models.BooleanField(verbose_name="¿Prorratea Mano de Obra?", default=False,
-                                             help_text="Si está seleccionada, los costos de mano de obra se "
-                                                          "prorratean en los demás CC")
-    prorratea_materiales = models.BooleanField(verbose_name="¿Prorratea Materiales?", default=False,
-                                               help_text="Si está seleccionada, los costos de materiales se "
-                                                          "prorratean en los demás CC")
+    prorratea_costos = models.BooleanField(verbose_name="¿Prorratea Costos?", default=False,
+                                           help_text="Si está seleccionada, los costos se prorratean en los demás CC")
 
     class Meta:
         verbose_name = "obra"

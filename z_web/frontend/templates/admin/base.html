@@ -140,19 +140,20 @@
                                         </a>
                                     </li>
                                 {% endif %}
-
+                                    {% if perms.costos.can_view_panel_control %}
                                     <li class="sidebar-menu-item-list-item">
                                         <a href="{% url 'frontend:index' %}" class="sidebar-menu-item-list-item-link">
                                             <span class="sidebar-menu-item-list-item-icon icon-open-external"></span> Panel de control
                                         </a>
                                     </li>
-
+                                    {%  endif %}
+                                    {% if perms.costos.can_add_costos_masivo %}
                                      <li class="sidebar-menu-item-list-item">
                                         <a href="{% url 'costos:index' %}" class="sidebar-menu-item-list-item-link">
                                             <span class="sidebar-menu-item-list-item-icon icon-book"></span> Ingreso de costos
                                         </a>
                                     </li>
-
+                                    {% endif %}
                                 {% url 'django-admindocs-docroot' as docsroot %}
                                 {% if docsroot %}
                                     <li class="sidebar-menu-item-list-item">

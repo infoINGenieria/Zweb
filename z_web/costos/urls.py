@@ -8,7 +8,6 @@ urlpatterns = [
     url(r'^subcontrato/$', views.masivo_subcontrato, name='masivo_subcontrato'),
     url(r'^manoobra/$', views.masivo_manoobra, name='masivo_manoobra'),
     url(r'^materiales/$', views.masivo_total_materiales, name='masivo_total_materiales'),
-    url(r'^serviciosprestados/$', views.masivo_serviciosprestados, name='masivo_serviciosprestados'),
     url(r'^lubricantes/$', views.masivo_lubricantes, name='masivo_lubricantes'),
 
     url(r'^trenrodaje/$', views.masivo_tren_rodaje, name='masivo_tren_rodaje'),

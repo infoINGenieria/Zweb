@@ -10,8 +10,7 @@
             <tr>
 
                 <th>N° Interno</th>
-                <th>Función</th>
-                <th>Operario</th>
+                <th>Familia de equipo</th>
                 <th>Días en el mes</th>
                 <th>Lubricantes y fluidos</th>
                 <th>Tren de rodaje</th>
@@ -28,8 +27,7 @@
                         <a href="{% url 'admin:core_equipos_change' line.registro_equipo__equipo_id %}">
                             {{ line.registro_equipo__equipo__n_interno }}</a>
                     </td>
-                    <td>{{ line.funcion__funcion }}</td>
-                    <td>{{ line.operario__nombre }}</td>
+                    <td>{{ line.registro_equipo__equipo__familia_equipo__nombre|default:"Sin familia asociada." }}</td>
                     <td>{{ line.dias_mes }}</td>
                     <td>{{ line.fluido|money }}</td>
                     <td>{{ line.tren|money }}</td>
@@ -38,7 +36,7 @@
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="3"></td>
+                <td colspan="2"></td>
                 <td>TOTAL:</td>
                 <td colspan="4"><strong>{{ totales|get_item:values.0.obra_id|money }}</strong></td>
 

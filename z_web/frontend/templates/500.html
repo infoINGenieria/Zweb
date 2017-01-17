@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}Error en el servidor{% endblock %}
+
+
+{% block content %}
+    {% block error %}<h1>{% trans 'error'|capfirst %} 500</h1>{% endblock %}
+    Ocurrió un error. Se reportó via email al administrador y será solucionado a la brevedad. Gracias por su paciencia.
+{% endblock %}

@@ -7,7 +7,9 @@
 
 {% block content %}
     <div class="filters">
+        {% if perms.costos.can_export_panel_control %}
         <a class="btn btn-primary pull-right" id="export_excel">Exportar a XLS</a>
+        {% endif %}
         <form method="get" action="." class="form-inline">
             <div class="form-group">
                 <label for="periodo-sel">Periodo: </label>
@@ -25,12 +27,35 @@
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#venta-costos">Ventas - Costos</a></li>
         <li><a data-toggle="tab" href="#resumen-costo">Resumen Costos</a></li>
+        <li><a data-toggle="tab" href="#archivos-tab">Archivos</a></li>
         <li><a data-toggle="tab" href="#listado-equipo-cc">Listado de equipos por CC</a></li>
     </ul>
     <div class="tab-content">
         <div id="venta-costos" class="tab-pane fade in active">
             <h2>Resumen de COSTOS vs VENTAS </h2>
             {%  include 'frontend/includes/panel_control_costos_ventas.html' %}
+        </div>
+        <div id="archivos-tab" class="tab-pane fade">
+            <h2>Archivos </h2>
+            {% for fil in archivos %}
+                <div class="col-sm-6">
+                    <div class="well">
+                        <a class="btn btn-default" href="{{ fil.archivo.url }}">{{ fil.archivo.name }}</a>
+                        {% if fil.comentario %}
+                            <p>{{ fil.comentario }}</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            {% endfor %}
+            {% if not archivos %}
+                <p class="alert alert-danger">
+                No hay archivos asociados al periodo.
+                </p>
+            {% endif %}
+            <div class="col-sm-12">
+                <a href="{% url 'admin:costos_archivosadjuntosperiodo_add' %}?periodo={{ periodo.pk }}">Agregar archivos</a>
+            </div>
         </div>
         <div id="resumen-costo" class="tab-pane fade">
             <h2>Resumen de costos</h2>

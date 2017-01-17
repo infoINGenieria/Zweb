@@ -74,6 +74,7 @@ class Periodo(models.Model):
     class Meta:
         verbose_name = 'periodo'
         verbose_name_plural = 'periodos'
+        ordering = ['-fecha_fin', ]
 
     def __str__(self):
         return "{}".format(self.descripcion)

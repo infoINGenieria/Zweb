@@ -32,10 +32,10 @@ class EstacionServicioAdmin(admin.ModelAdmin):
 
 @admin.register(Obras)
 class ObrasAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'obra', 'cuit', 'lugar', 'responsable', 'is_active', )
-    list_filter = ('responsable', 'descuenta_francos', 'descuenta_licencias', "es_cc", )
+    list_display = ('codigo', 'obra', 'cuit', 'lugar', 'responsable', 'is_active', 'es_cc', 'prorratea_costos')
+    list_filter = ('responsable', 'descuenta_francos', 'descuenta_licencias', "es_cc", 'prorratea_costos')
     search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', )
-    ordering = ('fecha_fin', 'codigo', )
+    ordering = ('fecha_fin', 'codigo', '-es_cc',)
     fieldsets = (
         (None, {
             'fields': (('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),
@@ -49,7 +49,7 @@ class ObrasAdmin(admin.ModelAdmin):
             'fields': ('tiene_comida', 'tiene_vianda', 'tiene_desarraigo', 'limite_vianda_doble', )
         }),
         ("Configuración de costos", {
-            'fields': ('es_cc', 'incluir_en_costos', 'prorratea_combustible', 'prorratea_manoobra', 'prorratea_materiales', )
+            'fields': ('es_cc', 'prorratea_costos', )
         })
     )
     def is_active(self, obj):

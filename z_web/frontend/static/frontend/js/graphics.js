@@ -104,7 +104,7 @@ graphCostosVentasBar = function(serie1, serie2, serie3) {
             },
             {
                 values: serie3,
-                key: "Serv. Prestados a O/S",
+                key: "Certif. Internas",
                 color: "#31708F"
 
             },
