@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.views import redirect_to_login
+from django.contrib.auth.views import redirect_to_login, logout as django_logout
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.core.urlresolvers import reverse
 from django.utils import six
 from django.utils.encoding import force_text
 
@@ -96,3 +99,24 @@ class PermissionRequiredMixin(AccessMixin):
 
 class LoginAndPermissionRequiredMixin(LoginRequiredMixin, PermissionRequiredMixin):
     pass
+
+
+def logout(request):
+    cache.delete("user_menu_{}".format(request.user.pk))
+    messages.add_message(request, messages.SUCCESS, u"Has cerrado la sesión exitosamente.")
+    return django_logout(request, next_page=reverse('login'))
+
+
+def generate_menu_user(user):
+    menu = []
+    if user.has_perm('costos.can_view_panel_control'):
+        menu.append({'name': "Panel de control", 'icon': 'dashboard',
+                     'url': reverse('frontend:ms_panel_control'), 'section': 'Movimiento de suelo',
+                     'btn_class': 'success'})
+    if user.has_perm('costos.can_add_costos_masivo'):
+        menu.append({'name': "Ingreso masivo de costos", 'icon': 'keyboard-o',
+                     'url': reverse('costos:index'), 'section': 'Movimiento de suelo', 'btn_class': 'success'})
+    # if user.has_perm('costos.can_add_costos_masivo'):
+    #     menu.append({'name': "Ingreso de parte diario", 'icon': 'car',
+    #                  'url': reverse('', 'Taller')})
+    return menu

@@ -2,7 +2,7 @@
 <div>
     {% if resumen_costos %}
 
-        <table class="table" id="table-resumen">
+        <table class="table table-responsive table-bordered table-striped table-hover" id="table-resumen">
             {% for cc in resumen_costos %}
                 {% if forloop.first %}
                     <thead>
@@ -52,26 +52,28 @@
             No existen datos para el periodo seleccionado.
         </p>
     {% endif %}
-    <div class="col-md-8">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                Resumen de costos - Totales
-            </div>
-            <div class="panel-body">
-                <div class="resumen" id="resumen">
-                    <svg style="width: 100%;height:500px;"></svg>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Resumen de costos - Totales
+                </div>
+                <div class="panel-body">
+                    <div class="resumen" id="resumen">
+                        <svg style="width: 100%;height:500px;"></svg>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                Resumen de costos - Percentual
-            </div>
-            <div class="panel-body">
-                <div class="resumen" id="resumen-pie">
-                    <svg style="width: 100%;height:500px;"></svg>
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Resumen de costos - Percentual
+                </div>
+                <div class="panel-body">
+                    <div class="resumen" id="resumen-pie">
+                        <svg style="width: 100%;height:500px;"></svg>
+                    </div>
                 </div>
             </div>
         </div>

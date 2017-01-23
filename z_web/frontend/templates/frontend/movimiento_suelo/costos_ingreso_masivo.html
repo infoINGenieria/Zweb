@@ -1,0 +1,144 @@
+{% extends "frontend/movimiento_suelo/base_ms.html" %}
+{% load i18n bootstrap3 %}
+{% block title %}<h2 class="main-title">Ingreso masivo de costos</h2>{% endblock %}
+{% block title_head %}{{ block.super }} > Ingreso masivo de costos{% endblock %}
+{% block wide_class %}container{% endblock %}
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#copiacosto">Copia de items de costos</a></li>
+        <li><a data-toggle="tab" href="#ingresomasivo">Ingreso masivo manual</a></li>
+
+    </ul>
+
+    <div class="tab-content">
+
+        <div id="copiacosto" class="tab-pane fade in active">
+            <div class="alert alert-success">
+            <p class="text-default">Utilice esta herramienta para copiar los valores de los costos establecidos en un periodo
+                a otro. Puede elegir recalcular los costos según los parámetros del periodo destina.</p>
+            </div>
+            <div class="">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            Copia de costos
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-6">
+                                {% bootstrap_field copia_form.tipo_costos %}
+                            </div>
+                            <div class="col-sm-6">
+                                {% bootstrap_field copia_form.recalcular %}
+                                {% bootstrap_field copia_form.de_periodo %}
+                                {% bootstrap_field copia_form.a_periodo %}
+                                <input type="submit" value="Continuar" class="submit btn btn-success"/>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+        <div id="ingresomasivo" class="tab-pane fade">
+            <div class="alert alert-success">
+                <p class="text-default">Utilice esta herramienta para ingresar de manera más cómoda los costos de un
+                    periodo dado.
+                    Escoja el tipo de costo a ingresar de las opciones disponible abajo.</p>
+            </div>
+
+            <div class="row opciones-costos">
+                <div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Relacionados con CC
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'costos:masivo_manoobra' %}">
+                                        Costos de mano de obra
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a class="btn btn-default btn-sm" href="{% url 'admin:costos_costomanoobra_changelist' %}">Ver
+                                        items</a>
+                                </div>
+                                <div class="col-sm-9">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'costos:masivo_subcontrato' %}">
+                                        Costos por subcontratos
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a class="btn btn-default btn-sm" href="{% url 'admin:costos_costosubcontrato_changelist' %}">Ver
+                                        items</a>
+                                </div>
+                                <div class="col-sm-9">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'costos:masivo_total_materiales' %}">
+                                        Costos totales de materiales
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a class="btn btn-default btn-sm" href="{% url 'admin:costos_materialestotal_changelist' %}">Ver
+                                        items</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Relacionados con los equipos
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'costos:masivo_lubricantes' %}">
+                                        Costos de Lubricantes y fluídos hidráulicos
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a class="btn btn-default btn-sm"
+                                       href="{% url 'admin:costos_lubricantefluidoshidro_changelist' %}">Ver items</a>
+                                </div>
+                                <div class="col-sm-9">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'costos:masivo_tren_rodaje' %}">
+                                        Costos de tren de rodaje
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a class="btn btn-default btn-sm" href="{% url 'admin:costos_trenrodaje_changelist' %}">Ver
+                                        items</a>
+                                </div>
+                                <div class="col-sm-9">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'costos:masivo_reserva_reparaciones' %}">
+                                        Reservas para reparaciones
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a class="btn btn-default btn-sm"
+                                       href="{% url 'admin:costos_reservereparaciones_changelist' %}">Ver items</a>
+                                </div>
+                                <div class="col-sm-9">
+                                    <a class="btn btn-primary btn-sm" href="{% url 'costos:masivo_posesion' %}">
+                                        Costos por posesión
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a class="btn btn-default btn-sm" href="{% url 'admin:costos_costoposesion_changelist' %}">Ver
+                                        items</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

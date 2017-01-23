@@ -1,10 +1,7 @@
-{% extends "frontend/base_custom.html" %}
+{% extends "frontend/movimiento_suelo/base_ms.html" %}
 {% load i18n frontend_tags charts_tags static %}
-{% block title %}Panel de Control{% endblock %}
-{% block last_breadcrumbs %}Panel de control{% endblock %}
-
-{% block pretitle %}<h2>PANEL DE CONTROL</h2>{% endblock %}
-
+{% block title %}<h2 class="main-title">Panel de control</h2>{% endblock %}
+{% block title_head %}{{ block.super }} > Panel de control{% endblock %}
 {% block content %}
     <div class="filters">
         {% if perms.costos.can_export_panel_control %}
@@ -19,7 +16,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <button class="button" type="submit">Ver</button>
+            <button class="btn btn-info btn-sm" type="submit">Ver</button>
 
         </form>
 
@@ -33,7 +30,7 @@
     <div class="tab-content">
         <div id="venta-costos" class="tab-pane fade in active">
             <h2>Resumen de COSTOS vs VENTAS </h2>
-            {%  include 'frontend/includes/panel_control_costos_ventas.html' %}
+            {%  include 'frontend/movimiento_suelo/includes/panel_control_costos_ventas.html' %}
         </div>
         <div id="archivos-tab" class="tab-pane fade">
             <h2>Archivos </h2>
@@ -59,11 +56,11 @@
         </div>
         <div id="resumen-costo" class="tab-pane fade">
             <h2>Resumen de costos</h2>
-            {%  include "frontend/includes/panel_control_resumen_costos.html" %}
+            {%  include "frontend/movimiento_suelo/includes/panel_control_resumen_costos.html" %}
         </div>
         <div id="listado-equipo-cc" class="tab-pane fade">
             <h2>Utilización de equipos por CC</h2>
-            {% include "frontend/includes/panel_control_listado_equipos.html" %}
+            {% include "frontend/movimiento_suelo/includes/panel_control_listado_equipos.html" %}
         </div>
 
     </div>
@@ -74,8 +71,12 @@
         (function ($) {
             $(document).ready(function () {
                 $("#export_excel").click(function(){
-                    window.location = "{% url 'frontend:export_panel_control_excel' %}?periodo=" + $("#periodo-sel").val();
-                })
+                    window.location = "{% url 'frontend:ms_export_panel_control_excel' %}?periodo=" + $("#periodo-sel").val();
+                });
+                $("#periodo-sel").chosen({
+                    'search_contains':true,
+                    'no_results_text': "No se encontraron coicidencias!",
+                });
                 var data = [
                     {% if resumen_costos %}
                             {% for i in resumen_costos|extraer_data_grafico_costos:-1 %}{

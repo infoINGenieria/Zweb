@@ -17,13 +17,37 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views
+
+from frontend.views import index
+from zweb_utils.views import logout
 
 urlpatterns = [
-    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^panel_de_control/', include('frontend.urls', namespace='frontend', app_name='frontend')),
+    url(r'^$', index, name='index'),
+    url(r'^', include('frontend.urls', namespace='frontend', app_name='frontend')),
     url(r'^ingreso_masivo/costos/', include('costos.urls', namespace='costos', app_name='costos')),
+    # admin
+    url(r'^admin/', include(admin.site.urls)),
+]
+
+urlpatterns += [
+    url(r'^logout/', logout, name='logout'),
+    url(r'^login/$', views.login, {'template_name': 'auth/login.html'}, name='login'),
+    url(r'^password_change/$', views.password_change, {'template_name': 'auth/password_change_form.html'},
+        name='password_change'),
+    url(r'^password_change/done/$', views.password_change_done, {'template_name': 'auth/password_change_done.html'},
+        name='password_change_done'),
+    url(r'^password_reset/$', views.password_reset, {
+            'html_email_template_name': 'auth/password_reset_email.html',
+            'template_name': 'auth/password_reset_form.html'
+        }, name='password_reset'),
+    url(r'^password_reset/done/$', views.password_reset_done, {'template_name': 'auth/password_reset_done.html'},
+        name='password_reset_done'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.password_reset_confirm, {'template_name': 'auth/password_reset_confirm.html'},
+        name='password_reset_confirm'),
+    url(r'^reset/done/$', views.password_reset_complete, {'template_name': 'auth/password_reset_complete.html'},
+        name='password_reset_complete'),
 ]
 
 if settings.DEBUG:
