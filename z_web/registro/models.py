@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from core.models import EstServicio, Operarios, Obras, Equipos
@@ -219,7 +220,11 @@ class Materiales(models.Model):
 class AjusteCombustible(models.Model):
     periodo = models.ForeignKey(Periodo, related_name="ajustes_combustibles")
     obra = models.ForeignKey(Obras, related_name="ajustes_combustibles_x_obra")
-    valor = models.FloatField(verbose_name="valor de ajuste")
+    valor = models.FloatField(verbose_name="valor de ajuste", null=True, blank=True,
+                              help_text='Utilice este valor para ajustar el valor arrojado por el informe')
+    costo_total = models.FloatField(verbose_name='costo total', null=True, blank=True,
+                                    help_text='Si ingresa este valor, se ignorará los registros para el periodo '
+                                              'y centro de costo asociados')
     comentarios = models.TextField(verbose_name="comentarios", null=True, blank=True)
 
     class Meta:
@@ -229,6 +234,13 @@ class AjusteCombustible(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.periodo, self.obra)
+
+    def clean(self):
+        super(AjusteCombustible, self).clean()
+        if not any([self.valor, self.costo_total]):
+            raise ValidationError('Ingrese al menos un valor (de ajuste o total). Ambos no pueden ser vacio.')
+        if all([self.valor, self.costo_total]):
+            raise ValidationError('Ingrese "Valor de ajuste" o "Costo Total" pero no ambos.')
 
 
 class CertificacionInterna(models.Model):
