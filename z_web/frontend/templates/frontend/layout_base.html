@@ -1,0 +1,95 @@
+{% extends "frontend/base.html" %}
+{% load bootstrap3 compress pipeline static %}
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'frontend/img/bg-letters.svg' %}" alt="ZILLE"/> </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="{% block index_act %}active{% endblock %}"><a href="{% url 'index' %}">Inicio</a></li>
+                    <li class="item-menu dropdown ">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Herramientas <span><b class="caret"></b></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for menu in user_menu %}
+                            <li><a href="{{ menu.url }}"><i class="fa fa-{{ menu.icon }}"></i> {{ menu.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% if request.user.is_superuser or request.user.is_staff %}
+                        <li><a href="{% url 'admin:index' %}">Administración</a></li>
+                    {% endif %}
+
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden-sm"><a href="#">{% now "l d \d\e F \d\e Y" %}</a></li>
+                    {% if user.is_authenticated %}
+
+                        <li class="item-menu dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <div>
+                                <span>Hola <strong>{{ user.username }}</strong></span>
+                                <span><b class="caret"></b></span>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'password_change' %}">Cambiar contraseña</a></li>
+                            <li><a href="#" id="id_Signout">Cerrar sesión</a></li>
+                        </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+{% endblock %}
+{% block base_content %}
+<div class="{% block wide_class %}container-fluid{% endblock %} main-wrapper">
+    {% block title %}{% endblock %}
+    {% bootstrap_messages %}
+    {% block content %}{% endblock %}
+</div>
+{%  endblock %}
+{% block footer %}
+<footer class="container-fluid">
+  {% include 'frontend/includes/_footer.html' %}
+</footer>
+{% endblock %}
+{% block js %}
+    {% javascript 'zweb_utils_js' %}
+    {% compress js %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+                $(".datepicker").datepicker({
+                    format: 'dd/mm/yyyy',
+                    language: 'es',
+                    orientation: 'bottom'
+                });
+                $("#id_Signout").click(function(e){
+                    e.preventDefault();
+                    showConfirm('Cerrar sesión', 'Va a cerrar la sesión. ¿Continuar?', function(){
+                        window.location = '{% url 'logout' %}';
+                    });
+                });
+                //$(".sticky-table-headers").stickyTableHeaders({fixedOffset: $('nav.navbar')});
+
+            });
+        })(jQuery);
+    </script>
+    {% endcompress %}
+{% endblock %}

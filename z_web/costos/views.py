@@ -20,7 +20,7 @@ from .forms import PeriodoSelectForm, CostoItemForm, CostoItemFamiliaForm, Copia
 
 
 class Index(LoginAndPermissionRequiredMixin, TemplateView):
-    template_name = "costos/ingreso_masivo.html"
+    template_name = "frontend/movimiento_suelo/costos_ingreso_masivo.html"
     permission_required = 'can_add_costos_masivo'
     permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
     raise_exception = True
@@ -54,8 +54,9 @@ class Index(LoginAndPermissionRequiredMixin, TemplateView):
                 # ori_param = CostoParametro.objects.get(periodo=de_periodo)
             except CostoParametro.DoesNotExist:
                 messages.add_message(self.request, messages.ERROR,
-                                     mark_safe("Asegúrese de definir los <a href='/costos/costoparametro'>parámetros "
-                                               "de costos</a> para ambos periodos seleccionados."))
+                                     mark_safe("Asegúrese de definir los <a href='{}'>parámetros "
+                                               "de costos</a> para ambos periodos seleccionados.".format(
+                                         reverse('admin:costos_costoparametro_changelist'))))
                 return self.form_invalid(form)
         copia_dict = dict()
         for costo in tipos:
@@ -144,7 +145,7 @@ class IngresoMasivoMixin(LoginAndPermissionRequiredMixin):
 
 class IngresoMasivoConObraMixin(IngresoMasivoMixin):
     TITLE_TIPO_COSTO = ''
-    template_name = "costos/masivo_obra_form.html"
+    template_name = "frontend/movimiento_suelo/costos_masivo_obra_form.html"
     form_class = CostoItemForm
     specified_field = 'obra'
 
@@ -182,7 +183,7 @@ class IngresoMasivoConObraMixin(IngresoMasivoMixin):
 
 class IngresoMasivoConFamiliaEquipoMixin(IngresoMasivoMixin):
     TITLE_TIPO_COSTO = ''
-    template_name = "costos/masivo_familia_form.html"
+    template_name = "frontend/movimiento_suelo/costos_masivo_familia_form.html"
     form_class = CostoItemFamiliaForm
     specified_field = 'familia'
 
@@ -223,8 +224,8 @@ class IngresoMasivoConFamiliaEquipoMixin(IngresoMasivoMixin):
                     raise IntegrityError
         except CostoParametro.DoesNotExist:
             messages.add_message(self.request, messages.ERROR,
-                                 mark_safe("No están definidos los <a href='/costos/costoparametro'>parámetros de costos</a> para el "
-                                       "periodo {}".format(periodo)))
+                                 mark_safe("No están definidos los <a href='{}'>parámetros de costos</a> para el "
+                                       "periodo {}".format(reverse('admin:costos_costoparametro_changelist'), periodo)))
             return self.form_invalid(p_form, formsets)
         except IntegrityError as e:
             return self.form_invalid(p_form, formsets)

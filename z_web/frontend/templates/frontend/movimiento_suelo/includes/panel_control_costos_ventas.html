@@ -1,7 +1,7 @@
 {% load frontend_tags %}
 <div>
 {% if cert_costos %}
-    <table class="table table-responsive" id="table-resumen">
+    <table class="table table-responsive table-bordered table-striped table-hover " id="table-resumen">
         {% for cc in cert_costos %}
             {% if forloop.first %}
                 <thead>
@@ -55,7 +55,7 @@
                 Resumen
             </div>
             <div class="panel-body">
-                <table class="table">
+                <table class="table table-bordered table-striped table-hover">
                     <tr>
                         <td>COSTOS:</td>
                         <td>{{ costos_ventas_total.t_costos|money }}</td>

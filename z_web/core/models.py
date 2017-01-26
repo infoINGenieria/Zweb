@@ -7,23 +7,28 @@ from parametros.models import FamiliaEquipo, Funcion
 
 class Equipos(models.Model):
     """
-    OK
+    Equipos y maquinarias de la empresa.
+    En futuras versiones debería ser movido a taller.
     """
     id = models.AutoField(db_column='ID', primary_key=True)
-    n_interno = models.CharField(db_column='N_INTERNO', max_length=255, blank=True, null=True)
-    equipo = models.CharField(db_column='EQUIPO', max_length=255, blank=True, null=True)
-    marca = models.CharField(db_column='MARCA', max_length=255, blank=True, null=True)
-    modelo = models.CharField(db_column='MODELO', max_length=255, blank=True, null=True)
-    año = models.FloatField(db_column='AÑO', blank=True, null=True)
-    dominio = models.CharField(db_column='DOMINIO', max_length=255, blank=True, null=True)
-    vto_vtv = models.DateField(db_column='VTO_VTV', blank=True, null=True)
-    vto_seguro = models.DateField(db_column='VTO_SEGURO', blank=True, null=True)
-    descripcion_vto1 = models.CharField(db_column='DESCRIPCION_VTO1', max_length=128, blank=True, null=True)
-    descripcion_vto2 = models.CharField(db_column='DESCRIPCION_VTO2', max_length=128, blank=True, null=True)
-    descripcion_vto3 = models.CharField(db_column='DESCRIPCION_VTO3', max_length=128, blank=True, null=True)
-    vto_otros1 = models.DateField(db_column='VTO_OTROS1', blank=True, null=True)
-    vto_otros2 = models.DateField(db_column='VTO_OTROS2', blank=True, null=True)
-    vto_otros3 = models.DateField(db_column='VTO_OTROS3', blank=True, null=True)
+    n_interno = models.CharField(verbose_name='n° interno', db_column='N_INTERNO', max_length=255, blank=True, null=True)
+    equipo = models.CharField(verbose_name='tipo de equipo', db_column='EQUIPO', max_length=255, blank=True, null=True)
+    marca = models.CharField(verbose_name='marca', db_column='MARCA', max_length=255, blank=True, null=True)
+    modelo = models.CharField(verbose_name='modelo', db_column='MODELO', max_length=255, blank=True, null=True)
+    año = models.FloatField(verbose_name='año', db_column='AÑO', blank=True, null=True)
+    dominio = models.CharField(verbose_name='dominio', db_column='DOMINIO', max_length=255, blank=True, null=True)
+    nro_serie = models.CharField(verbose_name="n° serie", max_length=255, blank=True, null=True)
+    vto_vtv = models.DateField(verbose_name='vto VTV', db_column='VTO_VTV', blank=True, null=True)
+    vto_seguro = models.DateField(verbose_name='vto seguro', db_column='VTO_SEGURO', blank=True, null=True)
+    vto_ruta = models.DateField(verbose_name='vto ruta', null=True, blank=True)
+    vto_certificacion = models.DateField(verbose_name='vto certificación', null=True, blank=True)
+    vto_certificacion_obs = models.CharField(verbose_name='observación vto. certificación', max_length=255, blank=True, null=True)
+    descripcion_vto1 = models.CharField(verbose_name='descripción vto1', db_column='DESCRIPCION_VTO1', max_length=128, blank=True, null=True)
+    descripcion_vto2 = models.CharField(verbose_name='descripción vto2', db_column='DESCRIPCION_VTO2', max_length=128, blank=True, null=True)
+    descripcion_vto3 = models.CharField(verbose_name='descripción vto3', db_column='DESCRIPCION_VTO3', max_length=128, blank=True, null=True)
+    vto_otros1 = models.DateField(verbose_name='fecha vto1', db_column='VTO_OTROS1', blank=True, null=True)
+    vto_otros2 = models.DateField(verbose_name='fecha vto2', db_column='VTO_OTROS2', blank=True, null=True)
+    vto_otros3 = models.DateField(verbose_name='fecha vto3', db_column='VTO_OTROS3', blank=True, null=True)
     familia_equipo = models.ForeignKey(FamiliaEquipo, db_column='FAMILIA_EQUIPO_ID', blank=True, null=True)
 
     class Meta:
@@ -117,6 +122,7 @@ class Obras(models.Model):
     @property
     def esta_activa(self):
         return self.fecha_fin is None
+
 
 class Operarios(models.Model):
     """

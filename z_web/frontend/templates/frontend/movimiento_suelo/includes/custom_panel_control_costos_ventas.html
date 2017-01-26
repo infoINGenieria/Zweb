@@ -1,0 +1,101 @@
+{% load frontend_tags %}
+<div>
+{% if data.cert_vs_costos %}
+    <table class="table table-responsive table-bordered table-striped table-hover " id="table-resumen">
+        <thead>
+            <tr>
+                <th>CC</th>
+                {% for cc_id in data.cert_vs_costos.keys %}
+                    <th>
+                        {{ data.cc_headers|from_dict:cc_id|slice:"30" }}
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Costos</td>
+            {% for cc_cost in data.cert_vs_costos.values %}
+                <td>{{ cc_cost.costos|money }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td>Certificaciones</td>
+            {% for cc_cost in data.cert_vs_costos.values %}
+                <td>{{ cc_cost.certificaciones|money }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td>Cer. Internas</td>
+            {% for cc_cost in data.cert_vs_costos.values %}
+                <td>{{ cc_cost.certif_internas|money }}</td>
+            {% endfor %}
+        </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Diferencia</th>
+                {% for cc_cost in data.cert_vs_costos.values %}
+                <th {% if cc_cost.diferencia < 0%}class="text-danger"{% endif %}>{{ cc_cost.diferencia|money }}</th>
+            {% endfor %}
+            </tr>
+        </tfoot>
+    </table>
+
+{% else %}
+    <p class="alert alert-warning">
+        No existen datos para el periodo seleccionado.
+    </p>
+{% endif %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                Resumen
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered table-striped table-hover">
+                    <tr>
+                        <td>COSTOS:</td>
+                        <td>{{ data.totales.t_costos|money }}</td>
+                    </tr>
+                    <tr>
+                        <td>CERTIFICACIONES:</td>
+                        <td>{{ data.totales.t_certif|money }}</td>
+                    </tr>
+                    <tr>
+                        <td>CERTIFICACIONES INTERNAS:</td>
+                        <td>{{ data.totales.t_servicios|money }}</td>
+                    </tr>
+                    <tr>
+                        <td>DIFERENCIA:</td>
+                        <td><span
+                                {% if data.totales.t_diff > 0 %}
+                                    class="text-success"
+                                {% elif data.totales.t_diff < 0%}
+                                    class="text-danger"
+                                {% else %}
+                                    class="text-warning"
+                                {% endif %}>
+                                <strong>{{ data.totales.t_diff|money }}</strong>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Costos vs Ventas
+            </div>
+            <div class="panel-body">
+                <div class="resumen" id="resumen-costos-ventas">
+                    <svg style="width: 100%;height:500px;"></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

@@ -118,12 +118,16 @@ class CertificacionAdmin(admin.ModelAdmin):
 
 @admin.register(AjusteCombustible)
 class AjusteCombustibleAdmin(admin.ModelAdmin):
-    list_display = ('periodo', 'obra', 'valor_format', 'comentarios')
+    list_display = ('periodo', 'obra', 'valor_format', 'total_format', 'comentarios')
     list_filter = ('periodo', 'obra', )
 
     def valor_format(self, obj):
-        return cur(obj.valor)
+        return cur(obj.valor) if obj.valor else ''
     valor_format.short_description = "Valor del ajuste ($)"
+
+    def total_format(self, obj):
+        return cur(obj.costo_total) if obj.costo_total else ''
+    total_format.short_description = "Costo total ($)"
 
 
 @admin.register(CertificacionInterna)

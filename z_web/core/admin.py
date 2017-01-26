@@ -13,11 +13,14 @@ class Equipos(admin.ModelAdmin):
     list_display_links = ('n_interno', 'equipo', )
     fieldsets = (
         (None, {
-            'fields': (('familia_equipo', 'n_interno', 'equipo'),
-                       ('dominio', 'marca', 'modelo', 'año'), )
+            'fields': (('familia_equipo', 'equipo'),
+                       ('n_interno', 'nro_serie'),
+                       ('marca', 'modelo',),
+                       ('dominio',  'año'), )
         }),
         ("Vencimientos", {
-            'fields': (('vto_vtv', 'vto_seguro', ),
+            'fields': (('vto_vtv', 'vto_seguro', 'vto_ruta'),
+                       ('vto_certificacion', 'vto_certificacion_obs'),
                        ('descripcion_vto1', 'vto_otros1', ),
                        ('descripcion_vto2', 'vto_otros2', ),
                        ('descripcion_vto3', 'vto_otros3', ))
