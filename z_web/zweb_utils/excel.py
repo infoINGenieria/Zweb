@@ -190,3 +190,153 @@ class ExportPanelControl(ExportExcelMixin):
             'data_labels': {'percentage': True, 'category':True}
         })
         ws_costos.insert_chart('E17', pie_chart)
+
+    def fill_custom_export(self, context):
+        """
+        Exporta el panel de control por rango a excel.!
+        """
+        self.fill_custom_costos_ventas(context)
+        self.fill_custom_resumen_costos(context)
+        return self.prepare_response()
+
+    def fill_custom_costos_ventas(self, context):
+        """
+        arma una hoja de calculo con los costso vs ventas como se ve en el panel de control.
+        """
+        periodos = [x.descripcion for x in context["data"]["periodos"]]
+        cert_vs_costos = context["data"]["cert_vs_costos"]
+        totales = context["data"]["totales"]
+        headers = context["data"]["cc_headers"]
+
+        worksheet_s_name = "Ventas vs Costos"
+        worksheet_s = self.workbook.add_worksheet(worksheet_s_name)
+
+        worksheet_s.merge_range('A2:H2', "VENTAS vs COSTOS (Periodos: {})".format(
+            " ,".join(periodos)), self.style_dict["title"])
+
+        row = 3
+        # cabeceras izquerda
+        worksheet_s.set_column(0, 0, 18)  # colum_ini, colun_fin, tamaño
+        worksheet_s.set_row(row, 25)
+        worksheet_s.write_column(row, 0, ["CC", "Costos", "Certificaciones", "Cert. Internas", "Diferencia"], self.style_dict["header"])
+
+        # completamos datos
+        column_num = 1
+        for cc_id, datos in cert_vs_costos.items():
+            # head
+            worksheet_s.write(row, column_num, headers[cc_id], self.style_dict["header"])
+            worksheet_s.set_column(column_num, column_num, 22)
+            # datos
+            i = row + 1
+            for costo in ['costos', 'certificaciones', 'certif_internas']:
+                worksheet_s.write(i, column_num, datos[costo], self.style_dict["normal"])
+                i += 1
+            # formula
+            worksheet_s.write(i, column_num, '=-{0}{1}+{0}{2}+{0}{3}'.format(self.get_c(column_num + 1), 5, 6, 7),
+                              self.style_dict["header_num"], datos["diferencia"])
+            column_num += 1
+        # escribimos formulas de subtotales
+        worksheet_s.write(row, column_num, "Subtotales", self.style_dict["header"])
+        worksheet_s.set_column(column_num, column_num, 20)
+        i = row + 1
+        for costo in ['t_costos', 't_certif', 't_servicios', 't_diff']:
+            worksheet_s.write_formula(i, column_num,
+                                      '=sum({0}{2}:{1}{2})'.format(self.get_c(2), self.get_c(column_num), i + 1),
+                                      self.style_dict["header_num"], totales[costo])
+            i += 1
+        worksheet_s.set_row(7, 25)
+
+        # añadimos el gráfico
+        chart = self.workbook.add_chart({'type': 'column'})
+        categories = "='{2}'!${0}$4:${1}$4".format(self.get_c(2), self.get_c(column_num), worksheet_s_name)
+        chart.add_series({'values': "='{2}'!${0}$5:${1}$5".format(self.get_c(2), self.get_c(column_num), worksheet_s_name),
+                          'categories': categories, 'name': 'Costos'})
+        chart.add_series({'values': "='{2}'!${0}$6:${1}$6".format(self.get_c(2), self.get_c(column_num), worksheet_s_name),
+                          'categories': categories, 'name': "Ventas"})
+        chart.add_series({'values': "='{2}'!${0}$7:${1}$7".format(self.get_c(2), self.get_c(column_num), worksheet_s_name),
+                          'categories': categories, 'name': 'Certif. Internas'})
+        chart.set_x_axis({
+            'name': 'Centros de costos',
+            'name_font': {'size': 14, 'bold': True},
+            'num_font': {'italic': True},
+
+        })
+        chart.set_y_axis({'num_format': '$ #,##0.00'})
+        chart.set_title({'name': 'Costos vs Ventas'})
+        worksheet_s.insert_chart('B10', chart, {'x_scale': 2, 'y_scale': 2.5})
+
+    def fill_custom_resumen_costos(self, context):
+        """
+        Arma un excel con el reumen de costos como se ve en el panel de control
+        """
+        periodos = [x.descripcion for x in context["data"]["periodos"]]
+        resumen_costos = context["data"]["costos"]
+        costos_totales = context["data"]["costos_totales"]
+        tipo_costo = context["data"]["costos_headers"]
+        headers = context["data"]["cc_headers"]
+
+        ws_costos_name = "Resumen de costos"
+        ws_costos = self.workbook.add_worksheet(ws_costos_name)
+
+        ws_costos.merge_range('A2:H2', "RESUMEN DE COSTOS (Periodos: {})".format(
+            " ,".join(periodos)), self.style_dict["title"])
+
+        row = 3
+        # cabeceras izquerda
+        ws_costos.set_column(0, 0, 18)  # colum_ini, colun_fin, tamaño
+        ws_costos.set_row(row, 25)
+        ws_costos.write_column(row, 0, ["TIPO DE COSTO", "Combustible", "Prorrateo Combustible", "Mano de Obra",
+                                        "Prorrateo Mano de Obra", "Subcontratos", "Utilización de equipos",
+                                        "Materiales", "Prorrateo de Materiales", "Totales"],
+                               self.style_dict["header"])
+
+        # completamos datos
+        column_num = 1
+        i = row + 1
+        for cc_id, datos in resumen_costos.items():
+            # head
+            ws_costos.write(row, column_num, headers[cc_id], self.style_dict["header"])
+            ws_costos.set_column(column_num, column_num, 22)
+            # datos
+            i = row + 1
+            for costo in tipo_costo.keys():
+                ws_costos.write(i, column_num, datos[costo], self.style_dict["normal"])
+                i += 1
+            # formula
+            ws_costos.write(i, column_num, '=sum({0}{1}:{0}{2})'.format(self.get_c(column_num + 1), 5, 12),
+                            self.style_dict["header_num"], costos_totales[cc_id])
+            column_num += 1
+        ws_costos.set_row(12, 25)
+
+        row = i + 2
+        ws_costos.write_rich_string(row + 1, 0, "TOTAL:", self.style_dict["total_legend"])
+        ws_costos.write_formula(row + 1, 1, '=sum({0}{2}:{1}{2})'.format(self.get_c(2), self.get_c(column_num), row),
+                                self.style_dict["total"], sum(costos_totales.values()))
+
+        # añadimos el gráfico
+        chart = self.workbook.add_chart({'type': 'column'})
+        # Configure the chart. In simplest case we add one or more data series.
+        chart.add_series({
+            'values': ['Resumen de costos', 12, 1, 12, column_num - 1],
+            'categories': ['Resumen de costos', 3, 1, 3, column_num - 1],
+            'name': 'Costos',
+            'data_labels': {'value': True, 'num_format': '$ #,##0.00'}
+        })
+
+        chart.set_x_axis({
+            'name': 'Centros de costos',
+            'name_font': {'size': 12, 'bold': True},
+            'num_font':  {'italic': True},
+
+        })
+        chart.set_y_axis({'num_format': '$ #,##0.00'})
+        chart.set_style(21)
+        ws_costos.insert_chart('A18', chart, {'x_scale': 1.5, 'y_scale': 2})
+
+        pie_chart = self.workbook.add_chart({'type': 'pie'})
+        pie_chart.add_series({
+            'values': ['Resumen de costos', 12, 1, 12, column_num - 1],
+            'categories': ['Resumen de costos', 3, 1, 3, column_num - 1],
+            'data_labels': {'percentage': True, 'category': True}
+        })
+        ws_costos.insert_chart('F18', pie_chart, {'x_scale': 1.5, 'y_scale': 1.75})

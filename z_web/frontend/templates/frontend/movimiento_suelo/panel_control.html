@@ -7,6 +7,7 @@
         {% if perms.costos.can_export_panel_control %}
         <a class="btn btn-primary pull-right" id="export_excel">Exportar a XLS</a>
         {% endif %}
+        <a class="btn btn-info pull-right" href="{% url 'frontend:ms_custom_panel_control' %}">Personalizar informe</a>
         <form method="get" action="." class="form-inline">
             <div class="form-group">
                 <label for="periodo-sel">Periodo: </label>

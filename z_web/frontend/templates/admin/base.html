@@ -188,17 +188,12 @@
     <div class="content">
       <div class="tools">
         {% block footer_links %}
-
         {% endblock %}
       </div>
 
-      <div class="copyright" style="width:300px">
+      <div class="copyright">
         {% block copyright %}
              {% include 'frontend/includes/_footer.html' with theme=True %}
-        {% endblock %}
-        <div class="branding" >
-          {% block footer_branding %}
-
         {% endblock %}
       </div>
     </div>
