@@ -124,7 +124,7 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
         return {
             'costos': data_costos, 'costos_totales': data_costos_totales,
             'cert_vs_costos': data_cert_costos, 'totales': data_totales,
-            'cc_headers': cc_headers, 'costos_headers': get_headers_costos(),
+            'cc_headers': cc_headers, 'costos_headers': dict(get_headers_costos()),
             'periodos': periodos
         }
 

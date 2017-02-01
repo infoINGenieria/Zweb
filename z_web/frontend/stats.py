@@ -11,8 +11,8 @@ from registro.models import Partediario, Certificacion, AjusteCombustible, Certi
 
 def get_headers_costos():
     heads = ["Combustible", "Prorrateo de Combustible", "Mano de Obra", "Prorrateo de Mano de Obra",
-            "Subcontratos", "Utilización de equipos", "Materiales", "Prorrateo de Materiales"]
-    return dict([(slugify(x), x) for x in heads])
+             "Subcontratos", "Utilización de equipos", "Materiales", "Prorrateo de Materiales"]
+    return [(slugify(x), x) for x in heads]
 
 
 def get_limited_dict(orig, restr):
@@ -144,21 +144,11 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
 
     if limit_cc:
         limited_no_prorrat = get_limited_dict(no_prorrat, limit_cc)
-
         # Ids de obras tipo CC (con costos prorrateables y sin) limitadas a la busqueda
         obras_ids = list(limited_no_prorrat.keys()) + list(ccs_pror.keys())
-
-        # Defino el head del reporte
-        headers = [v for k, v in no_prorrat.items() if k in limited_no_prorrat]
     else:
         # Ids de obras tipo CC (con costos prorrateables y sin)
         obras_ids = list(no_prorrat.keys()) + list(ccs_pror.keys())
-
-        # Defino el head del reporte
-        headers = [x for x in no_prorrat.values()]
-
-    headers.insert(0, "TIPO DE COSTO")
-    tipo_costo_headers = get_headers_costos()
 
     values = []
     # combustible
@@ -206,35 +196,44 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
     # armamos la tabla de costos
     totales = [sum(i) for i in zip(*values)]
 
-    # si están limitados, usamos esos, sino todas los CC
-    no_prorrat = list(no_prorrat if limited_no_prorrat is None else limited_no_prorrat)
+    tipo_costo_headers = get_headers_costos()
+
+    columns = list(no_prorrat if limited_no_prorrat is None else limited_no_prorrat)
     if get_dict:
         result = {}
         i = 0
-        for pk in no_prorrat:
+        for pk in columns:
             j = 0
             data = {}
-            for costo in tipo_costo_headers.keys():
+            for costo in [x[0] for x in tipo_costo_headers]:  # solo keys
                 data[costo] = values[j][i]
                 j += 1
             result[pk] = data
             i += 1
-        return result, dict(zip(no_prorrat, totales))
+        return result, dict(zip(columns, totales))
     else:
+        headers = ["TIPO DE COSTO", ]
+        # si están limitados, usamos esos, sino todas los CC
+        if limit_cc:
+            # Defino el head del reporte
+            headers.extend([v for k, v in no_prorrat.items() if k in limited_no_prorrat])
+        else:
+            # Defino el head del reporte
+            headers.extend([x for x in no_prorrat.values()])
 
         total = sum(totales)
         values.append(totales)
         report = []
         report.append(headers)
         i = 0
-        for x in list(tipo_costo_headers.values()) + ["Totales", ]:
+        for x in [x[1] for x in tipo_costo_headers] + ["Totales", ]:  # solo values
             l = list()
             l.append(x)
             l.extend(values[i])
             report.append(l)
             i += 1
 
-        return report, total, dict(zip(no_prorrat, totales))
+        return report, total, dict(zip(columns, totales))
 
 
 def get_ventas_costos(periodo, totales_costos, get_dict=False):
