@@ -89,11 +89,11 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
         else:
             form = CustomPanelControlForm()
         if form.is_valid():
-            context["data"] = self.get_report(form)
+            context["data"] = self.get_report(form, no_show_message=kwargs.get('no_show_message', False))
         context["form"] = form
         return context
 
-    def get_report(self, form):
+    def get_report(self, form, no_show_message=False):
         """
         Este reporte utiliza los métodos actuales del panel de control, pero limitando las centros de costos, para varios
         periodos.
@@ -112,14 +112,26 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
         data_cert_costos, data_totales = {}, {}
 
         for periodo in periodos:
-            _, equipos_totales = get_utilizacion_equipo(periodo, limit_cc=cc_id)
-            costos, totales_costos = get_cc_on_periodo(periodo, equipos_totales, get_dict=True, limit_cc=cc_id)
-            cert_costos, totales = get_ventas_costos(periodo, totales_costos, get_dict=True)  # totales_costos ya está limitado en CC
+            try:
+                _, equipos_totales = get_utilizacion_equipo(periodo, limit_cc=cc_id)
+                costos, totales_costos = get_cc_on_periodo(periodo, equipos_totales, get_dict=True, limit_cc=cc_id)
+                cert_costos, totales = get_ventas_costos(periodo, totales_costos, get_dict=True)  # totales_costos ya está limitado en CC
 
-            self.update_values(data_costos, costos)
-            self.update_values(data_costos_totales, totales_costos)
-            self.update_values(data_cert_costos, cert_costos)
-            self.update_values(data_totales, totales)
+                self.update_values(data_costos, costos)
+                self.update_values(data_costos_totales, totales_costos)
+                self.update_values(data_cert_costos, cert_costos)
+                self.update_values(data_totales, totales)
+            except CostoParametro.DoesNotExist as e:
+                if not no_show_message:
+                    messages.add_message(
+                        self.request, messages.WARNING, mark_safe(
+                            "No están definidos los <a href='/costos/costoparametro'>parámetros de costos</a> para el "
+                            "periodo <strong>{}</strong>. Se ignora el periodo.".format(periodo)))
+            except Certificacion.DoesNotExist as e:
+                if not no_show_message:
+                    messages.add_message(self.request, messages.WARNING, mark_safe(
+                        "No hay <a href='{}'>certificaciones de obras</a> para el "
+                        "periodo <strong>{}</strong>. Se ignora el periodo.".format(reverse('admin:registro_certificacion_changelist'), periodo)))
         cc_headers = dict(Obras.objects.filter(es_cc=True, pk__in=data_cert_costos.keys()).values_list('pk', 'codigo'))
         return {
             'costos': data_costos, 'costos_totales': data_costos_totales,
@@ -154,7 +166,7 @@ class MSExportarCustomPanel2Excel(MSCustomPanelControl):
     permission_required = ('costos.can_view_panel_control', 'costos.can_export_panel_control', )
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data()
+        context = self.get_context_data(no_show_message=True)
         if 'data' in context:
             response = HttpResponse(content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename=Report.xlsx'

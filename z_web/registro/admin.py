@@ -1,6 +1,8 @@
 from datetime import datetime
 from django.contrib import admin
+from django import forms
 
+from core.models import Obras
 from .models import (Alarma, Combustible, Partediario, Registro, Materiales,
                      RegistroEquipo, PrecioHistorico, Certificacion, AjusteCombustible,
                      CertificacionInterna)
@@ -106,20 +108,40 @@ class PartediarioAdmin(admin.ModelAdmin):
 #     valor_format.short_description = "Valor ($)"
 
 
+class CertificacionAdminForm(forms.ModelForm):
+    obra = forms.ModelChoiceField(queryset=Obras.objects.filter(
+        es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio'))
+
+    class Meta:
+        model = Certificacion
+        fields = ('periodo', 'obra', 'monto', )
+
+
 @admin.register(Certificacion)
 class CertificacionAdmin(admin.ModelAdmin):
     list_display = ('periodo', 'obra', 'valor_format')
     list_filter = ('periodo', 'obra', )
+    form = CertificacionAdminForm
 
     def valor_format(self, obj):
         return cur(obj.monto)
     valor_format.short_description = "Monto ($)"
 
 
+class AjusteCombustibleAdminForm(forms.ModelForm):
+    obra = forms.ModelChoiceField(queryset=Obras.objects.filter(
+        es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio'))
+
+    class Meta:
+        model = AjusteCombustible
+        fields = ('periodo', 'obra', 'valor', 'costo_total', 'comentarios')
+
+
 @admin.register(AjusteCombustible)
 class AjusteCombustibleAdmin(admin.ModelAdmin):
     list_display = ('periodo', 'obra', 'valor_format', 'total_format', 'comentarios')
     list_filter = ('periodo', 'obra', )
+    form = AjusteCombustibleAdminForm
 
     def valor_format(self, obj):
         return cur(obj.valor) if obj.valor else ''
@@ -130,11 +152,21 @@ class AjusteCombustibleAdmin(admin.ModelAdmin):
     total_format.short_description = "Costo total ($)"
 
 
+class CertificacionInternaAdminForm(forms.ModelForm):
+    obra = forms.ModelChoiceField(queryset=Obras.objects.filter(
+        es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio'))
+
+    class Meta:
+        model = CertificacionInterna
+        fields = ('periodo', 'obra', 'monto', )
+
+
 @admin.register(CertificacionInterna)
 class CertificacionInternaAdmin(admin.ModelAdmin):
     list_display = ('obra', 'periodo', 'monto_format', )
     list_filter = ('obra', 'periodo', )
     ordering = ('-periodo__fecha_inicio', )
+    form = CertificacionInternaAdminForm
 
     def monto_format(self, obj):
         return cur(obj.monto)

@@ -150,8 +150,7 @@ class IngresoMasivoConObraMixin(IngresoMasivoMixin):
     specified_field = 'obra'
 
     def get_queryset(self):
-        return Obras.objects.filter(es_cc=True)
-
+        return Obras.objects.filter(es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio')
 
     def form_valid(self, p_form, formsets):
         has_error = False
@@ -188,7 +187,7 @@ class IngresoMasivoConFamiliaEquipoMixin(IngresoMasivoMixin):
     specified_field = 'familia'
 
     def get_queryset(self):
-        return FamiliaEquipo.objects.all()
+        return FamiliaEquipo.objects.all().order_by('nombre')
 
     def form_valid(self, p_form, formsets):
         has_error = False
