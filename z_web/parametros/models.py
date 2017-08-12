@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 
 
 class FamiliaEquipo(models.Model):
@@ -78,3 +79,7 @@ class Periodo(models.Model):
 
     def __str__(self):
         return "{}".format(self.descripcion)
+
+    @property
+    def key(self):
+        return slugify(self.descripcion)

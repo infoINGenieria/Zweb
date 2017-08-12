@@ -10,6 +10,9 @@ INSTALLED_APPS += (
     'django_extensions',
     'debug_toolbar',
 )
+MIDDLEWARE_CLASSES += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
+)
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
@@ -26,3 +29,6 @@ DATABASES = {
 }
 
 COMPRESS_ENABLED = True
+DEBUG_TOOLBAR_CONFIG = {
+    'JQUERY_URL': 'http://127.0.0.1:8000/static/jquery/dist/jquery.js',
+}

@@ -1,0 +1,118 @@
+{% extends "frontend/movimiento_suelo/base_ms.html" %}
+{% load i18n frontend_tags charts_tags static bootstrap3 %}
+{% block title %}<h2 class="main-title">Panel de control por rango</h2>{% endblock %}
+{% block title_head %}{{ block.super }} > Panel de control por rango{% endblock %}
+{% block content %}
+    <div class="row">
+        <form method="get" action="." class="filters">
+            <div class="col-sm-9 col-md-6">
+                <div class="row">
+                    <div class="col-sm-6">
+                        {% bootstrap_field form.periodo_ini %}
+                    </div>
+                    <div class="col-sm-6">
+                        {% bootstrap_field form.periodo_fin %}
+                    </div>
+                    <div class="col-sm-12">
+                        {% bootstrap_field form.centro_costos %}
+                    </div>
+                    <div class="col-sm-12">
+                        <a class="btn btn-info" id="id_submit_filter">Generar</a>
+                        <a class="btn btn-danger" id="id_clear_filter">Limpiar</a>
+                        {% if perms.costos.can_export_panel_control %}
+                            <a class="btn btn-primary " id="export_excel">Exportar a XLS</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <input type="hidden" name="filtered" value="1">
+            </div>
+        </form>
+
+    </div>
+    <hr />
+    {% if data %}
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#venta-costos">Ventas - Costos</a></li>
+        <li><a data-toggle="tab" href="#resumen-costo">Resumen Costos</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="venta-costos" class="tab-pane fade in active">
+            <h2>Resumen de COSTOS vs VENTAS </h2>
+            {%  include 'frontend/movimiento_suelo/includes/custom_panel_control_costos_ventas.html' %}
+        </div>
+        <div id="resumen-costo" class="tab-pane fade">
+            <h2>Resumen de costos</h2>
+            {%  include "frontend/movimiento_suelo/includes/custom_panel_control_resumen_costos.html" %}
+        </div>
+    </div>
+    {% else %}
+        <p class="alert alert-info">
+        Utilice los filtros para generar el informe.
+        </p>
+    {% endif %}
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        (function ($) {
+
+            var cleanFilter = function(){
+                var select = $(".filters select");
+                select.val('');
+                select.trigger("chosen:updated");
+            };
+
+            $(document).ready(function () {
+                $("#id_submit_filter").click(function(){
+                    var form = $("form.filters");
+                    form.attr('action', "{% url 'frontend:ms_custom_panel_control' %}");
+                    form.submit();
+                });
+                $("#export_excel").click(function(){
+                    var form = $("form.filters");
+                    form.attr('action', "{% url 'frontend:ms_export_custom_panel_control_excel' %}");
+                    form.submit();
+                });
+                $("#id_centro_costos").attr('data-placeholder', 'Seleccione centros de costos');
+                $(".filters select").chosen({
+                    'search_contains':true,
+                    'no_results_text': "No se encontraron coicidencias!",
+                });
+                $("#id_clear_filter").click(cleanFilter);
+                {% if data %}
+                var data = [
+                    {% if data.costos %}
+                            {% for i in data.costos_totales|gen_data_grafico_costos_from_dict:data.cc_headers %}{
+                            x: "{{i.0}}", y: {{i.1|js_format}}
+                        }{% if not forloop.last %}, {% endif %}{% endfor %}
+                    {% endif %}
+                ];
+                var ventas = [
+                    {% if data.cert_vs_costos %}
+                        {% for i in data.cert_vs_costos|gen_data_grafico_ventas_from_dict:data.cc_headers %}{
+                            x: "{{ i.0 }}", y: {{ i.1|js_format }}
+                        }{%  if not forloop.last %}, {% endif %}{% endfor %}
+                    {% endif %}
+                ];
+                var servicios = [
+                    {% if data.cert_vs_costos %}
+                        {% for i in data.cert_vs_costos|gen_data_grafico_servicios_from_dict:data.cc_headers %}{
+                            x: "{{ i.0 }}", y: {{ i.1|js_format }}
+                        }{%  if not forloop.last %}, {% endif %}{% endfor %}
+                    {% endif %}
+                ];
+                nv.addGraph(graphCostosVentasBar(data, ventas, servicios));
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    var target = $(e.target).attr("href")
+                    if (target == "#resumen-costo") {
+                        nv.addGraph(graphResumenCostosBar(data));
+                        nv.addGraph(graphResumenCostosPie(data));
+                    } else if (target == "#venta-costos"){
+                        nv.addGraph(graphCostosVentasBar(data, ventas, servicios));
+                    }
+                });
+
+                {% endif %}
+            });
+        })(jQuery);
+    </script>
+{% endblock %}

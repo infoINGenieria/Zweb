@@ -72,3 +72,21 @@ def extraer_data_grafico_costos(data_dict, row):
 def extraer_data_grafico_resumen(data_dict, row):
     l_data = list(zip(data_dict[0][1:], data_dict[row:][0][1:]))
     return l_data
+
+
+@register.filter
+def gen_data_grafico_costos_from_dict(data_dict, cc_headers):
+    l = [(cc_headers.get(k), v) for k, v in data_dict.items()]
+    return l
+
+
+@register.filter
+def gen_data_grafico_ventas_from_dict(data_dict, cc_headers):
+    l = [(cc_headers.get(k), v['certificaciones']) for k, v in data_dict.items()]
+    return l
+
+
+@register.filter
+def gen_data_grafico_servicios_from_dict(data_dict, cc_headers):
+    l = [(cc_headers.get(k), v['certif_internas']) for k, v in data_dict.items()]
+    return l

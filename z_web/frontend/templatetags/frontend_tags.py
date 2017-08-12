@@ -41,3 +41,18 @@ def nombre_familia(familias, form):
             return "{}".format(familias.get(pk=form.cleaned_data["familia"].pk))
     except:
         return ""
+
+
+@register.filter
+def to_dict(defaultdict, key=None):
+    return dict(defaultdict) if key is None else dict(defaultdict)[key]
+
+
+@register.filter
+def from_dict(dictionary, key):
+    return dictionary[key]
+
+
+@register.filter
+def sum_dict(dictionary):
+    return sum(dictionary.values())

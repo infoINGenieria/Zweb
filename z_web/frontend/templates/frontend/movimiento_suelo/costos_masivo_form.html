@@ -1,0 +1,37 @@
+{% extends "frontend/movimiento_suelo/base_ms.html" %}
+
+{% load i18n frontend_tags bootstrap3 %}
+{% block title %}<h2 class="main-title">Ingreso masivo de costos</h2>{% endblock %}
+{% block title_head %}{{ block.super }} > Ingreso masivo de costos{% endblock %}
+{% block wide_class %}container{% endblock %}
+
+{% block content %}
+    <h3>{{ title_tipo_costo }}</h3>
+    {% block extra_info %}
+        <p class="alert-info alert">
+        Podrá ingresar todos los costos del periodo seleccionado. Si existiese algún dato duplicado, se mostrará una alerta.
+        En caso de dejar vacio el campo Monto, esa fila será ignorada.
+        </p>
+    {% endblock %}
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ formsets.management_form }}
+        {{ formsets.non_form_errors }}
+        <div class=" well"><div class="row">
+            <div class="col-sm-6 form-periodo">
+                {% bootstrap_form p_form layout='horizontal' %}
+            </div>
+            <div class="col-sm-3">
+                <a class="btn btn-primary btn-sm" href="{% url 'admin:parametros_periodo_add' %}">Añadir periodo</a>
+            </div>
+            <div class="col-sm-3">
+                <input type="submit" value="Guardar todos" class="submit btn btn-primary btn-sm" />
+                <a class="btn btn-danger btn-sm" href="{% url 'costos:index' %}" alt="volver">Volver</a>
+            </div>
+
+        </div></div>
+        {% block formsets %}{% endblock %}
+        <input type="submit" value="Guardar todos" class="submit btn btn-primary" />
+        <a class="btn btn-danger" href="{% url 'costos:index' %}" alt="volver">Volver</a>
+    </form>
+{% endblock %}

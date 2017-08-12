@@ -3,14 +3,25 @@ from .local import *
 DEBUG = True
 DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': '../zweb.db',
+#         'USER': '',
+#         'PASSWORD': '',
+#         'HOST': '',
+#         'PORT': '',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '../zweb.db',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "zweb_test",  #zilleprojects
+        'USER': "root",  # ,"root"
+        'PASSWORD': "zille123",  # , "zille123"
+        "HOST": "127.0.0.1",  # , "127.0.0.1"
+        "POST": "3306"
     }
 }
 
