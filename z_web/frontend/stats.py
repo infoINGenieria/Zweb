@@ -1,4 +1,5 @@
 from collections import defaultdict
+from decimal import Decimal as D
 
 from django.db.models import Count, When, Case, Sum
 from django.utils.text import slugify
@@ -242,33 +243,40 @@ def get_ventas_costos(periodo, totales_costos, get_dict=False):
     """
     ids = list(totales_costos.keys())
     obras = dict(Obras.objects.filter(id__in=ids).values_list('id', 'codigo'))
-    cert = dict(Certificacion.objects.filter(periodo=periodo, obra_id__in=ids).values_list('obra_id', 'monto'))
+    # Como las certificaciones tiene ítems, debemos obtener su sumatoria
+    cert = dict(
+        Certificacion.objects.filter(periodo=periodo, obra_id__in=ids).annotate(
+            total=Sum('items__monto')).values_list('obra_id', 'total'))
     cert_interna = dict(
         CertificacionInterna.objects.filter(periodo=periodo, obra_id__in=ids).values_list('obra_id', 'monto'))
-    total = {'t_costos': 0, 't_certif': 0, 't_servicios': 0, 't_diff': 0}
+    total = {'t_costos': D(0), 't_certif': D(0), 't_servicios': D(0), 't_diff': D(0)}
     for x in ids:
-        total["t_costos"] += totales_costos.get(x, 0)
-        total["t_certif"] += cert.get(x, 0)
-        total["t_servicios"] += cert_interna.get(x, 0)
-        row_t = cert.get(x, 0) - totales_costos.get(x, 0) + cert_interna.get(x, 0)
+        t_costos = D(totales_costos.get(x, 0))
+        t_certif = D(cert.get(x, 0))
+        t_servicios = D(cert_interna.get(x, 0))
+        total["t_costos"] += t_costos
+        total["t_certif"] += t_certif
+        total["t_servicios"] += t_servicios
+        row_t = t_certif - t_costos + t_servicios
         total["t_diff"] += row_t
     if get_dict:
         report = {}
         for x in ids:
             report[x] = {
-                'costos': totales_costos.get(x, 0),
-                'certificaciones': cert.get(x, 0),
-                'certif_internas': cert_interna.get(x, 0),
-                'diferencia': cert.get(x, 0) - totales_costos.get(x, 0) + cert_interna.get(x, 0)
+                'costos': D(totales_costos.get(x, 0)),
+                'certificaciones': D(cert.get(x, 0)),
+                'certif_internas': D(cert_interna.get(x, 0)),
+                'diferencia': D(cert.get(x, 0)) - D(totales_costos.get(x, 0)) + D(cert_interna.get(x, 0))
             }
         return report, total
     else:
         report = [['CC', ], ['Costos', ], ['Certificaciones', ], ['Certif. Internas', ], ['Diferencia', ], ]
         for x in ids:
             report[0].append(obras.get(x, 0))
-            report[1].append(totales_costos.get(x, 0))
-            report[2].append(cert.get(x, 0))
-            report[3].append(cert_interna.get(x, 0))
-            row_t = cert.get(x, 0) - totales_costos.get(x, 0) + cert_interna.get(x, 0)
+            report[1].append(D(totales_costos.get(x, 0)))
+            report[2].append(D(cert.get(x, 0)))
+            report[3].append(D(cert_interna.get(x, 0)))
+            # TODO: ir pasando todo a Decimal
+            row_t = D(cert.get(x, 0)) - D(totales_costos.get(x, 0)) + D(cert_interna.get(x, 0))
             report[4].append(row_t)
         return report, total

@@ -4,6 +4,7 @@ from django.db import models
 from core.models import EstServicio, Operarios, Obras, Equipos
 from documento.models import Ri
 from parametros.models import Funcion, Situacion, FamiliaEquipo, TipoCosto, Periodo
+from zweb_utils.models import BaseModel
 
 
 class Alarma(models.Model):
@@ -175,7 +176,6 @@ class PrecioHistorico(models.Model):
 class Certificacion(models.Model):
     periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="certificaciones_periodo")
     obra = models.ForeignKey(Obras, limit_choices_to={'es_cc': True}, related_name="certificaciones_obras")
-    monto = models.FloatField(verbose_name="Monto ($)")
 
     class Meta:
         unique_together = ('periodo', 'obra', )
@@ -184,6 +184,33 @@ class Certificacion(models.Model):
 
     def __str__(self):
         return "Certificación de {} en {}".format(self.obra, self.periodo)
+
+    @property
+    def total(self):
+        return sum(self.items.values_list('monto', flat=True))
+
+    @property
+    def total_sin_adicional(self):
+        return sum(self.items.filter(adicional=False).values_list('monto', flat=True))
+
+    @property
+    def total_adicional(self):
+        return sum(self.items.filter(adicional=True).values_list('monto', flat=True))
+
+
+class CertificacionItem(BaseModel):
+    certificacion = models.ForeignKey(Certificacion, verbose_name='certificación', related_name='items')
+    descripcion = models.CharField('descripción', max_length=255)
+    monto = models.DecimalField(verbose_name="Monto ($)", max_digits=18, decimal_places=2)
+    adicional = models.BooleanField('adicional', default=False)
+
+    class Meta:
+        verbose_name = 'ítem certificación'
+        verbose_name_plural = 'ítemes de certificaciones'
+
+    def __str__(self):
+        return "{} ($ {})".format(self.descripcion, self.monto)
+
 
 
 class Materiales(models.Model):

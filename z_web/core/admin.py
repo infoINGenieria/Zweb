@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
 from core.models import (Equipos, EstServicio, FrancoLicencia, Obras,
-                         Operarios, Usuario, CCT)
+                         Operarios, Usuario, CCT, UserExtension)
 
 
 @admin.register(Equipos)
@@ -129,3 +131,15 @@ class UsuarioAdmin(admin.ModelAdmin):
         return obj.fechabaja is None
     is_active.short_description = "Usuario activo"
     is_active.boolean = True
+
+
+class UserExtensionInline(admin.StackedInline):
+    model = UserExtension
+
+
+class CustomUserAdmin(UserAdmin):
+    inlines = UserAdmin.inlines + [UserExtensionInline]
+
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)

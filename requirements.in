@@ -1,0 +1,16 @@
+Django>1.8,<1.9
+mysqlclient
+django-suit
+django-bower>=5.0.4
+django-compressor>=1.6
+django-pipeline>=1.6.4
+django-bootstrap3>=6.2.2
+django-libsass
+libsass>=0.9.3
+xlsxwriter
+django-simple-history
+django-autocomplete-light
+django-mailer
+reportlab
+django-overextends
+django-import-export

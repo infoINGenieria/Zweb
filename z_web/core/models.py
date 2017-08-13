@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 
 from parametros.models import FamiliaEquipo, Funcion
 
@@ -83,7 +84,11 @@ class FrancoLicencia(models.Model):
 
 class Obras(models.Model):
     """
-    OK
+    Una obra representa una unidad integradora de recursos (equipos, personas, etc).
+    En algunos casos, una obra es un Centro de costos, la cual engloba los calculos de costos asociados a un CC.
+    Se identifican con es_cc = True
+    También se le llama proyecto.
+    Eventualmente, habría que refactorizar este modelo.
     """
     id = models.AutoField(db_column='ID', primary_key=True)
     codigo = models.CharField(db_column='CODIGO', max_length=255, unique=True)
@@ -110,6 +115,9 @@ class Obras(models.Model):
                                 help_text="Si está seleccionada, la obra es considerada un Centro de Costos (CC)")
     prorratea_costos = models.BooleanField(verbose_name="¿Prorratea Costos?", default=False,
                                            help_text="Si está seleccionada, los costos se prorratean en los demás CC")
+
+    unidad_negocio = models.ForeignKey(
+        'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
 
     class Meta:
         verbose_name = "obra"
@@ -200,3 +208,19 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.user
+
+
+class UserExtension(models.Model):
+    """
+    Modelo para almacenar información relativa al usuario
+    """
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='extension')
+    unidad_negocio = models.ForeignKey(
+        'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
+
+    class Meta:
+        verbose_name = 'información adicional'
+        verbose_name_plural = 'información adicional'
+
+    def __str__(self):
+        return "información de {}".format(self.user)
