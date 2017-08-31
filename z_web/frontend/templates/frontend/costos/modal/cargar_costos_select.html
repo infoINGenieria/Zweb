@@ -1,0 +1,22 @@
+{% extends "modal_base.html" %}
+{% block modal_content %}
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">
+            Cargar costos - Seleccione una opción
+        </h4>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-xs-6">
+                <a class="btn btn-primary btn-block btn-lg"
+                    href="{% url 'costos:costos_alta_cc' %}">Relacionado con Centro de costos</a>
+            </div>
+            <div class="col-xs-6">
+                <a class="btn btn-primary btn-block btn-lg"
+                    href="{% url 'costos:costos_alta_eq' %}">Relacionado con equipos</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

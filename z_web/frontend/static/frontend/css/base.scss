@@ -90,6 +90,11 @@ form {
   margin: 0 10px;
 }
 
+.filters {
+  button {
+    margin: 10px 5px 5px 0;
+  }
+}
 /*******************
  *   ID's
  *******************/
@@ -133,7 +138,9 @@ form {
   }
 }
 
-
+.btn {
+  margin: 5px;
+}
 /***************
  *  PACE style *
 ****************/

@@ -113,9 +113,9 @@ def generate_menu_user(user):
         menu.append({'name': "Panel de control", 'icon': 'dashboard',
                      'url': reverse('frontend:ms_panel_control'), 'section': 'Movimiento de suelo',
                      'btn_class': 'success'})
-    if user.has_perm('costos.can_add_costos_masivo'):
-        menu.append({'name': "Ingreso masivo de costos", 'icon': 'keyboard-o',
-                     'url': reverse('costos:index'), 'section': 'Movimiento de suelo', 'btn_class': 'success'})
+    if user.has_perm('costos.can_manage_costos'):
+        menu.append({'name': "Costos", 'icon': 'keyboard-o',
+                     'url': reverse('costos:costos_list'), 'section': 'Costos', 'btn_class': 'primary'})
     if user.has_perm("costos.can_generate_reports"):
         menu.append({'name': "Reportes", 'icon': 'keyboard-o',
                      'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes', 'btn_class': 'warning'})

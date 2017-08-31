@@ -49,6 +49,10 @@ INSTALLED_APPS = (
     'pipeline',
     'bootstrap3',
     'compressor',
+    'djangoformsetjs',
+    'django_tables2',
+    'django_filters',
+    'crispy_forms',
 
     'core',
     'indumentaria',
@@ -137,6 +141,7 @@ PIPELINE = {
                 'bootstrap-sass/assets/javascripts/bootstrap.js',
                 'bootstrap3-dialog/dist/js/bootstrap-dialog.js',
                 'chosen/chosen.jquery.min.js',
+                'jquery-form/jquery.form.js',
             ),
             'output_filename': 'js/base_js.js',
         },
@@ -147,6 +152,7 @@ PIPELINE = {
                 'bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
                 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js',
                 'PACE/pace.js',
+
             ),
             'output_filename': 'js/plugins.js',
         },
@@ -190,6 +196,7 @@ BOWER_INSTALLED_APPS = (
     'chosen#1.4.2',
     'pace#1.0.2',
     'bootstrap-datepicker#^1.5.1',
+    'jquery-form#3.46.0',
 )
 
 ROOT_URLCONF = 'zillepro_web.urls'
@@ -220,7 +227,7 @@ WSGI_APPLICATION = 'zillepro_web.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'es-ar'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Argentina/Mendoza'
 
@@ -257,3 +264,5 @@ BOOTSTRAP3 = {
     # Field class to use in horizontal forms
     'horizontal_field_class': 'col-sm-10',
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

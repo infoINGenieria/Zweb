@@ -16,5 +16,5 @@ def get_percentage(values):
     percentage = []
     for value in values:
         v = round(value*100.0/total, 2)
-        percentage.append(str(v)+" %")
+        percentage.append(str(v) + " %")
     return percentage

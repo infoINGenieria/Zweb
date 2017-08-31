@@ -33,6 +33,28 @@ def obra_codigo(obras, form):
 
 
 @register.filter
+def get_tipo_codigo_text(tipos_costos, form):
+    try:
+        if form.initial:
+            return "{}".format(tipos_costos.get(pk=form.initial["tipo_costo"]))
+        else:
+            return "{}".format(tipos_costos.get(pk=form.cleaned_data["tipo_costo"].pk))
+    except:
+        return ""
+
+
+@register.filter
+def get_nombre_familia_text(familias, form):
+    try:
+        if form.initial:
+            return "{}".format(familias.get(pk=form.initial["familia_equipo"]))
+        else:
+            return "{}".format(familias.get(pk=form.cleaned_data["familia_equipo"].pk))
+    except:
+        return ""
+
+
+@register.filter
 def nombre_familia(familias, form):
     try:
         if form.initial:

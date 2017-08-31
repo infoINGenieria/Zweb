@@ -1,0 +1,52 @@
+{% extends "frontend/costos/base_costos.html" %}
+{% load frontend_tags bootstrap3 i18n %}
+{% block title %}<h2 class="main-title">Carga de costos - Relacionados con Centro de costos</h2>{% endblock %}
+{% block title_head %}{{ block.super }} > Carga de costos{% endblock %}
+{% block wide_class %}container{% endblock %}
+
+{% block content %}
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ formsets.management_form }}
+        {{ formsets.non_form_errors }}
+        <div class=" well"><div class="row">
+            <div class="col-sm-6 form-periodo">
+                {% bootstrap_form p_form  %}
+            </div>
+            <div class="col-sm-3">
+                <a class="btn btn-primary btn-sm" href="{% url 'admin:parametros_periodo_add' %}">Añadir periodo</a>
+            </div>
+            <div class="col-sm-3">
+                <input type="submit" value="Guardar todos" class="submit btn btn-primary btn-sm" />
+                <a class="btn btn-danger btn-sm" href="{% url 'costos:costos_list' %}" alt="volver">Volver</a>
+            </div>
+
+        </div></div>
+        {% block formsets %}
+            <table class="table table-responsive table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>Tipo de Costo</th>
+                    <th>Monto ($)</th>
+                    <th>Observaciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for fs in formsets %}
+                    <tr data-index="{{ formsets.prefix }}">
+                        <td>
+                            {{ tipos_costos|get_tipo_codigo_text:fs }}
+                            {{ fs.tipo_costo }}
+                        </td>
+                        <td>{% bootstrap_field fs.monto_total show_label=False %}</td>
+                        <td> {% bootstrap_field fs.observacion show_label=False %}</td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endblock %}
+        <input type="submit" value="Guardar todos" class="submit btn btn-primary" />
+        <a class="btn btn-danger" href="{% url 'costos:costos_list' %}" alt="volver">Volver</a>
+    </form>
+    {% endblock %}

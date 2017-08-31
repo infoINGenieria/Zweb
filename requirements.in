@@ -14,3 +14,9 @@ django-mailer
 reportlab
 django-overextends
 django-import-export
+django-filter
+django-tables2
+django-model-utils
+django-formset-js
+django-crispy-forms
+factory_boy

@@ -1,0 +1,26 @@
+{% extends 'frontend/layout_base.html' %}
+{% load i18n compress pipeline frontend_tags static %}
+{% block title_head %}{{ block.super }} > Gestión de costos{% endblock %}
+{% block extra_css %}
+    <link media="all" href="{% static "nvd3/build/nv.d3.min.css" %}" type="text/css" rel="stylesheet" />
+    {% compress css %}
+        {% stylesheet 'plugins' %}
+    {% endcompress %}
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    {% compress js %}
+        {% javascript 'graphics_js' %}
+        <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+                $("select").chosen({
+                    'search_contains':true,
+                    'no_results_text': "No se encontraron coicidencias!"
+                });
+            });
+        })(jQuery);
+    </script>
+    {% endcompress %}
+{% endblock %}

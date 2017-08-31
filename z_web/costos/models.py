@@ -1,140 +1,11 @@
+from decimal import Decimal as D
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
+from zweb_utils.models import BaseModel
 
-
-class CalculosMixin:
-
-    def recalcular_valor(self, parametros):
-        """
-        Esta funcion recibe un objeto parámetro, cual tiene un nuevo valor del dolar,
-        y recalcula el item para ese monto.
-        :param parametros:
-        :return:
-        """
-        nuevo_pd = parametros.pesos_usd
-        viejo_pd = self.periodo.parametros_costos.pesos_usd
-        if hasattr(self, 'monto'):
-            self.monto = nuevo_pd * self.monto / viejo_pd
-        elif hasattr(self, 'monto_mes'):
-            self.monto_mes = nuevo_pd * self.monto_mes / viejo_pd
-        elif hasattr(self, 'monto_hora'):
-            self.monto_hora = nuevo_pd * self.monto_hora / viejo_pd
-
-
-class CostoManoObra(models.Model, CalculosMixin):
-    """
-    Costos de mano de obra por CC y periodo
-    """
-    obra = models.ForeignKey(Obras, verbose_name="Centro de Costo", related_name="costos_mo", limit_choices_to={'es_cc':True})
-    periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="costos_mo")
-    monto = models.FloatField(verbose_name="Monto ($)")
-
-    class Meta:
-        unique_together = ('periodo', 'obra', )
-        verbose_name_plural = "costos de mano de obra"
-        verbose_name = "costo de mano de obra"
-
-    def __str__(self):
-        return "{} - {}".format(self.obra, self.periodo)
-
-
-class CostoSubContrato(models.Model, CalculosMixin):
-    """
-    Costos por subcontratos
-    """
-    descripcion = models.CharField(verbose_name="Descripción", max_length=255, blank=True,
-                                   help_text="Observaciones opcionales")
-    obra = models.ForeignKey(Obras, verbose_name="Centro de costo", related_name="costos_subcontrato",
-                             limit_choices_to={'es_cc':True})
-    periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="costos_subcontratos")
-    monto = models.FloatField(verbose_name="Monto ($)")
-
-    class Meta:
-        unique_together = ('periodo', 'obra', )
-        verbose_name_plural = "costos por subcontrato"
-        verbose_name = "costo de subcontrato"
-
-    def __str__(self):
-        return "{0} - {1}{2}".format(
-            self.obra, self.periodo,
-            "({})".format(self.descripcion) if self.descripcion else '')
-
-
-class AbstractCosto(models.Model, CalculosMixin):
-    """
-    Clase genérica para costos comunes
-    """
-    familia_equipo = models.ForeignKey(FamiliaEquipo, verbose_name="Familia de equipo")
-    periodo = models.ForeignKey(Periodo, verbose_name="Periodo")
-    monto_hora = models.FloatField(verbose_name="$/hs")
-    monto_mes = models.FloatField(verbose_name="$/mes")
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        return "{} de {} en {}".format(self._meta.verbose_name, self.familia_equipo, self.periodo)
-
-    def set_monto_mes(self, parametros):
-        if self.monto_hora:
-            self.monto_mes = parametros.dias_mes * parametros.horas_dia * self.monto_hora
-
-    def set_monto_hora(self, parametros):
-        if self.monto_mes:
-            self.monto_hora = self.monto_mes / parametros.dias_mes / parametros.horas_dia
-
-
-class LubricanteFluidosHidro(AbstractCosto):
-
-    class Meta:
-        unique_together = ('periodo', 'familia_equipo', )
-        verbose_name = "costo de lubricantes y fluidos hidráulicos"
-        verbose_name_plural = "costos de lubricantes y fluidos hidráulicos"
-
-
-class TrenRodaje(AbstractCosto):
-
-    class Meta:
-        unique_together = ('periodo', 'familia_equipo', )
-        verbose_name = "costo de tren de rodaje"
-        verbose_name_plural = "costos de tren de rodaje"
-
-
-class ReserveReparaciones(AbstractCosto):
-
-    class Meta:
-        unique_together = ('periodo', 'familia_equipo', )
-        verbose_name = "costo de reserva de reparaciones"
-        verbose_name_plural = "costos de reserva de reparaciones"
-
-
-class CostoPosesion(AbstractCosto):
-    monto_año = models.FloatField(verbose_name="$/año")
-
-    class Meta:
-        unique_together = ('periodo', 'familia_equipo', )
-        verbose_name = "costo de posesión"
-        verbose_name_plural = "costos de posesión"
-
-
-class MaterialesTotal(models.Model, CalculosMixin):
-    """
-    Total de costo de materiales por periodo
-    """
-    periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="costos_total_materiales")
-    obra = models.ForeignKey(Obras, verbose_name="Centro de costo", related_name="costos_total_materiales",
-                             limit_choices_to={'es_cc':True})
-    monto = models.FloatField(verbose_name="Costo ($)")
-
-    class Meta:
-        unique_together = ('periodo', 'obra', )
-        verbose_name = "costo total de materiales"
-        verbose_name_plural = "costos totales de materiales"
-
-    def __str__(self):
-        return "{} - {}".format(self.obra, self.periodo)
 
 # Por ahora, sólo utilizamos los costos por periodo. Utilizar esto cuando sea por día
 # class CostoParametroManager(models.Manager):
@@ -150,7 +21,6 @@ class MaterialesTotal(models.Model, CalculosMixin):
 #         return super(CostoParametroManager, self).get_queryset().filter(
 #             Q(fecha_baja__gte=periodo.fecha_fin) | Q(fecha_baja__isnull=True),
 #             fecha_alta__lte=periodo.fecha_inicio)
-
 
 
 class CostoParametro(models.Model):
@@ -180,28 +50,10 @@ class CostoParametro(models.Model):
         verbose_name_plural = "parametros de costos"
         permissions = (
             ("can_view_panel_control", "Puede ver Panel de Control"),
-            ("can_add_costos_masivo", "Puede ingresar costos masivos"),
             ("can_export_panel_control", "Puede exportar el panel de control"),
+            ("can_manage_costos", "Puede gestionar costos"),
             ("can_generate_reports", "Puede generar reportes"),
         )
-
-
-class ServicioPrestadoUN(models.Model, CalculosMixin):
-    """
-    Este modelo pasa a registros, ya que no es un costo.
-    """
-    periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="costos_servicios_xperiodo")
-    obra = models.ForeignKey(Obras, verbose_name="Centro de costo", related_name="costos_servicios_xobra",
-                             limit_choices_to={'es_cc':True})
-    monto = models.FloatField(verbose_name="Costo ($)")
-
-    class Meta:
-        unique_together = ('periodo', 'obra', )
-        verbose_name = "costo de servicio prestado a UN"
-        verbose_name_plural = "costos de servicios prestados a UN"
-
-    def __str__(self):
-        return "{} - {}".format(self.obra, self.periodo)
 
 
 class ArchivosAdjuntosPeriodo(models.Model):
@@ -218,3 +70,183 @@ class ArchivosAdjuntosPeriodo(models.Model):
 
     def __str__(self):
         return "{} ({})".format(self.archivo, self.periodo)
+
+
+#######################################
+#  Nuevo sistema de costos
+#######################################
+
+
+class CostoTipo(BaseModel):
+    """
+    Clasificador de costos. El tipo de costo determina que
+    valores podrán cargarse y como éste se calcula.
+    """
+    RELACIONADO_CON = (
+        ('cc', 'Centro de costos'),
+        ('eq', 'Equipos')
+    )
+
+    UNIDAD_MONTO = (
+        ('total', '$'),
+        ('x_hs', '$/hs - $/mes - $/año')
+    )
+    nombre = models.CharField(verbose_name='nombre', max_length=255)
+    codigo = models.CharField(
+        verbose_name='codigo', max_length=8, unique=True,
+        help_text=("Código único para identificar unívocamente el tipo de costo. "
+                   "Máximo largo: 8. Se removerán automáticamente espacios y se convertirá a mayúsculas."))
+    relacionado_con = models.CharField(
+        'relacionado con', max_length=2, choices=RELACIONADO_CON, default='cc',
+        help_text='Especifique si el costo estará asociado a un centro de costos, o asociado a un equipo.')
+    unidad_monto = models.CharField(
+        'monto expresado en', max_length=8, choices=UNIDAD_MONTO, default='total',
+        help_text='Especifique si el valor del monto estará expresado en $ (total) o segmentado en $/hs, $/mes o $/año.')
+
+    class Meta:
+        verbose_name = 'tipo de costos'
+        verbose_name_plural = 'tipos de costos'
+
+    def __str__(self):
+        return self.nombre
+
+    @property
+    def es_monto_segmentado(self):
+        return self.unidad_monto == 'x_hs'
+
+    @property
+    def es_por_cc(self):
+        return self.relacionado_con == 'cc'
+
+    def clean(self):
+        super(CostoTipo, self).clean()
+        self.codigo = self.codigo.strip().replace(" ", "").upper()
+        if self.relacionado_con == 'cc' and self.unidad_monto != 'total':
+            raise ValidationError({'unidad_monto': "Si selecciona Centro de costos, debe seleccionar '$' como unidad de monto."})
+        if self.relacionado_con == 'eq' and self.unidad_monto != 'x_hs':
+            raise ValidationError({'unidad_monto': "Si selecciona Equipos, debe seleccionar '$/hs' como unidad de monto."})
+
+
+class Costo(BaseModel):
+    tipo_costo = models.ForeignKey(CostoTipo, verbose_name='tipo de costo')
+    periodo = models.ForeignKey(Periodo, verbose_name="periodo")
+    observacion = models.CharField(verbose_name='observación', max_length=255, null=True, blank=True)
+
+    centro_costo = models.ForeignKey(
+        Obras, verbose_name="centro de costo", related_name="mis_costos",
+        limit_choices_to={'es_cc':True}, null=True)
+
+    familia_equipo = models.ForeignKey(
+        FamiliaEquipo, verbose_name="Familia de equipo", null=True,
+        related_name='costos_de_la_familia')
+
+    monto_total = models.DecimalField(verbose_name="$", decimal_places=2, max_digits=18, null=True, blank=True)
+    monto_hora = models.DecimalField(verbose_name="$/hs", decimal_places=2, max_digits=18, null=True, blank=True)
+    monto_mes = models.DecimalField(verbose_name="$/mes", decimal_places=2, max_digits=18, null=True, blank=True)
+    monto_anio = models.DecimalField(verbose_name="$/año", decimal_places=2, max_digits=18, null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'costo'
+        verbose_name_plural = 'costos'
+        ordering = ('periodo', )
+
+    def clean(self):
+        super(Costo, self).clean()
+        is_unique = Costo.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)
+        non_unique = None
+
+        if self.tipo_costo.es_por_cc:
+            if not self.centro_costo:
+                raise ValidationError("El centro de costo es obligatorio para el tipo de costo '{}'".format(self.tipo_costo))
+            if not self.monto_total:
+                raise ValidationError("El monto total es obligatorio")
+
+            is_unique = is_unique.filter(centro_costo=self.centro_costo)
+            non_unique = 'centro de costo'
+
+        else:
+            if not self.familia_equipo:
+                raise ValidationError("La familia de equipo es obligatorio para el tipo de costo '{}'".format(self.tipo_costo))
+
+            if not any([self.monto_hora, self.monto_mes, self.monto_anio]):
+                raise ValidationError("Debe ingresar al menos un monto para calcular los restantes.")
+
+            is_unique = is_unique.filter(familia_equipo=self.familia_equipo)
+            non_unique = 'familia de equipo'
+        if self.pk:
+            is_unique = is_unique.exclude(pk=self.pk)
+        if is_unique.exists():
+            raise ValidationError("El costo para el periodo {} y {} ya existe.".format(self.periodo, non_unique))
+
+    def __str__(self):
+        return "Costo de {} - {} - {}".format(
+            self.tipo_costo,
+            self.periodo,
+            self.centro_costo if self.tipo_costo.es_por_cc else self.familia_equipo)
+
+    def recalcular_valor(self, parametros):
+        """
+        Esta funcion recibe un objeto parámetro, cual tiene un nuevo valor del dolar,
+        y recalcula el item para ese monto.
+        """
+        nuevo_pd = D("{}".format(parametros.pesos_usd))
+        viejo_pd = D("{}".format(self.periodo.parametros_costos.pesos_usd))
+        if self.tipo_costo.es_monto_segmentado:
+            if self.monto_hora:
+                self.monto_hora = nuevo_pd * self.monto_hora / viejo_pd
+            if self.monto_mes:
+                self.monto_mes = nuevo_pd * self.monto_mes / viejo_pd
+            if self.monto_anio:
+                self.monto_anio = nuevo_pd * self.monto_anio / viejo_pd
+        else:
+            self.monto_total = nuevo_pd * self.monto_total / viejo_pd
+
+    def calcular_otros_monto(self, parametros):
+        """
+        Calcula los distintos montos segmentados, basado en el dato dado.
+        """
+        if self.tipo_costo.es_monto_segmentado:
+            new_values = {}
+            if self.monto_hora:
+                new_values["monto_mes"] = parametros.dias_mes * parametros.horas_dia * self.monto_hora
+                new_values["monto_anio"] = parametros.horas_año * self.monto_hora
+            elif self.monto_mes:
+                new_values["monto_hora"] = self.monto_mes / parametros.dias_mes / parametros.horas_dia
+                new_values["monto_anio"] = parametros.horas_año * new_values["monto_hora"]
+            elif self.monto_anio:
+                new_values["monto_hora"] = self.monto_anio / parametros.horas_año
+                new_values["monto_mes"] = new_values["monto_hora"] * parametros.horas_dia * parametros.dias_mes
+            # actualizar sólo si no existe el valor
+            for k, v in new_values.items():
+                if not getattr(self, k):
+                    setattr(self, k, v)
+
+    def save(self, *args, **kwargs):
+        """
+        Calculo costos restantes basados en los parámetros y los valores existentes
+        """
+        if self.periodo.parametros_costos:
+            self.calcular_otros_monto(self.periodo.parametros_costos)
+        super(Costo, self).save(*args, **kwargs)
+
+    # def get_fields(self):
+    #     """
+    #     Deuelve el listado correcto de field según el tipo de costo
+    #     """
+    #     fields = ['tipo_costo', 'periodo', 'observacion']
+    #     if self.tipo_costo.es_por_cc:
+    #         fields.append('centro_costo')
+    #     else:
+    #         fields.append('familia_equipo')
+    #     if self.tipo_costo.es_monto_segmentado:
+    #         fields.extend(['monto_hora', 'monto_mes', 'monto_anio'])
+    #     else:
+    #         fields.append('monto_total')
+    #     return fields
+
+    @property
+    def render(self):
+        if self.tipo_costo.es_por_cc:
+            return "{} | CC: {}".format(self, self.centro_costo)
+        else:
+            return "{} | Equipo: {}".format(self, self.familia_equipo)

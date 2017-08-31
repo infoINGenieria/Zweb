@@ -1,3 +1,5 @@
+from decimal import Decimal as D
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib import messages
@@ -151,7 +153,7 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
             if cc_id not in data:
                 data[cc_id] = vals
             else:
-                if isinstance(vals, (float, int)):
+                if isinstance(vals, (float, int, D)):
                     data[cc_id] += vals
                 else:
                     for costo, val in vals.items():

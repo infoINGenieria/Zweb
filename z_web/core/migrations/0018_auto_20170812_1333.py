@@ -25,7 +25,7 @@ def crear_unidad_negocio_y_asociar(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0016_auto_20170812_1112'),
+        ('core', '0017_auto_20170812_1112'),
     ]
 
     operations = [

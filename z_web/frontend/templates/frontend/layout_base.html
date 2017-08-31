@@ -63,6 +63,7 @@
     {% bootstrap_messages %}
     {% block content %}{% endblock %}
 </div>
+<div class="modal fade" id="modal"></div>
 {%  endblock %}
 {% block footer %}
 <footer class="container-fluid">
@@ -86,7 +87,25 @@
                         window.location = '{% url 'logout' %}';
                     });
                 });
-                //$(".sticky-table-headers").stickyTableHeaders({fixedOffset: $('nav.navbar')});
+                $('#modal').on('show.bs.modal', function (event) {
+                    var modal = $(this);
+                    modal.html('');
+                    var urlAttr = $(event.relatedTarget).attr('href');
+                    var kind_action = $(event.relatedTarget).attr("data-action");
+                    if(kind_action == undefined || kind_action == 'html') {
+                        $.ajax({
+                            url: urlAttr,
+                            context: document.body
+                        }).done(function (response, status, xhr) {
+                            modal.html(response);
+                        });
+                    }
+                    else if (kind_action == 'image') {
+                        var img = '<div class="modal-dialog modal-lg zoom-images"><div class="modal-content">' +
+                                '<img class="img-responsive" src="' +  urlAttr +'"/></div></div>';
+                        modal.html(img);
+                    }
+                });
 
             });
         })(jQuery);
