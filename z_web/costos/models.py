@@ -2,6 +2,8 @@ from decimal import Decimal as D
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from model_utils.managers import QueryManager
+
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
 from zweb_utils.models import BaseModel
@@ -128,6 +130,10 @@ class CostoTipo(BaseModel):
 
 
 class Costo(BaseModel):
+    """
+    Representa un costo de un proyecto y/o equipo. Dependiendo de su tipo, este
+    tendrá distintos campos requeridos y distintos será el modo de calcular junto a otros costos.
+    """
     tipo_costo = models.ForeignKey(CostoTipo, verbose_name='tipo de costo')
     periodo = models.ForeignKey(Periodo, verbose_name="periodo")
     observacion = models.CharField(verbose_name='observación', max_length=255, null=True, blank=True)
@@ -145,14 +151,23 @@ class Costo(BaseModel):
     monto_mes = models.DecimalField(verbose_name="$/mes", decimal_places=2, max_digits=18, null=True, blank=True)
     monto_anio = models.DecimalField(verbose_name="$/año", decimal_places=2, max_digits=18, null=True, blank=True)
 
+    es_proyeccion = models.BooleanField(verbose_name="Es una proyección", default=False)
+
     class Meta:
         verbose_name = 'costo'
         verbose_name_plural = 'costos'
         ordering = ('periodo', )
 
+    def get_base_qs_clean(self):
+        """
+        Devuelve la base del query para comprobar si es único el costo. Necesario
+        para proyeccion de costos, que herada todo de costos.
+        """
+        return Costo.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)
+
     def clean(self):
         super(Costo, self).clean()
-        is_unique = Costo.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)
+        is_unique = self.get_base_qs_clean()
         non_unique = None
 
         if self.tipo_costo.es_por_cc:
@@ -250,3 +265,47 @@ class Costo(BaseModel):
             return "{} | CC: {}".format(self, self.centro_costo)
         else:
             return "{} | Equipo: {}".format(self, self.familia_equipo)
+
+
+class CostoReal(Costo):
+    objects = QueryManager(es_proyeccion=False)
+
+    class Meta:
+        proxy = True
+        verbose_name = 'costo'
+        verbose_name_plural = 'costos'
+
+    def save(self, *args, **kwargs):
+        """
+        Siempre hago False a es_proyeccion!!
+        Calculo costos restantes basados en los parámetros y los valores existentes.
+        """
+        self.es_proyeccion = False
+        return super(CostoReal, self).save(*args, **kwargs)
+
+
+class CostoProyeccion(Costo):
+
+    objects = QueryManager(es_proyeccion=True)
+
+    class Meta:
+        proxy = True
+        verbose_name = 'proyección de costo'
+        verbose_name_plural = 'proyecciones de costo'
+
+    def save(self, *args, **kwargs):
+        """
+        Siempre hago True a es_proyeccion!!
+        Calculo costos restantes basados en los parámetros y los valores existentes.
+        """
+        self.es_proyeccion = True
+        return super(CostoProyeccion, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "Proyección del costo de {} - {} - {}".format(
+            self.tipo_costo,
+            self.periodo,
+            self.centro_costo if self.tipo_costo.es_por_cc else self.familia_equipo)
+
+    def get_base_qs_clean(self):
+        return CostoProyeccion.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)

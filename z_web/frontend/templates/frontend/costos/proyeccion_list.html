@@ -1,12 +1,11 @@
 {% extends "frontend/costos/base_costos.html" %}
 {% load i18n bootstrap3 django_tables2 crispy_forms_tags %}
-{% block title %}<h2 class="main-title">Gestión de costos</h2>{% endblock %}
+{% block title %}<h2 class="main-title">Gestión de proyecciones de costos</h2>{% endblock %}
 
 {% block content %}
 <div class="well well-sm">
-        <a class="btn btn-success pull-right ml5" data-toggle="modal" href="{% url 'costos:costos_select' %}"
-        data-target="#modal" data-tooltip ><i class="fa fa-plus"></i> Cargar costos</a>
-        <a class="btn btn-primary pull-right" href="{% url 'costos:copia_costos' %}"><i class="fa fa-copy"></i> Copiar costos</a>
+        <a class="btn btn-success pull-right ml5" data-toggle="modal" href="{% url 'costos:costos_select' True %}"
+        data-target="#modal" data-tooltip ><i class="fa fa-plus"></i> Cargar proyecciones</a>
     <div class="row">
         <div class="col-sm-9 filters">
             {% crispy filter.form %}
@@ -18,7 +17,7 @@
     {% if is_filtered %}{% render_table table %}
     {% else %}
         <p class="alert alert-warning">
-            Utilice los filtros para visualizar los costos.
+            Utilice los filtros para visualizar los proyecciones.
         </p>
     {% endif %}
     </div>

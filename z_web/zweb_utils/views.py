@@ -114,13 +114,13 @@ def generate_menu_user(user):
                      'url': reverse('frontend:ms_panel_control'), 'section': 'Movimiento de suelo',
                      'btn_class': 'success'})
     if user.has_perm('costos.can_manage_costos'):
-        menu.append({'name': "Costos", 'icon': 'keyboard-o',
-                     'url': reverse('costos:costos_list'), 'section': 'Costos', 'btn_class': 'primary'})
+        menu.append({'name': "Costos", 'icon': 'list',
+                     'url': reverse('costos:index'), 'section': 'Administrar costos y avance de obra', 'btn_class': 'primary'})
     if user.has_perm("costos.can_generate_reports"):
-        menu.append({'name': "Reportes", 'icon': 'keyboard-o',
+        menu.append({'name': "Reportes", 'icon': 'print',
                      'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes', 'btn_class': 'warning'})
     if user.is_staff:
         menu.append({'name': "Administración", 'icon': 'cogs',
                      'url': reverse('admin:index'), 'section': 'Gestionar entidades',
-                     'btn_class': 'primary'})
+                     'btn_class': 'default'})
     return menu

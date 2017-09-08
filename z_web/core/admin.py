@@ -135,6 +135,8 @@ class UsuarioAdmin(admin.ModelAdmin):
 
 class UserExtensionInline(admin.StackedInline):
     model = UserExtension
+    max_num = 1
+    min_num = 0
 
 
 class CustomUserAdmin(UserAdmin):

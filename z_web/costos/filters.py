@@ -14,7 +14,8 @@ class CostosFilter(CrispyFilters):
         form_class = 'form-inline'
         form_method = 'get'
         layout = Layout(
-            Div('tipo_costo', css_class="col-xs-12"),
+            Div('tipo_costo', css_class="col-xs-6"),
+            Div('relacionado_con', css_class="col-xs-6"),
             Div('periodo', css_class='col-xs-6'),
             Div('familia_equipo', css_class='col-xs-6'),
             Div('centro_costo', css_class="col-xs-12"),
@@ -24,15 +25,13 @@ class CostosFilter(CrispyFilters):
         )
 
     helper = CostosFilterFormHelper
-    # tipo_costo = django_filters.DateFilter(
-    #     label='Desde el', name='dia', lookup_expr='gte', widget=FechaWidget)
-    # dia_end = django_filters.DateFilter(
-    #     label='Hasta el', name='dia', lookup_expr='lte', widget=FechaWidget)
     tipo_costo = django_filters.ModelChoiceFilter(
-        label='Tipo de costo', queryset=CostoTipo.objects.all(), required=True)
-    # no_asistio = django_filters.BooleanFilter(label='¿Faltó?', name='no_asistio')
-    # no_aviso = django_filters.BooleanFilter(label='¿Faltó y no avisó?', name='no_aviso')
+        label='Tipo de costo', queryset=CostoTipo.objects.all())
+    relacionado_con = django_filters.ChoiceFilter(
+        label='Relacionado con', choices=CostoTipo.RELACIONADO_CON,
+        name='tipo_costo__relacionado_con')
 
     class Meta:
         model = Costo
-        fields = ('tipo_costo', 'periodo', 'centro_costo', 'familia_equipo', )
+        fields = ('tipo_costo', 'relacionado_con', 'periodo',
+                  'centro_costo', 'familia_equipo', )

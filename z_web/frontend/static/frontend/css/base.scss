@@ -91,9 +91,16 @@ form {
 }
 
 .filters {
-  button {
+  .btn {
     margin: 10px 5px 5px 0;
   }
+}
+
+.mr5{
+  margin-right: 5px;
+}
+.ml5{
+  margin-left: 5px;
 }
 /*******************
  *   ID's
@@ -138,9 +145,9 @@ form {
   }
 }
 
-.btn {
-  margin: 5px;
-}
+// .btn {
+//   margin: 5px;
+// }
 /***************
  *  PACE style *
 ****************/

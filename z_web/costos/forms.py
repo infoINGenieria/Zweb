@@ -8,7 +8,7 @@ from crispy_forms.layout import Layout, Div
 
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
-from costos.models import Costo, CostoTipo
+from costos.models import CostoReal, CostoTipo, CostoProyeccion
 
 
 class PeriodoSelectForm(forms.Form):
@@ -16,7 +16,8 @@ class PeriodoSelectForm(forms.Form):
 
 
 class CopiaCostoForm(forms.Form):
-    tipo_costos = forms.ModelMultipleChoiceField(label="Tipos de costo", queryset=CostoTipo.objects.all(), widget=forms.CheckboxSelectMultiple())
+    tipo_costos = forms.ModelMultipleChoiceField(
+        label="Tipos de costo", queryset=CostoTipo.objects.all(), widget=forms.CheckboxSelectMultiple())
     de_periodo = forms.ModelChoiceField(queryset=Periodo.objects.all(), label="Periodo de origen")
     a_periodo = forms.ModelChoiceField(queryset=Periodo.objects.all(), label="Periodo de destino")
     recalcular = forms.BooleanField(required=False, initial=False, label="¿Recalcular costos?",
@@ -71,7 +72,7 @@ Forms usados por los popup
 class CostoEditPorCCForm(forms.ModelForm):
 
     class Meta:
-        model = Costo
+        model = CostoReal
         fields = ('periodo', 'centro_costo', 'monto_total', 'observacion', )
 
     def __init__(self, *args, **kwargs):
@@ -90,7 +91,7 @@ class CostoEditPorCCForm(forms.ModelForm):
 class CostoEditPorEquipoForm(forms.ModelForm):
 
     class Meta:
-        model = Costo
+        model = CostoReal
         fields = ('periodo', 'familia_equipo', 'monto_hora', 'monto_mes',
                   'monto_anio', 'observacion', )
 
@@ -112,3 +113,18 @@ class CostoEditPorEquipoForm(forms.ModelForm):
                 css_class='row'
             )
         )
+
+
+class ProyeccionEditPorCCForm(CostoEditPorCCForm):
+
+    class Meta:
+        model = CostoProyeccion
+        fields = ('periodo', 'centro_costo', 'monto_total', 'observacion', )
+
+
+class ProyeccionEditPorEquipoForm(CostoEditPorEquipoForm):
+
+    class Meta:
+        model = CostoProyeccion
+        fields = ('periodo', 'familia_equipo', 'monto_hora', 'monto_mes',
+                  'monto_anio', 'observacion', )

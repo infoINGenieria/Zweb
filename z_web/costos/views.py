@@ -17,23 +17,32 @@ from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
 from zweb_utils.mixins import TableFilterListView, ModalViewMixin
 from zweb_utils.views import LoginAndPermissionRequiredMixin
-from .models import CostoParametro, Costo, CostoTipo
+from .models import CostoParametro, Costo, CostoTipo, CostoProyeccion, CostoReal
 from .forms import (PeriodoSelectForm, CostoItemForm, CostoItemFamiliaForm,
                     CopiaCostoForm, CostoCCForm, PeriodoCCForm, PeriodoCostoTipoForm,
-                    CostoEquipoForm, CostoEditPorCCForm, CostoEditPorEquipoForm)
-from .tables import (CostosByCCMontoHSTable, CostosByCCTotalTable,
-                     CostosByEquipoMontoHSTable, CostosByEquipoTotalTable)
+                    CostoEquipoForm, CostoEditPorCCForm, CostoEditPorEquipoForm,
+                    ProyeccionEditPorCCForm, ProyeccionEditPorEquipoForm)
+from .tables import (CostoTableGeneric, CostosByCCTotalTable,
+                     CostosByEquipoMontoHSTable, ProyeccionTableGeneric,
+                     ProyeccionByCCTotalTable, ProyeccionByEquipoMontoHSTable)
 from .filters import CostosFilter
 
 
-class CopiaCostosView(LoginAndPermissionRequiredMixin, TemplateView):
+class BaseCostosMixin(LoginAndPermissionRequiredMixin):
+    permission_required = 'costos.can_manage_costos'
+    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
+    raise_exception = True
+
+
+class CostosIndexView(BaseCostosMixin, TemplateView):
+    template_name = "frontend/costos/base_costos.html"
+
+
+class CopiaCostosView(BaseCostosMixin, TemplateView):
     """
     Vista para copiar costos de un periodo a otro.
     """
     template_name = "frontend/costos/copiar_costos.html"
-    permission_required = 'costos.can_manage_costos'
-    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
-    raise_exception = True
 
     def get_context_data(self, **kwargs):
         context = super(CopiaCostosView, self).get_context_data(**kwargs)
@@ -101,31 +110,22 @@ class CopiaCostosView(LoginAndPermissionRequiredMixin, TemplateView):
         return HttpResponseRedirect(reverse('costos:copia_costos'))
 
 
-class CostosList(LoginAndPermissionRequiredMixin, TableFilterListView):
-    permission_required = 'costos.can_manage_costos'
-    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
-    raise_exception = True
-    model = Costo
+class CostosList(BaseCostosMixin, TableFilterListView):
     context_object_name = 'costos'
     template_name = 'frontend/costos/costo_list.html'
-    # table_class = TurnosReporteTable
     filterset_class = CostosFilter
+    model = CostoReal
 
     def get_table_class(self, **kwargs):
         if self.filterset.form.is_valid():
             tipo_costo = self.filterset.form.cleaned_data["tipo_costo"]
-            if tipo_costo.es_monto_segmentado:
-                if tipo_costo.es_por_cc:
-                    return CostosByCCMontoHSTable
-                else:
-                    return CostosByEquipoMontoHSTable
-            else:
-                if tipo_costo.es_por_cc:
-                    return CostosByCCTotalTable
-                else:
-                    return CostosByEquipoTotalTable
+            relacionado_con = self.filterset.form.cleaned_data["relacionado_con"]
+            if tipo_costo:
+                return CostosByCCTotalTable if tipo_costo.es_por_cc else CostosByEquipoMontoHSTable
+            if relacionado_con:
+                return CostosByCCTotalTable if relacionado_con == 'cc' else CostosByEquipoMontoHSTable
 
-        return CostosByCCMontoHSTable
+        return CostoTableGeneric
 
     def get_context_data(self, **kwargs):
         ctx = super(CostosList, self).get_context_data(**kwargs)
@@ -133,23 +133,23 @@ class CostosList(LoginAndPermissionRequiredMixin, TableFilterListView):
         return ctx
 
 
-class CostosAltaCC(LoginAndPermissionRequiredMixin, TemplateView):
-    permission_required = 'costos.can_manage_costos'
-    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
-    raise_exception = True
-
+class CostosAltaCC(BaseCostosMixin, TemplateView):
+    model = CostoReal
     template_name = "frontend/costos/costos_cc_form.html"
+
+    def _form_class(self):
+        return PeriodoCCForm
+
+    def _get_formset(self):
+        return formset_factory(CostoCCForm, extra=0)
 
     def get_context_data(self, **kwargs):
         context = super(CostosAltaCC, self).get_context_data(**kwargs)
-        # context["periodo"] = Periodo.objects.order_by('-fecha_inicio')
-        # context["title_tipo_costo"] = "Carga de costos"
         context["tipos_costos"] = self.get_queryset()
-        # context["{}s".format(self.specified_field)] = self.get_queryset()
         if "p_form" not in kwargs:
-            context["p_form"] = PeriodoCCForm()
+            context["p_form"] = self._form_class()()
         if "formsets" not in kwargs:
-            Formset = formset_factory(CostoCCForm, extra=0)
+            Formset = self._get_formset()
             initial = [{'tipo_costo': x.pk} for x in context["tipos_costos"]]
             context["formsets"] = Formset(initial=initial)
         return context
@@ -158,8 +158,8 @@ class CostosAltaCC(LoginAndPermissionRequiredMixin, TemplateView):
         return CostoTipo.objects.filter(relacionado_con='cc')
 
     def post(self, request, *args, **kwargs):
-        p_form = PeriodoCCForm(self.request.POST)
-        formsets = formset_factory(CostoCCForm, extra=0)(self.request.POST)
+        p_form = self._form_class()(self.request.POST)
+        formsets = self._get_formset()(self.request.POST)
 
         if p_form.is_valid() and formsets.is_valid():
             return self.form_valid(p_form, formsets)
@@ -179,13 +179,13 @@ class CostosAltaCC(LoginAndPermissionRequiredMixin, TemplateView):
                 for f in formsets:
                     if f.cleaned_data["monto_total"]:
                         tipo_costo = f.cleaned_data["tipo_costo"]
-                        if Costo.objects.filter(
+                        if self.model.objects.filter(
                             periodo=periodo, centro_costo=centro_costo, tipo_costo=tipo_costo).exists():
                             errors = f._errors.setdefault("monto_total", ErrorList())
                             errors.append(u"Ya existe un valor para el periodo y centro de costo seleccionado.")
                             has_error = True
                         else:
-                            costo = Costo(**f.cleaned_data)
+                            costo = self.model(**f.cleaned_data)
                             costo.centro_costo = centro_costo
                             costo.periodo = periodo
                             costo.save()
@@ -208,21 +208,24 @@ class CostosAltaCC(LoginAndPermissionRequiredMixin, TemplateView):
             return self.form_invalid(p_form, formsets)
 
 
-class CostosAltaEquipos(LoginAndPermissionRequiredMixin, TemplateView):
-    permission_required = 'costos.can_manage_costos'
-    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
-    raise_exception = True
+class CostosAltaEquipos(BaseCostosMixin, TemplateView):
     template_name = "frontend/costos/costos_eq_form.html"
     form_class = CostoItemForm
+    model = CostoProyeccion
+
+    def _form_class(self):
+        return PeriodoCostoTipoForm
+
+    def _get_formset(self):
+        return formset_factory(CostoEquipoForm, extra=0)
 
     def get_context_data(self, **kwargs):
         context = super(CostosAltaEquipos, self).get_context_data(**kwargs)
         context["familias"] = self.get_queryset()
-        # context["{}s".format(self.specified_field)] = self.get_queryset()
         if "p_form" not in kwargs:
-            context["p_form"] = PeriodoCostoTipoForm()
+            context["p_form"] = self._form_class()()
         if "formsets" not in kwargs:
-            Formset = formset_factory(CostoEquipoForm, extra=0)
+            Formset = self._get_formset()
             initial = [{'familia_equipo': x.pk} for x in context["familias"]]
             context["formsets"] = Formset(initial=initial)
         return context
@@ -231,8 +234,8 @@ class CostosAltaEquipos(LoginAndPermissionRequiredMixin, TemplateView):
         return FamiliaEquipo.objects.all()
 
     def post(self, request, *args, **kwargs):
-        p_form = PeriodoCostoTipoForm(self.request.POST)
-        formsets = formset_factory(CostoEquipoForm, extra=0)(self.request.POST)
+        p_form = self._form_class()(self.request.POST)
+        formsets = self._get_formset()(self.request.POST)
 
         if p_form.is_valid() and formsets.is_valid():
             return self.form_valid(p_form, formsets)
@@ -252,13 +255,13 @@ class CostosAltaEquipos(LoginAndPermissionRequiredMixin, TemplateView):
                 for f in formsets:
                     if f.cleaned_data["monto_hora"] or f.cleaned_data["monto_mes"] or f.cleaned_data["monto_anio"]:
                         familia = f.cleaned_data["familia_equipo"]
-                        if Costo.objects.filter(
+                        if self.model.objects.filter(
                             periodo=periodo, familia_equipo=familia, tipo_costo=tipo_costo).exists():
                             errors = f._errors.setdefault("monto_hora", ErrorList())
                             errors.append(u"Ya existe un valor para el periodo y familia de equipos seleccionado.")
                             has_error = True
                         else:
-                            costo = Costo(**f.cleaned_data)
+                            costo = self.model(**f.cleaned_data)
                             costo.tipo_costo = tipo_costo
                             costo.periodo = periodo
                             costo.save()
@@ -287,18 +290,17 @@ class CostosAltaEquipos(LoginAndPermissionRequiredMixin, TemplateView):
             return self.form_invalid(p_form, formsets)
 
 
-class CargarCostosSelectView(LoginAndPermissionRequiredMixin, TemplateView):
+class CargarCostosSelectView(BaseCostosMixin, TemplateView):
     template_name = 'frontend/costos/modal/cargar_costos_select.html'
-    permission_required = 'costos.can_manage_costos'
-    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
-    raise_exception = True
+
+    def get_context_data(self, **kwargs):
+        context = super(CargarCostosSelectView, self).get_context_data(**kwargs)
+        context["es_proyeccion"] = kwargs.get("es_proyeccion", False)
+        return context
 
 
-class EditarCostosView(LoginAndPermissionRequiredMixin, ModalViewMixin, UpdateView):
-    permission_required = 'costos.can_manage_costos'
-    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
-    raise_exception = True
-    model = Costo
+class EditarCostosView(BaseCostosMixin, ModalViewMixin, UpdateView):
+    model = CostoReal
     # form_class = CostoEditForm
 
     def get_form_class(self, **kwargs):
@@ -309,7 +311,7 @@ class EditarCostosView(LoginAndPermissionRequiredMixin, ModalViewMixin, UpdateVi
 
     def get_context_data(self, *args, **kwargs):
         ctx = super(EditarCostosView, self).get_context_data(*args, **kwargs)
-        ctx["modal_title"] = 'Editar costo'
+        ctx["modal_title"] = 'Editar %s' % self.model._meta.verbose_name
         return ctx
 
     def form_valid(self, form):
@@ -317,12 +319,9 @@ class EditarCostosView(LoginAndPermissionRequiredMixin, ModalViewMixin, UpdateVi
         return render(self.request, 'modal_success.html', {'obj': obj})
 
 
-class EliminarCostosView(LoginAndPermissionRequiredMixin, ModalViewMixin, DeleteView):
-    permission_required = 'costos.can_manage_costos'
-    permission_denied_message = "No posee los permisos suficientes para ingresar a esa sección"
-    raise_exception = True
+class EliminarCostosView(BaseCostosMixin, ModalViewMixin, DeleteView):
     # http_method_names = ["post", ]
-    model = Costo
+    model = CostoReal
     template_name = "modal_delete_form.html"
 
     def get_url_post_form(self):
@@ -334,6 +333,79 @@ class EliminarCostosView(LoginAndPermissionRequiredMixin, ModalViewMixin, Delete
         return render(self.request, 'modal_delete_success.html', {'obj': obj})
 
 
+class CostosProyeccionListView(CostosList):
+    model = CostoProyeccion
+    context_object_name = 'proyecciones'
+    template_name = 'frontend/costos/proyeccion_list.html'
+
+    def get_table_class(self, **kwargs):
+        if self.filterset.form.is_valid():
+            tipo_costo = self.filterset.form.cleaned_data["tipo_costo"]
+            relacionado_con = self.filterset.form.cleaned_data["relacionado_con"]
+            if tipo_costo:
+                return ProyeccionByCCTotalTable if tipo_costo.es_por_cc else ProyeccionByEquipoMontoHSTable
+            if relacionado_con:
+                return ProyeccionByCCTotalTable if relacionado_con == 'cc' else ProyeccionByEquipoMontoHSTable
+
+        return ProyeccionTableGeneric
+
+
+class CostosProyeccionAltaCC(CostosAltaCC):
+    model = CostoProyeccion
+    template_name = "frontend/costos/proyeccion_cc_form.html"
+
+    # def _get_formset(self):
+    #     return formset_factory(CostoCCForm, extra=0)
+
+    def response_result(self, p_form, formsets, saved_count):
+        if saved_count:
+            messages.add_message(
+                self.request, messages.SUCCESS,
+                "Se añadieron correctamente {} proyecciones al centro de costos '{}' para el periodo '{}'".format(
+                    saved_count, p_form.cleaned_data["centro_costo"], p_form.cleaned_data["periodo"]))
+            return HttpResponseRedirect(reverse('costos:proyecciones_alta_cc'))
+        else:
+            messages.add_message(self.request, messages.WARNING, "No íngresó valores de costos")
+            return self.form_invalid(p_form, formsets)
+
+
+class CostosProyeccionAltaEquipos(CostosAltaEquipos):
+    model = CostoProyeccion
+    template_name = "frontend/costos/proyeccion_eq_form.html"
+
+    # def _get_formset(self):
+    #     return formset_factory(CostoCCForm, extra=0)
+
+    def response_result(self, p_form, formsets, saved_count):
+        if saved_count:
+            messages.add_message(
+                self.request, messages.SUCCESS,
+                "Se añadieron correctamente {} proyecciones de costos del tipo '{}' para el periodo '{}'".format(
+                    saved_count, p_form.cleaned_data["tipo_costo"], p_form.cleaned_data["periodo"]))
+            return HttpResponseRedirect(reverse('costos:proyecciones_alta_eq'))
+        else:
+            messages.add_message(self.request, messages.WARNING, "No íngresó valores de costos")
+            return self.form_invalid(p_form, formsets)
+
+
+class EditarProyeccionesView(EditarCostosView, UpdateView):
+    model = CostoProyeccion
+
+    def get_form_class(self, **kwargs):
+        return ProyeccionEditPorCCForm if self.object.tipo_costo.es_por_cc else ProyeccionEditPorEquipoForm
+
+    def get_url_post_form(self):
+        return reverse_lazy('costos:proyecciones_edit', args=(self.object.pk, ))
+
+
+class EliminarProyeccionesView(EliminarCostosView):
+    model = CostoProyeccion
+
+    def get_url_post_form(self):
+        return reverse_lazy('costos:proyecciones_delete', args=(self.object.pk, ))
+
+
+costos_index = CostosIndexView.as_view()
 costos_list = CostosList.as_view()
 copia_costos = CopiaCostosView.as_view()
 costos_alta_cc = CostosAltaCC.as_view()
@@ -341,3 +413,8 @@ costos_alta_eq = CostosAltaEquipos.as_view()
 costos_select = CargarCostosSelectView.as_view()
 costos_edit = EditarCostosView.as_view()
 costos_delete = EliminarCostosView.as_view()
+proyecciones_list = CostosProyeccionListView.as_view()
+proyecciones_alta_cc = CostosProyeccionAltaCC.as_view()
+proyecciones_alta_eq = CostosProyeccionAltaEquipos.as_view()
+proyecciones_edit = EditarProyeccionesView.as_view()
+proyecciones_delete = EliminarProyeccionesView.as_view()

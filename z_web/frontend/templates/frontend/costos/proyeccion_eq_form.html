@@ -1,13 +1,13 @@
 {% extends "frontend/costos/base_costos.html" %}
 {% load frontend_tags bootstrap3 i18n %}
-{% block title %}<h2 class="main-title">Carga de costos - Relacionados con Equipos</h2>{% endblock %}
-{% block title_head %}{{ block.super }} > Carga de costos{% endblock %}
+{% block title %}<h2 class="main-title">Carga de proyecciones - Relacionados con Equipos</h2>{% endblock %}
+{% block title_head %}{{ block.super }} > Carga de proyecciones{% endblock %}
 {% block wide_class %}container{% endblock %}
 
 {% block content %}
 {% block extra_info %}
     <p class="alert alert-info">
-    Podrá ingresar todos los costos para el periodo y tipo de costo seleccionado.
+    Podrá ingresar todas las proyecciones de costos para el periodo y tipo de costo seleccionado.
     Si existiese algún dato duplicado, se mostrará una alerta.<br>
     Puede ingresar valores para los distintos montos ($/hs, $/mes y $/año), o sólo uno, y el resto será calculado automáticamente
         a partir del valor dado. Si deja todos vacios, la fila será ignorada.
@@ -27,7 +27,7 @@
             </div>
             <div class="col-sm-3">
                 <input type="submit" value="Guardar todos" class="submit btn btn-primary btn-sm" />
-                <a class="btn btn-danger btn-sm" href="{% url 'costos:costos_list' %}" alt="volver">Volver</a>
+                <a class="btn btn-danger btn-sm" href="{% url 'costos:proyecciones_list' %}" alt="volver">Volver</a>
             </div>
 
         </div></div>
@@ -59,6 +59,6 @@
             </table>
         {% endblock %}
         <input type="submit" value="Guardar todos" class="submit btn btn-primary" />
-        <a class="btn btn-danger" href="{% url 'costos:costos_list' %}" alt="volver">Volver</a>
+        <a class="btn btn-danger" href="{% url 'costos:proyecciones_list' %}" alt="volver">Volver</a>
     </form>
     {% endblock %}

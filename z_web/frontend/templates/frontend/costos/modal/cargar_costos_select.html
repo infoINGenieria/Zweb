@@ -7,16 +7,28 @@
         </h4>
     </div>
     <div class="modal-body">
-
+        {% if es_proyeccion %}
         <div class="row">
             <div class="col-xs-6">
                 <a class="btn btn-primary btn-block btn-lg"
-                    href="{% url 'costos:costos_alta_cc' %}">Relacionado con Centro de costos</a>
+                    href="{% url 'costos:proyecciones_alta_cc' %}">Relacionado con Centro de costos</a>
             </div>
             <div class="col-xs-6">
                 <a class="btn btn-primary btn-block btn-lg"
-                    href="{% url 'costos:costos_alta_eq' %}">Relacionado con equipos</a>
+                    href="{% url 'costos:proyecciones_alta_eq' %}">Relacionado con equipos</a>
             </div>
         </div>
+        {% else %}
+        <div class="row">
+                <div class="col-xs-6">
+                    <a class="btn btn-primary btn-block btn-lg"
+                        href="{% url 'costos:costos_alta_cc' %}">Relacionado con Centro de costos</a>
+                </div>
+                <div class="col-xs-6">
+                    <a class="btn btn-primary btn-block btn-lg"
+                        href="{% url 'costos:costos_alta_eq' %}">Relacionado con equipos</a>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
