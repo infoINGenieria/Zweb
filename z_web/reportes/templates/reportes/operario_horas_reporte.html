@@ -1,0 +1,34 @@
+{% extends 'reportes/base_reportes.html' %}
+{% load i18n compress pipeline frontend_tags static bootstrap3 %}
+{% block title_head %}{{ block.super }} > Horas trabajadas{% endblock %}
+{% block content %}
+    <h2>Reporte de horas trabajadas</h2>
+    <div class="filters col-md-6">
+        <form method="get" action="." >
+            {% bootstrap_form filter %}
+            <button class="btn btn-info btn-sm" type="submit">Generar</button>
+            <a class="btn btn-sm btn-danger" href="{% url 'reportes:index' %}">Volver</a>
+        </form>
+    </div>
+    {% if empty %}
+        <div class="col-md-12">
+            <p class="alert alert-warning">El reporte está vacio. </p>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block extra_js %}
+    {{ block.super }}
+    {% compress js %}
+        {% javascript 'graphics_js' %}
+        <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+                $("select").chosen({
+                    'search_contains':true,
+                    'no_results_text': "No se encontraron coicidencias!"
+                });
+            });
+        })(jQuery);
+    </script>
+    {% endcompress %}
+{% endblock %}

@@ -124,6 +124,25 @@ class Obras(models.Model):
         return self.fecha_fin is None
 
 
+class CCT(models.Model):
+    """
+    Representa un Contrato Colectivo de Trabajo.
+
+    """
+    nombre = models.CharField("nombre", max_length=255, unique=True)
+
+    class Meta:
+        verbose_name = "CCT"
+        verbose_name_plural = "CCTs"
+
+    def __str__(self):
+        return self.nombre
+
+    @property
+    def total_personas(self):
+        return "{} personas".format(self.operarios.count())
+
+
 class Operarios(models.Model):
     """
     OK
@@ -146,6 +165,8 @@ class Operarios(models.Model):
     vto_otros1 = models.DateField(db_column='VTO_OTROS1', blank=True, null=True)
     vto_otros2 = models.DateField(db_column='VTO_OTROS2', blank=True, null=True)
     vto_otros3 = models.DateField(db_column='VTO_OTROS3', blank=True, null=True)
+
+    cct = models.ForeignKey(CCT, verbose_name="CCT", related_name="operarios", null=True)
 
     class Meta:
         verbose_name = "operario"

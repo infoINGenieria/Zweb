@@ -181,7 +181,8 @@ class CostoParametro(models.Model):
         permissions = (
             ("can_view_panel_control", "Puede ver Panel de Control"),
             ("can_add_costos_masivo", "Puede ingresar costos masivos"),
-            ("can_export_panel_control", "Puede exportar el panel de control")
+            ("can_export_panel_control", "Puede exportar el panel de control"),
+            ("can_generate_reports", "Puede generar reportes"),
         )
 
 

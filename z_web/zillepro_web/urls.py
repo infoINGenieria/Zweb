@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^', include('frontend.urls', namespace='frontend', app_name='frontend')),
     url(r'^ingreso_masivo/costos/', include('costos.urls', namespace='costos', app_name='costos')),
+    url(r'^reportes/', include('reportes.urls', namespace='reportes')),
     # admin
     url(r'^admin/', include(admin.site.urls)),
 ]

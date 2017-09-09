@@ -116,7 +116,11 @@ def generate_menu_user(user):
     if user.has_perm('costos.can_add_costos_masivo'):
         menu.append({'name': "Ingreso masivo de costos", 'icon': 'keyboard-o',
                      'url': reverse('costos:index'), 'section': 'Movimiento de suelo', 'btn_class': 'success'})
-    # if user.has_perm('costos.can_add_costos_masivo'):
-    #     menu.append({'name': "Ingreso de parte diario", 'icon': 'car',
-    #                  'url': reverse('', 'Taller')})
+    if user.has_perm("costos.can_generate_reports"):
+        menu.append({'name': "Reportes", 'icon': 'keyboard-o',
+                     'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes', 'btn_class': 'warning'})
+    if user.is_staff:
+        menu.append({'name': "Administración", 'icon': 'cogs',
+                     'url': reverse('admin:index'), 'section': 'Gestionar entidades',
+                     'btn_class': 'primary'})
     return menu

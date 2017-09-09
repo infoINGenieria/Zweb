@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'documento',
     'costos',
     'zweb_utils',
+    'reportes',
 )
 
 MIDDLEWARE_CLASSES = (

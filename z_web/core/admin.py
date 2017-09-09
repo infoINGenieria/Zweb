@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from core.models import (Equipos, EstServicio, FrancoLicencia, Obras,
-                         Operarios, Usuario)
+                         Operarios, Usuario, CCT)
 
 
 @admin.register(Equipos)
@@ -77,11 +77,16 @@ class FrancoLicenciaInlineAdmin(admin.StackedInline):
     )
 
 
+@admin.register(CCT)
+class CCTAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Operarios)
 class OperariosAdmin(admin.ModelAdmin):
-    list_display = ('n_legajo', 'nombre', 'cuil', 'funcion', 'desarraigo',
+    list_display = ('n_legajo', 'nombre', 'cuil', 'funcion', 'cct', 'desarraigo',
                     'fecha_ingreso', 'observaciones')
-    list_filter = ('funcion', 'desarraigo', )
+    list_filter = ('funcion', 'desarraigo', 'cct')
     search_fields = ('^n_legajo', '^cuil', 'nombre', '^fecha_ingreso', )
     list_display_links = ('n_legajo', 'nombre', )
     fieldsets = (
@@ -91,7 +96,7 @@ class OperariosAdmin(admin.ModelAdmin):
         }),
 
         ('Funciones', {
-            'fields': (('funcion', 'desarraigo',), )
+            'fields': (('cct', 'funcion', 'desarraigo',), )
         }),
         ('Fechas Importantes', {
             'fields': ('fecha_ingreso',
