@@ -8,11 +8,15 @@ from crispy_forms.layout import Layout, Div
 
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
-from costos.models import CostoReal, CostoTipo, CostoProyeccion
+from costos.models import CostoReal, CostoTipo, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion, AvanceObra
 
 
 class PeriodoSelectForm(forms.Form):
     periodo = forms.ModelChoiceField(queryset=Periodo.objects.all())
+
+
+class CentroCostoSelectForm(forms.Form):
+    centro_costo = forms.ModelChoiceField(queryset=Obras.objects.filter(es_cc=True))
 
 
 class CopiaCostoForm(forms.Form):
@@ -63,6 +67,23 @@ class CostoEquipoForm(forms.Form):
     monto_anio = forms.DecimalField(label='Monto ($/año)', required=False)
     observacion = forms.CharField(label='Observación', required=False)
     familia_equipo = forms.ModelChoiceField(FamiliaEquipo.objects.all(), widget=forms.HiddenInput())
+
+
+class AvanceObraCreateForm(forms.ModelForm):
+    periodo = forms.ModelChoiceField(queryset=Periodo.objects.all(), required=True)
+
+    class Meta:
+        model = AvanceObra
+        fields = ('periodo', 'avance', 'observacion')
+
+    def save(self, centro_costo, es_proyeccion, commit=True):
+        avance = super(AvanceObraCreateForm, self).save(False)
+        avance.centro_costo = centro_costo
+        avance.es_proyeccion = es_proyeccion
+        if commit:
+            avance.save()
+        return avance
+
 
 
 """
@@ -128,3 +149,29 @@ class ProyeccionEditPorEquipoForm(CostoEditPorEquipoForm):
         model = CostoProyeccion
         fields = ('periodo', 'familia_equipo', 'monto_hora', 'monto_mes',
                   'monto_anio', 'observacion', )
+
+
+class AvanceObraEditForm(forms.ModelForm):
+
+    class Meta:
+        model = AvanceObraReal
+        fields = ('periodo', 'centro_costo', 'avance', 'observacion', )
+
+    def __init__(self, *args, **kwargs):
+        super(AvanceObraEditForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_class = 'horizontal-form'
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Div('centro_costo', css_class='col-sm-12'),
+            Div('periodo', css_class="col-sm-6"),
+            Div('avance', css_class='col-sm-6'),
+            Div('observacion', css_class="col-sm-12"),
+        )
+
+
+class AvanceObraProyectadoEditForm(AvanceObraEditForm):
+
+    class Meta:
+        model = AvanceObraProyeccion
+        fields = ('periodo', 'centro_costo', 'avance', 'observacion')

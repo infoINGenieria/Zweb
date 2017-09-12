@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse_lazy
 from django_tables2 import A, URLColumn, BooleanColumn, Column
 
 from zweb_utils.tables_filters import DefaultTable
-from .models import CostoReal, CostoProyeccion
+from .models import CostoReal, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion
 
 
 class CostoBaseTable(DefaultTable):
@@ -18,7 +18,7 @@ class CostoBaseTable(DefaultTable):
         return mark_safe(
             '<a class="btn btn-danger btn-xs pull-right" data-toggle="modal" data-target="#modal"'
             ' data-tooltip href="{}"><i class="fa fa-trash"></i> Eliminar</a> '
-            '<a class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#modal"'
+            '<a class="btn btn-primary btn-xs pull-right mr5" data-toggle="modal" data-target="#modal"'
             ' data-tooltip href="{}"><i class="fa fa-edit"></i> Modificar</a> '
             ''.format(
                 reverse_lazy(self.delete_link, args=(record.pk, )),
@@ -81,3 +81,25 @@ class ProyeccionByEquipoMontoHSTable(ProyeccionBaseTable):
         fields = ('periodo', 'tipo_costo', 'familia_equipo', 'observacion',
                   'monto_hora', 'monto_mes', 'monto_anio', 'links_action')
 
+
+# ################
+# AVANCE DE OBRA #
+##################
+
+class AvanceObraRealTable(CostoBaseTable):
+    delete_link = 'costos:avances_obra_delete'
+    edit_link = 'costos:avances_obra_edit'
+
+    class Meta(CostoBaseTable.Meta):
+        model = AvanceObraReal
+        fields = ('periodo', 'centro_costo', 'avance', 'observacion', 'links_action')
+
+    def render_avance(self, value):
+        return "{:.1f} %".format(value)
+
+
+class AvanceObraProyeccionTable(CostoBaseTable):
+
+    class Meta(CostoBaseTable.Meta):
+        model = AvanceObraProyeccion
+        fields = ('periodo', 'centro_costo', 'avance', 'observacion', 'links_action')

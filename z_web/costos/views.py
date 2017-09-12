@@ -17,15 +17,19 @@ from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
 from zweb_utils.mixins import TableFilterListView, ModalViewMixin
 from zweb_utils.views import LoginAndPermissionRequiredMixin
-from .models import CostoParametro, Costo, CostoTipo, CostoProyeccion, CostoReal
+from .models import (CostoParametro, Costo, CostoTipo, CostoProyeccion, CostoReal,
+                     AvanceObraReal, AvanceObraProyeccion, AvanceObra)
 from .forms import (PeriodoSelectForm, CostoItemForm, CostoItemFamiliaForm,
                     CopiaCostoForm, CostoCCForm, PeriodoCCForm, PeriodoCostoTipoForm,
                     CostoEquipoForm, CostoEditPorCCForm, CostoEditPorEquipoForm,
-                    ProyeccionEditPorCCForm, ProyeccionEditPorEquipoForm)
+                    ProyeccionEditPorCCForm, ProyeccionEditPorEquipoForm,
+                    AvanceObraEditForm, AvanceObraProyectadoEditForm,
+                    CentroCostoSelectForm, AvanceObraCreateForm)
 from .tables import (CostoTableGeneric, CostosByCCTotalTable,
                      CostosByEquipoMontoHSTable, ProyeccionTableGeneric,
-                     ProyeccionByCCTotalTable, ProyeccionByEquipoMontoHSTable)
-from .filters import CostosFilter
+                     ProyeccionByCCTotalTable, ProyeccionByEquipoMontoHSTable,
+                     AvanceObraProyeccionTable, AvanceObraRealTable)
+from .filters import CostosFilter, AvanceObraFilter
 
 
 class BaseCostosMixin(LoginAndPermissionRequiredMixin):
@@ -111,7 +115,7 @@ class CopiaCostosView(BaseCostosMixin, TemplateView):
 
 
 class CostosList(BaseCostosMixin, TableFilterListView):
-    context_object_name = 'costos'
+    # context_object_name = 'costos'
     template_name = 'frontend/costos/costo_list.html'
     filterset_class = CostosFilter
     model = CostoReal
@@ -333,9 +337,14 @@ class EliminarCostosView(BaseCostosMixin, ModalViewMixin, DeleteView):
         return render(self.request, 'modal_delete_success.html', {'obj': obj})
 
 
+################
+# PROYECCIONES #
+################
+
+
 class CostosProyeccionListView(CostosList):
     model = CostoProyeccion
-    context_object_name = 'proyecciones'
+    # context_object_name = 'proyecciones'
     template_name = 'frontend/costos/proyeccion_list.html'
 
     def get_table_class(self, **kwargs):
@@ -405,6 +414,107 @@ class EliminarProyeccionesView(EliminarCostosView):
         return reverse_lazy('costos:proyecciones_delete', args=(self.object.pk, ))
 
 
+##################
+# AVANCE DE OBRA #
+##################
+
+
+class AvanceObraRealList(BaseCostosMixin, TableFilterListView):
+    template_name = 'frontend/costos/avance_obra_list.html'
+    filterset_class = AvanceObraFilter
+    model = AvanceObraReal
+    table_class = AvanceObraRealTable
+
+    def get_context_data(self, **kwargs):
+        ctx = super(AvanceObraRealList, self).get_context_data(**kwargs)
+        ctx["is_filtered"] = self.filterset.form.is_valid()
+        return ctx
+
+
+class AvanceObraEditView(BaseCostosMixin, ModalViewMixin, UpdateView):
+    model = AvanceObraReal
+    form_class = AvanceObraEditForm
+
+    def get_url_post_form(self):
+        return reverse_lazy('costos:avances_obra_edit', args=(self.object.pk, ))
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super(AvanceObraEditView, self).get_context_data(*args, **kwargs)
+        ctx["modal_title"] = 'Editar %s' % self.model._meta.verbose_name
+        return ctx
+
+    def form_valid(self, form):
+        obj = form.save()
+        return render(self.request, 'modal_success.html', {'obj': obj})
+
+
+class AvanceObraDeleteView(BaseCostosMixin, ModalViewMixin, DeleteView):
+    model = AvanceObraReal
+    template_name = "modal_delete_form.html"
+
+    def get_url_post_form(self):
+        return reverse_lazy('costos:avances_obra_delete', args=(self.object.pk, ))
+
+    def post(self, *args, **kwargs):
+        obj = self.get_object()
+        obj.delete()
+        return render(self.request, 'modal_delete_success.html', {'obj': obj})
+
+
+class AvanceObraCreateView(BaseCostosMixin, TemplateView):
+    model = AvanceObra
+    template_name = "frontend/costos/avance_obra_create.html"
+    form_class = CentroCostoSelectForm
+    formset_avance = formset_factory(AvanceObraCreateForm, extra=0, min_num=1, can_delete=True, validate_min=True)
+    es_proyeccion = False
+
+    def get_context_data(self, **kwargs):
+        context = super(AvanceObraCreateView, self).get_context_data(**kwargs)
+        forms = {
+            "obra_form": CentroCostoSelectForm(prefix='obra_form'),
+            "avances_formset": self.formset_avance(prefix='avances_formset'),
+        }
+        forms.update(context)
+        return forms
+
+    def post(self, request, *args, **kwargs):
+        obra_form = CentroCostoSelectForm(self.request.POST, prefix='obra_form')
+        avances_formset = self.formset_avance(self.request.POST, prefix='avances_formset')
+
+        if obra_form.is_valid() and avances_formset.is_valid():
+            return self.form_valid(obra_form, avances_formset)
+        else:
+            return self.form_invalid(obra_form, avances_formset)
+
+    def form_invalid(self, obra_form, avances_formset):
+        return self.render_to_response(self.get_context_data(obra_form=obra_form, avances_formset=avances_formset))
+
+    def form_valid(self, obra_form, avances_formset):
+        has_error = False
+        centro_costo = obra_form.cleaned_data["centro_costo"]
+        try:
+            with atomic():
+                for f in avances_formset.forms:
+                    if f in avances_formset.deleted_forms:
+                        continue
+                    if self.model.objects.filter(periodo=f.cleaned_data["periodo"], centro_costo=centro_costo,
+                                                 es_proyeccion=self.es_proyeccion).exists():
+                        errors = f._errors.setdefault("avance", ErrorList())
+                        errors.append(u"Ya existe un valor para el periodo y centro de costo seleccionado.")
+                        has_error = True
+                    else:
+                        f.save(centro_costo, self.es_proyeccion)
+                if has_error:
+                    raise IntegrityError
+        except IntegrityError:
+            return self.form_invalid(obra_form, avances_formset)
+        messages.success(self.request, "Avances de {} guardados correctamente.".format(centro_costo))
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse_lazy('costos:avances_obra_list')
+
+
 costos_index = CostosIndexView.as_view()
 costos_list = CostosList.as_view()
 copia_costos = CopiaCostosView.as_view()
@@ -418,3 +528,7 @@ proyecciones_alta_cc = CostosProyeccionAltaCC.as_view()
 proyecciones_alta_eq = CostosProyeccionAltaEquipos.as_view()
 proyecciones_edit = EditarProyeccionesView.as_view()
 proyecciones_delete = EliminarProyeccionesView.as_view()
+avances_obra_list = AvanceObraRealList.as_view()
+avances_obra_edit = AvanceObraEditView.as_view()
+avances_obra_delete = AvanceObraDeleteView.as_view()
+avances_obra_create = AvanceObraCreateView.as_view()

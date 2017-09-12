@@ -309,3 +309,63 @@ class CostoProyeccion(Costo):
 
     def get_base_qs_clean(self):
         return CostoProyeccion.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)
+
+
+class AvanceObra(BaseModel):
+    """
+    Esta entidad registra el avance de obra real y proyectado para una obra y periodo específico.
+    """
+    periodo = models.ForeignKey(Periodo, verbose_name="periodo")
+    centro_costo = models.ForeignKey(
+        Obras, verbose_name="centro de costo", related_name="mis_avances",
+        limit_choices_to={'es_cc':True})
+    avance = models.DecimalField(verbose_name='avance', decimal_places=3, max_digits=18)
+    observacion = models.CharField(verbose_name='observación', max_length=255, null=True, blank=True)
+
+    es_proyeccion = models.BooleanField(verbose_name="Es una proyección", default=False)
+
+    class Meta:
+        verbose_name = 'avance de obra'
+        verbose_name_plural = 'avances de obra'
+        ordering = ('periodo', )
+        unique_together = ('periodo', 'centro_costo', 'es_proyeccion')
+
+    def __str__(self):
+        return "Avance de {} en {} - {:.1f} %".format(self.centro_costo, self.periodo, self.avance)
+
+    @property
+    def render(self):
+        if self.es_proyeccion:
+            return "Proyección de avance de obra de {} ({})".format(self.centro_costo, self.periodo)
+        return "Avance de obra de {} ({})".format(self.centro_costo, self.periodo)
+
+class AvanceObraReal(AvanceObra):
+    objects = QueryManager(es_proyeccion=False)
+
+    class Meta:
+        proxy = True
+        verbose_name = 'avance de obra'
+        verbose_name_plural = 'avances de obra'
+
+    def save(self, *args, **kwargs):
+        """
+        Siempre hago False a es_proyeccion!!
+        """
+        self.es_proyeccion = False
+        return super(AvanceObraReal, self).save(*args, **kwargs)
+
+
+class AvanceObraProyeccion(AvanceObra):
+    objects = QueryManager(es_proyeccion=True)
+
+    class Meta:
+        proxy = True
+        verbose_name = 'proyección de avance de obra'
+        verbose_name_plural = 'proyecciones de avance de obra'
+
+    def save(self, *args, **kwargs):
+        """
+        Siempre hago True a es_proyeccion!!
+        """
+        self.es_proyeccion = True
+        return super(AvanceObraProyeccion, self).save(*args, **kwargs)

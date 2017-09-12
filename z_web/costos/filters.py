@@ -5,7 +5,7 @@ from crispy_forms.layout import Layout, Div
 from crispy_forms.bootstrap import StrictButton
 
 from zweb_utils.tables_filters import CrispyFilters
-from .models import Costo, CostoTipo
+from .models import Costo, CostoTipo, AvanceObra
 
 
 class CostosFilter(CrispyFilters):
@@ -35,3 +35,22 @@ class CostosFilter(CrispyFilters):
         model = Costo
         fields = ('tipo_costo', 'relacionado_con', 'periodo',
                   'centro_costo', 'familia_equipo', )
+
+
+class AvanceObraFilter(CrispyFilters):
+    class AvanceObraFilterFormHelper(FormHelper):
+        form_class = 'form-inline'
+        form_method = 'get'
+        layout = Layout(
+            Div('periodo', css_class="col-xs-6"),
+            Div('centro_costo', css_class="col-xs-12"),
+            Div(
+                StrictButton('Filtrar', type="submit", css_class='btn btn-primary'),
+                css_class="col-xs-6")
+        )
+
+    helper = AvanceObraFilterFormHelper
+
+    class Meta:
+        model = AvanceObra
+        fields = ('periodo', 'centro_costo', )
