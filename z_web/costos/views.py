@@ -508,11 +508,47 @@ class AvanceObraCreateView(BaseCostosMixin, TemplateView):
                     raise IntegrityError
         except IntegrityError:
             return self.form_invalid(obra_form, avances_formset)
-        messages.success(self.request, "Avances de {} guardados correctamente.".format(centro_costo))
-        return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_url(self):
+        return HttpResponseRedirect(self.get_success_url(centro_costo))
+
+    def get_success_url(self, centro_costo):
+        messages.success(self.request, "Avances de {} guardados correctamente.".format(centro_costo))
         return reverse_lazy('costos:avances_obra_list')
+
+
+##################################
+# PROYECCIONES DE AVANCE DE OBRA #
+##################################
+
+class AvanceObraProyeccionList(AvanceObraRealList):
+    model = AvanceObraProyeccion
+    table_class = AvanceObraProyeccionTable
+    template_name = 'frontend/costos/avance_obra_proyeccion_list.html'
+
+
+class AvanceObraProyeccionEditView(AvanceObraEditView):
+    model = AvanceObraProyeccion
+    form_class = AvanceObraProyectadoEditForm
+
+    def get_url_post_form(self):
+        return reverse_lazy('costos:avances_obra_proyeccion_edit', args=(self.object.pk, ))
+
+
+class AvanceObraProyeccionDeleteView(AvanceObraDeleteView):
+    model = AvanceObraProyeccion
+
+    def get_url_post_form(self):
+        return reverse_lazy('costos:avances_obra_proyeccion_delete', args=(self.object.pk, ))
+
+
+class AvanceObraProyeccionCreateView(AvanceObraCreateView):
+    model = AvanceObraProyeccion
+    es_proyeccion = True
+    template_name = "frontend/costos/avance_obra_proyeccion_create.html"
+
+    def get_success_url(self, centro_costo):
+        messages.success(self.request, "Proyecciones de avances de {} guardados correctamente.".format(centro_costo))
+        return reverse_lazy('costos:avances_obra_proyeccion_list')
 
 
 costos_index = CostosIndexView.as_view()
@@ -532,3 +568,7 @@ avances_obra_list = AvanceObraRealList.as_view()
 avances_obra_edit = AvanceObraEditView.as_view()
 avances_obra_delete = AvanceObraDeleteView.as_view()
 avances_obra_create = AvanceObraCreateView.as_view()
+avances_obra_proyeccion_list = AvanceObraProyeccionList.as_view()
+avances_obra_proyeccion_edit = AvanceObraProyeccionEditView.as_view()
+avances_obra_proyeccion_delete = AvanceObraProyeccionDeleteView.as_view()
+avances_obra_proyeccion_create = AvanceObraProyeccionCreateView.as_view()

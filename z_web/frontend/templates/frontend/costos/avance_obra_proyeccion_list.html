@@ -1,12 +1,12 @@
 {% extends "frontend/costos/base_costos.html" %}
 {% load i18n bootstrap3 django_tables2 crispy_forms_tags %}
-{% block title %}<h2 class="main-title">Avances de obra</h2>{% endblock %}
+{% block title %}<h2 class="main-title">Proyecciones de avances de obra</h2>{% endblock %}
 
 {% block content %}
 <div class="well well-sm">
         <a class="btn btn-success pull-right ml5"
-            href="{% url 'costos:avances_obra_create' %}">
-            <i class="fa fa-plus"></i> Cargar avance de obra</a>
+            href="{% url 'costos:avances_obra_proyeccion_create' %}">
+            <i class="fa fa-plus"></i> Cargar proyección de avance de obra</a>
     <div class="row">
         <div class="col-sm-9 filters">
             {% crispy filter.form %}
@@ -18,7 +18,7 @@
     {% if is_filtered %}{% render_table table %}
     {% else %}
         <p class="alert alert-warning">
-            Utilice los filtros para visualizar los avances de obra.
+            Utilice los filtros para visualizar las proyecciones.
         </p>
     {% endif %}
     </div>

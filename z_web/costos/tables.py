@@ -99,7 +99,12 @@ class AvanceObraRealTable(CostoBaseTable):
 
 
 class AvanceObraProyeccionTable(CostoBaseTable):
+    delete_link = 'costos:avances_obra_proyeccion_delete'
+    edit_link = 'costos:avances_obra_proyeccion_edit'
 
     class Meta(CostoBaseTable.Meta):
         model = AvanceObraProyeccion
         fields = ('periodo', 'centro_costo', 'avance', 'observacion', 'links_action')
+
+    def render_avance(self, value):
+        return "{:.1f} %".format(value)

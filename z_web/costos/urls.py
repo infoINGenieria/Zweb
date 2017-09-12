@@ -22,4 +22,8 @@ urlpatterns = [
     url(r'^avance-obra/cargar/$', views.avances_obra_create, name="avances_obra_create"),
     url(r'^avance-obra/editar/(?P<pk>\d+)/$', views.avances_obra_edit, name="avances_obra_edit"),
     url(r'^avance-obra/eliminar/(?P<pk>\d+)/$', views.avances_obra_delete, name="avances_obra_delete"),
+    url(r'^avance-obra/proyeccion/$', views.avances_obra_proyeccion_list, name="avances_obra_proyeccion_list"),
+    url(r'^avance-obra/proyeccion/cargar/$', views.avances_obra_proyeccion_create, name="avances_obra_proyeccion_create"),
+    url(r'^avance-obra/proyeccion/editar/(?P<pk>\d+)/$', views.avances_obra_proyeccion_edit, name="avances_obra_proyeccion_edit"),
+    url(r'^avance-obra/proyeccion/eliminar/(?P<pk>\d+)/$', views.avances_obra_proyeccion_delete, name="avances_obra_proyeccion_delete"),
     ]
