@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'django_filters',
     'crispy_forms',
 
+    'presupuestos',
     'core',
     'indumentaria',
     'parametros',
