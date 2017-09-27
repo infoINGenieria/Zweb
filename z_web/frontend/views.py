@@ -178,6 +178,15 @@ class MSExportarCustomPanel2Excel(MSCustomPanelControl):
         return self.render_to_response(context)
 
 
+class NgIndex(LoginAndPermissionRequiredMixin, TemplateView):
+    template_name = 'frontend/ng_base.html'
+    permission_required = ('organizacion.can_manage_presupuestos', )
+    #
+
+
+# Angular app
+ng_index = NgIndex.as_view()
+
 index = Index.as_view()
 ms_panel_control = MSPanelControl.as_view()
 ms_export_panel_control_excel = MSExportarPanel2Excel.as_view()

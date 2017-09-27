@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'django_tables2',
     'django_filters',
     'crispy_forms',
+    'rest_framework',
 
     'presupuestos',
     'core',
@@ -64,7 +65,21 @@ INSTALLED_APPS = (
     'organizacion',
     'zweb_utils',
     'reportes',
+    'api',
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    # 'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', ),
+    'PAGE_SIZE': 10,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -85,6 +100,10 @@ STATICFILES_FINDERS = (
     'djangobower.finders.BowerFinder',
     'pipeline.finders.PipelineFinder',
     'compressor.finders.CompressorFinder',
+)
+
+STATICFILES_DIRS = (
+    normpath(join(SITE_ROOT, 'ng-zille', 'dist')),
 )
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
