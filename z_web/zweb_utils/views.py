@@ -119,6 +119,9 @@ def generate_menu_user(user):
     if user.has_perm("costos.can_generate_reports"):
         menu.append({'name': "Reportes", 'icon': 'print',
                      'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes', 'btn_class': 'warning'})
+    if user.has_perm("organizacion.can_manage_presupuestos"):
+        menu.append({'name': "Presupuestos", 'icon': 'file-text-o',
+                     'url': '/~/presupuestos/', 'section': 'Administrar presupuestos', 'btn_class': 'info'})
     if user.is_staff:
         menu.append({'name': "Administración", 'icon': 'cogs',
                      'url': reverse('admin:index'), 'section': 'Gestionar entidades',

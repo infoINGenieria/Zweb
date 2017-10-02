@@ -24,6 +24,19 @@ class Presupuesto(BaseModel):
     def __str__(self):
         return "Presupuesto para {}".format(self.centro_costo)
 
+    def save(self, *args, **kwargs):
+        revision = None
+        if not self.pk:
+            revision = Revision(version=0, fecha=self.fecha)
+        super(Presupuesto, self).save(*args, **kwargs)
+        if revision:
+            revision.presupuesto = self
+            revision.save()
+
+    @property
+    def revision_vigente(self):
+        return self.revisiones.latest('version')
+
 
 class TipoItemPresupuesto(BaseModel):
     """
@@ -48,6 +61,7 @@ class Revision(BaseModelWithHistory):
 
     version = models.PositiveIntegerField(verbose_name='version')
     fecha = models.DateField(verbose_name='fecha')
+    valor_dolar = models.DecimalField(verbose_name='valor dolar', decimal_places=2, max_digits=18)
 
     history = HistoricalRecords()
 
@@ -55,69 +69,72 @@ class Revision(BaseModelWithHistory):
 
     ## Estructura de costos generales
     contingencia = models.DecimalField(
-        verbose_name='contingencia', decimal_places=3, max_digits=18,
-        help_text="Sobre costos previstos")
+        verbose_name='contingencia', decimal_places=2, max_digits=18,
+        help_text="Sobre costos previstos", null=True)
 
     estructura_no_ree = models.DecimalField(
-        verbose_name='estructura no contemplada en REE', decimal_places=3, max_digits=18,
-        help_text="Sobre costos previstos")
+        verbose_name='estructura no contemplada en REE', decimal_places=2, max_digits=18,
+        help_text="Sobre costos previstos", null=True)
 
     aval_por_anticipos = models.DecimalField(
-        verbose_name='aval por anticipos', decimal_places=3, max_digits=18,
-        help_text="Sobre porcentaje de la venta")
+        verbose_name='aval por anticipos', decimal_places=2, max_digits=18,
+        help_text="Sobre porcentaje de la venta", null=True)
 
     seguro_caucion = models.DecimalField(
-        verbose_name='seguro de caución', decimal_places=3, max_digits=18,
-        help_text="Sobre venta")
+        verbose_name='seguro de caución', decimal_places=2, max_digits=18,
+        help_text="Sobre venta", null=True)
 
     aval_por_cumplimiento_contrato = models.DecimalField(
-        verbose_name='aval por cumplimiento de contrato', decimal_places=3, max_digits=18,
-        help_text="Sobre venta")
+        verbose_name='aval por cumplimiento de contrato', decimal_places=2, max_digits=18,
+        help_text="Sobre venta", null=True)
 
     aval_por_cumplimiento_garantia = models.DecimalField(
-        verbose_name='aval por cumplimiento de garantia', decimal_places=3, max_digits=18,
-        help_text="Sobre venta")
+        verbose_name='aval por cumplimiento de garantia', decimal_places=2, max_digits=18,
+        help_text="Sobre venta", null=True)
 
     seguro_5 = models.DecimalField(
-        verbose_name='seguro_5', decimal_places=3, max_digits=18,
-        help_text="Sobre venta")
+        verbose_name='seguro_5', decimal_places=2, max_digits=18,
+        help_text="Sobre venta", null=True)
 
     ## Mark up
     imprevistos = models.DecimalField(
-        verbose_name='imprevistos', decimal_places=3, max_digits=18,
-        help_text="Sobre costo industrial")
+        verbose_name='imprevistos', decimal_places=2, max_digits=18,
+        help_text="Sobre costo industrial", null=True)
 
     ganancias = models.DecimalField(
-        verbose_name='ganancias', decimal_places=3, max_digits=18,
-        help_text="Sobre costo industrial")
+        verbose_name='ganancias', decimal_places=2, max_digits=18,
+        help_text="Sobre costo industrial", null=True)
 
     impuestos_ganancias = models.DecimalField(
-        verbose_name='impuestos ganancias', decimal_places=3, max_digits=18,
-        help_text="Sobre Ganancia Neta")
+        verbose_name='impuestos ganancias', decimal_places=2, max_digits=18,
+        help_text="Sobre Ganancia Neta", null=True)
 
     sellado = models.DecimalField(
-        verbose_name='sellado', decimal_places=3, max_digits=18,
-        help_text="Sobre Venta")
+        verbose_name='sellado', decimal_places=2, max_digits=18,
+        help_text="Sobre Venta", null=True)
 
     ingresos_brutos = models.DecimalField(
-        verbose_name='ingresos brutos', decimal_places=3, max_digits=18,
-        help_text="Sobre Venta")
+        verbose_name='ingresos brutos', decimal_places=2, max_digits=18,
+        help_text="Sobre Venta", null=True)
 
     impuestos_cheque = models.DecimalField(
-        verbose_name='impuestos al cheque', decimal_places=3, max_digits=18,
-        help_text="Sobre Venta")
+        verbose_name='impuestos al cheque', decimal_places=2, max_digits=18,
+        help_text="Sobre Venta", null=True)
 
     costo_financiero = models.DecimalField(
-        verbose_name='costo financiero', decimal_places=3, max_digits=18,
-        help_text="Sobre Costo industrial")
+        verbose_name='costo financiero', decimal_places=2, max_digits=18,
+        help_text="Sobre Costo industrial", null=True)
 
     ## VENTA
     precio_venta = models.DecimalField(
-        verbose_name='precio de venta', decimal_places=3, max_digits=18)
+        verbose_name='precio de venta', decimal_places=2, max_digits=18, null=True)
+    precio_venta_dolar = models.DecimalField(
+        verbose_name='precio de venta (dolar)', decimal_places=2, max_digits=18, null=True)
 
     class Meta:
         verbose_name = 'revision'
         verbose_name_plural = 'revisiones'
+        unique_together = ('presupuesto', 'version')
 
     def __str__(self):
         return "Revisión {} ({})".format(self.version, self.presupuesto)
@@ -131,9 +148,10 @@ class ItemPresupuesto(BaseModelWithHistory):
         Revision, verbose_name='revision', related_name='items')
     tipo = models.ForeignKey(
         TipoItemPresupuesto, verbose_name='tipo de item', related_name='valores')
-    pesos = models.DecimalField(verbose_name='$', decimal_places=3, max_digits=18)
-    dolares = models.DecimalField(verbose_name='USD', decimal_places=3, max_digits=18)
+    pesos = models.DecimalField(verbose_name='$', decimal_places=2, max_digits=18)
+    dolares = models.DecimalField(verbose_name='USD', decimal_places=2, max_digits=18)
     observaciones = models.TextField(verbose_name='observaciones', null=True, blank=True)
+    indirecto = models.BooleanField(verbose_name='indirecto', default=False)
 
     history = HistoricalRecords()
 

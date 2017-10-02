@@ -20,3 +20,4 @@ django-model-utils
 django-formset-js
 django-crispy-forms
 factory_boy
+djangorestframework

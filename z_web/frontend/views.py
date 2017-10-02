@@ -1,10 +1,10 @@
 from decimal import Decimal as D
 
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 from django.utils.safestring import mark_safe
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 
 from core.models import Obras
 from frontend.forms import CustomPanelControlForm
@@ -17,8 +17,12 @@ from .stats import get_utilizacion_equipo, get_cc_on_periodo, get_ventas_costos,
 from zweb_utils.excel import ExportPanelControl
 
 
-class Index(LoginRequiredMixin, TemplateView):
-    template_name = 'frontend/index.html'
+class Index(LoginRequiredMixin, RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy('frontend:ng_index')
+    #template_name = 'frontend/index.html'
 
 
 class MSPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
@@ -177,6 +181,15 @@ class MSExportarCustomPanel2Excel(MSCustomPanelControl):
             return response
         return self.render_to_response(context)
 
+
+class NgIndex(LoginAndPermissionRequiredMixin, TemplateView):
+    template_name = 'frontend/ng_base.html'
+    permission_required = ('organizacion.can_manage_presupuestos', )
+    #
+
+
+# Angular app
+ng_index = NgIndex.as_view()
 
 index = Index.as_view()
 ms_panel_control = MSPanelControl.as_view()

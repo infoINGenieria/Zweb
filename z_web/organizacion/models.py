@@ -16,6 +16,9 @@ class UnidadNegocio(BaseModel):
     class Meta:
         verbose_name = "unidad de negocio"
         verbose_name_plural = "unidades de negocio"
+        permissions = (
+            ("can_manage_presupuestos", "Puede administrar presupuestos"),
+        )
 
     def __str__(self):
         return "{} - {}".format(self.codigo, self.nombre)
