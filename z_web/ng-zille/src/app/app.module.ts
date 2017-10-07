@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { BootstrapModalModule } from 'ngx-modialog/plugins/bootstrap';
 import { ModalModule } from 'ngx-modialog';
@@ -36,6 +37,7 @@ import { IndexComponent } from './components/index/index.component';
     ModalModule.forRoot(),
     BootstrapModalModule,
     APP_ROUTING,
+    BrowserAnimationsModule,
     // CurrencyMaskModule
   ],
   providers: [

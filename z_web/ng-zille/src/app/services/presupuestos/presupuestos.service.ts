@@ -16,7 +16,13 @@ export class PresupuestosService {
   /* Presupuestos */
   get_presupuestos(): Observable<IPresupuesto[]> {
     return this.http.get(`/api/presupuestos/`)
-      .map((r: Response) => r.json() as IPresupuesto[]);
+      .map((r: Response) => r.json()['results'] as IPresupuesto[]);
+  }
+
+  create_presupuesto(presupuesto: IPresupuesto): Observable<IPresupuesto> {
+    const bodyString = JSON.stringify(presupuesto);
+    return this.http.post(`/api/presupuestos/`, bodyString)
+      .map((r: Response) => r.json() as IPresupuesto);
   }
 
   get_revision(presu_pk: number, version: number): Observable<IRevision> {

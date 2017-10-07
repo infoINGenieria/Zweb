@@ -1,0 +1,26 @@
+<h1>Presupuestos</h1>
+
+<a class="btn btn-success" [routerLink]="['/presupuestos', 'nuevo']">Nuevo presupuesto</a>
+<a class="btn btn-primary" [routerLink]="['/tipo-items']">Tipo de ítems</a>
+<hr />
+<table class="table" *ngIf="presupuestos.length>0">
+  <thead>
+    <tr>
+      <th>Centro de costos</th>
+      <th>Fecha</th>
+      <th>Aprobado</th>
+      <th>Revisión vigente</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let presupuesto of presupuestos" [@fadeInAnimation]>
+      <td>{{ presupuesto.centro_costo.codigo }}</td>
+      <td>{{ presupuesto.fecha }}</td>
+      <td>{{ presupuesto.aprobado }}</td>
+      <td><a class="btn btn-success btn-sm" [routerLink]="['/presupuestos', presupuesto.pk, 'v', presupuesto.vigente]">Revisión {{ presupuesto.vigente }}</a></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<p *ngIf="presupuestos.length==0 && loaded" class="alert alert-warning ">No ha presupuestos para visualizar.</p>

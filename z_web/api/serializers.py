@@ -37,6 +37,13 @@ class PresupuestoSerializer(serializers.ModelSerializer):
         model = Presupuesto
         fields = ('pk', 'centro_costo', 'centro_costo_id', 'fecha', 'aprobado', 'vigente')
 
+    def create(self, validated_data):
+        import ipdb ; ipdb.set_trace()
+        centro = validated_data.pop('centro_costo')
+        presupuesto = Presupuesto(**validated_data)
+        presupuesto.centro_costo_id = centro["pk"]
+        presupuesto.save()
+        return presupuesto
 
 class RevisionSerializer(serializers.ModelSerializer):
     items = ItemPresupuestoSerializer(many=True)
@@ -63,6 +70,7 @@ class RevisionSerializer(serializers.ModelSerializer):
         return revision
 
     def update(self, instance, validated_data):
+        import ipdb ; ipdb.set_trace()
         items_data = validated_data.pop('items')
         presupuesto_data = validated_data.pop('presupuesto')
 

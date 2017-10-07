@@ -1,0 +1,19 @@
+.clickable {
+    cursor: pointer;
+}
+#table-costos {
+    input[type="tel"] {
+        text-align: right;
+    }
+    th:first-child {
+        width: 25%;
+    }
+    .trash {
+        width: 40px;
+        text-align: center;
+    }
+
+    .num-total {
+        width: 20%;
+    }
+}

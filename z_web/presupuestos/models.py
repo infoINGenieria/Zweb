@@ -27,7 +27,7 @@ class Presupuesto(BaseModel):
     def save(self, *args, **kwargs):
         revision = None
         if not self.pk:
-            revision = Revision(version=0, fecha=self.fecha)
+            revision = Revision(version=0, fecha=self.fecha, valor_dolar=0)
         super(Presupuesto, self).save(*args, **kwargs)
         if revision:
             revision.presupuesto = self
