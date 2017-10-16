@@ -76,8 +76,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
-    #'DATE_FORMAT': '%d/%m/%Y',
-
+    'DATE_FORMAT': '%d/%m/%Y',
+    'DATE_INPUT_FORMATS': ['%d/%m/%Y', 'iso-8601'],
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', ),
     'PAGE_SIZE': 10,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'

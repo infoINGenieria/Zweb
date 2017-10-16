@@ -1,7 +1,8 @@
 # coding: utf-8
 from django.http import Http404, HttpResponse
 
-from rest_framework.exceptions import MethodNotAllowed, ValidationError
+from rest_framework import status
+from rest_framework.exceptions import MethodNotAllowed, ValidationError, ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
@@ -9,6 +10,7 @@ from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelV
 from api.serializers import (
     PresupuestoSerializer, RevisionSerializer, TipoItemPresupuestoSerializer,
     ItemPresupuestoSerializer, ObrasSerializer)
+from api.filters import PresupuestoFilter
 from core.models import Obras, UserExtension
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto, TipoItemPresupuesto)
@@ -51,6 +53,7 @@ class PresupuestoRelatedMixin(object):
 
 class PresupuestoViewSet(ModelViewSet, AuthView):
     serializer_class = PresupuestoSerializer
+    filter_class = PresupuestoFilter
 
     def get_queryset(self):
         qs = Presupuesto.objects.all()
@@ -98,6 +101,16 @@ class ItemPresupuestoViewSet(PresupuestoRelatedMixin, ModelViewSet, AuthView):
 class TipoItemPresupuestoViewSet(ModelViewSet, AuthView):
     serializer_class = TipoItemPresupuestoSerializer
     queryset = TipoItemPresupuesto.objects.all()
+
+    def destroy(self, *args, **kwargs):
+        obj = self.get_object()
+        if ItemPresupuesto.objects.filter(tipo=obj).exists():
+            raise ParseError("Hay presupuestos utilizando este Tipo de "
+                             "ítem de presupuesto. No se puede eliminar.")
+            # return Response(data={'message': "Too late to delete"},
+                            # status=status.HTTP_400_BAD_REQUEST)
+        self.perform_destroy(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CentroCostoViewSet(ModelViewSet, AuthView):

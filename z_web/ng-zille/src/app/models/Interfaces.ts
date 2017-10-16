@@ -9,9 +9,13 @@ export interface MenuEntry {
 export interface IPresupuesto {
     pk?: number;
     centro_costo_id: number;
-    fecha: Date;
+    fecha: string;
+    fecha_vigente: Date;
     aprobado: boolean;
     vigente: number;
+    venta_actual: number;
+    venta_revision_anterior: number;
+    versiones: Array<number>;
     centro_costo: ICentroCosto;
 }
 
@@ -28,9 +32,15 @@ export interface ICentroCosto {
 export interface IRevision {
     pk?: number;
     presupuesto: IPresupuesto;
-    fecha: Date;
+    fecha: string;
     version: number;
     valor_dolar: number;
+
+    // venta
+    venta_contractual_b0: number;
+    ordenes_cambio: number;
+    reajustes_precio: number;
+    reclamos_reconocidos: number;
 
     contingencia: number;
     estructura_no_ree: number;
@@ -46,8 +56,6 @@ export interface IRevision {
     ingresos_brutos: number;
     impuestos_cheque: number;
     costo_financiero: number;
-    precio_venta: number;
-    precio_venta_dolar: number;
 
     items: Array<IItemPresupuesto>;
 }

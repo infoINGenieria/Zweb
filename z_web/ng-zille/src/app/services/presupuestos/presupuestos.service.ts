@@ -1,7 +1,7 @@
 import { BaseApiService } from './../base-api/base-api.service';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Response} from '@angular/http';
+import { Observable } from 'rxjs/Rx';
+import { Response, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
@@ -14,9 +14,19 @@ export class PresupuestosService {
   }
 
   /* Presupuestos */
-  get_presupuestos(): Observable<IPresupuesto[]> {
-    return this.http.get(`/api/presupuestos/`)
-      .map((r: Response) => r.json() as IPresupuesto[]);
+  get_presupuestos(centro_costo?, desde?, hasta?): Observable<IPresupuesto[]> {
+    let myParams = new URLSearchParams();
+    myParams.set('centro_costo', centro_costo || '');
+    myParams.set('desde', desde || '');
+    myParams.set('hasta', hasta || '');
+    return this.http.get(`/api/presupuestos/`, myParams)
+      .map((r: Response) => r.json()['results'] as IPresupuesto[]);
+  }
+
+  create_presupuesto(presupuesto: IPresupuesto): Observable<IPresupuesto> {
+    const bodyString = JSON.stringify(presupuesto);
+    return this.http.post(`/api/presupuestos/`, bodyString)
+      .map((r: Response) => r.json() as IPresupuesto);
   }
 
   get_revision(presu_pk: number, version: number): Observable<IRevision> {
@@ -32,8 +42,14 @@ export class PresupuestosService {
 
   save_revision(revision: IRevision): Observable<IRevision> {
     const bodyString = JSON.stringify(revision);
-    return this.http.put(`/api/presupuestos/${revision.presupuesto.pk}/v/${revision.version}`, bodyString)
+    return this.http.put(`/api/presupuestos/${revision.presupuesto.pk}/v/${revision.version}/`, bodyString)
       .map((res: Response) => res.json() as IRevision);
+  }
+
+  delete_presupuesto(presupuesto: IPresupuesto): Observable<IPresupuesto> {
+    return this.http.delete(`/api/presupuestos/${presupuesto.pk}/`)
+      .map((res: Response) => res.json())
+      .catch((error: any) => Observable.throw(error.json().detail || 'Server error'));
   }
 
 
@@ -60,6 +76,7 @@ export class PresupuestosService {
   delete_tipo_item(item: ITipoItemPresupuesto): Observable<ITipoItemPresupuesto[]> {
 
     return this.http.delete(`/api/tipo_items/${item.pk}/`)
-      .map((res: Response) => res.json());
+      .map((res: Response) => res.json())
+      .catch((error: any) => Observable.throw(error.json().detail || 'Server error'));
   }
 }

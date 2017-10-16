@@ -1,7 +1,9 @@
-import { MenuEntry } from './../../models/Interfaces';
 import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
-import {Http, Headers, RequestOptions} from '@angular/http';
+import {Http, Headers, RequestOptions, Response, URLSearchParams } from '@angular/http';
+import 'rxjs/add/operator/map';
+
+import { MenuEntry } from './../../models/Interfaces';
 
 @Injectable()
 export class BaseApiService {
@@ -18,33 +20,32 @@ export class BaseApiService {
     }
   }
 
-  private getRequestOptions() {
+  private getRequestOptions(params?: URLSearchParams) {
     const headers = new Headers({'Content-Type': 'application/json', 'X-CSRFToken': this.xsrfToken});
+    if (params) {
+      return new RequestOptions({headers: headers, params: params});
+    }
     return new RequestOptions({headers: headers});
   }
 
-  get(url) {
-    return this.http.get(url, this.getRequestOptions())
-      .catch(error => error.json());
+  get(url, params?: URLSearchParams): Observable<Response> {
+    return this.http.get(url, this.getRequestOptions(params));
   }
 
-  post(url, payload) {
-    return this.http.post(url, payload, this.getRequestOptions())
-      .catch(error => error.json());
+  post(url, payload): Observable<Response> {
+    return this.http.post(url, payload, this.getRequestOptions());
   }
 
-  put(url, payload) {
-    return this.http.put(url, payload, this.getRequestOptions())
-      .catch(error => error.json());
+  put(url, payload): Observable<Response> {
+    return this.http.put(url, payload, this.getRequestOptions());
   }
-  delete(url) {
-    return this.http.delete(url, this.getRequestOptions())
-      .catch(error => error.json());
+  delete(url): Observable<Response> {
+    return this.http.delete(url, this.getRequestOptions());
   }
 
   /*   Common methods API */
 
-  get_my_menu(): Observable<any> {
+  get_my_menu(): Observable<MenuEntry[]> {
     return this.get('/api/my_menu/')
       .map((r: Response) => r.json());
   }

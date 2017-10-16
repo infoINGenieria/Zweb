@@ -2,16 +2,20 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { BootstrapModalModule } from 'ngx-modialog/plugins/bootstrap';
 import { ModalModule } from 'ngx-modialog';
 // import { CurrencyMaskModule } from 'ng2-currency-mask';
-
+import { ToastyModule } from 'ng2-toasty';
+// import { MyDatePickerModule } from 'mydatepicker';
+import { DpDatePickerModule } from 'ng2-date-picker';
 import { APP_ROUTING } from './app.routes';
 
 // Services
-import { CoreService } from './services/core/core.service';
 import { BaseApiService } from './services/base-api/base-api.service';
+import { CoreService } from './services/core/core.service';
+import { NotificationService } from './services/core/notifications.service';
 
 // Own
 import { AppComponent } from './app.component';
@@ -27,15 +31,18 @@ import { IndexComponent } from './components/index/index.component';
     PresupuestosComponent,
     PresupuestoComponent,
     TipoItemPresupuestoComponent,
-    IndexComponent
+    IndexComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     ModalModule.forRoot(),
+    ToastyModule.forRoot(),
+    DpDatePickerModule,
     BootstrapModalModule,
     APP_ROUTING,
+    BrowserAnimationsModule,
     // CurrencyMaskModule
   ],
   providers: [
@@ -43,6 +50,7 @@ import { IndexComponent } from './components/index/index.component';
     BaseApiService,
     PresupuestosService,
     CoreService,
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })

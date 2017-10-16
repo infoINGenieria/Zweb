@@ -27,15 +27,36 @@ class Presupuesto(BaseModel):
     def save(self, *args, **kwargs):
         revision = None
         if not self.pk:
-            revision = Revision(version=0, fecha=self.fecha)
+            revision = Revision(version=0, fecha=self.fecha, valor_dolar=0)
         super(Presupuesto, self).save(*args, **kwargs)
         if revision:
             revision.presupuesto = self
             revision.save()
 
     @property
+    def fecha_vigente(self):
+        if self.revision_vigente:
+            return self.revision_vigente.fecha
+        return None
+
+    @property
     def revision_vigente(self):
         return self.revisiones.latest('version')
+
+    @property
+    def venta_actual(self):
+        return self.revision_vigente.total_venta
+
+    @property
+    def venta_revision_anterior(self):
+        if self.revision_vigente.version == 0:
+            return 0
+        anterior = self.revisiones.get(version=self.revision_vigente.version - 1)
+        return anterior.total_venta
+
+    @property
+    def versiones(self):
+        return self.revisiones.values_list('version', flat=True).order_by('-version')
 
 
 class TipoItemPresupuesto(BaseModel):
@@ -66,6 +87,18 @@ class Revision(BaseModelWithHistory):
     history = HistoricalRecords()
 
     # Campos basados en el excel
+    venta_contractual_b0 = models.DecimalField(
+        verbose_name='venta contractual base cero',
+        decimal_places=2, max_digits=18, null=True)
+    ordenes_cambio = models.DecimalField(
+        verbose_name='órdenes de cambio',
+        decimal_places=2, max_digits=18, null=True)
+    reajustes_precio = models.DecimalField(
+        verbose_name='reajustes de precio',
+        decimal_places=2, max_digits=18, null=True)
+    reclamos_reconocidos = models.DecimalField(
+        verbose_name='reclamos reconocidos',
+        decimal_places=2, max_digits=18, null=True)
 
     ## Estructura de costos generales
     contingencia = models.DecimalField(
@@ -125,12 +158,6 @@ class Revision(BaseModelWithHistory):
         verbose_name='costo financiero', decimal_places=2, max_digits=18,
         help_text="Sobre Costo industrial", null=True)
 
-    ## VENTA
-    precio_venta = models.DecimalField(
-        verbose_name='precio de venta', decimal_places=2, max_digits=18, null=True)
-    precio_venta_dolar = models.DecimalField(
-        verbose_name='precio de venta (dolar)', decimal_places=2, max_digits=18, null=True)
-
     class Meta:
         verbose_name = 'revision'
         verbose_name_plural = 'revisiones'
@@ -138,6 +165,14 @@ class Revision(BaseModelWithHistory):
 
     def __str__(self):
         return "Revisión {} ({})".format(self.version, self.presupuesto)
+
+    @property
+    def total_venta(self):
+        total = self.venta_contractual_b0 if self.venta_contractual_b0 else 0
+        total += self.ordenes_cambio if self.ordenes_cambio else 0
+        total += self.reajustes_precio if self.reajustes_precio else 0
+        total += self.reclamos_reconocidos if self.reclamos_reconocidos else 0
+        return total
 
 
 class ItemPresupuesto(BaseModelWithHistory):

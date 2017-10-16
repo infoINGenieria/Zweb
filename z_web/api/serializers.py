@@ -31,12 +31,27 @@ class ObrasSerializer(serializers.ModelSerializer):
 class PresupuestoSerializer(serializers.ModelSerializer):
     centro_costo = ObrasSerializer(read_only=True)
     centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
+    versiones = serializers.ListField(
+        child=serializers.IntegerField(min_value=0, max_value=100))
     vigente = serializers.IntegerField(source='revision_vigente.version', read_only=True)
+    venta_actual = serializers.DecimalField(
+        max_digits=18, decimal_places=2, read_only=True)
+    venta_revision_anterior = serializers.DecimalField(
+        max_digits=18, decimal_places=2, read_only=True)
+    fecha_vigente = serializers.DateField(read_only=True)
 
     class Meta:
         model = Presupuesto
-        fields = ('pk', 'centro_costo', 'centro_costo_id', 'fecha', 'aprobado', 'vigente')
+        fields = ('pk', 'centro_costo', 'centro_costo_id', 'fecha', 'aprobado',
+                  'vigente', 'fecha_vigente', 'venta_actual', 'venta_revision_anterior',
+                  'versiones')
 
+    def create(self, validated_data):
+        centro = validated_data.pop('centro_costo')
+        presupuesto = Presupuesto(**validated_data)
+        presupuesto.centro_costo_id = centro["pk"]
+        presupuesto.save()
+        return presupuesto
 
 class RevisionSerializer(serializers.ModelSerializer):
     items = ItemPresupuestoSerializer(many=True)
@@ -45,12 +60,13 @@ class RevisionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Revision
         fields = ('pk', 'version', 'fecha', 'valor_dolar',
+                  'venta_contractual_b0', 'ordenes_cambio', 'reajustes_precio',
+                  'reclamos_reconocidos',
                   'contingencia', 'estructura_no_ree', 'aval_por_anticipos',
                   'seguro_caucion', 'aval_por_cumplimiento_contrato',
                   'aval_por_cumplimiento_garantia', 'seguro_5', 'imprevistos',
                   'ganancias', 'impuestos_ganancias', 'sellado', 'ingresos_brutos',
-                  'impuestos_cheque', 'costo_financiero', 'precio_venta',
-                  'precio_venta_dolar', 'presupuesto', 'items')
+                  'impuestos_cheque', 'costo_financiero', 'presupuesto', 'items')
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
@@ -67,7 +83,6 @@ class RevisionSerializer(serializers.ModelSerializer):
         presupuesto_data = validated_data.pop('presupuesto')
 
         instance.presupuesto.centro_costo_id = presupuesto_data.get('centro_costo_id', instance.presupuesto.centro_costo_id)
-        instance.presupuesto.fecha = presupuesto_data.get('fecha', instance.presupuesto.fecha)
         instance.presupuesto.aprobado = presupuesto_data.get('aprobado', instance.presupuesto.aprobado)
 
         for attr in validated_data.keys():

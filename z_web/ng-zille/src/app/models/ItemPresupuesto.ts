@@ -25,12 +25,12 @@ export class ItemPresupuesto implements IItemPresupuesto {
         }
     }
 
-    peso_dolar(valor_dolar: number): number {
+    /* peso_dolar(valor_dolar: number): number {
         const calc = Number(this.dolares) * valor_dolar;
         return calc;
     }
 
     total_item(valor_dolar: number): number {
         return Number(this.pesos) + this.peso_dolar(valor_dolar);
-    }
+    } */
 }
