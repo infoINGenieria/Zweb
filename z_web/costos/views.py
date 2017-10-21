@@ -19,7 +19,7 @@ from zweb_utils.mixins import TableFilterListView, ModalViewMixin
 from zweb_utils.views import LoginAndPermissionRequiredMixin
 from .models import (CostoParametro, Costo, CostoTipo, CostoProyeccion, CostoReal,
                      AvanceObraReal, AvanceObraProyeccion, AvanceObra)
-from .forms import (PeriodoSelectForm, CostoItemForm, CostoItemFamiliaForm,
+from .forms import (CostoItemForm, CostoItemFamiliaForm,
                     CopiaCostoForm, CostoCCForm, PeriodoCCForm, PeriodoCostoTipoForm,
                     CostoEquipoForm, CostoEditPorCCForm, CostoEditPorEquipoForm,
                     ProyeccionEditPorCCForm, ProyeccionEditPorEquipoForm,

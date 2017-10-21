@@ -11,8 +11,8 @@ from parametros.models import Periodo, FamiliaEquipo
 from costos.models import CostoReal, CostoTipo, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion, AvanceObra
 
 
-class PeriodoSelectForm(forms.Form):
-    periodo = forms.ModelChoiceField(queryset=Periodo.objects.all())
+# class PeriodoSelectForm(forms.Form):
+    # periodo = forms.ModelChoiceField(queryset=Periodo.objects.all())
 
 
 class CentroCostoSelectForm(forms.Form):
@@ -22,8 +22,12 @@ class CentroCostoSelectForm(forms.Form):
 class CopiaCostoForm(forms.Form):
     tipo_costos = forms.ModelMultipleChoiceField(
         label="Tipos de costo", queryset=CostoTipo.objects.all(), widget=forms.CheckboxSelectMultiple())
-    de_periodo = forms.ModelChoiceField(queryset=Periodo.objects.all(), label="Periodo de origen")
-    a_periodo = forms.ModelChoiceField(queryset=Periodo.objects.all(), label="Periodo de destino")
+    de_periodo = forms.ModelChoiceField(
+        queryset=Periodo.con_parametros_costos.all(), label="Periodo de origen",
+        help_text="Sólo se visualizan aquellos periodos con parámetros de costos asociados.")
+    a_periodo = forms.ModelChoiceField(
+        queryset=Periodo.con_parametros_costos.all(), label="Periodo de destino",
+        help_text="Sólo se visualizan aquellos periodos con parámetros de costos asociados.")
     recalcular = forms.BooleanField(required=False, initial=False, label="¿Recalcular costos?",
                                     help_text="Al seleccionar esta opción, el valor de cada costos será recalculado "
                                               "según el valor del dolar para el periodo destino")
@@ -44,7 +48,9 @@ class CostoItemFamiliaForm(forms.Form):
 
 
 class PeriodoCCForm(forms.Form):
-    periodo = forms.ModelChoiceField(queryset=Periodo.objects.all())
+    periodo = forms.ModelChoiceField(
+        queryset=Periodo.con_parametros_costos.all(),
+        help_text="Sólo se visualizan aquellos periodos con parámetros de costos asociados.")
     centro_costo = forms.ModelChoiceField(
         label="Centro de costos", queryset=Obras.objects.filter(es_cc=True))
 
@@ -56,7 +62,9 @@ class CostoCCForm(forms.Form):
 
 
 class PeriodoCostoTipoForm(forms.Form):
-    periodo = forms.ModelChoiceField(queryset=Periodo.objects.all())
+    periodo = forms.ModelChoiceField(
+        queryset=Periodo.con_parametros_costos.all(),
+        help_text="Sólo se visualizan aquellos periodos con parámetros de costos asociados.")
     tipo_costo = forms.ModelChoiceField(
         CostoTipo.objects.filter(relacionado_con='eq'))
 
@@ -70,7 +78,7 @@ class CostoEquipoForm(forms.Form):
 
 
 class AvanceObraCreateForm(forms.ModelForm):
-    periodo = forms.ModelChoiceField(queryset=Periodo.objects.all(), required=True)
+    periodo = forms.ModelChoiceField(queryset=Periodo.con_parametros_costos.all(), required=True)
 
     class Meta:
         model = AvanceObra
@@ -91,6 +99,7 @@ Forms usados por los popup
 """
 
 class CostoEditPorCCForm(forms.ModelForm):
+    periodo = forms.ModelChoiceField(queryset=Periodo.con_parametros_costos.all(), required=True)
 
     class Meta:
         model = CostoReal
@@ -110,6 +119,7 @@ class CostoEditPorCCForm(forms.ModelForm):
 
 
 class CostoEditPorEquipoForm(forms.ModelForm):
+    periodo = forms.ModelChoiceField(queryset=Periodo.con_parametros_costos.all(), required=True)
 
     class Meta:
         model = CostoReal
@@ -152,6 +162,7 @@ class ProyeccionEditPorEquipoForm(CostoEditPorEquipoForm):
 
 
 class AvanceObraEditForm(forms.ModelForm):
+    periodo = forms.ModelChoiceField(queryset=Periodo.con_parametros_costos.all(), required=True)
 
     class Meta:
         model = AvanceObraReal

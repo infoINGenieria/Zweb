@@ -5,7 +5,7 @@ from django.db import models
 from model_utils.managers import QueryManager
 
 from core.models import Obras
-from parametros.models import Periodo, FamiliaEquipo
+from parametros.models import Periodo, FamiliaEquipo, Parametro
 from zweb_utils.models import BaseModel
 
 

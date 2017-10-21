@@ -1,6 +1,10 @@
 {% extends "frontend/costos/base_costos.html" %}
 {% load i18n bootstrap3 django_tables2 crispy_forms_tags %}
-{% block title %}<h2 class="main-title">Gestión de costos</h2>{% endblock %}
+{% block title %}
+<h1>
+    <a class="btn btn-default" href="{% url 'costos:index' %}"><i class="fa fa-chevron-left"></i></a> Gestión de costos
+</h1><hr />
+{% endblock %}
 
 {% block content %}
 <div class="well well-sm">

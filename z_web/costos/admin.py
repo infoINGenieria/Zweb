@@ -54,7 +54,7 @@ class CostoAdmin(admin.ModelAdmin):
 class CostoProyeccionAdmin(CostoAdmin):
 
     def has_add_permission(self, request):
-        return True
+        return False
 
 
 # # Registramos todos los proxies de los costos
