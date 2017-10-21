@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 from costos.models import CostoParametro, Costo, CostoTipo
 from core.models import Obras
-from registro.models import Partediario, Certificacion, AjusteCombustible, CertificacionInterna
+from registro.models import Partediario, CertificacionReal, AjusteCombustible, CertificacionInterna
 
 
 def get_headers_costos():
@@ -99,10 +99,10 @@ def get_utilizacion_equipo(periodo, limit_cc=None):
     los equipos que se utilizaron y la cantidad de días. Luego
     se calculan los costos por equipo utilizando los costos asociados a la familia x la cantidad de días de uso.
     """
-    obras = list(Certificacion.objects.filter(periodo=periodo).values_list('obra_id', flat=True))
+    obras = list(CertificacionReal.objects.filter(periodo=periodo).values_list('obra_id', flat=True))
     obras += list(CertificacionInterna.objects.filter(periodo=periodo).values_list('obra_id', flat=True))
     if not obras:
-        raise Certificacion.DoesNotExist
+        raise CertificacionReal.DoesNotExist
     elif limit_cc:
         obras = set(obras).intersection(limit_cc)
     qs = Partediario.objects.filter(
@@ -144,12 +144,12 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
     """
     param = CostoParametro.objects.get(periodo=periodo)
     # Todas las obras implicadas en costos
-    ccs1 = Certificacion.objects.select_related('obra').filter(
+    ccs1 = CertificacionReal.objects.select_related('obra').filter(
         periodo=periodo).values_list('obra_id', 'obra__codigo')
     serv = CertificacionInterna.objects.select_related('obra').filter(
         periodo=periodo).values_list('obra_id', 'obra__codigo')
     if not ccs1.exists() and not serv.exists():
-        raise Certificacion.DoesNotExist
+        raise CertificacionReal.DoesNotExist
 
     # Busco las cabeceras (CC no prorrateable)
     no_prorrat = dict(ccs1)
@@ -268,7 +268,7 @@ def get_ventas_costos(periodo, totales_costos, get_dict=False):
     obras = dict(Obras.objects.filter(id__in=ids).values_list('id', 'codigo'))
     # Como las certificaciones tiene ítems, debemos obtener su sumatoria
     cert = dict(
-        Certificacion.objects.filter(periodo=periodo, obra_id__in=ids).annotate(
+        CertificacionReal.objects.filter(periodo=periodo, obra_id__in=ids).annotate(
             total=Sum('items__monto')).values_list('obra_id', 'total'))
     cert_interna = dict(
         CertificacionInterna.objects.filter(periodo=periodo, obra_id__in=ids).values_list('obra_id', 'monto'))

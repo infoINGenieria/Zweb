@@ -1,3 +1,4 @@
+import { ICentroCosto, ICertificacionItem } from './Interfaces';
 export interface MenuEntry {
     name: string;
     icon: string;
@@ -74,3 +75,30 @@ export interface ITipoItemPresupuesto {
     pk?: number;
     nombre: string;
 }
+
+export interface ICertificacionItem {
+    pk?: number;
+    descripcion: string;
+    monto: number;
+    adicional: string;
+}
+
+export interface IPeriodo {
+    pk?: number;
+    descripcion: string;
+    fecha_inicio: string;
+    fecha_fin: string;
+}
+
+export interface ICertificacion {
+    pk?: number;
+    periodo: IPeriodo;
+    periodo_id: number;
+    obra: ICentroCosto;
+    obra_id: number;
+    items: Array<ICertificacionItem>;
+    total: number;
+    total_sin_adicional: number;
+    total_adicional: number;
+}
+

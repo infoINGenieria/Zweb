@@ -122,6 +122,9 @@ def generate_menu_user(user):
     if user.has_perm("organizacion.can_manage_presupuestos"):
         menu.append({'name': "Presupuestos", 'icon': 'file-text-o',
                      'url': '/~/presupuestos/', 'section': 'Administrar presupuestos', 'btn_class': 'info'})
+    if user.has_perm("registro_can_manage_certificaciones"):
+        menu.append({'name': "Certificaciones", 'icon': 'certificate',
+                     'url': '/~/certificaciones/index', 'section': 'Administrar certificaciones', 'btn_class': 'success'})
     if user.is_staff:
         menu.append({'name': "Administración", 'icon': 'cogs',
                      'url': reverse('admin:index'), 'section': 'Gestionar entidades',

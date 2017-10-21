@@ -1,3 +1,4 @@
+import { RegistroService } from './services/registro/registro.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -23,6 +24,9 @@ import { PresupuestoComponent } from './components/presupuesto/presupuesto.compo
 import { PresupuestosComponent } from './components/presupuestos/presupuestos.component';
 import { PresupuestosService } from './services/presupuestos/presupuestos.service';
 import { TipoItemPresupuestoComponent } from './components/tipo-item-presupuesto/tipo-item-presupuesto.component';
+import {
+  CertificacionesIndexComponent, CertificacionesRealComponent, CertificacionRealComponent,
+  CertificacionesProyeccionComponent, CertificacionProyeccionComponent } from './components/certificaciones';
 import { IndexComponent } from './components/index/index.component';
 
 @NgModule({
@@ -32,6 +36,11 @@ import { IndexComponent } from './components/index/index.component';
     PresupuestoComponent,
     TipoItemPresupuestoComponent,
     IndexComponent,
+    CertificacionesRealComponent,
+    CertificacionRealComponent,
+    CertificacionesProyeccionComponent,
+    CertificacionesIndexComponent,
+    CertificacionProyeccionComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +59,8 @@ import { IndexComponent } from './components/index/index.component';
     BaseApiService,
     PresupuestosService,
     CoreService,
-    NotificationService
+    NotificationService,
+    RegistroService
   ],
   bootstrap: [AppComponent]
 })

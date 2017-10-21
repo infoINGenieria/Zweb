@@ -11,7 +11,6 @@ import { NgForm } from '@angular/forms';
 import { PresupuestosService } from './../../services/presupuestos/presupuestos.service';
 import { IPresupuesto, ICentroCosto } from './../../models/Interfaces';
 
-import { trigger, style, transition, animate, group } from '@angular/animations';
 @Component({
   selector: 'app-presupuestos',
   templateUrl: './presupuestos.component.html',

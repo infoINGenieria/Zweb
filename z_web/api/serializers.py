@@ -1,9 +1,13 @@
 # coding: utf-8
-from rest_framework import serializers
+from django.db.utils import IntegrityError
+from rest_framework import serializers, status
+from rest_framework.response import Response
 
 from core.models import Obras
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto, TipoItemPresupuesto)
+from registro.models import CertificacionItem, CertificacionReal, CertificacionProyeccion
+from parametros.models import Periodo
 
 
 class TipoItemPresupuestoSerializer(serializers.ModelSerializer):
@@ -95,3 +99,79 @@ class RevisionSerializer(serializers.ModelSerializer):
             ItemPresupuesto.objects.create(revision=instance, **item)
         # actualizar, crear y borrar items
         return instance
+
+class CertificacionItemSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+
+    class Meta:
+        model = CertificacionItem
+        fields = ('pk', 'descripcion', 'monto', 'adicional')
+
+
+class PeriodoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Periodo
+        fields = ('pk', 'descripcion', 'fecha_inicio', 'fecha_fin')
+
+
+class CertificacionRealSerializer(serializers.ModelSerializer):
+    periodo = PeriodoSerializer(read_only=True)
+    periodo_id = serializers.IntegerField(source='periodo.pk')
+    obra = ObrasSerializer(read_only=True)
+    obra_id = serializers.IntegerField(source='obra.pk')
+    items = CertificacionItemSerializer(many=True)
+    total = serializers.DecimalField(
+        max_digits=18, decimal_places=2, read_only=True)
+    total_sin_adicional = serializers.DecimalField(
+        max_digits=18, decimal_places=2, read_only=True)
+    total_adicional = serializers.DecimalField(
+        max_digits=18, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = CertificacionReal
+        fields = ('pk', 'periodo', 'periodo_id', 'obra', 'obra_id', 'items', 'total',
+                  'total_sin_adicional', 'total_adicional')
+
+    def create(self, validated_data):
+        obra = validated_data.pop('obra')
+        periodo = validated_data.pop('periodo')
+        items = validated_data.pop('items')
+        certif = self.Meta.model(**validated_data)
+        certif.obra_id = obra["pk"]
+        certif.periodo_id = periodo["pk"]
+        try:
+            certif.save()
+        except IntegrityError:
+            raise serializers.ValidationError('%s existente' % self.Meta.model._meta.verbose_name)
+        for item_data in items:
+            CertificacionItem.objects.create(certificacion=certif, **item_data)
+        return certif
+
+    def update(self, instance, validated_data):
+        obra = validated_data.pop('obra')
+        periodo = validated_data.pop('periodo')
+        items = validated_data.pop('items')
+        instance.obra_id = obra.get('pk', instance.obra_id)
+        instance.periodo_id = periodo.get('pk', instance.periodo)
+        instance.save()
+
+        exists_pks = []
+        for item in items:
+            if "pk" in item:
+                pk = item.pop('pk')
+                exists_pks.append(pk)
+                item_obj, _ = CertificacionItem.objects.update_or_create(pk=pk, certificacion=instance, defaults=item)
+            else:
+                item_obj = CertificacionItem(certificacion=instance, **item)
+                item_obj.save()
+                exists_pks.append(item_obj.pk)
+        # eliminar items no enviados
+        instance.items.exclude(pk__in=exists_pks).delete()
+        return instance
+
+class CertificacionProyeccionSerializer(CertificacionRealSerializer):
+
+    class Meta:
+        model = CertificacionProyeccion
+        fields = ('pk', 'periodo', 'periodo_id', 'obra', 'obra_id', 'items', 'total',
+                  'total_sin_adicional', 'total_adicional')

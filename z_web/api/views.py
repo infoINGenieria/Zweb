@@ -9,12 +9,15 @@ from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelV
 
 from api.serializers import (
     PresupuestoSerializer, RevisionSerializer, TipoItemPresupuestoSerializer,
-    ItemPresupuestoSerializer, ObrasSerializer)
-from api.filters import PresupuestoFilter
+    ItemPresupuestoSerializer, ObrasSerializer, CertificacionProyeccionSerializer,
+    CertificacionRealSerializer, CertificacionItemSerializer, PeriodoSerializer)
+from api.filters import PresupuestoFilter, CertificacionFilter
 from core.models import Obras, UserExtension
+from parametros.models import Periodo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto, TipoItemPresupuesto)
 from zweb_utils.views import generate_menu_user
+from registro.models import CertificacionProyeccion, CertificacionReal, Certificacion
 
 
 class AuthView(APIView):
@@ -125,3 +128,46 @@ class CentroCostoViewSet(ModelViewSet, AuthView):
         except UserExtension.DoesNotExist:
             pass
         return qs
+
+
+class CertificacionRealViewSet(ModelViewSet, AuthView):
+    serializer_class = CertificacionRealSerializer
+    filter_class = CertificacionFilter
+
+    def get_centros_costos(self):
+        obra_qs = Obras.objects.filter(es_cc=True)
+        user = self.request.user
+        try:
+            if user.extension.unidad_negocio:
+                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
+        except UserExtension.DoesNotExist:
+            pass
+        return obra_qs
+
+    def get_queryset(self):
+        obra_qs = self.get_centros_costos()
+        return CertificacionReal.objects.filter(obra__in=obra_qs).order_by('-periodo__fecha_fin')
+
+
+class CertificacionProyeccionViewSet(ModelViewSet, AuthView):
+    serializer_class = CertificacionProyeccionSerializer
+    filter_class = CertificacionFilter
+
+    def get_centros_costos(self):
+        obra_qs = Obras.objects.filter(es_cc=True)
+        user = self.request.user
+        try:
+            if user.extension.unidad_negocio:
+                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
+        except UserExtension.DoesNotExist:
+            pass
+        return obra_qs
+
+    def get_queryset(self):
+        obra_qs = self.get_centros_costos()
+        return CertificacionProyeccion.objects.filter(obra__in=obra_qs).order_by('-periodo__fecha_fin')
+
+
+class PeriodoViewSet(ModelViewSet, AuthView):
+    serializer_class = PeriodoSerializer
+    queryset = Periodo.objects.all().order_by('-fecha_fin')

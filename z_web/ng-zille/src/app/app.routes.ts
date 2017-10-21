@@ -5,13 +5,26 @@ import { PresupuestosComponent } from './components/presupuestos/presupuestos.co
 import { AppComponent } from './app.component';
 import { RouterModule, Routes } from '@angular/router';
 
+import {
+  CertificacionesProyeccionComponent, CertificacionesIndexComponent,
+  CertificacionRealComponent, CertificacionesRealComponent,
+  CertificacionProyeccionComponent
+} from './components/certificaciones';
+
 const APP_ROUTES: Routes = [
   { path: '', component: IndexComponent },
   { path: 'tipo-items', component: TipoItemPresupuestoComponent },
   { path: 'presupuestos', component: PresupuestosComponent },
   { path: 'presupuestos/nuevo', component: PresupuestoComponent },
   { path: 'presupuestos/:pk/v/:version', component: PresupuestoComponent },
-  // { path: 'heroe/:id', component: HeroeComponent },
+  { path: 'certificaciones/index', component: CertificacionesIndexComponent },
+  { path: 'certificaciones/real', component: CertificacionesRealComponent },
+  { path: 'certificaciones/real/nuevo', component: CertificacionRealComponent },
+  { path: 'certificaciones/real/:pk', component: CertificacionRealComponent },
+  { path: 'certificaciones/proyeccion', component: CertificacionesProyeccionComponent },
+  { path: 'certificaciones/proyeccion/nuevo', component: CertificacionProyeccionComponent },
+  { path: 'certificaciones/proyeccion/:pk', component: CertificacionProyeccionComponent },
+
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 

@@ -80,7 +80,7 @@ REST_FRAMEWORK = {
     'DATE_INPUT_FORMATS': ['%d/%m/%Y', 'iso-8601'],
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', ),
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 50,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
@@ -133,6 +133,7 @@ PIPELINE = {
                 'bootstrap-datepicker/dist/css/bootstrap-datepicker3.css',
                 'frontend/css/base.scss',
                 'chosen/chosen.min.css',
+                'animate.css/animate.min.css',
             ),
             'output_filename': 'css/base.css',
             'extra_context': {
@@ -213,13 +214,14 @@ BOWER_INSTALLED_APPS = (
     'd3#3.3.13',
     'nvd3#1.7.1',
     'bootstrap-sass#3.3',
-    'fontawesome#4.3',
+    'fontawesome#4.7',
     'datatables#~1.10.10',
     'bootstrap3-dialog#1.34.9',
     'chosen#1.4.2',
     'pace#1.0.2',
     'bootstrap-datepicker#^1.5.1',
     'jquery-form#3.46.0',
+    'animate.css#^3.5.2'
 )
 
 ROOT_URLCONF = 'zillepro_web.urls'

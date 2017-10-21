@@ -4,7 +4,7 @@ from django import forms
 
 from core.models import Obras
 from .models import (Alarma, Combustible, Partediario, Registro, Materiales,
-                     RegistroEquipo, PrecioHistorico, Certificacion, AjusteCombustible,
+                     RegistroEquipo, PrecioHistorico, CertificacionReal, AjusteCombustible,
                      CertificacionInterna, CertificacionItem)
 from zweb_utils.format import currency_format as cur
 
@@ -117,11 +117,11 @@ class CertificacionAdminForm(forms.ModelForm):
         es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio'))
 
     class Meta:
-        model = Certificacion
+        model = CertificacionReal
         fields = ('periodo', 'obra', )
 
 
-@admin.register(Certificacion)
+@admin.register(CertificacionReal)
 class CertificacionAdmin(admin.ModelAdmin):
     list_display = ('periodo', 'obra', 'valor_format')
     list_filter = ('periodo', 'obra', )

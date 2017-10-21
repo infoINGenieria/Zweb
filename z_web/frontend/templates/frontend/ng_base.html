@@ -8,7 +8,11 @@
 
 
 {% block content %}
-    <app-root><div class="loading-center"><img src="{% static 'frontend/img/logo.png' %}" alt="ZILLE"/></div></app-root>
+    <app-root>
+        <div class="loading-center">
+            <img src="{% static 'frontend/img/logo.png' %}" alt="ZILLE" class="animated infinite pulse"/>
+        </div>
+    </app-root>
 {% endblock %}
 
 {% block extra_js %}
