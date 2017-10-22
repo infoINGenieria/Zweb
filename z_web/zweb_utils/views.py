@@ -110,9 +110,19 @@ def logout(request):
 def generate_menu_user(user):
     menu = []
     if user.has_perm('costos.can_view_panel_control'):
-        menu.append({'name': "Panel de control", 'icon': 'dashboard',
-                     'url': reverse('frontend:ms_panel_control'), 'section': 'Movimiento de suelo',
-                     'btn_class': 'success'})
+        ext = user.extension
+        if not ext.unidad_negocio or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS'):
+            menu.append({
+                'name': "Panel de control", 'icon': 'dashboard',
+                'url': reverse('frontend:ms_panel_control'), 'section': "{}".format(ext.unidad_negocio or 'Movimiento de suelo'),
+                'btn_class': 'success'
+            })
+        if not ext.unidad_negocio or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'OS'):
+            menu.append({
+                'name': "Tablero de control", 'icon': 'area-chart',
+                'url': '/~/tablero-control/os/', 'section': "{}".format(ext.unidad_negocio or 'Obras de superficie'),
+                'btn_class': 'default'
+            })
     if user.has_perm('costos.can_manage_costos'):
         menu.append({'name': "Costos", 'icon': 'list',
                      'url': reverse('costos:index'), 'section': 'Administrar costos y avance de obra', 'btn_class': 'primary'})

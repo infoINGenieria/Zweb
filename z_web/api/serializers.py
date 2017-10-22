@@ -36,7 +36,7 @@ class PresupuestoSerializer(serializers.ModelSerializer):
     centro_costo = ObrasSerializer(read_only=True)
     centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
     versiones = serializers.ListField(
-        child=serializers.IntegerField(min_value=0, max_value=100))
+        child=serializers.IntegerField(min_value=0, max_value=100), read_only=True)
     vigente = serializers.IntegerField(source='revision_vigente.version', read_only=True)
     venta_actual = serializers.DecimalField(
         max_digits=18, decimal_places=2, read_only=True)

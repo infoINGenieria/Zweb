@@ -26,6 +26,10 @@ class AuthView(APIView):
     """
     permission_classes = (IsAuthenticated, )
 
+    def get_centros_costos(self):
+        obra_qs = Obras.get_centro_costos(self.request.user)
+        return obra_qs
+
 
 class DynamicMenuView(APIView):
     def get(self, request, *args, **kwargs):
@@ -120,29 +124,12 @@ class CentroCostoViewSet(ModelViewSet, AuthView):
     serializer_class = ObrasSerializer
 
     def get_queryset(self):
-        qs = Obras.objects.filter(es_cc=True)
-        user = self.request.user
-        try:
-            if user.extension.unidad_negocio:
-                qs = qs.filter(unidad_negocio=user.extension.unidad_negocio)
-        except UserExtension.DoesNotExist:
-            pass
-        return qs
+        return self.get_centros_costos()
 
 
 class CertificacionRealViewSet(ModelViewSet, AuthView):
     serializer_class = CertificacionRealSerializer
     filter_class = CertificacionFilter
-
-    def get_centros_costos(self):
-        obra_qs = Obras.objects.filter(es_cc=True)
-        user = self.request.user
-        try:
-            if user.extension.unidad_negocio:
-                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
-        except UserExtension.DoesNotExist:
-            pass
-        return obra_qs
 
     def get_queryset(self):
         obra_qs = self.get_centros_costos()
@@ -152,16 +139,6 @@ class CertificacionRealViewSet(ModelViewSet, AuthView):
 class CertificacionProyeccionViewSet(ModelViewSet, AuthView):
     serializer_class = CertificacionProyeccionSerializer
     filter_class = CertificacionFilter
-
-    def get_centros_costos(self):
-        obra_qs = Obras.objects.filter(es_cc=True)
-        user = self.request.user
-        try:
-            if user.extension.unidad_negocio:
-                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
-        except UserExtension.DoesNotExist:
-            pass
-        return obra_qs
 
     def get_queryset(self):
         obra_qs = self.get_centros_costos()

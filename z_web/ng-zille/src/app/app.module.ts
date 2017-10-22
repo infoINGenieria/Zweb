@@ -28,6 +28,7 @@ import {
   CertificacionesIndexComponent, CertificacionesRealComponent, CertificacionRealComponent,
   CertificacionesProyeccionComponent, CertificacionProyeccionComponent } from './components/certificaciones';
 import { IndexComponent } from './components/index/index.component';
+import { TableroControlOsComponent } from './components/tablero-control-os/tablero-control-os.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { IndexComponent } from './components/index/index.component';
     CertificacionRealComponent,
     CertificacionesProyeccionComponent,
     CertificacionesIndexComponent,
-    CertificacionProyeccionComponent
+    CertificacionProyeccionComponent,
+    TableroControlOsComponent
   ],
   imports: [
     BrowserModule,

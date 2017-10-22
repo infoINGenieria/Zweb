@@ -131,6 +131,16 @@ class Obras(models.Model):
     def esta_activa(self):
         return self.fecha_fin is None
 
+    @classmethod
+    def get_centro_costos(cls, user):
+        obra_qs = Obras.objects.filter(es_cc=True)
+        try:
+            if user.extension.unidad_negocio:
+                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
+        except UserExtension.DoesNotExist:
+            pass
+        return obra_qs
+
 
 class CCT(models.Model):
     """

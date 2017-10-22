@@ -44,7 +44,7 @@ class ObrasAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),
-                       ('cuit', 'lugar', 'plazo'),
+                       ('cuit', 'lugar', 'plazo', 'unidad_negocio'),
                        ('contrato', 'comitente', 'responsable',))
         }),
         ("Configuración General", {

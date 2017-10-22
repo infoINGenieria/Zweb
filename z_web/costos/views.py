@@ -38,6 +38,13 @@ class BaseCostosMixin(LoginAndPermissionRequiredMixin):
     raise_exception = True
 
 
+class FormWithUserMixin(object):
+
+    def get_form_kwargs(self):
+        kwargs = super(FormWithUserMixin, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
 class CostosIndexView(BaseCostosMixin, TemplateView):
     template_name = "frontend/costos/base_costos.html"
 
@@ -115,10 +122,21 @@ class CopiaCostosView(BaseCostosMixin, TemplateView):
 
 
 class CostosList(BaseCostosMixin, TableFilterListView):
-    # context_object_name = 'costos'
     template_name = 'frontend/costos/costo_list.html'
     filterset_class = CostosFilter
     model = CostoReal
+
+    def get_filterset(self, *args, **kwargs):
+        """
+        Solo mostramos centro de costos de la unidad de negocio del usuario
+        """
+        fs = super(CostosList, self).get_filterset(*args, **kwargs)
+        fs.filters['centro_costo'].field.queryset = Obras.get_centro_costos(self.request.user)
+        return fs
+
+    def get_queryset(self):
+        return CostoReal.objects.filter(
+            centro_costo__in=Obras.get_centro_costos(self.request.user))
 
     def get_table_class(self, **kwargs):
         if self.filterset.form.is_valid():
@@ -151,7 +169,7 @@ class CostosAltaCC(BaseCostosMixin, TemplateView):
         context = super(CostosAltaCC, self).get_context_data(**kwargs)
         context["tipos_costos"] = self.get_queryset()
         if "p_form" not in kwargs:
-            context["p_form"] = self._form_class()()
+            context["p_form"] = self._form_class()(self.request.user)
         if "formsets" not in kwargs:
             Formset = self._get_formset()
             initial = [{'tipo_costo': x.pk} for x in context["tipos_costos"]]
@@ -162,7 +180,7 @@ class CostosAltaCC(BaseCostosMixin, TemplateView):
         return CostoTipo.objects.filter(relacionado_con='cc')
 
     def post(self, request, *args, **kwargs):
-        p_form = self._form_class()(self.request.POST)
+        p_form = self._form_class()(self.request.user, self.request.POST)
         formsets = self._get_formset()(self.request.POST)
 
         if p_form.is_valid() and formsets.is_valid():
@@ -303,9 +321,8 @@ class CargarCostosSelectView(BaseCostosMixin, TemplateView):
         return context
 
 
-class EditarCostosView(BaseCostosMixin, ModalViewMixin, UpdateView):
+class EditarCostosView(BaseCostosMixin, FormWithUserMixin, ModalViewMixin, UpdateView):
     model = CostoReal
-    # form_class = CostoEditForm
 
     def get_form_class(self, **kwargs):
         return CostoEditPorCCForm if self.object.tipo_costo.es_por_cc else CostoEditPorEquipoForm
@@ -358,13 +375,14 @@ class CostosProyeccionListView(CostosList):
 
         return ProyeccionTableGeneric
 
+    def get_queryset(self):
+        return CostoProyeccion.objects.filter(
+            centro_costo__in=Obras.get_centro_costos(self.request.user))
+
 
 class CostosProyeccionAltaCC(CostosAltaCC):
     model = CostoProyeccion
     template_name = "frontend/costos/proyeccion_cc_form.html"
-
-    # def _get_formset(self):
-    #     return formset_factory(CostoCCForm, extra=0)
 
     def response_result(self, p_form, formsets, saved_count):
         if saved_count:
@@ -381,9 +399,6 @@ class CostosProyeccionAltaCC(CostosAltaCC):
 class CostosProyeccionAltaEquipos(CostosAltaEquipos):
     model = CostoProyeccion
     template_name = "frontend/costos/proyeccion_eq_form.html"
-
-    # def _get_formset(self):
-    #     return formset_factory(CostoCCForm, extra=0)
 
     def response_result(self, p_form, formsets, saved_count):
         if saved_count:
@@ -425,13 +440,25 @@ class AvanceObraRealList(BaseCostosMixin, TableFilterListView):
     model = AvanceObraReal
     table_class = AvanceObraRealTable
 
+    def get_filterset(self, *args, **kwargs):
+        """
+        Solo mostramos centro de costos de la unidad de negocio del usuario
+        """
+        fs = super(AvanceObraRealList, self).get_filterset(*args, **kwargs)
+        fs.filters['centro_costo'].field.queryset = Obras.get_centro_costos(self.request.user)
+        return fs
+
     def get_context_data(self, **kwargs):
         ctx = super(AvanceObraRealList, self).get_context_data(**kwargs)
         ctx["is_filtered"] = self.filterset.form.is_valid()
         return ctx
 
+    def get_queryset(self):
+        return self.model.objects.filter(
+            centro_costo__in=Obras.get_centro_costos(self.request.user))
 
-class AvanceObraEditView(BaseCostosMixin, ModalViewMixin, UpdateView):
+
+class AvanceObraEditView(BaseCostosMixin, FormWithUserMixin, ModalViewMixin, UpdateView):
     model = AvanceObraReal
     form_class = AvanceObraEditForm
 
@@ -471,14 +498,14 @@ class AvanceObraCreateView(BaseCostosMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(AvanceObraCreateView, self).get_context_data(**kwargs)
         forms = {
-            "obra_form": CentroCostoSelectForm(prefix='obra_form'),
+            "obra_form": CentroCostoSelectForm(user=self.request.user, prefix='obra_form'),
             "avances_formset": self.formset_avance(prefix='avances_formset'),
         }
         forms.update(context)
         return forms
 
     def post(self, request, *args, **kwargs):
-        obra_form = CentroCostoSelectForm(self.request.POST, prefix='obra_form')
+        obra_form = CentroCostoSelectForm(user=self.request.user, data=self.request.POST, prefix='obra_form')
         avances_formset = self.formset_avance(self.request.POST, prefix='avances_formset')
 
         if obra_form.is_valid() and avances_formset.is_valid():

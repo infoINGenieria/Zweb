@@ -18,6 +18,9 @@ from costos.models import CostoReal, CostoTipo, CostoProyeccion, AvanceObraReal,
 class CentroCostoSelectForm(forms.Form):
     centro_costo = forms.ModelChoiceField(queryset=Obras.objects.filter(es_cc=True))
 
+    def __init__(self, user, *args, **kwargs):
+        super(CentroCostoSelectForm, self).__init__(*args, **kwargs)
+        self.fields["centro_costo"].queryset = Obras.get_centro_costos(user)
 
 class CopiaCostoForm(forms.Form):
     tipo_costos = forms.ModelMultipleChoiceField(
@@ -53,6 +56,10 @@ class PeriodoCCForm(forms.Form):
         help_text="Sólo se visualizan aquellos periodos con parámetros de costos asociados.")
     centro_costo = forms.ModelChoiceField(
         label="Centro de costos", queryset=Obras.objects.filter(es_cc=True))
+
+    def __init__(self, user, *args, **kwargs):
+        super(PeriodoCCForm, self).__init__(*args, **kwargs)
+        self.fields["centro_costo"].queryset = Obras.get_centro_costos(user)
 
 
 class CostoCCForm(forms.Form):
@@ -105,8 +112,10 @@ class CostoEditPorCCForm(forms.ModelForm):
         model = CostoReal
         fields = ('periodo', 'centro_costo', 'monto_total', 'observacion', )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(CostoEditPorCCForm, self).__init__(*args, **kwargs)
+        self.fields["centro_costo"].queryset = Obras.get_centro_costos(user)
+
         self.helper = FormHelper(self)
         self.helper.form_class = 'horizontal-form'
         self.helper.form_tag = False
@@ -168,8 +177,9 @@ class AvanceObraEditForm(forms.ModelForm):
         model = AvanceObraReal
         fields = ('periodo', 'centro_costo', 'avance', 'observacion', )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(AvanceObraEditForm, self).__init__(*args, **kwargs)
+        self.fields["centro_costo"].queryset = Obras.get_centro_costos(user)
         self.helper = FormHelper(self)
         self.helper.form_class = 'horizontal-form'
         self.helper.form_tag = False

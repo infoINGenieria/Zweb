@@ -66,3 +66,5 @@ collected_static/
 z_web/zillepro_web/settings/local.py
 z_web/zillepro_web/settings/private.py
 fabfile.py
+
+.vscode/

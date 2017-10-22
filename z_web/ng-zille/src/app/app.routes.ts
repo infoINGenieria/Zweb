@@ -1,3 +1,4 @@
+import { TableroControlOsComponent } from './components/tablero-control-os/tablero-control-os.component';
 import { IndexComponent } from './components/index/index.component';
 import { TipoItemPresupuestoComponent } from './components/tipo-item-presupuesto/tipo-item-presupuesto.component';
 import { PresupuestoComponent } from './components/presupuesto/presupuesto.component';
@@ -24,6 +25,8 @@ const APP_ROUTES: Routes = [
   { path: 'certificaciones/proyeccion', component: CertificacionesProyeccionComponent },
   { path: 'certificaciones/proyeccion/nuevo', component: CertificacionProyeccionComponent },
   { path: 'certificaciones/proyeccion/:pk', component: CertificacionProyeccionComponent },
+
+  { path: 'tablero-control/os', component: TableroControlOsComponent },
 
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
