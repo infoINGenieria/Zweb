@@ -5,7 +5,7 @@ import { Response, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
-import { IPresupuesto, ITipoItemPresupuesto, IRevision } from './../../models/Interfaces';
+import { IPresupuesto, ICostoTipo, IRevision } from './../../models/Interfaces';
 
 @Injectable()
 export class PresupuestosService {
@@ -54,29 +54,8 @@ export class PresupuestosService {
 
 
   /* Tipo de Item de presupuesto */
-  get_tipo_items(): Observable<ITipoItemPresupuesto[]> {
-    return this.http.get(`/api/tipo_items/`)
-      .map((r: Response) => r.json()['results'] as ITipoItemPresupuesto[]);
-  }
-
-  create_tipo_item(nombre: string): Observable<ITipoItemPresupuesto[]> {
-    const bodyString = JSON.stringify({'nombre': nombre});
-
-    return this.http.post(`/api/tipo_items/`, bodyString)
-      .map((res: Response) => res.json());
-  }
-
-  update_tipo_item(item: ITipoItemPresupuesto): Observable<ITipoItemPresupuesto[]> {
-    const bodyString = JSON.stringify({'nombre': item.nombre});
-
-    return this.http.put(`/api/tipo_items/${item.pk}/`, bodyString)
-      .map((res: Response) => res.json());
-  }
-
-  delete_tipo_item(item: ITipoItemPresupuesto): Observable<ITipoItemPresupuesto[]> {
-
-    return this.http.delete(`/api/tipo_items/${item.pk}/`)
-      .map((res: Response) => res.json())
-      .catch((error: any) => Observable.throw(error.json().detail || 'Server error'));
+  get_tipo_items(): Observable<ICostoTipo[]> {
+    return this.http.get(`/api/tipo_costos/`)
+      .map((r: Response) => r.json()['results'] as ICostoTipo[]);
   }
 }

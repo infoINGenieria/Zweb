@@ -51,7 +51,6 @@ export interface IRevision {
     aval_por_cumplimiento_garantia: number;
     seguro_5: number;
     imprevistos: number;
-    ganancias: number;
     impuestos_ganancias: number;
     sellado: number;
     ingresos_brutos: number;
@@ -63,7 +62,7 @@ export interface IRevision {
 
 export interface IItemPresupuesto {
     pk?: number;
-    tipo: ITipoItemPresupuesto;
+    tipo: ICostoTipo;
     pesos: number;
     dolares: number;
     observaciones?: string;
@@ -71,7 +70,7 @@ export interface IItemPresupuesto {
 
 }
 
-export interface ITipoItemPresupuesto {
+export interface ICostoTipo {
     pk?: number;
     nombre: string;
 }

@@ -6,10 +6,10 @@ from rest_framework import routers
 
 
 from api.views import (
-    PresupuestoViewSet, RevisionViewSet, TipoItemPresupuestoViewSet,
+    PresupuestoViewSet, RevisionViewSet, TipoCostoViewSet,
     ItemPresupuestoViewSet, DynamicMenuView, CentroCostoViewSet,
     CertificacionRealViewSet, CertificacionProyeccionViewSet,
-    PeriodoViewSet
+    PeriodoViewSet, TableroControlView
 )
 
 router = routers.DefaultRouter()
@@ -22,7 +22,7 @@ router.register(
 #     r'presupuestos/(?P<presupuesto_pk>[^/.]+)/v/(?P<version>[^/.]+)/items',
 #     ItemPresupuestoViewSet, base_name='revision')
 router.register(
-    r'tipo_items', TipoItemPresupuestoViewSet, base_name='tipo_item')
+    r'tipo_costos', TipoCostoViewSet, base_name='tipo_costos')
 router.register(
     r'centro_costos', CentroCostoViewSet, base_name='centro_costo'
 )
@@ -39,5 +39,7 @@ router.register(
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^my_menu/', DynamicMenuView.as_view(), name="my_menu"),
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/',
+        TableroControlView.as_view(), name="tablero_control")
 
 ]

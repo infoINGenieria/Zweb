@@ -48,7 +48,7 @@ export class CertificacionesProyeccionComponent implements OnInit {
   }
 
   handleError(error: any) {
-    this._notifications.error(error);
+    this._notifications.error(error._body || error);
   }
 
   filterList(form: NgForm) {

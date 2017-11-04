@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-01 16:46-0300\n"
+"POT-Creation-Date: 2017-10-27 00:40-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,23 +18,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: frontend/templates/admin/login.html:21
-msgid "<span class=\"bright\">ZILLE</span> WEB"
+#: frontend/templates/403.html:7 frontend/templates/404.html:8
+#: frontend/templates/500.html:8 frontend/templates/suit/error_base.html:76
+msgid "error"
 msgstr ""
 
-#: frontend/templates/admin/login.html:26
-#: frontend/templates/admin/login.html:59
-msgid "Log in"
+#: frontend/templates/admin/base.html:94
+msgid "Welcome,"
 msgstr ""
 
-#: frontend/templates/admin/login.html:32
-msgid "Please correct the error below."
+#: frontend/templates/admin/base.html:103
+msgid "Documentation"
 msgstr ""
 
-#: frontend/templates/admin/login.html:32
-msgid "Please correct the errors below."
+#: frontend/templates/admin/base.html:106
+msgid "Change password"
 msgstr ""
 
-#: frontend/templates/admin/login.html:55
-msgid "Forgotten your password or username?"
+#: frontend/templates/admin/base.html:108
+msgid "Log out"
+msgstr ""
+
+#: frontend/templates/admin/base.html:128
+#: frontend/templates/frontend/base_custom.html:5
+msgid "Home"
+msgstr ""
+
+#: frontend/templates/auth/password_reset_email.html:3
+#: frontend/templates/auth/password_reset_subject.html:2
+#, python-format
+msgid "Restablecer contraseña en %(site_name)s"
+msgstr ""
+
+#: frontend/templates/suit/error_base.html:93
+msgid "Ir a la administración"
 msgstr ""

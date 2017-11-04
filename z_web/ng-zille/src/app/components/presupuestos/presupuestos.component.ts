@@ -51,7 +51,8 @@ export class PresupuestosComponent implements OnInit {
   }
 
   handleError(error: any) {
-    this._notifications.error(error);
+    console.error(error);
+    this._notifications.error(error._body || error);
   }
 
   delete(presupuesto: IPresupuesto) {

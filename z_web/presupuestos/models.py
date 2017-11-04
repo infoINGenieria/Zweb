@@ -1,10 +1,13 @@
 # coding: utf-8
 from django.db import models
+from django.db.models import Sum, F
 
 from simple_history.models import HistoricalRecords
 
-from zweb_utils.models import BaseModelWithHistory, BaseModel
 from core.models import Obras
+from costos.models import CostoTipo
+from parametros.models import Periodo
+from zweb_utils.models import BaseModel, BaseModelWithHistory
 
 
 class Presupuesto(BaseModel):
@@ -59,18 +62,18 @@ class Presupuesto(BaseModel):
         return self.revisiones.values_list('version', flat=True).order_by('-version')
 
 
-class TipoItemPresupuesto(BaseModel):
-    """
-    Un tipo de item del presupuesto.
-    """
-    nombre = models.CharField(verbose_name='nombre', max_length=255, unique=True)
+# class CostoTipo(BaseModel):
+#     """
+#     Un tipo de item del pre_presupuestosupuesto.
+#     """
+#     nombre = models.CharField(verbose_name='nombre', max_length=255, unique=True)
 
-    class Meta:
-        verbose_name = 'tipo de ítem de presupuesto'
-        verbose_name_plural = 'tipos de ítem de presupuesto'
+#     class Meta:
+#         verbose_name = 'tipo de ítem de presupuesto'
+#         verbose_name_plural = 'tipos de ítem de presupuesto'
 
-    def __str__(self):
-        return self.nombre
+#     def __str__(self):
+#         return self.nombre
 
 
 class Revision(BaseModelWithHistory):
@@ -79,6 +82,9 @@ class Revision(BaseModelWithHistory):
     """
     presupuesto = models.ForeignKey(
         Presupuesto, verbose_name='presupuesto', related_name='revisiones')
+    # periodo = models.ForeignKey(
+    #     Periodo, verbose_name='periodo', related_name='revisiones'
+    # )
 
     version = models.PositiveIntegerField(verbose_name='version')
     fecha = models.DateField(verbose_name='fecha')
@@ -131,11 +137,7 @@ class Revision(BaseModelWithHistory):
 
     ## Mark up
     imprevistos = models.DecimalField(
-        verbose_name='imprevistos', decimal_places=2, max_digits=18,
-        help_text="Sobre costo industrial", null=True)
-
-    ganancias = models.DecimalField(
-        verbose_name='ganancias', decimal_places=2, max_digits=18,
+        verbose_name='imprevistos', decimal_places=4, max_digits=18,
         help_text="Sobre costo industrial", null=True)
 
     impuestos_ganancias = models.DecimalField(
@@ -143,19 +145,19 @@ class Revision(BaseModelWithHistory):
         help_text="Sobre Ganancia Neta", null=True)
 
     sellado = models.DecimalField(
-        verbose_name='sellado', decimal_places=2, max_digits=18,
+        verbose_name='sellado', decimal_places=4, max_digits=18,
         help_text="Sobre Venta", null=True)
 
     ingresos_brutos = models.DecimalField(
-        verbose_name='ingresos brutos', decimal_places=2, max_digits=18,
+        verbose_name='ingresos brutos', decimal_places=4, max_digits=18,
         help_text="Sobre Venta", null=True)
 
     impuestos_cheque = models.DecimalField(
-        verbose_name='impuestos al cheque', decimal_places=2, max_digits=18,
+        verbose_name='impuestos al cheque', decimal_places=4, max_digits=18,
         help_text="Sobre Venta", null=True)
 
     costo_financiero = models.DecimalField(
-        verbose_name='costo financiero', decimal_places=2, max_digits=18,
+        verbose_name='costo financiero', decimal_places=4, max_digits=18,
         help_text="Sobre Costo industrial", null=True)
 
     class Meta:
@@ -174,6 +176,59 @@ class Revision(BaseModelWithHistory):
         total += self.reclamos_reconocidos if self.reclamos_reconocidos else 0
         return total
 
+    @property
+    def sellado_pesos(self):
+        return self.total_venta * self.sellado / 100
+
+    @property
+    def imprevistos_pesos(self):
+        return self.costo_industrial * self.imprevistos / 100
+
+    @property
+    def impuestos_cheque_pesos(self):
+        return self.total_venta * self.impuestos_cheque / 100
+
+    @property
+    def ingresos_brutos_pesos(self):
+        return self.total_venta * self.ingresos_brutos / 100
+
+    @property
+    def impuesto_ganancias_pesos(self):
+        return self.ganancias * self.impuestos_ganancias / 100
+
+    @property
+    def costo_financiero_pesos(self):
+        return self.costo_industrial * self.costo_financiero / 100
+
+    @property
+    def costos_previstos(self):
+        costo = self.items.aggregate(
+            total=Sum("pesos") + (Sum('dolares') * F('revision__valor_dolar')))["total"]
+        return costo
+
+    @property
+    def costo_industrial(self):
+        costo = self.costos_previstos
+        costo += self.contingencia
+        costo += self.estructura_no_ree
+        costo += self.aval_por_anticipos
+        costo += self.seguro_caucion
+        costo += self.aval_por_cumplimiento_contrato
+        costo += self.aval_por_cumplimiento_garantia
+        costo += self.seguro_5
+        return costo
+
+    @property
+    def ganancias(self):
+        ganancia = self.total_venta + self.imprevistos_pesos
+        ganancia -= self.sellado_pesos
+        ganancia -= self.ingresos_brutos_pesos
+        ganancia -= self.impuestos_cheque_pesos
+        ganancia -= self.costo_financiero_pesos
+        ganancia -= self.costo_industrial
+        ganancia = ganancia / (1 + (self.impuestos_ganancias / 100))
+        return ganancia
+
 
 class ItemPresupuesto(BaseModelWithHistory):
     """
@@ -182,7 +237,7 @@ class ItemPresupuesto(BaseModelWithHistory):
     revision = models.ForeignKey(
         Revision, verbose_name='revision', related_name='items')
     tipo = models.ForeignKey(
-        TipoItemPresupuesto, verbose_name='tipo de item', related_name='valores')
+        CostoTipo, verbose_name='tipo de item', related_name='valores_presupuesto')
     pesos = models.DecimalField(verbose_name='$', decimal_places=2, max_digits=18)
     dolares = models.DecimalField(verbose_name='USD', decimal_places=2, max_digits=18)
     observaciones = models.TextField(verbose_name='observaciones', null=True, blank=True)

@@ -216,198 +216,147 @@
           <table class="table table-bordered table-hover table-condensed costos-estructurales">
             <thead>
               <tr class="success">
-                <th colspan="7" class="text-center">
+                <th colspan="3" class="text-center">
                   <h3>Estructura de costos generales</h3>
                 </th>
               </tr>
               <tr>
-                <th>Costo</th>
+                <th>Detalle</th>
+                <td>MU Resultante</td>
                 <th>Pesos ($)</th>
-                <th>Dolares (USD)</th>
-                <th style="width: 25%">Total</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>
-                  <div class="input-group input-group-sm" title="Sobre costos previstos">
-                    <span class="input-group-addon">Contingencia:</span>
-                    <input type="tel" step="0.01" class="form-control number" name="contingencia" [(ngModel)]="revision.contingencia" #contingencia/>
-                    <span class="input-group-addon">{{ contingencia.value  }}%</span>
-                  </div>
+                <td>Contingencia:</td>
+                <td>{{ sobre_previstos_pesos(contingencia.value) | number:'1.2-2' }} %</td>
+                <td><input type="tel" step="0.01" class="form-control number input-sm"
+                    name="contingencia" [(ngModel)]="revision.contingencia" #contingencia/>
                 </td>
-                <td>{{ sobre_previstos_pesos(contingencia.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_previstos_dolares(contingencia.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_previstos_total(contingencia.value) | number:'1.2-2' }}</td>
               </tr>
               <tr>
-                <td>
-                  <div class="input-group input-group-sm" title="Sobre costos previstos">
-                    <span class="input-group-addon">Estructura no contemmpladas en el REE:</span>
-                    <input type="tel" step="0.01" class="form-control" name="estructura_no_ree" [(ngModel)]="revision.estructura_no_ree" #estructura_no_ree/>
-                    <span class="input-group-addon">{{ estructura_no_ree.value }}%</span>
-                  </div>
-                </td>
-                <td>{{ sobre_previstos_pesos(estructura_no_ree.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_previstos_dolares(estructura_no_ree.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_previstos_total(estructura_no_ree.value) | number:'1.2-2' }}</td>
+                <td>Estructura no contemmpladas en el REE:</td>
+                <td>{{ sobre_previstos_pesos(estructura_no_ree.value) | number:'1.2-2' }} %</td>
+                <td><input type="tel" step="0.01" class="form-control input-sm" name="estructura_no_ree"
+                    [(ngModel)]="revision.estructura_no_ree" #estructura_no_ree/></td>
               </tr>
               <tr>
+                <td>Aval por anticipos:</td>
+                <td>{{ sobre_venta_pesos(aval_por_anticipos.value) | number:'1.2-2' }} %</td>
                 <td>
-                  <div class="input-group input-group-sm" title="Sobre venta">
-                    <span class="input-group-addon">Aval por anticipos:</span>
-                    <input type="tel" step="0.01" class="form-control" name="aval_por_anticipos" [(ngModel)]="revision.aval_por_anticipos" #aval_por_anticipos/>
-                    <span class="input-group-addon">{{ aval_por_anticipos.value }}%</span>
-                  </div>
+                  <input type="tel" step="0.01" class="form-control input-sm" name="aval_por_anticipos"
+                    [(ngModel)]="revision.aval_por_anticipos" #aval_por_anticipos/>
                 </td>
-                <td>{{ sobre_venta_pesos(aval_por_anticipos.value) | number:'1.2-2' }}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(aval_por_anticipos.value) | number:'1.2-2' }}</td>
               </tr>
               <tr>
-                <td>
-                  <div class="input-group input-group-sm" title="Sobre venta">
-                    <span class="input-group-addon">Seguro de caución:</span>
-                    <input type="tel" step="0.01" class="form-control" name="seguro_caucion" [(ngModel)]="revision.seguro_caucion" #seguro_caucion/>
-                    <span class="input-group-addon">{{ seguro_caucion.value }}%</span>
-                  </div>
+                <td>Seguro de caución:
                 </td>
-                <td>{{ sobre_venta_pesos(seguro_caucion.value) | number:'1.2-2' }}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(seguro_caucion.value) | number:'1.2-2' }}</td>
+                <td>{{ sobre_venta_pesos(seguro_caucion.value) | number:'1.2-2' }} %</td>
+                <td>
+                    <input type="tel" step="0.01" class="form-control input-sm" name="seguro_caucion"
+                      [(ngModel)]="revision.seguro_caucion" #seguro_caucion/>
+                </td>
               </tr>
               <tr>
-                <td>
-                  <div class="input-group input-group-sm" title="Sobre venta">
-                    <span class="input-group-addon">Aval por complimiento de contrato:</span>
-                    <input type="tel" step="0.01" class="form-control" name="aval_por_cumplimiento_contrato" [(ngModel)]="revision.aval_por_cumplimiento_contrato"
-                      #aval_por_cumplimiento_contrato/>
-                    <span class="input-group-addon">{{ aval_por_cumplimiento_contrato.value }}%</span>
-                  </div>
+                <td>Aval por complimiento de contrato:
                 </td>
-                <td>{{ sobre_venta_pesos(aval_por_cumplimiento_contrato.value) | number:'1.2-2' }}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(aval_por_cumplimiento_contrato.value) | number:'1.2-2' }}</td>
+                <td>{{ sobre_venta_pesos(aval_por_cumplimiento_contrato.value) | number:'1.2-2' }} %</td>
+                <td><input type="tel" step="0.01" class="form-control input-sm" name="aval_por_cumplimiento_contrato"
+                  [(ngModel)]="revision.aval_por_cumplimiento_contrato"  #aval_por_cumplimiento_contrato />
+                </td>
               </tr>
               <tr>
-                <td>
-                  <div class="input-group input-group-sm" title="Sobre venta">
-                    <span class="input-group-addon">Aval por complimiento de garantia:</span>
-                    <input type="tel" step="0.01" class="form-control" name="aval_por_cumplimiento_garantia" [(ngModel)]="revision.aval_por_cumplimiento_garantia"
-                      #aval_por_cumplimiento_garantia/>
-                    <span class="input-group-addon">{{ aval_por_cumplimiento_garantia.value }}%</span>
-                  </div>
+                <td>Aval por complimiento de garantia:
                 </td>
-                <td>{{ sobre_venta_pesos(aval_por_cumplimiento_garantia.value) | number:'1.2-2'}}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(aval_por_cumplimiento_garantia.value) | number:'1.2-2' }}</td>
+                <td>{{ sobre_venta_pesos(aval_por_cumplimiento_garantia.value) | number:'1.2-2'}} %</td>
+                <td>
+                    <input type="tel" step="0.01" class="form-control input-sm" name="aval_por_cumplimiento_garantia"
+                      [(ngModel)]="revision.aval_por_cumplimiento_garantia" #aval_por_cumplimiento_garantia/>
+                </td>
               </tr>
               <tr>
+                <td>Seguro 5:</td>
+                <td>{{ sobre_venta_pesos(seguro_5.value) | number:'1.2-2' }} %</td>
                 <td>
-                  <div class="input-group input-group-sm" title="Sobre venta">
-                    <span class="input-group-addon">Seguro 5:</span>
-                    <input type="tel" step="0.01" class="form-control" name="seguro_5" [(ngModel)]="revision.seguro_5" #seguro_5/>
-                    <span class="input-group-addon">{{ seguro_5.value }}%</span>
-                  </div>
+                    <input type="tel" step="0.01" class="form-control input-sm" name="seguro_5" [(ngModel)]="revision.seguro_5" #seguro_5/>
                 </td>
-                <td>{{ sobre_venta_pesos(seguro_5.value) | number:'1.2-2' }}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(seguro_5.value) | number:'1.2-2' }}</td>
               </tr>
               <tr class="info">
                 <th>Costo Industrial</th>
+                <th></th>
                 <th class="number">$ {{ costo_industrial_pesos() | number:'1.2-2' }}</th>
-                <th class="number">USD {{ costo_industrial_dolares() | number:'1.2-2' }}</th>
-                <th class="number">$ {{ costo_industrial_total() | number:'1.2-2' }}</th>
               </tr>
               <tr>
+                <td>IMPREVISTOS:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre costo industrial">
-                    <span class="input-group-addon">IMPREVISTOS:</span>
                     <input type="tel" step="0.01" class="form-control" name="imprevistos" [(ngModel)]="revision.imprevistos" #imprevistos/>
                     <span class="input-group-addon">{{ imprevistos.value }}%</span>
                   </div>
                 </td>
                 <td>{{ sobre_costo_industrial_pesos(imprevistos.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_costo_industrial_dolares(imprevistos.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_costo_industrial_total(imprevistos.value) | number:'1.2-2' }}</td>
               </tr>
               <tr>
-                <td>
-                  <div class="input-group input-group-sm" title="Sobre costo industrial">
-                    <span class="input-group-addon">GANANCIAS:</span>
-                    <input type="tel" step="0.01" class="form-control" name="ganancias" [(ngModel)]="revision.ganancias" #ganancias/>
-                    <span class="input-group-addon">{{ ganancias.value }}%</span>
-                  </div>
-                </td>
-                <td>{{ sobre_costo_industrial_pesos(ganancias.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_costo_industrial_dolares(ganancias.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_costo_industrial_total(ganancias.value) | number:'1.2-2' }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="input-group input-group-sm" title="Sobre Ganancia Neta">
-                    <span class="input-group-addon">IMPUESTOS GANANCIAS:</span>
-                    <input type="tel" step="0.01" class="form-control" name="impuestos_ganancias" [(ngModel)]="revision.impuestos_ganancias"
-                      #impuestos_ganancias/>
-                    <span class="input-group-addon">{{ impuestos_ganancias.value }}%</span>
-                  </div>
-                </td>
-                <td>{{ sobre_ganancia_neta_pesos(impuestos_ganancias.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_ganancia_neta_dolares(impuestos_ganancias.value) | number:'1.2-2'}}</td>
-                <td>{{ sobre_ganancia_neta_total(impuestos_ganancias.value) | number:'1.2-2' }}</td>
-              </tr>
-              <tr>
+                <td>SELLADO:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre Venta">
-                    <span class="input-group-addon">SELLADO:</span>
                     <input type="tel" step="0.01" class="form-control" name="sellado" [(ngModel)]="revision.sellado" #sellado/>
                     <span class="input-group-addon">{{ sellado.value }}%</span>
                   </div>
                 </td>
-                <td>{{ sobre_venta_pesos(sellado.value) | number:'1.2-2' }}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(sellado.value) | number:'1.2-2' }}</td>
+                <td>{{ perc_de_venta_pesos(sellado.value) | number:'1.2-2' }}</td>
+              </tr>
+              <tr>
+                <td>GANANCIAS:</td>
+                <td><h3 class="label label-danger">{{ calcular_perc_ganancia() | number:'1.2-2' }} %</h3></td>
+                <td>{{ calcular_ganancia() | number:'1.2-2' }}</td>
+              </tr>
+              <tr>
+                <td>IMPUESTOS GANANCIAS:</td>
+                <td>
+                  <div class="input-group input-group-sm" title="Sobre Ganancia Neta">
+                    <input type="tel" step="0.01" class="form-control" name="impuestos_ganancias"
+                      [(ngModel)]="revision.impuestos_ganancias" #impuestos_ganancias/>
+                    <span class="input-group-addon">{{ impuestos_ganancias.value }}%</span>
+                  </div>
+                </td>
+                <td>{{ sobre_ganancia_neta_pesos(impuestos_ganancias.value) | number:'1.2-2' }}</td>
               </tr>
               <tr>
                 <td>
+                  INGRESOS BRUTOS:
+                  </td>
+                <td>
                   <div class="input-group input-group-sm" title="Sobre venta">
-                    <span class="input-group-addon">INGRESOS BRUTOS:</span>
-                    <input type="tel" step="0.01" class="form-control" name="ingresos_brutos" [(ngModel)]="revision.ingresos_brutos" #ingresos_brutos/>
+                    <input type="tel" step="0.01" class="form-control" name="ingresos_brutos"
+                      [(ngModel)]="revision.ingresos_brutos" #ingresos_brutos/>
                     <span class="input-group-addon">{{ ingresos_brutos.value }}%</span>
                   </div>
                 </td>
-                <td>{{ sobre_venta_pesos(ingresos_brutos.value) | number:'1.2-2' }}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(ingresos_brutos.value) | number:'1.2-2' }}</td>
+                <td>{{ perc_de_venta_pesos(ingresos_brutos.value) | number:'1.2-2' }}</td>
               </tr>
               <tr>
+                <td>IMPUESTOS AL CHEQUE:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre venta">
-                    <span class="input-group-addon">IMPUESTOS AL CHEQUE:</span>
                     <input type="tel" step="0.01" class="form-control" name="impuestos_cheque" [(ngModel)]="revision.impuestos_cheque" #impuestos_cheque/>
                     <span class="input-group-addon">{{ impuestos_cheque.value }}%</span>
                   </div>
                 </td>
-                <td>{{ sobre_venta_pesos(impuestos_cheque.value) | number:'1.2-2' }}</td>
-                <td>-</td>
-                <td>{{ sobre_venta_pesos(impuestos_cheque.value) | number:'1.2-2' }}</td>
+                <td>{{ perc_de_venta_pesos(impuestos_cheque.value) | number:'1.2-2' }}</td>
               </tr>
               <tr>
+                <td>COSTO FINANCIERO:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre costo industrial">
-                    <span class="input-group-addon">COSTO FINANCIERO:</span>
                     <input type="tel" step="0.01" class="form-control" name="costo_financiero" [(ngModel)]="revision.costo_financiero" #costo_financiero/>
                     <span class="input-group-addon">{{ costo_financiero.value }}%</span>
                   </div>
                 </td>
                 <td>{{ sobre_costo_industrial_pesos(costo_financiero.value) | number:'1.2-2'}}</td>
-                <td>{{ sobre_costo_industrial_dolares(costo_financiero.value) | number:'1.2-2' }}</td>
-                <td>{{ sobre_costo_industrial_total(costo_financiero.value) | number:'1.2-2' }}</td>
               </tr>
               <tr class="warning">
                 <th>MARK UP</th>
-                <th class="number">$ {{ markup_pesos | number:'1.2-2' }}</th>
                 <th class="number">-</th>
                 <th class="number">$ {{ markup_pesos | number:'1.2-2' }}</th>
               </tr>
@@ -415,7 +364,7 @@
             <thead>
               <tr [ngClass]="isWarningVenta ? 'has-error' : ''" class="danger">
                 <th>TOTAL VENTA</th>
-                <th colspan="2">
+                <th>
                   <span *ngIf="isWarningVenta" class="text text-danger">TOTAL VENTA es menor a los costos.</span>
                 </th>
                 <th class="number"><strong>$ {{ calc_total_venta() | number:'1.2-2' }}</strong></th>

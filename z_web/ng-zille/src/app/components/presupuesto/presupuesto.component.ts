@@ -9,7 +9,7 @@ import 'rxjs/add/operator/map';
 import { DatePickerComponent, IDatePickerConfig, ECalendarValue } from 'ng2-date-picker';
 import * as moment from 'moment';
 
-import { ICentroCosto, IRevision, ITipoItemPresupuesto, IPresupuesto, IItemPresupuesto } from './../../models/Interfaces';
+import { ICentroCosto, IRevision, ICostoTipo, IPresupuesto, IItemPresupuesto } from './../../models/Interfaces';
 import { ItemPresupuesto } from './../../models/ItemPresupuesto';
 
 import { CoreService } from './../../services/core/core.service';
@@ -29,7 +29,7 @@ export class PresupuestoComponent implements OnInit {
   presupuesto: IPresupuesto;
   revision: IRevision;
 
-  tipos: ITipoItemPresupuesto[] = [];
+  tipos: ICostoTipo[] = [];
   centro_costos: ICentroCosto[] = [];
 
   loading = 0;
@@ -87,7 +87,7 @@ export class PresupuestoComponent implements OnInit {
    }
 
    handleError(error: any) {
-    this.notify_service.error(error);
+    this.notify_service.error(error._body || error);
   }
 
   addItem(indirecto: boolean) {
@@ -253,69 +253,35 @@ export class PresupuestoComponent implements OnInit {
   */
 
   sobre_previstos_pesos(valor: number) {
-    const calc = this.calc_total_items_pesos() * this._tonum(valor) / 100;
+    const calc = this._tonum(valor) / this.calc_total_items() * 100;
     return calc || 0;
   }
 
-  sobre_previstos_dolares(valor: number) {
-    return this.calc_total_items_dolares() * this._tonum(valor) / 100 || 0;
-  }
-
-  sobre_previstos_total(valor: number) {
-    if (!this.revision.valor_dolar) {
-      return 0;
-    }
-    return this.sobre_previstos_pesos(valor) +
-      (this.sobre_previstos_dolares(valor) * this.revision.valor_dolar) || 0;
-  }
-
   sobre_venta_pesos(valor: number) {
-    return this._tonum(this.calc_total_venta()) * this._tonum(valor) / 100 || 0;
+    return  this._tonum(valor) / this._tonum(this.calc_total_venta()) * 100 || 0;
+  }
+
+  perc_de_venta_pesos(valor: number) {
+    return  this._tonum(this.calc_total_venta()) * this._tonum(valor) / 100 || 0;
   }
 
   costo_industrial_pesos() {
     let costo = this.calc_total_items_pesos();
     // contingencia
-    costo += this.sobre_previstos_pesos(this.revision.contingencia);
+    costo += this._tonum(this.revision.contingencia);
     // Estructura no REE
-    costo += this.sobre_previstos_pesos(this.revision.estructura_no_ree);
+    costo += this._tonum(this.revision.estructura_no_ree);
     // aval por anticipos
-    costo += this.sobre_venta_pesos(this.revision.aval_por_anticipos);
+    costo += this._tonum(this.revision.aval_por_anticipos);
     // caucion
-    costo += this.sobre_venta_pesos(this.revision.seguro_caucion);
+    costo += this._tonum(this.revision.seguro_caucion);
     // complimiento contrato
-    costo += this.sobre_venta_pesos(this.revision.aval_por_cumplimiento_contrato);
+    costo += this._tonum(this.revision.aval_por_cumplimiento_contrato);
     // cumplimiento garantia
-    costo += this.sobre_venta_pesos(this.revision.aval_por_cumplimiento_garantia);
+    costo += this._tonum(this.revision.aval_por_cumplimiento_garantia);
     // seguro 5
-    costo += this.sobre_venta_pesos(this.revision.seguro_5);
+    costo += this._tonum(this.revision.seguro_5);
     return costo;
-  }
-  costo_industrial_dolares() {
-    let costo = this.calc_total_items_dolares();
-    // contingencia
-    costo += this.sobre_previstos_dolares(this.revision.contingencia);
-    // Estructura no REE
-    costo += this.sobre_previstos_dolares(this.revision.estructura_no_ree);
-    // aval por anticipos
-    // costo += this.sobre_venta_dolares(this.revision.aval_por_anticipos);
-    // // caucion
-    // costo += this.sobre_venta_dolares(this.revision.seguro_caucion);
-    // // complimiento contrato
-    // costo += this.sobre_venta_dolares(this.revision.aval_por_cumplimiento_contrato);
-    // // cumplimiento garantia
-    // costo += this.sobre_venta_dolares(this.revision.aval_por_cumplimiento_garantia);
-    // // seguro 5
-    // costo += this.sobre_venta_dolares(this.revision.seguro_5);
-    return costo;
-  }
-
-  costo_industrial_total() {
-    if (!this.revision.valor_dolar) {
-      return 0;
-    }
-    return this.costo_industrial_pesos() + (
-      this.costo_industrial_dolares() * this.revision.valor_dolar);
   }
 
   /*
@@ -325,33 +291,50 @@ export class PresupuestoComponent implements OnInit {
     return this.costo_industrial_pesos() * this._tonum(valor) / 100 || 0;
   }
 
-  sobre_costo_industrial_dolares(valor: number) {
-    return this.costo_industrial_dolares() * this._tonum(valor) / 100 || 0;
+
+  // sobre_costo_industrial_dolares(valor: number) {
+  //   return this.costo_industrial_dolares() * this._tonum(valor) / 100 || 0;
+  // }
+
+  // sobre_costo_industrial_total(valor: number) {
+  //   if (!this.revision.valor_dolar) {
+  //     return 0;
+  //   }
+  //   return this.sobre_costo_industrial_pesos(valor) +
+  //     (this.sobre_costo_industrial_dolares(valor) * this.revision.valor_dolar) || 0;
+  // }
+
+  calcular_ganancia() {
+    let ganancia = this.calc_total_venta();
+    ganancia += this.sobre_costo_industrial_pesos(this.revision.imprevistos); // imprevistos
+    ganancia -= this.perc_de_venta_pesos(this.revision.sellado);  // sellado
+    ganancia -= this.perc_de_venta_pesos(this.revision.ingresos_brutos);  // iibb
+    ganancia -= this.perc_de_venta_pesos(this.revision.impuestos_cheque); // cheques
+    ganancia -= this.sobre_costo_industrial_pesos(this.revision.costo_financiero);  // costo financiero
+    ganancia -= this.costo_industrial_pesos();
+    ganancia = ganancia / (1 + (this.revision.impuestos_ganancias / 100));
+    return ganancia;
   }
 
-  sobre_costo_industrial_total(valor: number) {
-    if (!this.revision.valor_dolar) {
-      return 0;
-    }
-    return this.sobre_costo_industrial_pesos(valor) +
-      (this.sobre_costo_industrial_dolares(valor) * this.revision.valor_dolar) || 0;
+  calcular_perc_ganancia() {
+    return this.calcular_ganancia() / this.costo_industrial_pesos() * 100;
   }
 
   sobre_ganancia_neta_pesos(valor: number) {
-    return this.sobre_costo_industrial_pesos(this.revision.ganancias) * this._tonum(valor) / 100 || 0;
+    return this.calcular_ganancia() * this._tonum(valor) / 100 || 0;
   }
 
-  sobre_ganancia_neta_dolares(valor: number) {
-    return this.sobre_costo_industrial_dolares(this.revision.ganancias) * this._tonum(valor) / 100 || 0;
-  }
+  // sobre_ganancia_neta_dolares(valor: number) {
+  //   return this.sobre_costo_industrial_dolares(this.revision.ganancias) * this._tonum(valor) / 100 || 0;
+  // }
 
-  sobre_ganancia_neta_total(valor: number) {
-    if (!this.revision.valor_dolar) {
-      return 0;
-    }
-    return this.sobre_ganancia_neta_pesos(valor) +
-      (this.sobre_ganancia_neta_dolares(valor) * this.revision.valor_dolar) || 0;
-  }
+  // sobre_ganancia_neta_total(valor: number) {
+  //   if (!this.revision.valor_dolar) {
+  //     return 0;
+  //   }
+  //   return this.sobre_ganancia_neta_pesos(valor) +
+  //     (this.sobre_ganancia_neta_dolares(valor) * this.revision.valor_dolar) || 0;
+  // }
 
 
   get markup_pesos() {

@@ -1,5 +1,6 @@
 # coding: utf-8
 from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.exceptions import MethodNotAllowed, ValidationError, ParseError
@@ -8,16 +9,19 @@ from rest_framework.views import APIView, Response
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
 
 from api.serializers import (
-    PresupuestoSerializer, RevisionSerializer, TipoItemPresupuestoSerializer,
+    PresupuestoSerializer, RevisionSerializer, CostoTipoSerializer,
     ItemPresupuestoSerializer, ObrasSerializer, CertificacionProyeccionSerializer,
     CertificacionRealSerializer, CertificacionItemSerializer, PeriodoSerializer)
 from api.filters import PresupuestoFilter, CertificacionFilter
 from core.models import Obras, UserExtension
+from costos.models import CostoTipo
 from parametros.models import Periodo
 from presupuestos.models import (
-    Presupuesto, Revision, ItemPresupuesto, TipoItemPresupuesto)
+    Presupuesto, Revision, ItemPresupuesto)
 from zweb_utils.views import generate_menu_user
 from registro.models import CertificacionProyeccion, CertificacionReal, Certificacion
+from organizacion.models import UnidadNegocio
+from frontend.tablero.os import generar_tablero
 
 
 class AuthView(APIView):
@@ -37,6 +41,14 @@ class DynamicMenuView(APIView):
         return Response(menu)
 
 
+class TableroControlView(AuthView):
+    def get(self, request, *args, **kwargs):
+        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
+        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'))
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
+        data_tablero = generar_tablero(unidad_negocio, obra, periodo)
+        return Response(data_tablero)
+
 class PresupuestoRelatedMixin(object):
     """
     Este mixin obtiene el id de presupuesto de la url.
@@ -53,7 +65,7 @@ class PresupuestoRelatedMixin(object):
 
     def get_serializer_context(self):
         """
-        Poner el presupuestoen el contexto del serializer
+        Poner el presupuesto en el contexto del serializer
         """
         return {'presupuesto_pk': self.kwargs["presupuesto_pk"]}
 
@@ -105,17 +117,15 @@ class ItemPresupuestoViewSet(PresupuestoRelatedMixin, ModelViewSet, AuthView):
         serializer.save(revision=self.revision)
 
 
-class TipoItemPresupuestoViewSet(ModelViewSet, AuthView):
-    serializer_class = TipoItemPresupuestoSerializer
-    queryset = TipoItemPresupuesto.objects.all()
+class TipoCostoViewSet(ModelViewSet, AuthView):
+    serializer_class = CostoTipoSerializer
+    queryset = CostoTipo.objects.filter(relacionado_con='cc', unidad_monto='total')
 
     def destroy(self, *args, **kwargs):
         obj = self.get_object()
         if ItemPresupuesto.objects.filter(tipo=obj).exists():
             raise ParseError("Hay presupuestos utilizando este Tipo de "
                              "ítem de presupuesto. No se puede eliminar.")
-            # return Response(data={'message': "Too late to delete"},
-                            # status=status.HTTP_400_BAD_REQUEST)
         self.perform_destroy(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 

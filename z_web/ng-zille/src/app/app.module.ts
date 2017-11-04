@@ -1,3 +1,4 @@
+import { TableroService } from './services/tablero.service';
 import { RegistroService } from './services/registro/registro.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
@@ -23,7 +24,6 @@ import { AppComponent } from './app.component';
 import { PresupuestoComponent } from './components/presupuesto/presupuesto.component';
 import { PresupuestosComponent } from './components/presupuestos/presupuestos.component';
 import { PresupuestosService } from './services/presupuestos/presupuestos.service';
-import { TipoItemPresupuestoComponent } from './components/tipo-item-presupuesto/tipo-item-presupuesto.component';
 import {
   CertificacionesIndexComponent, CertificacionesRealComponent, CertificacionRealComponent,
   CertificacionesProyeccionComponent, CertificacionProyeccionComponent } from './components/certificaciones';
@@ -35,7 +35,6 @@ import { TableroControlOsComponent } from './components/tablero-control-os/table
     AppComponent,
     PresupuestosComponent,
     PresupuestoComponent,
-    TipoItemPresupuestoComponent,
     IndexComponent,
     CertificacionesRealComponent,
     CertificacionRealComponent,
@@ -62,7 +61,8 @@ import { TableroControlOsComponent } from './components/tablero-control-os/table
     PresupuestosService,
     CoreService,
     NotificationService,
-    RegistroService
+    RegistroService,
+    TableroService
   ],
   bootstrap: [AppComponent]
 })

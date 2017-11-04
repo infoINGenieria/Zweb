@@ -4,16 +4,17 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 
 from core.models import Obras
+from costos.models import CostoTipo
 from presupuestos.models import (
-    Presupuesto, Revision, ItemPresupuesto, TipoItemPresupuesto)
+    Presupuesto, Revision, ItemPresupuesto)
 from registro.models import CertificacionItem, CertificacionReal, CertificacionProyeccion
 from parametros.models import Periodo
 
 
-class TipoItemPresupuestoSerializer(serializers.ModelSerializer):
+class CostoTipoSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TipoItemPresupuesto
+        model = CostoTipo
         fields = ('pk', 'nombre')
 
 
@@ -69,7 +70,7 @@ class RevisionSerializer(serializers.ModelSerializer):
                   'contingencia', 'estructura_no_ree', 'aval_por_anticipos',
                   'seguro_caucion', 'aval_por_cumplimiento_contrato',
                   'aval_por_cumplimiento_garantia', 'seguro_5', 'imprevistos',
-                  'ganancias', 'impuestos_ganancias', 'sellado', 'ingresos_brutos',
+                  'impuestos_ganancias', 'sellado', 'ingresos_brutos',
                   'impuestos_cheque', 'costo_financiero', 'presupuesto', 'items')
 
     def create(self, validated_data):

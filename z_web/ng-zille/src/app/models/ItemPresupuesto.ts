@@ -1,9 +1,9 @@
-import { IItemPresupuesto, ITipoItemPresupuesto } from './Interfaces';
+import { IItemPresupuesto, ICostoTipo } from './Interfaces';
 
 
 export class ItemPresupuesto implements IItemPresupuesto {
     pk?: number;
-    tipo: ITipoItemPresupuesto;
+    tipo: ICostoTipo;
     pesos: number;
     dolares: number;
     observaciones?: string;
