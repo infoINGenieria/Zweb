@@ -23,8 +23,6 @@
     "@angular/router": "^4.2.4",
     "core-js": "^2.4.1",
     "moment": "^2.19.1",
-    "momentjs": "^2.0.0",
-    "mydatepicker": "^2.0.31",
     "ng2-currency-mask": "^4.3.4",
     "ng2-date-picker": "^2.5.1",
     "ng2-nvd3": "^2.0.0",
