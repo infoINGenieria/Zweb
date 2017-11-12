@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from .models import (CostoManoObra, CostoSubContrato, LubricanteFluidosHidro,
-                     TrenRodaje, ReserveReparaciones, MaterialesTotal,
-                     CostoParametro, CostoPosesion, ArchivosAdjuntosPeriodo)
-from zweb_utils.format import currency_format as cur
+from model_utils.managers import QueryManager
+
+from .models import CostoParametro, ArchivosAdjuntosPeriodo, CostoReal, CostoTipo, CostoProyeccion
+from .forms import CostoEditPorCCForm, CostoEditPorEquipoForm
 
 
 @admin.register(CostoParametro)
@@ -22,72 +22,70 @@ class CostoParametroAdmin(admin.ModelAdmin):
     #     obj.save()
 
 
-@admin.register(CostoManoObra)
-class CostoManoObraAdmin(admin.ModelAdmin):
-    list_display = ('obra', 'periodo', 'monto_format',)
-    list_filter = ('obra', 'periodo', )
-
-    def monto_format(self, obj):
-        return cur(obj.monto)
-    monto_format.short_description = "Costo ($)"
-
-
-@admin.register(CostoSubContrato)
-class CostoSubContratoAdmin(admin.ModelAdmin):
-    list_display = ('obra', 'periodo', 'monto_format', 'descripcion', )
-    list_filter = ('obra', 'periodo', )
-    ordering = ('-periodo__fecha_inicio', )
-
-    def monto_format(self, obj):
-        return cur(obj.monto)
-    monto_format.short_description = "Costo ($)"
-
-@admin.register(MaterialesTotal)
-class MaterialesTotalAdmin(admin.ModelAdmin):
-    list_display = ('obra', 'periodo', 'monto_format', )
-    list_filter = ('obra', 'periodo', )
-    ordering = ('-periodo__fecha_inicio', )
-
-    def monto_format(self, obj):
-        return cur(obj.monto)
-    monto_format.short_description = "Costo ($)"
-
-
-class AbstractAdmin(admin.ModelAdmin):
-    list_display = ('familia_equipo', 'periodo', 'monto_hora_format', 'monto_mes_format', )
-    list_filter = ('familia_equipo', 'periodo', )
-    ordering = ('-periodo__fecha_inicio', )
-
-    def monto_hora_format(self, obj):
-        return cur(obj.monto_hora)
-    monto_hora_format.short_description = "Costo ($/hs)"
-
-    def monto_mes_format(self, obj):
-        return cur(obj.monto_mes)
-    monto_mes_format.short_description = "Costo ($/mes)"
-
-
-@admin.register(LubricanteFluidosHidro)
-class LubricanteFluidosHidroAdmin(AbstractAdmin):
-    pass
-
-
-@admin.register(TrenRodaje)
-class TrenRodajeAdmin(AbstractAdmin):
-    pass
-
-
-@admin.register(ReserveReparaciones)
-class ReserveReparacionesAdmin(AbstractAdmin):
-
-    pass
-
-
-@admin.register(CostoPosesion)
-class CostoPosesionAdmin(AbstractAdmin):
-    pass
-
-
 @admin.register(ArchivosAdjuntosPeriodo)
 class ArchivosAdjuntosPeriodoAdmin(admin.ModelAdmin):
     list_display = ('periodo', 'archivo', 'comentario')
+
+
+@admin.register(CostoTipo)
+class CostoTipoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'codigo', 'relacionado_con', 'unidad_monto')
+    list_filter = ('relacionado_con', 'unidad_monto', )
+
+
+@admin.register(CostoReal)
+class CostoAdmin(admin.ModelAdmin):
+    list_display = ('tipo_costo', 'periodo', 'centro_costo', 'familia_equipo')
+    list_filter = ('periodo', 'tipo_costo', 'centro_costo', 'familia_equipo', )
+
+    def get_form(self, request, obj=None, **kwargs):
+        if not obj:
+            return super(CostoAdmin, self).get_form(request, obj, **kwargs)
+        if obj.tipo_costo.es_por_cc:
+            return CostoEditPorCCForm
+        else:
+            return CostoEditPorEquipoForm
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(CostoProyeccion)
+class CostoProyeccionAdmin(CostoAdmin):
+
+    def has_add_permission(self, request):
+        return False
+
+
+# # Registramos todos los proxies de los costos
+# def create_proxy_admin(model_admin, model, name, tipo_costo):
+
+#     # el crear el proxy para el admin
+#     class  Meta:
+#         proxy = True
+#         app_label = model._meta.app_label
+#         verbose_name = verbose_name_plural = tipo_costo.nombre
+
+#     attrs = {
+#         '__module__': '',
+#         'Meta': Meta,
+#         'objects': QueryManager(tipo_costo=tipo_costo).order_by("-periodo")
+#         }
+#     proxy_model = type(name, (model, ), attrs)
+
+#     # registrar el proxy en el admin
+#     admin.site.register(proxy_model, model_admin)
+
+# for tipo_costo in CostoTipo.objects.all():
+#     # nombre de la clase
+#     name = "{}".format(tipo_costo.nombre.capitalize().replace(" ", ""))
+
+#     admin_attrs = {
+#         'list_display': ('periodo', 'centro_costo', 'familia_equipo'),
+#     }
+
+#     # Create ModelAdmin class
+#     Admin = type("{}Admin".format(name), (admin.ModelAdmin, ), admin_attrs)
+
+#     # Create proxy model and register with admin
+#     create_proxy_admin(Admin, Costo, name, tipo_costo)

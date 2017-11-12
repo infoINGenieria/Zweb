@@ -1,17 +1,26 @@
+# coding: utf-8
 from collections import defaultdict
+from decimal import Decimal as D
 
 from django.db.models import Count, When, Case, Sum
 from django.utils.text import slugify
 
-from costos.models import (LubricanteFluidosHidro, TrenRodaje, CostoPosesion, ReserveReparaciones, CostoParametro,
-                           CostoManoObra, CostoSubContrato, MaterialesTotal)
+from costos.models import CostoParametro, Costo, CostoTipo
 from core.models import Obras
-from registro.models import Partediario, Certificacion, AjusteCombustible, CertificacionInterna
+from registro.models import Partediario, CertificacionReal, AjusteCombustible, CertificacionInterna
 
 
 def get_headers_costos():
-    heads = ["Combustible", "Prorrateo de Combustible", "Mano de Obra", "Prorrateo de Mano de Obra",
-             "Subcontratos", "Utilización de equipos", "Materiales", "Prorrateo de Materiales"]
+    """
+    Esto devuelve las etiquetas para los costos.
+
+    TODO: hacer esto dinámico. Ver como determinar que costos pueden prorratearse
+    """
+    heads = ["Combustible", "Prorrateo de Combustible", ]
+    for tipo in CostoTipo.objects.filter(relacionado_con='cc'):
+        heads += [tipo.nombre, "Prorrateo de {}".format(tipo.nombre)]
+
+    heads += ["Utilización de equipos"]
     return [(slugify(x), x) for x in heads]
 
 
@@ -25,9 +34,19 @@ def get_limited_dict(orig, restr):
 
 
 def get_calculo_costo(costos, valores, horas_dia, total=0):
-    val = costos.get(valores["registro_equipo__equipo__familia_equipo_id"], 0) * horas_dia * valores["dias_mes"]
+    costo = costos.get(valores["registro_equipo__equipo__familia_equipo_id"], D('0'))
+    val = costo * horas_dia * valores["dias_mes"]
     total += val
     return total, val
+
+
+def float_to_decimal(values):
+    for j in range(0, len(values)):
+        for p in range(0, len(values[j])):
+            _aux = values[j][p]
+            if not isinstance(_aux, D):
+                values[j][p] = D('{}'.format(_aux))
+    return values
 
 
 def calcular_item_costo(report, datos, no_prorrat, limited_cc=None, prorrat=None, multiplicador=1,
@@ -76,10 +95,18 @@ def calcular_item_costo(report, datos, no_prorrat, limited_cc=None, prorrat=None
 
 
 def get_utilizacion_equipo(periodo, limit_cc=None):
-    obras = list(Certificacion.objects.filter(periodo=periodo).values_list('obra_id', flat=True))
-    obras += list(CertificacionInterna.objects.filter(periodo=periodo).values_list('obra_id', flat=True))
+    """
+    Este método calcula los costos relacionados con los equipos. Para ello, obtiene
+    los equipos que se utilizaron y la cantidad de días. Luego
+    se calculan los costos por equipo utilizando los costos asociados a la familia x la cantidad de días de uso.
+    """
+    cc_unidad = Obras.get_centro_costos_ms()
+    obras = list(CertificacionReal.objects.filter(
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', flat=True))
+    obras += list(CertificacionInterna.objects.filter(
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', flat=True))
     if not obras:
-        raise Certificacion.DoesNotExist
+        raise CertificacionReal.DoesNotExist
     elif limit_cc:
         obras = set(obras).intersection(limit_cc)
     qs = Partediario.objects.filter(
@@ -96,48 +123,44 @@ def get_utilizacion_equipo(periodo, limit_cc=None):
     result = dict(processed.items())
     ids = list(set(x["registro_equipo__equipo__familia_equipo_id"] for x in qs))
     param = CostoParametro.objects.get(periodo=periodo)
-    # cálculo de lubricantes
-    lubris = dict(LubricanteFluidosHidro.objects.filter(
-        periodo=periodo, familia_equipo_id__in=ids).values_list('familia_equipo', 'monto_hora'))
-    # cálculo de tren
-    tren = dict(TrenRodaje.objects.filter(periodo=periodo, familia_equipo_id__in=ids).values_list('familia_equipo',
-                                                                                                  'monto_hora'))
-    # cálculo de posesión
-    posesion = dict(
-        CostoPosesion.objects.filter(periodo=periodo, familia_equipo_id__in=ids).values_list('familia_equipo',
-                                                                                             'monto_hora'))
-    # cálculo de reparación
-    repara = dict(
-        ReserveReparaciones.objects.filter(periodo=periodo, familia_equipo_id__in=ids).values_list('familia_equipo',
-                                                                                                   'monto_hora'))
+
+    costos_dict = {}
+    for tipo in CostoTipo.objects.filter(relacionado_con='eq'):
+        familia_costo = dict(
+            Costo.objects.filter(tipo_costo=tipo, periodo=periodo,
+                                 familia_equipo_id__in=ids).values_list('familia_equipo', 'monto_hora'))
+        costos_dict[tipo.codigo] = familia_costo
+
     totales = dict()
-    for k, v in result.items():
+    for obra, valores in result.items():
         total = 0
-        for l in v:
-            total, l["fluido"] = get_calculo_costo(lubris, l, param.horas_dia, total)
-            total, l["tren"] = get_calculo_costo(tren, l, param.horas_dia, total)
-            total, l["posesion"] = get_calculo_costo(posesion, l, param.horas_dia, total)
-            total, l["repara"] = get_calculo_costo(repara, l, param.horas_dia, total)
-        totales[v[0]["obra_id"]] = total
+        for valor in valores:
+            for costo, costo_valor in costos_dict.items():
+                total, valor[costo] = get_calculo_costo(costo_valor, valor, param.horas_dia, total)
+        totales[valores[0]["obra_id"]] = total
 
     return result, totales
 
 
 def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
+    """
+    Este método genera el resumen de costos de los distintas CC.
+    """
+    cc_unidad = Obras.get_centro_costos_ms()
     param = CostoParametro.objects.get(periodo=periodo)
-    # Todas las obras implicadas en costos
-    ccs1 = Certificacion.objects.select_related('obra').filter(
-        periodo=periodo).values_list('obra_id', 'obra__codigo')
+    # Todas las obras implicadas en costos (de la unidad de negocio del usuario)
+    ccs1 = CertificacionReal.objects.select_related('obra').filter(
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', 'obra__codigo')
     serv = CertificacionInterna.objects.select_related('obra').filter(
-        periodo=periodo).values_list('obra_id', 'obra__codigo')
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', 'obra__codigo')
     if not ccs1.exists() and not serv.exists():
-        raise Certificacion.DoesNotExist
+        raise CertificacionReal.DoesNotExist
 
     # Busco las cabeceras (CC no prorrateable)
     no_prorrat = dict(ccs1)
     no_prorrat.update(dict(serv))
 
-    ccs_pror = dict(Obras.objects.filter(prorratea_costos=True).exclude(
+    ccs_pror = dict(cc_unidad.filter(prorratea_costos=True).exclude(
         pk__in=no_prorrat.keys()).values_list('id', 'codigo'))
 
     limited_no_prorrat = None
@@ -151,8 +174,12 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
         obras_ids = list(no_prorrat.keys()) + list(ccs_pror.keys())
 
     values = []
+
+    # TODO: El caso del combustible necesita una vuelta de rosca, luego de implementar esa área.
+    # Actualmente, está bastante hardcodeado y rigido. Seguramente, este costo se obtendrá de ese subsistema.
+
     # combustible
-    combustible = dict(Obras.objects.filter(pk__in=obras_ids).annotate(combustible=Sum(
+    combustible = dict(cc_unidad.filter(pk__in=obras_ids).annotate(combustible=Sum(
         Case(
             When(
                 partediario__fecha__gte=periodo.fecha_inicio,
@@ -175,23 +202,25 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
                                  prorrat=list(ccs_pror.keys()), multiplicador=param.precio_go,
                                  ajuste=ajuste_combustible, absoluto=total_combustible)
 
-    # Mano de obra
-    mos = dict(CostoManoObra.objects.filter(periodo=periodo, obra_id__in=obras_ids).values_list('obra_id', 'monto'))
-    values = calcular_item_costo(report=values, datos=mos, no_prorrat=no_prorrat, limited_cc=limited_no_prorrat,
-                                 prorrat=list(ccs_pror.keys()))
+    for tipo in CostoTipo.objects.filter(relacionado_con='cc'):
+        costo_data = dict(Costo.objects.filter(
+            periodo=periodo, centro_costo__in=obras_ids, tipo_costo=tipo).values_list('centro_costo_id', 'monto_total'))
+        values = calcular_item_costo(
+            report=values,
+            datos=costo_data,
+            no_prorrat=no_prorrat,
+            limited_cc=limited_no_prorrat,
+            prorrat=list(ccs_pror.keys())
+        )
 
-    # subcontratos
-    sub = dict(CostoSubContrato.objects.filter(periodo=periodo, obra_id__in=obras_ids).values_list('obra_id', 'monto'))
-    values = calcular_item_costo(report=values, datos=sub, no_prorrat=no_prorrat, limited_cc=limited_no_prorrat)
+    # adicionalmente, añadimos los costos de equipos
+    values = calcular_item_costo(
+        report=values, datos=equipos_totales,
+        no_prorrat=no_prorrat,
+        limited_cc=limited_no_prorrat)
 
-    # gastos de equipos
-    values = calcular_item_costo(report=values, datos=equipos_totales, no_prorrat=no_prorrat,
-                                 limited_cc=limited_no_prorrat)
-
-    # Materiales
-    mat = dict(MaterialesTotal.objects.filter(periodo=periodo, obra__id__in=obras_ids).values_list('obra_id', 'monto'))
-    values = calcular_item_costo(report=values, datos=mat, no_prorrat=no_prorrat, limited_cc=limited_no_prorrat,
-                                 prorrat=list(ccs_pror.keys()))
+    # normalizamos valores: tipo float lo convertimos a Decimal
+    values = float_to_decimal(values)
 
     # armamos la tabla de costos
     totales = [sum(i) for i in zip(*values)]
@@ -227,10 +256,12 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
         report.append(headers)
         i = 0
         for x in [x[1] for x in tipo_costo_headers] + ["Totales", ]:  # solo values
-            l = list()
-            l.append(x)
-            l.extend(values[i])
-            report.append(l)
+            fila = list()
+            fila.append(x)
+            fila.extend(values[i])
+            # si toda la fila es 0, no la incluyo.
+            if sum(fila[1:]) != 0:
+                report.append(fila)
             i += 1
 
         return report, total, dict(zip(columns, totales))
@@ -240,35 +271,43 @@ def get_ventas_costos(periodo, totales_costos, get_dict=False):
     """
     Devuelve los costos vs certificaciones y sus diferencias para los totales de costos pasados por parámetro.
     """
+    cc_unidad = Obras.get_centro_costos_ms()
     ids = list(totales_costos.keys())
-    obras = dict(Obras.objects.filter(id__in=ids).values_list('id', 'codigo'))
-    cert = dict(Certificacion.objects.filter(periodo=periodo, obra_id__in=ids).values_list('obra_id', 'monto'))
+    obras = dict(cc_unidad.filter(id__in=ids).values_list('id', 'codigo'))
+    # Como las certificaciones tiene ítems, debemos obtener su sumatoria
+    cert = dict(
+        CertificacionReal.objects.filter(periodo=periodo, obra_id__in=ids).annotate(
+            total=Sum('items__monto')).values_list('obra_id', 'total'))
     cert_interna = dict(
         CertificacionInterna.objects.filter(periodo=periodo, obra_id__in=ids).values_list('obra_id', 'monto'))
-    total = {'t_costos': 0, 't_certif': 0, 't_servicios': 0, 't_diff': 0}
+    total = {'t_costos': D(0), 't_certif': D(0), 't_servicios': D(0), 't_diff': D(0)}
     for x in ids:
-        total["t_costos"] += totales_costos.get(x, 0)
-        total["t_certif"] += cert.get(x, 0)
-        total["t_servicios"] += cert_interna.get(x, 0)
-        row_t = cert.get(x, 0) - totales_costos.get(x, 0) + cert_interna.get(x, 0)
+        t_costos = D(totales_costos.get(x, 0))
+        t_certif = D(cert.get(x, 0))
+        t_servicios = D(cert_interna.get(x, 0))
+        total["t_costos"] += t_costos
+        total["t_certif"] += t_certif
+        total["t_servicios"] += t_servicios
+        row_t = t_certif - t_costos + t_servicios
         total["t_diff"] += row_t
     if get_dict:
         report = {}
         for x in ids:
             report[x] = {
-                'costos': totales_costos.get(x, 0),
-                'certificaciones': cert.get(x, 0),
-                'certif_internas': cert_interna.get(x, 0),
-                'diferencia': cert.get(x, 0) - totales_costos.get(x, 0) + cert_interna.get(x, 0)
+                'costos': D(totales_costos.get(x, 0)),
+                'certificaciones': D(cert.get(x, 0)),
+                'certif_internas': D(cert_interna.get(x, 0)),
+                'diferencia': D(cert.get(x, 0)) - D(totales_costos.get(x, 0)) + D(cert_interna.get(x, 0))
             }
         return report, total
     else:
         report = [['CC', ], ['Costos', ], ['Certificaciones', ], ['Certif. Internas', ], ['Diferencia', ], ]
         for x in ids:
             report[0].append(obras.get(x, 0))
-            report[1].append(totales_costos.get(x, 0))
-            report[2].append(cert.get(x, 0))
-            report[3].append(cert_interna.get(x, 0))
-            row_t = cert.get(x, 0) - totales_costos.get(x, 0) + cert_interna.get(x, 0)
+            report[1].append(D(totales_costos.get(x, 0)))
+            report[2].append(D(cert.get(x, 0)))
+            report[3].append(D(cert_interna.get(x, 0)))
+            # TODO: ir pasando todo a Decimal
+            row_t = D(cert.get(x, 0)) - D(totales_costos.get(x, 0)) + D(cert_interna.get(x, 0))
             report[4].append(row_t)
         return report, total

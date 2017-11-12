@@ -1,0 +1,48 @@
+{% extends 'frontend/layout_base.html' %}
+{% load i18n compress pipeline frontend_tags static %}
+{% block title_head %}{{ block.super }}{% endblock %}
+{% block extra_css %}
+<base href="/~/">
+
+{% endblock %}
+
+
+{% block content %}
+    <app-root>
+        <div class="loading-center">
+            <img src="{% static 'frontend/img/logo.png' %}" alt="ZILLE" class="animated infinite pulse"/>
+        </div>
+    </app-root>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'inline.bundle.js' %}"></script>
+    <script type="text/javascript" src="{% static 'polyfills.bundle.js' %}"></script>
+    <script type="text/javascript" src="{% static 'styles.bundle.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor.bundle.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main.bundle.js' %}"></script>
+    <script type='text/javascript'>
+        (function($){
+            $(document).ready(function(){
+
+                $(".datepicker").on('focus', function(e) {
+                    $(this).datepicker({
+                        format: 'yyyy-mm-dd',
+                        language: 'es',
+                        orientation: 'bottom'
+                    });
+                });
+                $('input[type="number"]').on('focus', function (e) {
+                    $(this).on('mousewheel.disableScroll', function (e) {
+                      e.preventDefault();
+                      var scrollTo = (e.originalEvent.wheelDelta*-1) + $(document.documentElement).scrollTop();
+                      $(document.documentElement).scrollTop(scrollTo);
+                    });
+                }).on('blur', function (e) {
+                    $(this).off('mousewheel.disableScroll');
+                });
+            });
+        })(jQuery);
+    </script>
+{% endblock %}

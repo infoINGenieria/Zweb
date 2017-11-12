@@ -17,6 +17,7 @@
                         {% bootstrap_field form.centro_costos %}
                     </div>
                     <div class="col-sm-12">
+                        <a class="btn btn-default" href="{% url 'frontend:ms_panel_control' %}">Volver</a>
                         <a class="btn btn-info" id="id_submit_filter">Generar</a>
                         <a class="btn btn-danger" id="id_clear_filter">Limpiar</a>
                         {% if perms.costos.can_export_panel_control %}

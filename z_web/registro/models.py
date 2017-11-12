@@ -1,9 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from model_utils.managers import QueryManager
+
 from core.models import EstServicio, Operarios, Obras, Equipos
 from documento.models import Ri
 from parametros.models import Funcion, Situacion, FamiliaEquipo, TipoCosto, Periodo
+from zweb_utils.models import BaseModel
 
 
 class Alarma(models.Model):
@@ -172,18 +175,91 @@ class PrecioHistorico(models.Model):
         verbose_name_plural = 'precios históricos'
 
 
+####################################
+## CERTIFICACIONES Y PROYECCIONES ##
+####################################
+
+
 class Certificacion(models.Model):
     periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="certificaciones_periodo")
     obra = models.ForeignKey(Obras, limit_choices_to={'es_cc': True}, related_name="certificaciones_obras")
-    monto = models.FloatField(verbose_name="Monto ($)")
+
+    es_proyeccion = models.BooleanField(verbose_name="Es una proyección", default=False)
 
     class Meta:
-        unique_together = ('periodo', 'obra', )
+        unique_together = ('periodo', 'obra', 'es_proyeccion')
         verbose_name = 'certificación'
         verbose_name_plural = 'certificaciones'
+        permissions = (
+            ("can_manage_certificacion", "Puede gestionar certificaciones"),
+        )
 
     def __str__(self):
         return "Certificación de {} en {}".format(self.obra, self.periodo)
+
+    @property
+    def render(self):
+        if self.es_proyeccion:
+            return "Proyección de certificación de {} ({})".format(self.obra, self.periodo)
+        return "Certificación de {} ({})".format(self.obra, self.periodo)
+
+    @property
+    def total(self):
+        return sum(self.items.values_list('monto', flat=True))
+
+    @property
+    def total_sin_adicional(self):
+        return sum(self.items.filter(adicional=False).values_list('monto', flat=True))
+
+    @property
+    def total_adicional(self):
+        return sum(self.items.filter(adicional=True).values_list('monto', flat=True))
+
+
+class CertificacionItem(BaseModel):
+    certificacion = models.ForeignKey(Certificacion, verbose_name='certificación', related_name='items')
+    descripcion = models.CharField('descripción', max_length=255)
+    monto = models.DecimalField(verbose_name="Monto ($)", max_digits=18, decimal_places=2)
+    adicional = models.BooleanField('adicional', default=False)
+
+    class Meta:
+        verbose_name = 'ítem certificación'
+        verbose_name_plural = 'ítemes de certificaciones'
+
+    def __str__(self):
+        return "{} ($ {})".format(self.descripcion, self.monto)
+
+
+class CertificacionReal(Certificacion):
+    objects = QueryManager(es_proyeccion=False)
+
+    class Meta:
+        proxy = True
+        verbose_name = 'certificación'
+        verbose_name_plural = 'certificaciones'
+
+    def save(self, *args, **kwargs):
+        """
+        Siempre hago False a es_proyeccion!!
+        """
+        self.es_proyeccion = False
+        return super(CertificacionReal, self).save(*args, **kwargs)
+
+
+class CertificacionProyeccion(Certificacion):
+    objects = QueryManager(es_proyeccion=True)
+
+    class Meta:
+        proxy = True
+        verbose_name = 'proyección de certificación'
+        verbose_name_plural = 'proyecciones de certificación'
+
+    def save(self, *args, **kwargs):
+        """
+        Siempre hago True a es_proyeccion!!
+        """
+        self.es_proyeccion = True
+        return super(CertificacionProyeccion, self).save(*args, **kwargs)
 
 
 class Materiales(models.Model):

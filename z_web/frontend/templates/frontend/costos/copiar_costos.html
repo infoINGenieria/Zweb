@@ -1,0 +1,42 @@
+{% extends "frontend/costos/base_costos.html" %}
+{% load i18n bootstrap3 %}
+{% block title %}<h2 class="main-title">Copia de costos</h2>{% endblock %}
+{% block title_head %}{{ block.super }} > Copia de costos{% endblock %}
+{% block wide_class %}container{% endblock %}
+{% block content %}
+
+    <div id="copiacosto" class="tab-pane fade in active">
+        <div class="">
+            <form method="post">
+                {% csrf_token %}
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        Copia de costos
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-sm-12">
+                            <div class="well">
+                                <p class="text-primary">Utilice esta herramienta para copiar los valores de los costos establecidos en un periodo
+                                    a otro. Puede elegir recalcular los costos según los parámetros del periodo destino.</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            {% bootstrap_field copia_form.tipo_costos %}
+                        </div>
+                        <div class="col-sm-6">
+                            {% bootstrap_field copia_form.recalcular %}
+                            {% bootstrap_field copia_form.de_periodo %}
+                            {% bootstrap_field copia_form.a_periodo %}
+                            <input type="submit" value="Copiar" class="submit btn btn-danger"/>
+                            <a href="{% url 'costos:costos_list' %}" title="Volver al listado" class=" btn btn-info">Volver al listado</a>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,2207 @@
+[
+    {
+        "fields": {
+            "activa": true,
+            "codigo": "OS",
+            "created_at": "2017-10-21T12:28:24Z",
+            "modified_at": "2017-10-21T12:28:24Z",
+            "nombre": "Obras de superficie",
+            "observaciones": ""
+        },
+        "model": "organizacion.unidadnegocio",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "codigo": "Obra DEMO OS",
+            "comitente": "",
+            "contrato": "",
+            "cuit": "",
+            "descuenta_francos": false,
+            "descuenta_licencias": false,
+            "es_cc": true,
+            "fecha_fin": null,
+            "fecha_inicio": "2017-04-21",
+            "limite_vianda_doble": 2.0,
+            "lugar": "Una ubicaci\u00f3n cercana",
+            "obra": "OBRA DEMO",
+            "plazo": "9 meses",
+            "prorratea_costos": false,
+            "responsable": "Un responsable",
+            "tiene_comida": true,
+            "tiene_desarraigo": true,
+            "tiene_equipo": false,
+            "tiene_registro": false,
+            "tiene_vianda": true,
+            "unidad_negocio": 2
+        },
+        "model": "core.obras",
+        "pk": 95
+    },
+    {
+        "fields": {
+            "aprobado": true,
+            "centro_costo": 95,
+            "created_at": "2017-10-21T15:14:36Z",
+            "fecha": "2017-10-21",
+            "modified_at": "2017-11-10T19:09:13Z"
+        },
+        "model": "presupuestos.presupuesto",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "aval_por_anticipos": "0.00",
+            "aval_por_cumplimiento_contrato": "154783.84",
+            "aval_por_cumplimiento_garantia": "144281.94",
+            "contingencia": "555877.84",
+            "costo_financiero": "2.5000",
+            "created_at": "2017-10-21T15:33:09Z",
+            "estructura_no_ree": "1667633.51",
+            "fecha": "2017-09-13",
+            "imprevistos": "0.5200",
+            "impuestos_cheque": "1.5100",
+            "impuestos_ganancias": "35.00",
+            "ingresos_brutos": "3.6500",
+            "modified_at": "2017-11-10T19:09:13Z",
+            "ordenes_cambio": "8668811.27",
+            "presupuesto": 1,
+            "reajustes_precio": "12117944.72",
+            "reclamos_reconocidos": null,
+            "seguro_5": "0.00",
+            "seguro_caucion": "10501.89",
+            "sellado": "0.5600",
+            "valor_dolar": "17.50",
+            "venta_contractual_b0": "60286631.50",
+            "version": 2
+        },
+        "model": "presupuestos.revision",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "aval_por_anticipos": "0.00",
+            "aval_por_cumplimiento_contrato": "145694.35",
+            "aval_por_cumplimiento_garantia": "144281.94",
+            "contingencia": "527548.78",
+            "costo_financiero": "2.5000",
+            "created_at": "2017-10-21T15:23:24Z",
+            "estructura_no_ree": "1582646.35",
+            "fecha": "2017-06-14",
+            "imprevistos": "0.5400",
+            "impuestos_cheque": "1.5100",
+            "impuestos_ganancias": "35.00",
+            "ingresos_brutos": "3.6500",
+            "modified_at": "2017-11-10T19:08:57Z",
+            "ordenes_cambio": "4669361.77",
+            "presupuesto": 1,
+            "reajustes_precio": "10078024.56",
+            "reclamos_reconocidos": null,
+            "seguro_5": "0.00",
+            "seguro_caucion": "1412.41",
+            "sellado": "0.7300",
+            "valor_dolar": "17.50",
+            "venta_contractual_b0": "60286631.50",
+            "version": 1
+        },
+        "model": "presupuestos.revision",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "codigo": "OBRADOR",
+            "created_at": "2017-10-21T15:45:49Z",
+            "modified_at": "2017-10-21T15:45:49Z",
+            "nombre": "Obrador y campamento",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "codigo": "FLETESTR",
+            "created_at": "2017-10-21T15:47:29Z",
+            "modified_at": "2017-10-21T15:47:29Z",
+            "nombre": "Fletes y transporte",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 14
+    },
+    {
+        "fields": {
+            "codigo": "HERRAMIE",
+            "created_at": "2017-10-21T15:47:01Z",
+            "modified_at": "2017-10-21T15:47:01Z",
+            "nombre": "Herramientas",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 13
+    },
+    {
+        "fields": {
+            "codigo": "COMB_LUB",
+            "created_at": "2017-10-21T15:46:47Z",
+            "modified_at": "2017-10-21T15:46:47Z",
+            "nombre": "Combustibles, lubricantes y mantenimiento",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 12
+    },
+    {
+        "fields": {
+            "codigo": "EQUIPOS",
+            "created_at": "2017-10-21T15:46:18Z",
+            "modified_at": "2017-10-21T15:46:18Z",
+            "nombre": "Equipos",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 11
+    },
+    {
+        "fields": {
+            "codigo": "SUBCONTR",
+            "created_at": "2017-10-21T12:28:25Z",
+            "modified_at": "2017-10-21T12:28:25Z",
+            "nombre": "Subcontratos",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "codigo": "CONSUMIB",
+            "created_at": "2017-10-21T15:46:05Z",
+            "modified_at": "2017-10-21T15:46:05Z",
+            "nombre": "Consumibles",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 10
+    },
+    {
+        "fields": {
+            "codigo": "MATERIAL",
+            "created_at": "2017-10-21T12:28:25Z",
+            "modified_at": "2017-10-21T12:28:25Z",
+            "nombre": "Materiales",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "codigo": "PERSONAL",
+            "created_at": "2017-10-21T15:45:28Z",
+            "modified_at": "2017-10-21T15:45:28Z",
+            "nombre": "Gastos de personal",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "codigo": "MANOOBRA",
+            "created_at": "2017-10-21T12:28:25Z",
+            "modified_at": "2017-10-21T12:28:25Z",
+            "nombre": "Mano de obra",
+            "relacionado_con": "cc",
+            "unidad_monto": "total"
+        },
+        "model": "costos.costotipo",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "aval_por_anticipos": "0.00",
+            "aval_por_cumplimiento_contrato": "148207.91",
+            "aval_por_cumplimiento_garantia": "148207.91",
+            "contingencia": "506156.90",
+            "costo_financiero": "2.5000",
+            "created_at": "2017-10-21T15:14:36Z",
+            "estructura_no_ree": "1518470.37",
+            "fecha": "2017-05-10",
+            "imprevistos": "0.5200",
+            "impuestos_cheque": "1.5100",
+            "impuestos_ganancias": "35.00",
+            "ingresos_brutos": "3.6500",
+            "modified_at": "2017-11-10T19:08:26Z",
+            "ordenes_cambio": null,
+            "presupuesto": 1,
+            "reajustes_precio": null,
+            "reclamos_reconocidos": null,
+            "seguro_5": "0.00",
+            "seguro_caucion": "0.00",
+            "sellado": "0.8800",
+            "valor_dolar": "17.50",
+            "venta_contractual_b0": "61801443.84",
+            "version": 0
+        },
+        "model": "presupuestos.revision",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "253746.96",
+            "revision": 3,
+            "tipo": 12
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 252
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "401569.77",
+            "revision": 3,
+            "tipo": 11
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 251
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "867063.95",
+            "revision": 3,
+            "tipo": 8
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 250
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "5647384.63",
+            "revision": 3,
+            "tipo": 1
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 249
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "1690151.98",
+            "revision": 3,
+            "tipo": 9
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 248
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "213241.51",
+            "revision": 3,
+            "tipo": 14
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 247
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "93676.74",
+            "revision": 3,
+            "tipo": 13
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 246
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "854950.78",
+            "revision": 3,
+            "tipo": 12
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 245
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "2016766.20",
+            "revision": 3,
+            "tipo": 11
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 244
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "33169164.19",
+            "revision": 3,
+            "tipo": 2
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 243
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "316172.52",
+            "revision": 3,
+            "tipo": 10
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 242
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "8755047.32",
+            "revision": 3,
+            "tipo": 3
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 241
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "102217.28",
+            "revision": 3,
+            "tipo": 8
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 240
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:09:14Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:09:14Z",
+            "observaciones": null,
+            "pesos": "3975158.61",
+            "revision": 3,
+            "tipo": 1
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 239
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "253746.96",
+            "revision": 2,
+            "tipo": 12
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 238
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "401569.77",
+            "revision": 2,
+            "tipo": 11
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 237
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "867063.95",
+            "revision": 2,
+            "tipo": 8
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 236
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "5531950.88",
+            "revision": 2,
+            "tipo": 1
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 235
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "1680998.18",
+            "revision": 2,
+            "tipo": 9
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 234
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "213241.51",
+            "revision": 2,
+            "tipo": 14
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 233
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "89061.74",
+            "revision": 2,
+            "tipo": 13
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 232
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "840493.10",
+            "revision": 2,
+            "tipo": 12
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 231
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "1904634.43",
+            "revision": 2,
+            "tipo": 11
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 230
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "30619696.41",
+            "revision": 2,
+            "tipo": 2
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 229
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "316172.52",
+            "revision": 2,
+            "tipo": 10
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 228
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "8753041.22",
+            "revision": 2,
+            "tipo": 3
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 227
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "102217.28",
+            "revision": 2,
+            "tipo": 8
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 226
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:57Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:57Z",
+            "observaciones": null,
+            "pesos": "3924074.73",
+            "revision": 2,
+            "tipo": 1
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 225
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "553725.32",
+            "revision": 1,
+            "tipo": 12
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 224
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "794837.22",
+            "revision": 1,
+            "tipo": 11
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 223
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "1545861.25",
+            "revision": 1,
+            "tipo": 8
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 222
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "4133607.94",
+            "revision": 1,
+            "tipo": 1
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 221
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": true,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "997688.28",
+            "revision": 1,
+            "tipo": 9
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 220
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "232000.00",
+            "revision": 1,
+            "tipo": 14
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 219
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "900000.00",
+            "revision": 1,
+            "tipo": 13
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 218
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "1364051.90",
+            "revision": 1,
+            "tipo": 12
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 217
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "2606389.36",
+            "revision": 1,
+            "tipo": 11
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 216
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "21652609.80",
+            "revision": 1,
+            "tipo": 2
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 215
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "307262.52",
+            "revision": 1,
+            "tipo": 10
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 214
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "7765691.81",
+            "revision": 1,
+            "tipo": 3
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 213
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "182240.00",
+            "revision": 1,
+            "tipo": 8
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 212
+    },
+    {
+        "fields": {
+            "created_at": "2017-11-10T19:08:26Z",
+            "dolares": "0.00",
+            "indirecto": false,
+            "modified_at": "2017-11-10T19:08:26Z",
+            "observaciones": null,
+            "pesos": "6070168.31",
+            "revision": 1,
+            "tipo": 1
+        },
+        "model": "presupuestos.itempresupuesto",
+        "pk": 211
+    },
+    {
+        "fields": {
+            "descripcion": "Abril-2017",
+            "fecha_fin": "2017-04-20",
+            "fecha_inicio": "2017-03-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 23
+    },
+    {
+        "fields": {
+            "descripcion": "Junio-17",
+            "fecha_fin": "2017-06-20",
+            "fecha_inicio": "2017-05-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 25
+    },
+    {
+        "fields": {
+            "descripcion": "Julio-17",
+            "fecha_fin": "2017-07-20",
+            "fecha_inicio": "2017-06-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 26
+    },
+    {
+        "fields": {
+            "descripcion": "Agosto-17",
+            "fecha_fin": "2017-08-20",
+            "fecha_inicio": "2017-07-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 27
+    },
+    {
+        "fields": {
+            "descripcion": "Septiembre-2017",
+            "fecha_fin": "2017-09-20",
+            "fecha_inicio": "2017-08-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 28
+    },
+    {
+        "fields": {
+            "descripcion": "Octubre-2017",
+            "fecha_fin": "2017-10-20",
+            "fecha_inicio": "2017-09-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 29
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "3972617.36",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 3
+        },
+        "model": "costos.costo",
+        "pk": 1495
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "500405.34",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 11
+        },
+        "model": "costos.costo",
+        "pk": 1498
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "11518792.31",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 2
+        },
+        "model": "costos.costo",
+        "pk": 1494
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "136368.13",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 10
+        },
+        "model": "costos.costo",
+        "pk": 1497
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "97511.38",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 14
+        },
+        "model": "costos.costo",
+        "pk": 1500
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "1125535.00",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 1
+        },
+        "model": "costos.costo",
+        "pk": 1493
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "161624.53",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 8
+        },
+        "model": "costos.costo",
+        "pk": 1496
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:10:54Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-10-21T16:10:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "136797.97",
+            "observacion": "",
+            "periodo": 23,
+            "tipo_costo": 12
+        },
+        "model": "costos.costo",
+        "pk": 1499
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "71925.89",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 10
+        },
+        "model": "costos.costo",
+        "pk": 1517
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "7450.00",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 13
+        },
+        "model": "costos.costo",
+        "pk": 1520
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "2247847.73",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 2
+        },
+        "model": "costos.costo",
+        "pk": 1513
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "216452.81",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 9
+        },
+        "model": "costos.costo",
+        "pk": 1516
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "175926.16",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 12
+        },
+        "model": "costos.costo",
+        "pk": 1519
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "1389032.56",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 1
+        },
+        "model": "costos.costo",
+        "pk": 1512
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "227302.50",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 8
+        },
+        "model": "costos.costo",
+        "pk": 1515
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "999550.76",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 11
+        },
+        "model": "costos.costo",
+        "pk": 1518
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "39633.26",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 14
+        },
+        "model": "costos.costo",
+        "pk": 1521
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:20:48Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:20:48Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "2544338.49",
+            "observacion": "",
+            "periodo": 25,
+            "tipo_costo": 3
+        },
+        "model": "costos.costo",
+        "pk": 1514
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "7848178.21",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 2
+        },
+        "model": "costos.costo",
+        "pk": 1523
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "307437.65",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 9
+        },
+        "model": "costos.costo",
+        "pk": 1526
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "165704.72",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 12
+        },
+        "model": "costos.costo",
+        "pk": 1529
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "1833281.16",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 1
+        },
+        "model": "costos.costo",
+        "pk": 1522
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "131818.96",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 8
+        },
+        "model": "costos.costo",
+        "pk": 1525
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "1204398.84",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 11
+        },
+        "model": "costos.costo",
+        "pk": 1528
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "13800.00",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 14
+        },
+        "model": "costos.costo",
+        "pk": 1531
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "950859.71",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 3
+        },
+        "model": "costos.costo",
+        "pk": 1524
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "69282.00",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 10
+        },
+        "model": "costos.costo",
+        "pk": 1527
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:47:23Z",
+            "es_proyeccion": true,
+            "familia_equipo": null,
+            "modified_at": "2017-11-09T11:33:04Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "601116.00",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 2
+        },
+        "model": "costos.costo",
+        "pk": 1511
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:22:44Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:22:44Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "17450.00",
+            "observacion": "",
+            "periodo": 26,
+            "tipo_costo": 13
+        },
+        "model": "costos.costo",
+        "pk": 1530
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "3507111.61",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 2
+        },
+        "model": "costos.costo",
+        "pk": 1533
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "232853.20",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 9
+        },
+        "model": "costos.costo",
+        "pk": 1536
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "135887.39",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 12
+        },
+        "model": "costos.costo",
+        "pk": 1539
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:47:23Z",
+            "es_proyeccion": true,
+            "familia_equipo": null,
+            "modified_at": "2017-11-09T11:32:54Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "17111190.00",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 1
+        },
+        "model": "costos.costo",
+        "pk": 1510
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "1065052.47",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 1
+        },
+        "model": "costos.costo",
+        "pk": 1532
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "1117360.00",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 8
+        },
+        "model": "costos.costo",
+        "pk": 1535
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "778710.00",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 11
+        },
+        "model": "costos.costo",
+        "pk": 1538
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "94620.67",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 3
+        },
+        "model": "costos.costo",
+        "pk": 1534
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "69282.00",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 10
+        },
+        "model": "costos.costo",
+        "pk": 1537
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:24:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:24:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "10000.00",
+            "observacion": "",
+            "periodo": 27,
+            "tipo_costo": 13
+        },
+        "model": "costos.costo",
+        "pk": 1540
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:27:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:27:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "2412107.47",
+            "observacion": "",
+            "periodo": 28,
+            "tipo_costo": 2
+        },
+        "model": "costos.costo",
+        "pk": 1542
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:27:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:27:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "434466.83",
+            "observacion": "",
+            "periodo": 28,
+            "tipo_costo": 11
+        },
+        "model": "costos.costo",
+        "pk": 1545
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:27:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:27:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "877340.61",
+            "observacion": "",
+            "periodo": 28,
+            "tipo_costo": 1
+        },
+        "model": "costos.costo",
+        "pk": 1541
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:27:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:27:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "183429.20",
+            "observacion": "",
+            "periodo": 28,
+            "tipo_costo": 9
+        },
+        "model": "costos.costo",
+        "pk": 1544
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:27:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:27:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "10000.00",
+            "observacion": "",
+            "periodo": 28,
+            "tipo_costo": 13
+        },
+        "model": "costos.costo",
+        "pk": 1547
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:27:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:27:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "117360.00",
+            "observacion": "",
+            "periodo": 28,
+            "tipo_costo": 8
+        },
+        "model": "costos.costo",
+        "pk": 1543
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:27:10Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:27:10Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "90591.59",
+            "observacion": "",
+            "periodo": 28,
+            "tipo_costo": 12
+        },
+        "model": "costos.costo",
+        "pk": 1546
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:28:12Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:28:12Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "140440.00",
+            "observacion": "",
+            "periodo": 29,
+            "tipo_costo": 2
+        },
+        "model": "costos.costo",
+        "pk": 1549
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:28:12Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:28:12Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "118562.07",
+            "observacion": "",
+            "periodo": 29,
+            "tipo_costo": 11
+        },
+        "model": "costos.costo",
+        "pk": 1552
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:28:12Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:28:12Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "364240.44",
+            "observacion": "",
+            "periodo": 29,
+            "tipo_costo": 1
+        },
+        "model": "costos.costo",
+        "pk": 1548
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:28:12Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:28:12Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "161400.00",
+            "observacion": "",
+            "periodo": 29,
+            "tipo_costo": 9
+        },
+        "model": "costos.costo",
+        "pk": 1551
+    },
+    {
+        "fields": {
+            "centro_costo": 95,
+            "created_at": "2017-11-10T21:28:12Z",
+            "es_proyeccion": false,
+            "familia_equipo": null,
+            "modified_at": "2017-11-10T21:28:12Z",
+            "monto_anio": null,
+            "monto_hora": null,
+            "monto_mes": null,
+            "monto_total": "56050.00",
+            "observacion": "",
+            "periodo": 29,
+            "tipo_costo": 8
+        },
+        "model": "costos.costo",
+        "pk": 1550
+    },
+    {
+        "fields": {
+            "descripcion": "Noviembre-2017",
+            "fecha_fin": "2017-11-20",
+            "fecha_inicio": "2017-10-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 30
+    },
+    {
+        "fields": {
+            "es_proyeccion": false,
+            "obra": 95,
+            "periodo": 26
+        },
+        "model": "registro.certificacion",
+        "pk": 161
+    },
+    {
+        "fields": {
+            "es_proyeccion": true,
+            "obra": 95,
+            "periodo": 29
+        },
+        "model": "registro.certificacion",
+        "pk": 160
+    },
+    {
+        "fields": {
+            "es_proyeccion": true,
+            "obra": 95,
+            "periodo": 28
+        },
+        "model": "registro.certificacion",
+        "pk": 159
+    },
+    {
+        "fields": {
+            "es_proyeccion": true,
+            "obra": 95,
+            "periodo": 27
+        },
+        "model": "registro.certificacion",
+        "pk": 158
+    },
+    {
+        "fields": {
+            "es_proyeccion": false,
+            "obra": 95,
+            "periodo": 29
+        },
+        "model": "registro.certificacion",
+        "pk": 157
+    },
+    {
+        "fields": {
+            "es_proyeccion": true,
+            "obra": 95,
+            "periodo": 30
+        },
+        "model": "registro.certificacion",
+        "pk": 156
+    },
+    {
+        "fields": {
+            "es_proyeccion": false,
+            "obra": 95,
+            "periodo": 28
+        },
+        "model": "registro.certificacion",
+        "pk": 155
+    },
+    {
+        "fields": {
+            "es_proyeccion": false,
+            "obra": 95,
+            "periodo": 27
+        },
+        "model": "registro.certificacion",
+        "pk": 154
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 161,
+            "created_at": "2017-11-10T22:07:17Z",
+            "descripcion": "reajustes",
+            "modified_at": "2017-11-10T22:07:17Z",
+            "monto": "1305596.91"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 154
+    },
+    {
+        "fields": {
+            "adicional": true,
+            "certificacion": 161,
+            "created_at": "2017-11-10T22:07:17Z",
+            "descripcion": "cambios",
+            "modified_at": "2017-11-10T22:07:17Z",
+            "monto": "2789037.89"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 153
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 161,
+            "created_at": "2017-11-10T22:07:17Z",
+            "descripcion": "venta",
+            "modified_at": "2017-11-10T22:07:17Z",
+            "monto": "9616533.90"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 152
+    },
+    {
+        "fields": {
+            "adicional": true,
+            "certificacion": 160,
+            "created_at": "2017-11-10T21:59:06Z",
+            "descripcion": "cambio",
+            "modified_at": "2017-11-10T21:59:06Z",
+            "monto": "789599.51"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 151
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 160,
+            "created_at": "2017-11-10T21:59:06Z",
+            "descripcion": "venta",
+            "modified_at": "2017-11-10T21:59:06Z",
+            "monto": "165733.26"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 150
+    },
+    {
+        "fields": {
+            "adicional": true,
+            "certificacion": 159,
+            "created_at": "2017-11-10T21:58:17Z",
+            "descripcion": "cambios",
+            "modified_at": "2017-11-10T21:58:17Z",
+            "monto": "3136346.70"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 149
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 159,
+            "created_at": "2017-11-10T21:58:17Z",
+            "descripcion": "venta",
+            "modified_at": "2017-11-10T21:58:17Z",
+            "monto": "6154909.32"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 148
+    },
+    {
+        "fields": {
+            "adicional": true,
+            "certificacion": 158,
+            "created_at": "2017-11-10T21:57:37Z",
+            "descripcion": "cambios",
+            "modified_at": "2017-11-10T21:57:37Z",
+            "monto": "1861859.68"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 147
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 158,
+            "created_at": "2017-11-10T21:57:37Z",
+            "descripcion": "venta",
+            "modified_at": "2017-11-10T21:57:37Z",
+            "monto": "6245314.51"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 146
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 157,
+            "created_at": "2017-11-10T11:49:36Z",
+            "descripcion": "Pago",
+            "modified_at": "2017-11-10T11:49:53Z",
+            "monto": "11000000.00"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 145
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 156,
+            "created_at": "2017-10-27T04:33:29Z",
+            "descripcion": "Adicional puelo",
+            "modified_at": "2017-11-10T11:50:15Z",
+            "monto": "90000.00"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 144
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 156,
+            "created_at": "2017-10-27T04:33:29Z",
+            "descripcion": "Avance 33",
+            "modified_at": "2017-11-10T11:50:15Z",
+            "monto": "8500000.00"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 143
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 155,
+            "created_at": "2017-10-27T04:05:17Z",
+            "descripcion": "Pago sep17",
+            "modified_at": "2017-11-10T11:48:43Z",
+            "monto": "25058502.00"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 142
+    },
+    {
+        "fields": {
+            "adicional": false,
+            "certificacion": 154,
+            "created_at": "2017-10-27T04:04:44Z",
+            "descripcion": "Certificaci\u00f3n",
+            "modified_at": "2017-11-10T11:49:03Z",
+            "monto": "9900000.00"
+        },
+        "model": "registro.certificacionitem",
+        "pk": 141
+    },
+    {
+        "fields": {
+            "descripcion": "Mayo-17",
+            "fecha_fin": "2017-05-20",
+            "fecha_inicio": "2017-04-21"
+        },
+        "model": "parametros.periodo",
+        "pk": 24
+    },
+    {
+        "fields": {
+            "avance": "10.000",
+            "centro_costo": 95,
+            "created_at": "2017-11-09T01:36:53Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-11-09T01:36:53Z",
+            "observacion": "",
+            "periodo": 23
+        },
+        "model": "costos.avanceobra",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "avance": "3.000",
+            "centro_costo": 95,
+            "created_at": "2017-11-09T01:38:05Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-11-09T01:38:05Z",
+            "observacion": "",
+            "periodo": 24
+        },
+        "model": "costos.avanceobra",
+        "pk": 13
+    },
+    {
+        "fields": {
+            "avance": "60.000",
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:49:52Z",
+            "es_proyeccion": false,
+            "modified_at": "2017-10-21T16:49:52Z",
+            "observacion": "",
+            "periodo": 25
+        },
+        "model": "costos.avanceobra",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "avance": "11.000",
+            "centro_costo": 95,
+            "created_at": "2017-11-09T01:36:53Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-11-09T01:36:53Z",
+            "observacion": "",
+            "periodo": 25
+        },
+        "model": "costos.avanceobra",
+        "pk": 9
+    },
+    {
+        "fields": {
+            "avance": "4.000",
+            "centro_costo": 95,
+            "created_at": "2017-11-09T01:38:05Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-11-09T01:38:05Z",
+            "observacion": "",
+            "periodo": 26
+        },
+        "model": "costos.avanceobra",
+        "pk": 14
+    },
+    {
+        "fields": {
+            "avance": "11.000",
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:50:16Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-10-21T16:50:16Z",
+            "observacion": "",
+            "periodo": 27
+        },
+        "model": "costos.avanceobra",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "avance": "11.000",
+            "centro_costo": 95,
+            "created_at": "2017-10-21T16:49:52Z",
+            "es_proyeccion": false,
+            "modified_at": "2017-10-21T16:49:52Z",
+            "observacion": "",
+            "periodo": 27
+        },
+        "model": "costos.avanceobra",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "avance": "20.000",
+            "centro_costo": 95,
+            "created_at": "2017-11-09T01:36:53Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-11-09T01:36:53Z",
+            "observacion": "",
+            "periodo": 28
+        },
+        "model": "costos.avanceobra",
+        "pk": 10
+    },
+    {
+        "fields": {
+            "avance": "31.000",
+            "centro_costo": 95,
+            "created_at": "2017-11-09T01:36:53Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-11-09T01:36:53Z",
+            "observacion": "",
+            "periodo": 29
+        },
+        "model": "costos.avanceobra",
+        "pk": 11
+    },
+    {
+        "fields": {
+            "avance": "10.000",
+            "centro_costo": 95,
+            "created_at": "2017-11-09T01:36:53Z",
+            "es_proyeccion": true,
+            "modified_at": "2017-11-09T01:36:53Z",
+            "observacion": "",
+            "periodo": 30
+        },
+        "model": "costos.avanceobra",
+        "pk": 12
+    }
+]

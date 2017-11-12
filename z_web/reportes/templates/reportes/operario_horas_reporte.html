@@ -1,6 +1,11 @@
 {% extends 'reportes/base_reportes.html' %}
 {% load i18n compress pipeline frontend_tags static bootstrap3 %}
 {% block title_head %}{{ block.super }} > Horas trabajadas{% endblock %}
+{% block title %}
+<h1 class="">
+    <a class="btn btn-default" href="{% url 'reportes:index' %}"><i class="fa fa-chevron-left"></i></a> Reportes
+</h1><hr />
+{% endblock %}
 {% block content %}
     <h2>Reporte de horas trabajadas</h2>
     <div class="filters col-md-6">

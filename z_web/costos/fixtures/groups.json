@@ -1,6 +1,6 @@
 [
 {
-    "pk": 1,
+    "model": "auth.group",
     "fields": {
         "name": "Acceso completo Panel de Control",
         "permissions": [
@@ -16,10 +16,10 @@
             ]
         ]
     },
-    "model": "auth.group"
+    "pk": 1
 },
 {
-    "pk": 2,
+    "model": "auth.group",
     "fields": {
         "name": "Visualizador Panel de control",
         "permissions": [
@@ -30,28 +30,13 @@
             ]
         ]
     },
-    "model": "auth.group"
+    "pk": 2
 },
 {
-    "pk": 3,
+    "model": "auth.group",
     "fields": {
         "name": "Administrador de costos",
         "permissions": [
-            [
-                "add_costomanoobra",
-                "costos",
-                "costomanoobra"
-            ],
-            [
-                "change_costomanoobra",
-                "costos",
-                "costomanoobra"
-            ],
-            [
-                "delete_costomanoobra",
-                "costos",
-                "costomanoobra"
-            ],
             [
                 "add_costoparametro",
                 "costos",
@@ -81,114 +66,9 @@
                 "delete_costoparametro",
                 "costos",
                 "costoparametro"
-            ],
-            [
-                "add_costoposesion",
-                "costos",
-                "costoposesion"
-            ],
-            [
-                "change_costoposesion",
-                "costos",
-                "costoposesion"
-            ],
-            [
-                "delete_costoposesion",
-                "costos",
-                "costoposesion"
-            ],
-            [
-                "add_costosubcontrato",
-                "costos",
-                "costosubcontrato"
-            ],
-            [
-                "change_costosubcontrato",
-                "costos",
-                "costosubcontrato"
-            ],
-            [
-                "delete_costosubcontrato",
-                "costos",
-                "costosubcontrato"
-            ],
-            [
-                "add_lubricantefluidoshidro",
-                "costos",
-                "lubricantefluidoshidro"
-            ],
-            [
-                "change_lubricantefluidoshidro",
-                "costos",
-                "lubricantefluidoshidro"
-            ],
-            [
-                "delete_lubricantefluidoshidro",
-                "costos",
-                "lubricantefluidoshidro"
-            ],
-            [
-                "add_materialestotal",
-                "costos",
-                "materialestotal"
-            ],
-            [
-                "change_materialestotal",
-                "costos",
-                "materialestotal"
-            ],
-            [
-                "delete_materialestotal",
-                "costos",
-                "materialestotal"
-            ],
-            [
-                "add_reservereparaciones",
-                "costos",
-                "reservereparaciones"
-            ],
-            [
-                "change_reservereparaciones",
-                "costos",
-                "reservereparaciones"
-            ],
-            [
-                "delete_reservereparaciones",
-                "costos",
-                "reservereparaciones"
-            ],
-            [
-                "add_servicioprestadoun",
-                "costos",
-                "servicioprestadoun"
-            ],
-            [
-                "change_servicioprestadoun",
-                "costos",
-                "servicioprestadoun"
-            ],
-            [
-                "delete_servicioprestadoun",
-                "costos",
-                "servicioprestadoun"
-            ],
-            [
-                "add_trenrodaje",
-                "costos",
-                "trenrodaje"
-            ],
-            [
-                "change_trenrodaje",
-                "costos",
-                "trenrodaje"
-            ],
-            [
-                "delete_trenrodaje",
-                "costos",
-                "trenrodaje"
             ]
         ]
     },
-    "model": "auth.group"
+    "pk": 3
 }
 ]

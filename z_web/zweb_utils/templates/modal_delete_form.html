@@ -1,0 +1,50 @@
+{% load bootstrap3 static %}
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        {% block modal_content %}
+        <form id="modal_form_id" method='post' class="form" role="form" action='{{ url_post_form }}' enctype="multipart/form-data">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">
+                    {% block modal_title %}
+                    ¿Eliminar?
+                    {% endblock %}
+                </h4>
+            </div>
+            <div class="modal-body" id="id_modal-body">
+                {% block modal_body_content %}
+                <p>Está a punto de eliminar: <br><br>
+                    <span class="text-danger"><strong>{{ object.render }}</strong></span>.
+                    <p>¿Continuar?</p>
+                </p>
+                {% csrf_token %}
+                {% if form %}{% bootstrap_form form %}{% endif %}
+                <div class="row"><div class="col-sm-12">
+                    <input type="submit" class="btn btn-raised btn-danger pull-right" value="Si, eliminar"/>
+                    <input type="button" class="btn btn-raised btn-default pull-right mr5" data-dismiss="modal" value="No, cancelar"/>
+                </div></div>
+                {% endblock %}
+            </div>
+        </form>
+        <script>
+            (function($){
+                var close_dialog = function (ev) {
+                    if(ev.indexOf('modal_form_id') == -1) {
+                        setTimeout(function () {
+                            $("#modal").modal('hide');
+                            window.location.reload(true);
+                        }, 800);
+                    }
+                };
+
+                var form_options = {
+                    target: '#modal',
+                    success: close_dialog
+                };
+                $('#modal_form_id').ajaxForm(form_options);
+            })(jQuery);
+
+        </script>
+        {% endblock %}
+    </div>
+</div>

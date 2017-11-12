@@ -1,0 +1,31 @@
+{% extends 'frontend/layout_base.html' %}
+{% load i18n bootstrap3 django_tables2 crispy_forms_tags %}
+{% block title %}<h2 class="main-title">Certificaciones</h2>{% endblock %}
+
+{% block content %}
+{% comment %} <div class="well well-sm">
+    <a class="btn btn-success pull-right ml5"
+        href="{% url 'costos:avances_obra_create' %}">
+        <i class="fa fa-plus"></i> Cargar certificación</a>
+    <div class="row">
+        <div class="col-sm-9 filters">
+            {% crispy filter.form %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+    {% if is_filtered %}{% render_table table %}
+    {% else %}
+        <p class="alert alert-warning">
+            Utilice los filtros para visualizar las certificaciones.
+        </p>
+    {% endif %}
+    </div>
+</div> {% endcomment %}
+<ul>
+{% for c in object_list %}
+<li>{{ c.render }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

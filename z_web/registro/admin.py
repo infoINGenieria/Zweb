@@ -4,8 +4,8 @@ from django import forms
 
 from core.models import Obras
 from .models import (Alarma, Combustible, Partediario, Registro, Materiales,
-                     RegistroEquipo, PrecioHistorico, Certificacion, AjusteCombustible,
-                     CertificacionInterna)
+                     RegistroEquipo, PrecioHistorico, CertificacionReal, AjusteCombustible,
+                     CertificacionInterna, CertificacionItem)
 from zweb_utils.format import currency_format as cur
 
 
@@ -107,24 +107,29 @@ class PartediarioAdmin(admin.ModelAdmin):
 #         return cur(obj.valor)
 #     valor_format.short_description = "Valor ($)"
 
+class CertificacionItemAdminInline(admin.TabularInline):
+    model = CertificacionItem
+    extra = 1
+
 
 class CertificacionAdminForm(forms.ModelForm):
     obra = forms.ModelChoiceField(queryset=Obras.objects.filter(
         es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio'))
 
     class Meta:
-        model = Certificacion
-        fields = ('periodo', 'obra', 'monto', )
+        model = CertificacionReal
+        fields = ('periodo', 'obra', )
 
 
-@admin.register(Certificacion)
+@admin.register(CertificacionReal)
 class CertificacionAdmin(admin.ModelAdmin):
     list_display = ('periodo', 'obra', 'valor_format')
     list_filter = ('periodo', 'obra', )
     form = CertificacionAdminForm
+    inlines = (CertificacionItemAdminInline, )
 
     def valor_format(self, obj):
-        return cur(obj.monto)
+        return cur(obj.total)
     valor_format.short_description = "Monto ($)"
 
 

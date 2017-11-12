@@ -2,6 +2,11 @@
 {% load i18n compress pipeline frontend_tags static %}
 {% block title_head %}{{ block.super }} > Reportes{% endblock %}
 {% block wide_class %}container{% endblock %}
+{% block title %}
+    <h1 class="">
+        <a class="btn btn-default" href="{% url 'index' %}"><i class="fa fa-chevron-left"></i></a> Reportes
+    </h1><hr />
+{% endblock %}
 {% block extra_css %}
     <link media="all" href="{% static "nvd3/build/nv.d3.min.css" %}" type="text/css" rel="stylesheet" />
     {% compress css %}
@@ -9,7 +14,6 @@
     {% endcompress %}
 {% endblock %}
 {% block content %}
-    <h2>Reportes</h2>
     <a class="btn btn-lg btn-success" href="{% url 'reportes:operario_hora' %}">Reporte de horas trabajadas</a>
 
 {% endblock %}

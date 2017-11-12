@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
 
+from model_utils.managers import QueryManager
+
 
 class FamiliaEquipo(models.Model):
     nombre = models.CharField(max_length=255, blank=True, null=True)
@@ -72,6 +74,9 @@ class Periodo(models.Model):
     fecha_inicio = models.DateField(verbose_name="Fecha de inicio")
     fecha_fin = models.DateField(verbose_name="Fecha de cierre")
 
+    objects = models.Manager()
+    con_parametros_costos = QueryManager(parametros_costos__isnull=False)
+
     class Meta:
         verbose_name = 'periodo'
         verbose_name_plural = 'periodos'
@@ -83,3 +88,14 @@ class Periodo(models.Model):
     @property
     def key(self):
         return slugify(self.descripcion)
+
+    def save(self, *args, **kwargs):
+        parametro = None
+        if not self.pk:
+            from costos.models import CostoParametro
+            ultimo = CostoParametro.objects.latest("periodo__fecha_fin")
+            parametro = CostoParametro(pesos_usd=ultimo.pesos_usd, precio_go=ultimo.precio_go)
+        super(Periodo, self).save(*args, **kwargs)
+        if parametro:
+            parametro.periodo = self
+            parametro.save()

@@ -1,22 +1,27 @@
+from decimal import Decimal as D
+
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 from django.utils.safestring import mark_safe
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 
 from core.models import Obras
 from frontend.forms import CustomPanelControlForm
 from parametros.models import Periodo
 from costos.models import CostoParametro, ArchivosAdjuntosPeriodo
-from registro.models import Certificacion
+from registro.models import CertificacionReal
 from zweb_utils.views import LoginAndPermissionRequiredMixin, LoginRequiredMixin
 from .stats import get_utilizacion_equipo, get_cc_on_periodo, get_ventas_costos, get_headers_costos
 
 from zweb_utils.excel import ExportPanelControl
 
 
-class Index(LoginRequiredMixin, TemplateView):
-    template_name = 'frontend/index.html'
+class Index(LoginRequiredMixin, RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy('frontend:ng_index')
 
 
 class MSPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
@@ -42,10 +47,10 @@ class MSPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
             messages.add_message(self.request, messages.WARNING,
                                  mark_safe("No están definidos los <a href='/costos/costoparametro'>parámetros de costos</a> para el "
                                            "periodo {}".format(periodo)))
-        except Certificacion.DoesNotExist as e:
+        except CertificacionReal.DoesNotExist as e:
             messages.add_message(self.request, messages.WARNING,
                                  mark_safe("No hay <a href='{}'>certificaciones de obras</a> para el "
-                                           "periodo {}".format(reverse('admin:registro_certificacion_changelist'), periodo)))
+                                           "periodo {}".format('/~/certificaciones/real', periodo)))
         return context
 
     def get(self, request, *args, **kwargs):
@@ -85,7 +90,7 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MSCustomPanelControl, self).get_context_data(**kwargs)
         if self.request.GET.get("filtered", False):
-            form = CustomPanelControlForm(self.request.GET)
+            form = CustomPanelControlForm(data=self.request.GET)
         else:
             form = CustomPanelControlForm()
         if form.is_valid():
@@ -125,20 +130,39 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
                 if not no_show_message:
                     messages.add_message(
                         self.request, messages.WARNING, mark_safe(
-                            "No están definidos los <a href='/costos/costoparametro'>parámetros de costos</a> para el "
+                            "No están definidos los <a href='/admin/costos/costoparametro'>parámetros de costos</a> para el "
                             "periodo <strong>{}</strong>. Se ignora el periodo.".format(periodo)))
-            except Certificacion.DoesNotExist as e:
+            except CertificacionReal.DoesNotExist as e:
                 if not no_show_message:
                     messages.add_message(self.request, messages.WARNING, mark_safe(
                         "No hay <a href='{}'>certificaciones de obras</a> para el "
-                        "periodo <strong>{}</strong>. Se ignora el periodo.".format(reverse('admin:registro_certificacion_changelist'), periodo)))
+                        "periodo <strong>{}</strong>. Se ignora el periodo.".format("/~/certificaciones/real", periodo)))
+        data_costos, header_costos = self.remove_zero_values(data_costos)
         cc_headers = dict(Obras.objects.filter(es_cc=True, pk__in=data_cert_costos.keys()).values_list('pk', 'codigo'))
         return {
             'costos': data_costos, 'costos_totales': data_costos_totales,
             'cert_vs_costos': data_cert_costos, 'totales': data_totales,
-            'cc_headers': cc_headers, 'costos_headers': dict(get_headers_costos()),
+            'cc_headers': cc_headers, 'costos_headers': header_costos,
             'periodos': periodos
         }
+
+    def remove_zero_values(self, costos):
+        """
+        Calculo los totales de cada items, y si este es 0,
+        remuevo esos datos junto a la cabecera correspondiente.
+        """
+        headers = dict(get_headers_costos())
+
+        suma = dict()
+        for head in headers.keys():
+            for key in costos.keys():
+                suma[head] = suma.get(head, 0) + costos[key].get(head)
+        for key, _suma in suma.items():
+            if _suma == 0:
+                del headers[key]
+                for _id in costos.keys():
+                    del costos[_id][key]
+        return costos, headers
 
     def update_values(self, data, values):
         """
@@ -151,7 +175,7 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
             if cc_id not in data:
                 data[cc_id] = vals
             else:
-                if isinstance(vals, (float, int)):
+                if isinstance(vals, (float, int, D)):
                     data[cc_id] += vals
                 else:
                     for costo, val in vals.items():
@@ -175,6 +199,15 @@ class MSExportarCustomPanel2Excel(MSCustomPanelControl):
             return response
         return self.render_to_response(context)
 
+
+class NgIndex(LoginAndPermissionRequiredMixin, TemplateView):
+    template_name = 'frontend/ng_base.html'
+    permission_required = ('organizacion.can_manage_presupuestos', )
+    #
+
+
+# Angular app
+ng_index = NgIndex.as_view()
 
 index = Index.as_view()
 ms_panel_control = MSPanelControl.as_view()

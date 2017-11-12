@@ -49,16 +49,40 @@ INSTALLED_APPS = (
     'pipeline',
     'bootstrap3',
     'compressor',
+    'djangoformsetjs',
+    'django_tables2',
+    'django_filters',
+    'crispy_forms',
+    'rest_framework',
 
+    'presupuestos',
     'core',
     'indumentaria',
     'parametros',
     'registro',
     'documento',
     'costos',
+    'organizacion',
     'zweb_utils',
     'reportes',
+    'api',
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DATE_FORMAT': '%d/%m/%Y',
+    'DATE_INPUT_FORMATS': ['%d/%m/%Y', 'iso-8601'],
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', ),
+    'PAGE_SIZE': 50,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -79,6 +103,10 @@ STATICFILES_FINDERS = (
     'djangobower.finders.BowerFinder',
     'pipeline.finders.PipelineFinder',
     'compressor.finders.CompressorFinder',
+)
+
+STATICFILES_DIRS = (
+    normpath(join(SITE_ROOT, 'ng-zille', 'dist')),
 )
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
@@ -105,6 +133,7 @@ PIPELINE = {
                 'bootstrap-datepicker/dist/css/bootstrap-datepicker3.css',
                 'frontend/css/base.scss',
                 'chosen/chosen.min.css',
+                'animate.css/animate.min.css',
             ),
             'output_filename': 'css/base.css',
             'extra_context': {
@@ -136,6 +165,7 @@ PIPELINE = {
                 'bootstrap-sass/assets/javascripts/bootstrap.js',
                 'bootstrap3-dialog/dist/js/bootstrap-dialog.js',
                 'chosen/chosen.jquery.min.js',
+                'jquery-form/jquery.form.js',
             ),
             'output_filename': 'js/base_js.js',
         },
@@ -146,6 +176,7 @@ PIPELINE = {
                 'bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
                 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js',
                 'PACE/pace.js',
+
             ),
             'output_filename': 'js/plugins.js',
         },
@@ -183,12 +214,14 @@ BOWER_INSTALLED_APPS = (
     'd3#3.3.13',
     'nvd3#1.7.1',
     'bootstrap-sass#3.3',
-    'fontawesome#4.3',
+    'fontawesome#4.7',
     'datatables#~1.10.10',
     'bootstrap3-dialog#1.34.9',
     'chosen#1.4.2',
     'pace#1.0.2',
     'bootstrap-datepicker#^1.5.1',
+    'jquery-form#3.46.0',
+    'animate.css#^3.5.2'
 )
 
 ROOT_URLCONF = 'zillepro_web.urls'
@@ -219,7 +252,7 @@ WSGI_APPLICATION = 'zillepro_web.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'es-ar'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Argentina/Mendoza'
 
@@ -242,7 +275,7 @@ SUIT_CONFIG = {
     'HEADER_DATE_FORMAT': 'l, d F Y',
     'SEARCH_URL': 'admin:core_operarios_changelist',
     'MENU': (
-        'core', 'costos', 'documento', 'parametros', 'registro',
+        'core', 'organizacion', 'costos', 'documento', 'parametros', 'registro',
         {'app': 'auth', 'label': 'Usuarios', 'icon': 'icon-user'},
         {'label': 'Volver a la aplicación', 'url': 'index', 'icon': 'icon-th'},
     )
@@ -256,3 +289,5 @@ BOOTSTRAP3 = {
     # Field class to use in horizontal forms
     'horizontal_field_class': 'col-sm-10',
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

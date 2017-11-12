@@ -1,0 +1,51 @@
+
+table {
+    input[type="tel"], .number {
+        text-align: right;
+    }
+}
+.padd-total {
+    padding-right: 50px;
+}
+#table-costos {
+
+    th:first-child {
+        width: 25%;
+    }
+    .trash {
+        width: 40px;
+        text-align: center;
+    }
+
+    .num-total {
+        width: 20%;
+    }
+}
+.costos-estructurales {
+    th.text-center {
+        text-align: center;
+    }
+    td {
+        text-align: right;
+        &::first-child {
+            text-align: left;
+        }
+    }
+}
+
+.totales-presupuesto {
+    font-size: 150%;
+    .number {
+        text-align: right;
+    }
+}
+
+.table-ventas {
+    .total {
+        width: 160px;
+    }
+}
+
+dp-date-picker {
+    display: inherit;
+}

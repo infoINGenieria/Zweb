@@ -1,0 +1,46 @@
+{% load bootstrap3 static crispy_forms_tags %}
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        {% block modal_content %}
+        <form id="modal_form_id" method='post' class="form" role="form" action='{{ url_post_form }}' enctype="multipart/form-data">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">
+                    {% block modal_title %}
+                    {% if modal_title %}{{ modal_title }}{% else %}[NO TITLE]{% endif %}
+                    {% endblock %}
+                </h4>
+            </div>
+            <div class="modal-body" id="id_modal-body">
+                {% block modal_body_content %}
+                {% csrf_token %}
+                {% crispy form %}
+                <div class="row"><div class="col-sm-12">
+                    <input type="submit" class="btn btn-raised btn-primary pull-right" value="Guardar"/>
+                    <input type="button" class="btn btn-raised btn-default pull-right mr5" data-dismiss="modal" value="Cancelar"/>
+                </div></div>
+                {% endblock %}
+            </div>
+        </form>
+        <script>
+            (function($){
+                var close_dialog = function (ev) {
+                    if(ev.indexOf('modal_form_id') == -1) {
+                        setTimeout(function () {
+                            $("#modal").modal('hide');
+                            window.location.reload(true);
+                        }, 800);
+                    }
+                };
+
+                var form_options = {
+                    target: '#modal',
+                    success: close_dialog
+                };
+                $('#modal_form_id').ajaxForm(form_options);
+            })(jQuery);
+
+        </script>
+        {% endblock %}
+    </div>
+</div>

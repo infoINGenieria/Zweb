@@ -29,9 +29,34 @@ form {
   margin-bottom: 20px;
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
 /**********************
  *   Classes
  **********************/
+.loading-center {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000000;
+  background-color: #3e3f3a;
+
+  img {
+    margin-left: calc(50% - 252.5px);
+    margin-top: calc(20% - 66px);
+  }
+}
+
 .main-wrapper {
   padding-top: 70px;
   min-height:100%;
@@ -90,6 +115,26 @@ form {
   margin: 0 10px;
 }
 
+.filters {
+  .btn {
+    margin: 10px 5px 5px 0;
+  }
+}
+
+.mr5{
+  margin-right: 5px;
+}
+.ml5{
+  margin-left: 5px;
+}
+
+.mb10 {
+  margin-bottom: 10px;
+}
+
+.mt10 {
+  margin-top: 10px;
+}
 /*******************
  *   ID's
  *******************/
@@ -133,7 +178,9 @@ form {
   }
 }
 
-
+// .btn {
+//   margin: 5px;
+// }
 /***************
  *  PACE style *
 ****************/

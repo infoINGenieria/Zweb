@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 
 from parametros.models import FamiliaEquipo, Funcion
 
@@ -83,7 +84,11 @@ class FrancoLicencia(models.Model):
 
 class Obras(models.Model):
     """
-    OK
+    Una obra representa una unidad integradora de recursos (equipos, personas, etc).
+    En algunos casos, una obra es un Centro de costos, la cual engloba los calculos de costos asociados a un CC.
+    Se identifican con es_cc = True
+    También se le llama proyecto.
+    Eventualmente, habría que refactorizar este modelo.
     """
     id = models.AutoField(db_column='ID', primary_key=True)
     codigo = models.CharField(db_column='CODIGO', max_length=255, unique=True)
@@ -111,6 +116,9 @@ class Obras(models.Model):
     prorratea_costos = models.BooleanField(verbose_name="¿Prorratea Costos?", default=False,
                                            help_text="Si está seleccionada, los costos se prorratean en los demás CC")
 
+    unidad_negocio = models.ForeignKey(
+        'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
+
     class Meta:
         verbose_name = "obra"
         verbose_name_plural = "obras"
@@ -122,6 +130,22 @@ class Obras(models.Model):
     @property
     def esta_activa(self):
         return self.fecha_fin is None
+
+    @classmethod
+    def get_centro_costos(cls, user):
+        obra_qs = Obras.objects.filter(es_cc=True)
+        try:
+            if user.extension.unidad_negocio:
+                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
+        except UserExtension.DoesNotExist:
+            pass
+        return obra_qs
+
+    @classmethod
+    def get_centro_costos_ms(cls):
+        return Obras.objects.filter(
+            es_cc=True, unidad_negocio__codigo='MS')
+
 
 
 class CCT(models.Model):
@@ -200,3 +224,19 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.user
+
+
+class UserExtension(models.Model):
+    """
+    Modelo para almacenar información relativa al usuario
+    """
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='extension')
+    unidad_negocio = models.ForeignKey(
+        'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
+
+    class Meta:
+        verbose_name = 'información adicional'
+        verbose_name_plural = 'información adicional'
+
+    def __str__(self):
+        return "información de {}".format(self.user)
