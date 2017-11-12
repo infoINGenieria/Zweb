@@ -11,7 +11,7 @@ def user_menu(request):
             return cache.get(key)
         else:
             menu = {'user_menu': generate_menu_user(request.user)}
-            cache.set(key, menu, 60 * 60 )  # cached for 1 hours
+            cache.set(key, menu, 60 * 5 )  # cached for 15 minutos
             return menu
     else:
         return {}
