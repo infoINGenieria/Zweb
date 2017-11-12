@@ -5,6 +5,7 @@ import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NvD3Module } from 'ng2-nvd3';
 
 import { BootstrapModalModule } from 'ngx-modialog/plugins/bootstrap';
 import { ModalModule } from 'ngx-modialog';
@@ -30,6 +31,11 @@ import {
 import { IndexComponent } from './components/index/index.component';
 import { TableroControlOsComponent } from './components/tablero-control-os/tablero-control-os.component';
 
+// d3 and nvd3 should be included somewhere
+import 'd3';
+import 'nvd3';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +47,7 @@ import { TableroControlOsComponent } from './components/tablero-control-os/table
     CertificacionesProyeccionComponent,
     CertificacionesIndexComponent,
     CertificacionProyeccionComponent,
-    TableroControlOsComponent
+    TableroControlOsComponent,
   ],
   imports: [
     BrowserModule,
@@ -53,6 +59,7 @@ import { TableroControlOsComponent } from './components/tablero-control-os/table
     BootstrapModalModule,
     APP_ROUTING,
     BrowserAnimationsModule,
+    NvD3Module,
     // CurrencyMaskModule
   ],
   providers: [

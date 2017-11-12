@@ -1,3 +1,4 @@
+# coding: utf-8
 from collections import defaultdict
 from decimal import Decimal as D
 
@@ -99,8 +100,11 @@ def get_utilizacion_equipo(periodo, limit_cc=None):
     los equipos que se utilizaron y la cantidad de días. Luego
     se calculan los costos por equipo utilizando los costos asociados a la familia x la cantidad de días de uso.
     """
-    obras = list(CertificacionReal.objects.filter(periodo=periodo).values_list('obra_id', flat=True))
-    obras += list(CertificacionInterna.objects.filter(periodo=periodo).values_list('obra_id', flat=True))
+    cc_unidad = Obras.get_centro_costos_ms()
+    obras = list(CertificacionReal.objects.filter(
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', flat=True))
+    obras += list(CertificacionInterna.objects.filter(
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', flat=True))
     if not obras:
         raise CertificacionReal.DoesNotExist
     elif limit_cc:
@@ -142,12 +146,13 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
     """
     Este método genera el resumen de costos de los distintas CC.
     """
+    cc_unidad = Obras.get_centro_costos_ms()
     param = CostoParametro.objects.get(periodo=periodo)
-    # Todas las obras implicadas en costos
+    # Todas las obras implicadas en costos (de la unidad de negocio del usuario)
     ccs1 = CertificacionReal.objects.select_related('obra').filter(
-        periodo=periodo).values_list('obra_id', 'obra__codigo')
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', 'obra__codigo')
     serv = CertificacionInterna.objects.select_related('obra').filter(
-        periodo=periodo).values_list('obra_id', 'obra__codigo')
+        periodo=periodo, obra__in=cc_unidad).values_list('obra_id', 'obra__codigo')
     if not ccs1.exists() and not serv.exists():
         raise CertificacionReal.DoesNotExist
 
@@ -155,7 +160,7 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
     no_prorrat = dict(ccs1)
     no_prorrat.update(dict(serv))
 
-    ccs_pror = dict(Obras.objects.filter(prorratea_costos=True).exclude(
+    ccs_pror = dict(cc_unidad.filter(prorratea_costos=True).exclude(
         pk__in=no_prorrat.keys()).values_list('id', 'codigo'))
 
     limited_no_prorrat = None
@@ -174,7 +179,7 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
     # Actualmente, está bastante hardcodeado y rigido. Seguramente, este costo se obtendrá de ese subsistema.
 
     # combustible
-    combustible = dict(Obras.objects.filter(pk__in=obras_ids).annotate(combustible=Sum(
+    combustible = dict(cc_unidad.filter(pk__in=obras_ids).annotate(combustible=Sum(
         Case(
             When(
                 partediario__fecha__gte=periodo.fecha_inicio,
@@ -254,7 +259,9 @@ def get_cc_on_periodo(periodo, equipos_totales, get_dict=False, limit_cc=None):
             fila = list()
             fila.append(x)
             fila.extend(values[i])
-            report.append(fila)
+            # si toda la fila es 0, no la incluyo.
+            if sum(fila[1:]) != 0:
+                report.append(fila)
             i += 1
 
         return report, total, dict(zip(columns, totales))
@@ -264,8 +271,9 @@ def get_ventas_costos(periodo, totales_costos, get_dict=False):
     """
     Devuelve los costos vs certificaciones y sus diferencias para los totales de costos pasados por parámetro.
     """
+    cc_unidad = Obras.get_centro_costos_ms()
     ids = list(totales_costos.keys())
-    obras = dict(Obras.objects.filter(id__in=ids).values_list('id', 'codigo'))
+    obras = dict(cc_unidad.filter(id__in=ids).values_list('id', 'codigo'))
     # Como las certificaciones tiene ítems, debemos obtener su sumatoria
     cert = dict(
         CertificacionReal.objects.filter(periodo=periodo, obra_id__in=ids).annotate(

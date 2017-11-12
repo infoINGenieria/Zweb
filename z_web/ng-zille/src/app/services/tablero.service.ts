@@ -14,4 +14,23 @@ export class TableroService {
     return this.http.get(`/api/tablero/os/${centro_costo.id}/${periodo.pk}/`)
       .map((r: Response) => r.json());
   }
+
+  get_graph_certificacion(centro_costo: ICentroCosto): Observable<any> {
+    return this.http.get(`/api/tablero/os/${centro_costo.id}/graph_certificacion/`)
+    .map((r: Response) => r.json());
+  }
+
+  get_graph_costo(centro_costo: ICentroCosto): Observable<any> {
+    return this.http.get(`/api/tablero/os/${centro_costo.id}/graph_costo/`)
+    .map((r: Response) => r.json());
+  }
+  get_graph_avance(centro_costo: ICentroCosto): Observable<any> {
+    return this.http.get(`/api/tablero/os/${centro_costo.id}/graph_avance/`)
+    .map((r: Response) => r.json());
+  }
+
+  get_graph_consolidado(centro_costo: ICentroCosto): Observable<any> {
+    return this.http.get(`/api/tablero/os/${centro_costo.id}/consolidado/`)
+    .map((r: Response) => r.json());
+  }
 }

@@ -21,10 +21,13 @@
 
 <table class="table table-bordered table-condensed" *ngIf="data">
   <thead>
-    <tr>
-      <th colspan="7">Resultado económico</th>
+    <tr class="info">
+      <th colspan="7" class="text-center">
+        Resultado económico
+        <span class="pull-right">Revisión {{ data["revision"]["version"] }} | Fecha {{ data["revision"]["fecha"]|date:"dd/MM/yyyy" }}</span>
+      </th>
     </tr>
-    <tr>
+    <tr class="success">
       <th>Conceptos</th>
       <th>Acumulado</th>
       <th>Faltante estimado</th>
@@ -35,7 +38,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <tr class="warning">
       <th>Venta</th>
       <th *ngFor="let h of headers">
         {{ data["venta"][h]["subtotal"] | number:'1.2-2' }}
@@ -65,7 +68,7 @@
         {{ data["venta"][h]["reclamos_reconocidos"] | number:'1.2-2' }}
       </td>
     </tr>
-    <tr>
+    <tr class="warning">
       <th>Costos</th>
       <th *ngFor="let h of headers">
         {{ data["costos"][h]["total_costos"] | number:'1.2-2' }}
@@ -77,7 +80,7 @@
         {{ data["costos"][h][costo_str] | number:'1.2-2' }}
       </td>
     </tr>
-    <tr>
+    <tr class="warning">
       <th>Costos previstos</th>
       <th *ngFor="let h of headers">
         {{ data["costos"][h]["subtotal"] | number:'1.2-2' }}
@@ -101,7 +104,7 @@
       <td>{{ data["estructura_costos"]["presupuesto"]["avales_gtia_seguros"] | number:'1.2-2' }}</td>
       <td>{{ data["estructura_costos"]["comercial"]["avales_gtia_seguros"] | number:'1.2-2' }}</td>
     </tr>
-    <tr>
+    <tr class="warning">
       <th>Costo industrial</th>
       <th>{{ data["costos"]['acumulado']["subtotal"] | number:'1.2-2' }}</th>
       <th>{{ data["costos"]['faltante_estimado']["subtotal"] | number:'1.2-2' }}</th>
@@ -149,14 +152,14 @@
       <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos_perc"] | number:'1.2-2' }}%</td>
       <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos_perc"] | number:'1.2-2' }}%</td>
     </tr>
-    <tr>
+    <tr class="danger">
       <td rowspan="2">Margen Bruto</td>
       <td></td><td></td><td></td>
       <td>{{ data["markup"]["estimado"]["margen_bruto"] | number:'1.2-2' }}</td>
       <td>{{ data["markup"]["presupuesto"]["margen_bruto"] | number:'1.2-2' }}</td>
       <td>{{ data["markup"]["comercial"]["margen_bruto"] | number:'1.2-2' }}</td>
     </tr>
-    <tr>
+    <tr class="danger">
       <td></td><td></td><td></td>
       <td>{{ data["markup"]["estimado"]["margen_bruto_perc"] | number:'1.2-2' }}%</td>
       <td>{{ data["markup"]["presupuesto"]["margen_bruto_perc"] | number:'1.2-2' }}%</td>
@@ -165,3 +168,45 @@
 
   </tbody>
 </table>
+<div class="row" *ngIf="graph_data">
+  <div class="col-md-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Consolidado
+        </div>
+        <div class="panel-body">
+          <nvd3 [options]="g_consol_options" [data]="graph_consol_data"></nvd3>
+        </div>
+      </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        Certificación REAL vs PROYECTADA
+      </div>
+      <div class="panel-body">
+        <nvd3 [options]="g_cert_options" [data]="graph_data"></nvd3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        Costos REALES vs PROYECTADOS
+      </div>
+      <div class="panel-body">
+        <nvd3 [options]="g_costo_options" [data]="graph_costo_data"></nvd3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        Avance de obra REAL vs PROYECTADO
+      </div>
+      <div class="panel-body">
+        <nvd3 [options]="g_avance_options" [data]="graph_avance_data"></nvd3>
+      </div>
+    </div>
+  </div>
+</div>

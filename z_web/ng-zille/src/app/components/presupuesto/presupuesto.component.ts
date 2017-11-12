@@ -306,7 +306,7 @@ export class PresupuestoComponent implements OnInit {
 
   calcular_ganancia() {
     let ganancia = this.calc_total_venta();
-    ganancia += this.sobre_costo_industrial_pesos(this.revision.imprevistos); // imprevistos
+    ganancia -= this.sobre_costo_industrial_pesos(this.revision.imprevistos); // imprevistos
     ganancia -= this.perc_de_venta_pesos(this.revision.sellado);  // sellado
     ganancia -= this.perc_de_venta_pesos(this.revision.ingresos_brutos);  // iibb
     ganancia -= this.perc_de_venta_pesos(this.revision.impuestos_cheque); // cheques

@@ -8,7 +8,7 @@ class CustomPanelControlForm(forms.Form):
     periodo_ini = forms.ModelChoiceField(queryset=Periodo.objects.all(), label='Periodo inicial', required=True)
     periodo_fin = forms.ModelChoiceField(queryset=Periodo.objects.all(), label='Periodo final', required=False)
     centro_costos = forms.ModelMultipleChoiceField(
-        queryset=Obras.objects.filter(es_cc=True), label='Centro de costos', required=False,
+        queryset=Obras.get_centro_costos_ms(), label='Centro de costos', required=False,
         help_text="No seleccione ningún centro de costos para ver todos los involucrados en el rango de "
                   "periodos seleccionados")
 

@@ -220,7 +220,8 @@ class Revision(BaseModelWithHistory):
 
     @property
     def ganancias(self):
-        ganancia = self.total_venta + self.imprevistos_pesos
+        ganancia = self.total_venta
+        ganancia -= self.imprevistos_pesos
         ganancia -= self.sellado_pesos
         ganancia -= self.ingresos_brutos_pesos
         ganancia -= self.impuestos_cheque_pesos

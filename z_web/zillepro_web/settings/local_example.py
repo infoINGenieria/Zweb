@@ -9,6 +9,7 @@ DEBUG = True
 INSTALLED_APPS += (
     'django_extensions',
     'debug_toolbar',
+    'fixture_magic',
 )
 MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware'

@@ -21,7 +21,9 @@ from presupuestos.models import (
 from zweb_utils.views import generate_menu_user
 from registro.models import CertificacionProyeccion, CertificacionReal, Certificacion
 from organizacion.models import UnidadNegocio
-from frontend.tablero.os import generar_tablero
+from frontend.tablero.os import (
+    generar_tabla_tablero, get_certificacion_graph, get_costos_graph,
+    get_avances_graph, get_consolidado_graph)
 
 
 class AuthView(APIView):
@@ -41,13 +43,54 @@ class DynamicMenuView(APIView):
         return Response(menu)
 
 
-class TableroControlView(AuthView):
+class TCCertficacionGraphView(AuthView):
     def get(self, request, *args, **kwargs):
         unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
-        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'))
+        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
+                                 unidad_negocio=unidad_negocio)
+        data_graph = get_certificacion_graph(obra)
+        return Response(data_graph)
+
+
+class TCCostoGraphView(AuthView):
+    def get(self, request, *args, **kwargs):
+        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
+        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
+                                 unidad_negocio=unidad_negocio)
+        data_graph = get_costos_graph(obra)
+        return Response(data_graph)
+
+
+class TCAvanceGraphView(AuthView):
+    def get(self, request, *args, **kwargs):
+        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
+        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
+                                 unidad_negocio=unidad_negocio)
+        data_graph = get_avances_graph(obra)
+        return Response(data_graph)
+
+
+class TableroControTablalView(AuthView):
+    def get(self, request, *args, **kwargs):
+        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
+        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
+                                 unidad_negocio=unidad_negocio)
         periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
-        data_tablero = generar_tablero(unidad_negocio, obra, periodo)
+        try:
+            data_tablero = generar_tabla_tablero(obra, periodo)
+        except Exception as e:
+            raise ParseError(e)
         return Response(data_tablero)
+
+
+class TCConsolidadoGraphView(AuthView):
+    def get(self, request, *args, **kwargs):
+        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
+        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
+                                 unidad_negocio=unidad_negocio)
+        data_graph = get_consolidado_graph(obra)
+        return Response(data_graph)
+
 
 class PresupuestoRelatedMixin(object):
     """

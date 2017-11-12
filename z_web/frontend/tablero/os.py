@@ -2,15 +2,19 @@
 """
 Tablero de control para Obras de superficie.
 """
+import time
 from decimal import Decimal as D
+
+from django.core.cache import cache
 from django.db.models import Sum, F
+from django.forms.models import model_to_dict
 
 from core.models import Obras
 from organizacion.models import UnidadNegocio
 from parametros.models import Periodo
 from presupuestos.models import Presupuesto, Revision
-from registro.models import CertificacionReal, CertificacionItem, CertificacionProyeccion
-from costos.models import CostoReal, CostoProyeccion
+from registro.models import CertificacionReal, CertificacionItem, CertificacionProyeccion, Certificacion
+from costos.models import CostoReal, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion, Costo
 
 
 class MarkUpColumn(object):
@@ -41,7 +45,7 @@ class MarkUpColumn(object):
 
     @property
     def impuestos_y_contribuciones_perc(self):
-        return self._2D(self.impuestos_y_contribuciones / self.subtotal_costo_industrial)
+        return self._2D(self.impuestos_y_contribuciones / self.subtotal_costo_industrial * 100)
 
     @property
     def costo_financiero_e_imprevistos(self):
@@ -50,7 +54,7 @@ class MarkUpColumn(object):
 
     @property
     def costo_financiero_e_imprevistos_perc(self):
-        return self._2D(self.costo_financiero_e_imprevistos / self.subtotal_costo_industrial)
+        return self._2D(self.costo_financiero_e_imprevistos / self.subtotal_costo_industrial * 100)
 
     @property
     def ganancias_despues_impuestos(self):
@@ -58,7 +62,7 @@ class MarkUpColumn(object):
 
     @property
     def ganancias_despues_impuestos_perc(self):
-        return self._2D(self.ganancias_despues_impuestos / self.subtotal_costo_industrial)
+        return self._2D(self.ganancias_despues_impuestos / self.subtotal_costo_industrial * 100)
 
     @property
     def margen_bruto(self):
@@ -68,7 +72,7 @@ class MarkUpColumn(object):
 
     @property
     def margen_bruto_perc(self):
-        return self._2D(self.margen_bruto / self.subtotal_costo_industrial)
+        return self._2D(self.margen_bruto / self.subtotal_costo_industrial * 100)
 
 
     def set_subtotal_costo_industrial(self, costos_estructurales):
@@ -96,15 +100,15 @@ class MarkUpColumnEstimado(MarkUpColumn):
     def impuestos_y_contribuciones(self):
         return self._2D(
             self.revision.sellado_pesos + (
-                (self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta
-            ) + (self.ganancias_despues_impuestos * self.revision.impuestos_ganancias)
+                (self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta / 100
+            ) + (self.ganancias_despues_impuestos * self.revision.impuestos_ganancias / 100)
         )
 
     @property
     def costo_financiero_e_imprevistos(self):
         return self._2D(
             self.revision.imprevistos_pesos + (
-                self.revision.costo_financiero_pesos * self.subtotal_costos_previstos))
+                self.revision.costo_financiero * self.subtotal_costo_industrial / 100))
 
     @property
     def ganancias_despues_impuestos(self):
@@ -112,8 +116,8 @@ class MarkUpColumnEstimado(MarkUpColumn):
             self.subtotal_costo_industrial + #I30
             self.costo_financiero_e_imprevistos +  #I33
             self.revision.sellado_pesos +  # $'Ppto. aprobado - R2'.I75
-            ((self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta)
-        ) / (1 + self.revision.impuestos_ganancias)
+            ((self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta / 100)
+        ) / (1 + (self.revision.impuestos_ganancias / 100))
         return self._2D(calc)
 
 
@@ -130,15 +134,23 @@ class MarkUp(object):
         return {
             "estimado": self.estimado.to_dict(),
             "presupuesto": self.presupuesto.to_dict(),
-            "comercial": self.presupuesto.to_dict()
+            "comercial": self.comercial.to_dict()
         }
 
-def generar_tablero(unidad_negocio, obra, periodo):
+def generar_tabla_tablero(obra, periodo):
+    # primero, si lo guarde en cache, uso ese!! 30 segundos de cache
+    key_cache = "tablero_{}_{}".format(obra.pk, periodo.pk)
+    data_table = cache.get(key_cache)
+    if data_table:
+        return data_table
 
     presupuesto = Presupuesto.objects.filter(
         centro_costo=obra).latest('fecha')
 
-    revision = presupuesto.revisiones.filter(fecha__lte=periodo.fecha_fin).latest('fecha')
+    try:
+        revision = presupuesto.revisiones.filter(fecha__lte=periodo.fecha_fin).latest('fecha')
+    except Revision.DoesNotExist:
+        raise ValueError("Seleccione un periodo posterior. No existen revisiones anteriores a la fecha de fin del periodo")
     revision_b0 = presupuesto.revisiones.get(version=0)
 
     markup = MarkUp(revision, revision_b0)
@@ -147,11 +159,12 @@ def generar_tablero(unidad_negocio, obra, periodo):
 
     # acumulados
     venta = {}
+
+    certificaciones = CertificacionReal.objects.filter(
+        obra=obra, periodo__fecha_fin__lte=periodo.fecha_fin)
     venta["acumulado"] = {
-        "venta_contractual": CertificacionReal.objects.filter(
-        obra=obra, items__adicional=False).aggregate(total=Sum('items__monto'))["total"] or 0,
-        "ordenes_cambio": CertificacionReal.objects.filter(
-        obra=obra, items__adicional=True).aggregate(total=Sum('items__monto'))["total"] or 0,
+        "venta_contractual": certificaciones.filter(items__adicional=False).aggregate(total=Sum('items__monto'))["total"] or 0,
+        "ordenes_cambio": certificaciones.filter(items__adicional=True).aggregate(total=Sum('items__monto'))["total"] or 0,
         "reajustes_precios": revision.reajustes_precio or 0,
         "reclamos_reconocidos": revision.reclamos_reconocidos or 0
     }
@@ -173,7 +186,7 @@ def generar_tablero(unidad_negocio, obra, periodo):
     # faltante ppto
     venta["faltante_presupuesto"] = {
         "venta_contractual": revision.total_venta - venta["acumulado"]["venta_contractual"],
-        "ordenes_cambio": revision.ordenes_cambio - venta["acumulado"]["ordenes_cambio"],
+        "ordenes_cambio": (revision.ordenes_cambio or 0) - venta["acumulado"]["ordenes_cambio"],
         "reajustes_precios": 0,  # revision.reajustes_precio - revision.reajustes_precio,
         "reclamos_reconocidos": 0  # revision.reclamos_reconocidos - revision.reclamos_reconocidos
     }
@@ -215,9 +228,11 @@ def generar_tablero(unidad_negocio, obra, periodo):
 
     # acumulado de costos reales
     costos_reales = dict(CostoReal.objects.filter(
-        centro_costo=obra).values('tipo_costo__nombre').annotate(
-            total=Sum('monto_total')).values_list(
-                'tipo_costo__nombre', 'total').order_by())
+        centro_costo=obra,
+        periodo__fecha_fin__lte=periodo.fecha_fin).values(
+            'tipo_costo__nombre').annotate(
+                total=Sum('monto_total')).values_list(
+                    'tipo_costo__nombre', 'total').order_by())
     costos_reales["subtotal"] = sum(costos_reales.values())
 
     # Faltante estimado son las proyecciones de costos
@@ -248,6 +263,7 @@ def generar_tablero(unidad_negocio, obra, periodo):
         list(costos_reales.keys()) + list(costos_proyectados.keys()) +
         list(costos_total_presupuesto.keys()) + list(costos_total_comercial.keys())
     )
+    claves_costos.remove("subtotal")
     costos_faltante_presupuesto = {}
     costos_total_estimado = {}
 
@@ -261,9 +277,8 @@ def generar_tablero(unidad_negocio, obra, periodo):
         costos_total_estimado[costo_key] = costos_reales[costo_key] + costos_proyectados[costo_key]
 
     # calculos subtotales
-    costos_faltante_presupuesto["subtotal"] = sum(costos_faltante_presupuesto.values())
-    costos_total_estimado["subtotal"] = sum(costos_total_estimado.values())
-
+    costos_faltante_presupuesto["subtotal"] = sum(list(costos_faltante_presupuesto.values()))
+    costos_total_estimado["subtotal"] = sum(list(costos_total_estimado.values()))
     costos["acumulado"] = costos_reales
     costos["faltante_estimado"] = costos_proyectados
     costos["faltante_presupuesto"] = costos_faltante_presupuesto
@@ -276,7 +291,6 @@ def generar_tablero(unidad_negocio, obra, periodo):
     markup.presupuesto.subtotal_costos_previstos = costos_total_presupuesto["subtotal"]
     markup.comercial.subtotal_costos_previstos = costos_total_comercial["subtotal"]
 
-    # No lo agrego aún porque falta los de estructura
     data_table["costos"] = costos
 
     # Estructura de Costos
@@ -299,7 +313,7 @@ def generar_tablero(unidad_negocio, obra, periodo):
         }
     }
     # estimado y presupuesto son iguales acá, pero no sus subtotales
-    estructura_costos["estimado"] = estructura_costos["presupuesto"]
+    estructura_costos["estimado"] = estructura_costos["presupuesto"].copy()
 
     # subtotales industriales
     estructura_costos["presupuesto"]["subtotal"] = markup.presupuesto.set_subtotal_costo_industrial(sum(estructura_costos["presupuesto"].values()))
@@ -320,5 +334,237 @@ def generar_tablero(unidad_negocio, obra, periodo):
 
     # MARK UP
     data_table["markup"] = markup.to_dict()
+    data_table["revision"] = model_to_dict(revision)
 
+    # guardo en cache esto por 30 segundos
+    cache.set(key_cache, 30)
     return data_table
+
+
+def datetime_to_epoch(date):
+    return int(time.mktime(date.timetuple())) * 1000
+
+
+def get_certificacion_graph(obra):
+    first_real = CertificacionReal.objects.filter(obra=obra).earliest('periodo__fecha_fin')
+    last_real = CertificacionReal.objects.filter(obra=obra).latest('periodo__fecha_fin')
+    cert_real = dict(
+        CertificacionReal.objects.filter(obra=obra).values(
+            'periodo').annotate(total=Sum('items__monto')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+
+    cert_proyeccion = dict(
+        CertificacionProyeccion.objects.filter(obra=obra).values(
+            'periodo').annotate(total=Sum('items__monto')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+
+    first_proy = CertificacionProyeccion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
+    last_proy = CertificacionProyeccion.objects.filter(obra=obra).latest('periodo__fecha_fin')
+    data_real = []
+    #{       'key': "Cert. Real"}
+    data_proy = []
+    # {      'key': "Cert. Proyectado"}
+    for periodo in Periodo.objects.filter(
+            fecha_fin__gte=min(first_real.periodo.fecha_fin, first_proy.periodo.fecha_fin),
+            fecha_fin__lte=max(last_real.periodo.fecha_fin, last_proy.periodo.fecha_fin)).order_by('fecha_fin'):
+        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': cert_real.get(periodo.pk, 0)})
+        data_proy.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': cert_proyeccion.get(periodo.pk, 0)})
+
+    return [
+        {
+            'key': "Certificación Real",
+            'values': data_real,
+            'color': '#ff7f0e'
+        },
+        {
+            'key': "Certificación Proyectada",
+            'values': data_proy,
+            'color': '#2ca02c'
+        }
+    ]
+
+def get_costos_graph(obra):
+    first_real = CostoReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+    last_real = CostoReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    first_proy = CostoProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+    last_proy = CostoProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    costo_real = dict(
+        CostoReal.objects.filter(centro_costo=obra).values(
+            'periodo').annotate(total=Sum('monto_total')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+
+    costo_proy = dict(
+        CostoProyeccion.objects.filter(centro_costo=obra).values(
+            'periodo').annotate(total=Sum('monto_total')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+
+
+    data_real = []
+    data_proy = []
+    for periodo in Periodo.objects.filter(
+            fecha_fin__gte=min(first_real.periodo.fecha_fin, first_proy.periodo.fecha_fin),
+            fecha_fin__lte=max(last_real.periodo.fecha_fin, last_proy.periodo.fecha_fin)).order_by('fecha_fin'):
+        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': costo_real.get(periodo.pk, 0)})
+        data_proy.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': costo_proy.get(periodo.pk, 0)})
+
+    return [
+        {
+            'key': "Costos Reales",
+            'values': data_real,
+            'color': '#ff7f0e'
+        },
+        {
+            'key': "Costos Proyectados",
+            'values': data_proy,
+            'color': '#2ca02c'
+        }
+    ]
+
+
+def get_avances_graph(obra):
+    first_real = AvanceObraReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+    last_real = AvanceObraReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    first_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+    last_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    costo_real = dict(
+        AvanceObraReal.objects.filter(centro_costo=obra).values(
+            'periodo').annotate(total=Sum('avance')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))
+
+    costo_proy = dict(
+        AvanceObraProyeccion.objects.filter(centro_costo=obra).values(
+            'periodo').annotate(total=Sum('avance')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))
+
+    data_real = []
+    data_proy = []
+    real_acumulado = 0;
+    proyectado_acumulado = 0
+    for periodo in Periodo.objects.filter(
+            fecha_fin__gte=min(first_real.periodo.fecha_fin, first_proy.periodo.fecha_fin),
+            fecha_fin__lte=max(last_real.periodo.fecha_fin, last_proy.periodo.fecha_fin)).order_by('fecha_fin'):
+        real_acumulado += costo_real.get(periodo.pk, 0)
+        proyectado_acumulado += costo_proy.get(periodo.pk, 0)
+        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': real_acumulado})
+        data_proy.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': proyectado_acumulado})
+    return [
+        {
+            'key': "Avance real",
+            'values': data_real,
+            'color': '#ff7f0e',
+            'strokeWidth': 2,
+        },
+        {
+            'key': "Avance Proyectado",
+            'values': data_proy,
+            'color': '#2ca02c',
+            'strokeWidth': 2,
+        },
+        # {
+        #     'key': "Avance Proyectado",
+        #     'values': data_proy2,
+        #     'strokeWidth': 2,
+        #     'classed': 'dashed',
+        #     'color': '#2ca02c'
+        # }
+    ]
+
+
+def get_consolidado_graph(obra):
+    first_periodo = Periodo.objects.filter(fecha_inicio__lte=obra.fecha_inicio).latest("fecha_inicio")
+    ultimo_dato_cert = Certificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
+    ultimo_dato_costo = Costo.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    ultima_fecha = obra.fecha_fin
+    if not ultima_fecha:
+        ultima_fecha = max(ultimo_dato_costo.periodo.fecha_fin, ultimo_dato_cert.periodo.fecha_fin)
+
+    cert_real = dict(
+        CertificacionReal.objects.filter(obra=obra).values(
+            'periodo').annotate(total=Sum('items__monto')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))
+    cert_proyeccion = dict(
+        CertificacionProyeccion.objects.filter(obra=obra).values(
+            'periodo').annotate(total=Sum('items__monto')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+    costo_real = dict(
+        CostoReal.objects.filter(centro_costo=obra).values(
+            'periodo').annotate(total=Sum('monto_total')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+    costo_proy = dict(
+        CostoProyeccion.objects.filter(centro_costo=obra).values(
+            'periodo').annotate(total=Sum('monto_total')).values_list(
+                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+
+    data_cert_real = []
+    data_cert_proy = []
+    data_costo_real = []
+    data_costo_proy = []
+    data_revision_costos = []
+    data_revision_venta = []
+
+    data_cert_real_acumulado = 0
+    data_cert_proy_acumulado = 0
+    data_costo_real_acumulado = 0
+    data_costo_proy_acumulado = 0
+    presupuesto = Presupuesto.objects.filter(
+        centro_costo=obra).latest('fecha')
+
+    for periodo in Periodo.objects.filter(
+            fecha_fin__gte=first_periodo.fecha_fin,
+            fecha_fin__lte=ultima_fecha).order_by('fecha_fin'):
+        fecha = datetime_to_epoch(periodo.fecha_fin)
+        revision = presupuesto.revisiones.filter(fecha__lte=periodo.fecha_fin).latest('fecha')
+
+        data_revision_costos.append({'x': fecha, 'y': revision.costo_industrial})
+        data_revision_venta.append({'x': fecha, 'y': revision.total_venta})
+
+        data_cert_real_acumulado += cert_real.get(periodo.pk, 0)
+        data_cert_proy_acumulado += cert_proyeccion.get(periodo.pk, 0)
+        data_costo_real_acumulado += costo_real.get(periodo.pk, 0)
+        data_costo_proy_acumulado += costo_proy.get(periodo.pk, 0)
+
+        data_cert_real.append({'x': fecha, 'y': data_cert_real_acumulado})
+        data_cert_proy.append({'x': fecha, 'y': data_cert_proy_acumulado})
+        data_costo_real.append({'x': fecha, 'y': data_costo_real_acumulado})
+        data_costo_proy.append({'x': fecha, 'y': data_costo_proy_acumulado})
+
+    return [
+        {
+            'key': "Cert. Real",
+            'values': data_cert_real,
+            'color': '#f47c3c',
+            'strokeWidth': 2,
+        },
+        {
+            'key': "Cert. Proyectada",
+            'values': data_cert_proy,
+            'color': '#ef5c0e',
+            'strokeWidth': 2,
+            'classed': 'dashed',
+        },
+        {
+            'key': "Costos Reales",
+            'values': data_costo_real,
+            'color': '#93c54b',
+            'strokeWidth': 2,
+        },
+        {
+            'key': "Costos proyectados",
+            'values': data_costo_proy,
+            'color': '#79a736',
+            'strokeWidth': 2,
+            'classed': 'dashed',
+        },
+        {
+            'key': "Costos Presupuestados",
+            'values': data_revision_costos,
+            'color': '#17759c',
+            'strokeWidth': 2,
+        },
+        {
+            'key': "Venta presupuestada",
+            'values': data_revision_venta,
+            'color': '#ff0470',
+            'strokeWidth': 2,
+        }
+    ]

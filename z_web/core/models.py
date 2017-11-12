@@ -141,6 +141,12 @@ class Obras(models.Model):
             pass
         return obra_qs
 
+    @classmethod
+    def get_centro_costos_ms(cls):
+        return Obras.objects.filter(
+            es_cc=True, unidad_negocio__codigo='MS')
+
+
 
 class CCT(models.Model):
     """

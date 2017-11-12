@@ -135,20 +135,22 @@ class ExportPanelControl(ExportExcelMixin):
         worksheet_s.insert_chart('B10', chart, {'x_scale': 2, 'y_scale': 1.5})
 
     def fill_resumen_costos(self, context):
+
         ws_costos_name = "Resumen de costos"
         ws_costos = self.workbook.add_worksheet(ws_costos_name)
         ws_costos.merge_range('A2:F2', "Periodo: {}".format(context["periodo"]),
                               self.style_dict["title"])
 
         row = 3
+        fila_formula = len(context["resumen_costos"]) + row - 1
         for line in context["resumen_costos"]:
             for i in range(0, len(line)):
-                if row == 12 and i > 0:
-                    ws_costos.write_formula(row, i, '=sum({0}{1}:{0}{2})'.format(self.get_c(i + 1), 5, 12),
+                if row == fila_formula and i > 0:
+                    ws_costos.write_formula(row, i, '=sum({0}{1}:{0}{2})'.format(self.get_c(i + 1), 5, fila_formula),
                                             self.style_dict["header_num"], line[i])
                 else:
                     ws_costos.write(row, i, line[i],
-                                    self.style_dict["header"] if row in [3, 12] or i == 0 else self.style_dict["normal"])
+                                    self.style_dict["header"] if row in [3, fila_formula] or i == 0 else self.style_dict["normal"])
                 if row == 3:
                     ws_costos.set_column(row, i, 30)
                 else:
@@ -156,7 +158,7 @@ class ExportPanelControl(ExportExcelMixin):
             row += 1
 
         ws_costos.set_row(3, 25)
-        ws_costos.set_row(12, 25)
+        ws_costos.set_row(fila_formula, 25)
         ws_costos.write_rich_string(row + 1, 0, "TOTAL:", self.style_dict["total_legend"])
         ws_costos.write_formula(row + 1, 1,
                                 '=sum({0}{2}:{1}{2})'.format(
@@ -166,7 +168,7 @@ class ExportPanelControl(ExportExcelMixin):
         chart = self.workbook.add_chart({'type': 'column'})
         # Configure the chart. In simplest case we add one or more data series.
         chart.add_series({
-            'values': ['Resumen de costos', 12, 1, 12, i],
+            'values': ['Resumen de costos', fila_formula, 1, fila_formula, i],
             'categories': ['Resumen de costos', 3, 1, 3, i],
             'name': 'Costos',
             'data_labels': {'value': True, 'num_format': '$ #,##0.00'}
@@ -185,7 +187,7 @@ class ExportPanelControl(ExportExcelMixin):
 
         pie_chart = self.workbook.add_chart({'type': 'pie'})
         pie_chart.add_series({
-            'values': ['Resumen de costos', 12, 1, 12, i],
+            'values': ['Resumen de costos', fila_formula, 1, fila_formula, i],
             'categories': ['Resumen de costos', 3, 1, 3, i],
             'data_labels': {'percentage': True, 'category':True}
         })
@@ -267,7 +269,7 @@ class ExportPanelControl(ExportExcelMixin):
 
     def fill_custom_resumen_costos(self, context):
         """
-        Arma un excel con el reumen de costos como se ve en el panel de control
+        Arma un excel con el resumen de costos como se ve en el panel de control
         """
         periodos = [x.descripcion for x in context["data"]["periodos"]]
         resumen_costos = context["data"]["costos"]
@@ -282,14 +284,12 @@ class ExportPanelControl(ExportExcelMixin):
             " ,".join(periodos)), self.style_dict["title"])
 
         row = 3
+        fila_formula = row + len(resumen_costos) - 1
         # cabeceras izquerda
         ws_costos.set_column(0, 0, 18)  # colum_ini, colun_fin, tamaño
         ws_costos.set_row(row, 25)
-        ws_costos.write_column(row, 0, ["TIPO DE COSTO", "Combustible", "Prorrateo Combustible", "Mano de Obra",
-                                        "Prorrateo Mano de Obra", "Subcontratos", "Utilización de equipos",
-                                        "Materiales", "Prorrateo de Materiales", "Totales"],
+        ws_costos.write_column(row, 0, ["TIPO DE COSTO"] + list(tipo_costo.values()) + ["Totales"],
                                self.style_dict["header"])
-
         # completamos datos
         column_num = 1
         i = row + 1
@@ -303,10 +303,10 @@ class ExportPanelControl(ExportExcelMixin):
                 ws_costos.write(i, column_num, datos[costo], self.style_dict["normal"])
                 i += 1
             # formula
-            ws_costos.write(i, column_num, '=sum({0}{1}:{0}{2})'.format(self.get_c(column_num + 1), 5, 12),
+            ws_costos.write(i, column_num, '=sum({0}{1}:{0}{2})'.format(self.get_c(column_num + 1), 5, fila_formula),
                             self.style_dict["header_num"], costos_totales[cc_id])
             column_num += 1
-        ws_costos.set_row(12, 25)
+        ws_costos.set_row(fila_formula, 25)
 
         row = i + 2
         ws_costos.write_rich_string(row + 1, 0, "TOTAL:", self.style_dict["total_legend"])
@@ -317,7 +317,7 @@ class ExportPanelControl(ExportExcelMixin):
         chart = self.workbook.add_chart({'type': 'column'})
         # Configure the chart. In simplest case we add one or more data series.
         chart.add_series({
-            'values': ['Resumen de costos', 12, 1, 12, column_num - 1],
+            'values': ['Resumen de costos', fila_formula, 1, fila_formula, column_num - 1],
             'categories': ['Resumen de costos', 3, 1, 3, column_num - 1],
             'name': 'Costos',
             'data_labels': {'value': True, 'num_format': '$ #,##0.00'}
@@ -335,7 +335,7 @@ class ExportPanelControl(ExportExcelMixin):
 
         pie_chart = self.workbook.add_chart({'type': 'pie'})
         pie_chart.add_series({
-            'values': ['Resumen de costos', 12, 1, 12, column_num - 1],
+            'values': ['Resumen de costos', fila_formula, 1, fila_formula, column_num - 1],
             'categories': ['Resumen de costos', 3, 1, 3, column_num - 1],
             'data_labels': {'percentage': True, 'category': True}
         })
