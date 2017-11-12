@@ -118,7 +118,7 @@ class PresupuestoViewSet(ModelViewSet, AuthView):
     filter_class = PresupuestoFilter
 
     def get_queryset(self):
-        qs = Presupuesto.objects.all()
+        qs = Presupuesto.objects.filter(centro_costo__in=self.get_centros_costos())
         return qs
 
 

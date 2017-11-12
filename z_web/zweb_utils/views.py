@@ -109,8 +109,8 @@ def logout(request):
 
 def generate_menu_user(user):
     menu = []
+    ext = user.extension
     if user.has_perm('costos.can_view_panel_control'):
-        ext = user.extension
         if not ext.unidad_negocio or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS'):
             menu.append({
                 'name': "Panel de control", 'icon': 'dashboard',
@@ -121,12 +121,13 @@ def generate_menu_user(user):
             menu.append({
                 'name': "Tablero de control", 'icon': 'area-chart',
                 'url': '/~/tablero-control/os/', 'section': "{}".format(ext.unidad_negocio or 'Obras de superficie'),
-                'btn_class': 'default'
+                'btn_class': 'warning'
             })
     if user.has_perm('costos.can_manage_costos'):
         menu.append({'name': "Costos", 'icon': 'list',
                      'url': reverse('costos:index'), 'section': 'Administrar costos y avance de obra', 'btn_class': 'primary'})
-    if user.has_perm("costos.can_generate_reports"):
+    if user.has_perm("costos.can_generate_reports") and (
+            not ext.unidad_negocio or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS')):
         menu.append({'name': "Reportes", 'icon': 'print',
                      'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes', 'btn_class': 'warning'})
     if user.has_perm("organizacion.can_manage_presupuestos"):
