@@ -4,7 +4,7 @@ from zweb_utils.views import generate_menu_user
 
 
 def user_menu(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         # warning: si se cambia la key, actualizar el invalidador en logout
         key = "user_menu_{}".format(request.user.pk)
         if cache.get(key):
