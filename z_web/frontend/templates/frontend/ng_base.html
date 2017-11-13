@@ -2,7 +2,7 @@
 {% load i18n compress pipeline frontend_tags static %}
 {% block title_head %}{{ block.super }}{% endblock %}
 {% block extra_css %}
-<script type="text/javascript" src="{% static 'styles.bundle.css' %}"></script>
+<link rel="stylesheet" media="all" href="{% static 'styles.bundle.css' %}" />
 <base href="/~/">
 
 {% endblock %}
