@@ -64,7 +64,7 @@ export class TableroControlOsComponent implements OnInit {
         x: function(d){ return d.x; },
         y: function(d){ return d.y; },
         useInteractiveGuideline: true,
-        interpolate: 'basis',
+        // interpolate: 'basis',
         showLegend: true,
         xAxis: {
           axisLabel: 'Periodo',
@@ -94,7 +94,7 @@ export class TableroControlOsComponent implements OnInit {
         x: function(d){ return d.x; },
         y: function(d){ return d.y; },
         useInteractiveGuideline: true,
-        interpolate: 'basis',
+        // interpolate: 'basis',
         showLegend: true,
         xAxis: {
           axisLabel: 'Periodo',
