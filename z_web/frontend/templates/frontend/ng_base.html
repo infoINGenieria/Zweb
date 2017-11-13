@@ -2,6 +2,7 @@
 {% load i18n compress pipeline frontend_tags static %}
 {% block title_head %}{{ block.super }}{% endblock %}
 {% block extra_css %}
+<script type="text/javascript" src="{% static 'styles.bundle.css' %}"></script>
 <base href="/~/">
 
 {% endblock %}
@@ -19,7 +20,6 @@
     {{ block.super }}
     <script type="text/javascript" src="{% static 'inline.bundle.js' %}"></script>
     <script type="text/javascript" src="{% static 'polyfills.bundle.js' %}"></script>
-    <script type="text/javascript" src="{% static 'styles.bundle.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor.bundle.js' %}"></script>
     <script type="text/javascript" src="{% static 'main.bundle.js' %}"></script>
     <script type='text/javascript'>
