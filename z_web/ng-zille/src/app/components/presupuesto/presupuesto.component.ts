@@ -148,9 +148,6 @@ export class PresupuestoComponent implements OnInit {
   }
 
   trackByIndex(index: number, item: ItemPresupuesto) {
-    if (item && item.pk) {
-      return item.pk;
-    }
     return index;
   }
 
@@ -266,7 +263,7 @@ export class PresupuestoComponent implements OnInit {
   }
 
   costo_industrial_pesos() {
-    let costo = this.calc_total_items_pesos();
+    let costo = this.calc_total_items();
     // contingencia
     costo += this._tonum(this.revision.contingencia);
     // Estructura no REE
@@ -291,19 +288,6 @@ export class PresupuestoComponent implements OnInit {
     return this.costo_industrial_pesos() * this._tonum(valor) / 100 || 0;
   }
 
-
-  // sobre_costo_industrial_dolares(valor: number) {
-  //   return this.costo_industrial_dolares() * this._tonum(valor) / 100 || 0;
-  // }
-
-  // sobre_costo_industrial_total(valor: number) {
-  //   if (!this.revision.valor_dolar) {
-  //     return 0;
-  //   }
-  //   return this.sobre_costo_industrial_pesos(valor) +
-  //     (this.sobre_costo_industrial_dolares(valor) * this.revision.valor_dolar) || 0;
-  // }
-
   calcular_ganancia() {
     let ganancia = this.calc_total_venta();
     ganancia -= this.sobre_costo_industrial_pesos(this.revision.imprevistos); // imprevistos
@@ -323,19 +307,6 @@ export class PresupuestoComponent implements OnInit {
   sobre_ganancia_neta_pesos(valor: number) {
     return this.calcular_ganancia() * this._tonum(valor) / 100 || 0;
   }
-
-  // sobre_ganancia_neta_dolares(valor: number) {
-  //   return this.sobre_costo_industrial_dolares(this.revision.ganancias) * this._tonum(valor) / 100 || 0;
-  // }
-
-  // sobre_ganancia_neta_total(valor: number) {
-  //   if (!this.revision.valor_dolar) {
-  //     return 0;
-  //   }
-  //   return this.sobre_ganancia_neta_pesos(valor) +
-  //     (this.sobre_ganancia_neta_dolares(valor) * this.revision.valor_dolar) || 0;
-  // }
-
 
   get markup_pesos() {
     return this.calc_total_venta() - this.costo_industrial_pesos();
