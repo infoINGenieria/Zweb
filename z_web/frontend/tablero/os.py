@@ -8,6 +8,7 @@ from decimal import Decimal as D
 from django.core.cache import cache
 from django.db.models import Sum, F
 from django.forms.models import model_to_dict
+from django.core.exceptions import ObjectDoesNotExist
 
 from core.models import Obras
 from organizacion.models import UnidadNegocio
@@ -343,7 +344,7 @@ def generar_tabla_tablero(obra, periodo):
     data_table["revision"] = model_to_dict(revision)
 
     # guardo en cache esto por 30 segundos
-    cache.set(key_cache, 30)
+    cache.set(key_cache, data_table, 30)
     return data_table
 
 
@@ -352,20 +353,24 @@ def datetime_to_epoch(date):
 
 
 def get_certificacion_graph(obra):
-    first_real = CertificacionReal.objects.filter(obra=obra).earliest('periodo__fecha_fin')
-    last_real = CertificacionReal.objects.filter(obra=obra).latest('periodo__fecha_fin')
-    cert_real = dict(
-        CertificacionReal.objects.filter(obra=obra).values(
-            'periodo').annotate(total=Sum('items__monto')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+    try:
+        first_real = CertificacionReal.objects.filter(obra=obra).earliest('periodo__fecha_fin')
+        last_real = CertificacionReal.objects.filter(obra=obra).latest('periodo__fecha_fin')
+        cert_real = dict(
+            CertificacionReal.objects.filter(obra=obra).values(
+                'periodo').annotate(total=Sum('items__monto')).values_list(
+                    'periodo', 'total').order_by('periodo__fecha_fin'))  #
 
-    cert_proyeccion = dict(
-        CertificacionProyeccion.objects.filter(obra=obra).values(
-            'periodo').annotate(total=Sum('items__monto')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+        cert_proyeccion = dict(
+            CertificacionProyeccion.objects.filter(obra=obra).values(
+                'periodo').annotate(total=Sum('items__monto')).values_list(
+                    'periodo', 'total').order_by('periodo__fecha_fin'))  #
 
-    first_proy = CertificacionProyeccion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
-    last_proy = CertificacionProyeccion.objects.filter(obra=obra).latest('periodo__fecha_fin')
+        first_proy = CertificacionProyeccion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
+        last_proy = CertificacionProyeccion.objects.filter(obra=obra).latest('periodo__fecha_fin')
+    except ObjectDoesNotExist:
+        raise ValueError("No hay certificaciones cargadas para el proyecto.")
+
     data_real = []
     #{       'key': "Cert. Real"}
     data_proy = []
@@ -390,10 +395,13 @@ def get_certificacion_graph(obra):
     ]
 
 def get_costos_graph(obra):
-    first_real = CostoReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-    last_real = CostoReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-    first_proy = CostoProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-    last_proy = CostoProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    try:
+        first_real = CostoReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_real = CostoReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+        first_proy = CostoProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_proy = CostoProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    except ObjectDoesNotExist:
+        raise ValueError("No hay costos reales cargados para el proyecto.")
     costo_real = dict(
         CostoReal.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('monto_total')).values_list(
@@ -428,10 +436,13 @@ def get_costos_graph(obra):
 
 
 def get_avances_graph(obra):
-    first_real = AvanceObraReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-    last_real = AvanceObraReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-    first_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-    last_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    try:
+        first_real = AvanceObraReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_real = AvanceObraReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+        first_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+    except ObjectDoesNotExist:
+        raise ValueError("No hay avances de obra cargados para el proyecto.")
     costo_real = dict(
         AvanceObraReal.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('avance')).values_list(
@@ -477,12 +488,15 @@ def get_avances_graph(obra):
 
 
 def get_consolidado_graph(obra):
-    first_periodo = Periodo.objects.filter(fecha_inicio__lte=obra.fecha_inicio).latest("fecha_inicio")
-    ultimo_dato_cert = Certificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
-    ultimo_dato_costo = Costo.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-    ultima_fecha = obra.fecha_fin
-    if not ultima_fecha:
-        ultima_fecha = max(ultimo_dato_costo.periodo.fecha_fin, ultimo_dato_cert.periodo.fecha_fin)
+    try:
+        first_periodo = Periodo.objects.filter(fecha_inicio__lte=obra.fecha_inicio).latest("fecha_inicio")
+        ultimo_dato_cert = Certificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
+        ultimo_dato_costo = Costo.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+        ultima_fecha = obra.fecha_fin
+        if not ultima_fecha:
+            ultima_fecha = max(ultimo_dato_costo.periodo.fecha_fin, ultimo_dato_cert.periodo.fecha_fin)
+    except ObjectDoesNotExist:
+        raise ValueError("No pudo generarse el gráfico consolidado.")
 
     cert_real = dict(
         CertificacionReal.objects.filter(obra=obra).values(

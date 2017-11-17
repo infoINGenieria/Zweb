@@ -48,7 +48,10 @@ class TCCertficacionGraphView(AuthView):
         unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
         obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
                                  unidad_negocio=unidad_negocio)
-        data_graph = get_certificacion_graph(obra)
+        try:
+            data_graph = get_certificacion_graph(obra)
+        except Exception as e:
+            raise ParseError(e)
         return Response(data_graph)
 
 
@@ -57,7 +60,10 @@ class TCCostoGraphView(AuthView):
         unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
         obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
                                  unidad_negocio=unidad_negocio)
-        data_graph = get_costos_graph(obra)
+        try:
+            data_graph = get_costos_graph(obra)
+        except Exception as e:
+            raise ParseError(e)
         return Response(data_graph)
 
 
@@ -66,7 +72,10 @@ class TCAvanceGraphView(AuthView):
         unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
         obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
                                  unidad_negocio=unidad_negocio)
-        data_graph = get_avances_graph(obra)
+        try:
+            data_graph = get_avances_graph(obra)
+        except Exception as e:
+            raise ParseError(e)
         return Response(data_graph)
 
 
@@ -88,7 +97,10 @@ class TCConsolidadoGraphView(AuthView):
         unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
         obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
                                  unidad_negocio=unidad_negocio)
-        data_graph = get_consolidado_graph(obra)
+        try:
+            data_graph = get_consolidado_graph(obra)
+        except Exception as e:
+            raise ParseError(e)
         return Response(data_graph)
 
 

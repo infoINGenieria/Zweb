@@ -183,7 +183,10 @@ export class TableroControlOsComponent implements OnInit {
           this.data = data;
           this.get_data_graphs();
         },
-        error => this.handleError(error)
+        error => {
+          this.data = null;
+          this.handleError(error);
+        }
       );
 
     } else {
@@ -195,34 +198,53 @@ export class TableroControlOsComponent implements OnInit {
     this._tableroServ.get_graph_certificacion(this.centro_costo).subscribe(
       data => {
         setTimeout(() => this.graph_data = data, 1000);
-      }, error => this.handleError(error)
+      },
+      error => {
+        this.graph_data = null;
+        this.handleError(error);
+      }
     );
     this._tableroServ.get_graph_costo(this.centro_costo).subscribe(
       data => {
         setTimeout(() => this.graph_costo_data = data, 1000);
-      }, error => this.handleError(error)
+      },
+      error => {
+        this.graph_costo_data = null;
+        this.handleError(error);
+      }
     );
     this._tableroServ.get_graph_avance(this.centro_costo).subscribe(
       data => {
         setTimeout(() => this.graph_avance_data = data, 1000);
-      }, error => this.handleError(error)
+      },
+      error => {
+        this.graph_avance_data = null;
+        this.handleError(error);
+      }
     );
     this._tableroServ.get_graph_consolidado(this.centro_costo).subscribe(
       data => {
         this.graph_consol_data = data;
-      }, error => this.handleError(error)
+      },
+      error => {
+        this.graph_consol_data = null;
+        this.handleError(error);
+      }
     );
   }
 
   get_items_costos(): String[] {
-    let keys = Object.keys(this.data['costos']['acumulado']);
-    keys.splice(keys.indexOf('subtotal'));
-    keys.splice(keys.indexOf('total_costos'));
-    return keys;
+    try {
+      let keys = Object.keys(this.data['costos']['acumulado']);
+      keys.splice(keys.indexOf('subtotal'));
+      keys.splice(keys.indexOf('total_costos'));
+      return keys;
+    } catch (e) {
+      return [];
+    }
   }
 
   handleError(error: any) {
-    console.log(error);
     try {
       const _error = JSON.parse(error._body);
       this._notifications.error(_error.detail);
