@@ -296,19 +296,25 @@ def generar_tabla_tablero(obra, periodo):
     # Estructura de Costos
     estructura_costos = {
         'presupuesto': {
-            "contingencia": revision.contingencia,
-            "estructura": revision.estructura_no_ree,
+            "contingencia": revision.contingencia or 0,
+            "estructura": revision.estructura_no_ree or 0,
             "avales_gtia_seguros": (
-                revision.aval_por_anticipos + revision.seguro_caucion + revision.seguro_5 +
-                revision.aval_por_cumplimiento_contrato + revision.aval_por_cumplimiento_garantia
+                (revision.aval_por_anticipos or 0) +
+                (revision.seguro_caucion or 0) +
+                (revision.seguro_5 or 0) +
+                (revision.aval_por_cumplimiento_contrato or 0) +
+                (revision.aval_por_cumplimiento_garantia or 0)
             )
         },
         "comercial": {
-            "contingencia": revision_b0.contingencia,
-            "estructura": revision_b0.estructura_no_ree,
+            "contingencia": revision_b0.contingencia or 0,
+            "estructura": revision_b0.estructura_no_ree or 0,
             "avales_gtia_seguros": (
-                revision_b0.aval_por_anticipos + revision_b0.seguro_caucion + revision_b0.seguro_5 +
-                revision_b0.aval_por_cumplimiento_contrato + revision_b0.aval_por_cumplimiento_garantia
+                (revision_b0.aval_por_anticipos or 0) +
+                (revision_b0.seguro_caucion or 0) +
+                (revision_b0.seguro_5 or 0) +
+                (revision_b0.aval_por_cumplimiento_contrato or 0) +
+                (revision_b0.aval_por_cumplimiento_garantia or 0)
             )
         }
     }

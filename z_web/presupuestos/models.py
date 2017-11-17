@@ -178,27 +178,29 @@ class Revision(BaseModelWithHistory):
 
     @property
     def sellado_pesos(self):
+        if not self.sellado:
+            return 0
         return self.total_venta * self.sellado / 100
 
     @property
     def imprevistos_pesos(self):
-        return self.costo_industrial * self.imprevistos / 100
+        return self.costo_industrial * (self.imprevistos or 0) / 100
 
     @property
     def impuestos_cheque_pesos(self):
-        return self.total_venta * self.impuestos_cheque / 100
+        return self.total_venta * (self.impuestos_cheque or 0) / 100
 
     @property
     def ingresos_brutos_pesos(self):
-        return self.total_venta * self.ingresos_brutos / 100
+        return self.total_venta * (self.ingresos_brutos or 0) / 100
 
     @property
     def impuesto_ganancias_pesos(self):
-        return self.ganancias * self.impuestos_ganancias / 100
+        return self.ganancias * (self.impuestos_ganancias or 0) / 100
 
     @property
     def costo_financiero_pesos(self):
-        return self.costo_industrial * self.costo_financiero / 100
+        return self.costo_industrial * (self.costo_financiero or 0) / 100
 
     @property
     def costos_previstos(self):
@@ -208,28 +210,33 @@ class Revision(BaseModelWithHistory):
 
     @property
     def costo_industrial(self):
-        costo = self.costos_previstos
-        costo += self.contingencia
-        costo += self.estructura_no_ree
-        costo += self.aval_por_anticipos
-        costo += self.seguro_caucion
-        costo += self.aval_por_cumplimiento_contrato
-        costo += self.aval_por_cumplimiento_garantia
-        costo += self.seguro_5
-        return costo
+        try:
+            costo = self.costos_previstos
+            costo += self.contingencia
+            costo += self.estructura_no_ree
+            costo += self.aval_por_anticipos
+            costo += self.seguro_caucion
+            costo += self.aval_por_cumplimiento_contrato
+            costo += self.aval_por_cumplimiento_garantia
+            costo += self.seguro_5
+            return costo
+        except TypeError:
+            return 0
 
     @property
     def ganancias(self):
-        ganancia = self.total_venta
-        ganancia -= self.imprevistos_pesos
-        ganancia -= self.sellado_pesos
-        ganancia -= self.ingresos_brutos_pesos
-        ganancia -= self.impuestos_cheque_pesos
-        ganancia -= self.costo_financiero_pesos
-        ganancia -= self.costo_industrial
-        ganancia = ganancia / (1 + (self.impuestos_ganancias / 100))
-        return ganancia
-
+        try:
+            ganancia = self.total_venta
+            ganancia -= self.imprevistos_pesos
+            ganancia -= self.sellado_pesos
+            ganancia -= self.ingresos_brutos_pesos
+            ganancia -= self.impuestos_cheque_pesos
+            ganancia -= self.costo_financiero_pesos
+            ganancia -= self.costo_industrial
+            ganancia = ganancia / (1 + (self.impuestos_ganancias / 100))
+            return ganancia
+        except TypeError:
+            return 0
 
 class ItemPresupuesto(BaseModelWithHistory):
     """
