@@ -172,8 +172,15 @@ class UserExtensionInline(admin.StackedInline):
 
 
 class CustomUserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'un')
     inlines = UserAdmin.inlines + [UserExtensionInline]
 
+    def un(self, obj):
+        try:
+            return obj.extension.unidad_negocio.codigo
+        except:
+            return "-"
+    un.short_description = "Unidad de negocio"
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
