@@ -2,7 +2,7 @@
 {% if equipos.items %}
 
     <table class="table table-responsive table-bordered table-striped table-hover" id="table-equipos">
-        {% for name,values in equipos.items %}
+        {% for name, values in equipos.items %}
             <thead>
             <tr>
                 <th colspan="8">{{ name }} - TOTAL: {{ totales|get_item:values.0.obra_id|money }}</th>
@@ -29,10 +29,10 @@
                     </td>
                     <td>{{ line.registro_equipo__equipo__familia_equipo__nombre|default:"Sin familia asociada." }}</td>
                     <td>{{ line.dias_mes }}</td>
-                    <td>{{ line.fluido|money }}</td>
-                    <td>{{ line.tren|money }}</td>
-                    <td>{{ line.posesion|money }}</td>
-                    <td>{{ line.repara|money }}</td>
+                    <td>{{ line.LUBR_FLU|money }}</td>
+                    <td>{{ line.TRENRODA|money }}</td>
+                    <td>{{ line.POSESION|money }}</td>
+                    <td>{{ line.R_REPARA|money }}</td>
                 </tr>
             {% endfor %}
             <tr>
