@@ -62,6 +62,38 @@ class ObrasAdmin(admin.ModelAdmin):
     is_active.short_description = "¿Activa?"
     is_active.boolean = True
 
+    def get_queryset(self, request, **kwargs):
+        qs = Obras.get_obras_by_un(request.user)
+        return qs
+
+    def get_form(self, request, obj=None, **kwargs):
+        unidad_negocio = None
+        try:
+            unidad_negocio = request.user.extension.unidad_negocio
+        except UserExtension.DoesNotExist:
+            pass
+        if unidad_negocio:
+            # si tiene, ocultamos el campo
+            self.fieldsets[0][1]["fields"] = (
+                ('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),
+                ('cuit', 'lugar', 'plazo'),
+                ('contrato', 'comitente', 'responsable',)
+            )
+        form = super(ObrasAdmin, self).get_form(request, obj, **kwargs)
+        return form
+
+    def save_model(self, request, obj, form, change):
+        unidad_negocio = None
+        try:
+            unidad_negocio = request.user.extension.unidad_negocio
+        except UserExtension.DoesNotExist:
+            pass
+        if unidad_negocio:
+            if not obj.unidad_negocio or (
+                    obj.unidad_negocio and obj.unidad_negocio_id != unidad_negocio.pk):
+                obj.unidad_negocio = unidad_negocio
+        super(ObrasAdmin, self).save_model(request, obj, form, change)
+
 
 class FrancoLicenciaInlineAdmin(admin.StackedInline):
     extra = 0

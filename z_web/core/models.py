@@ -146,6 +146,15 @@ class Obras(models.Model):
         return Obras.objects.filter(
             es_cc=True, unidad_negocio__codigo='MS')
 
+    @classmethod
+    def get_obras_by_un(cls, user):
+        obra_qs = Obras.objects.all()
+        try:
+            if user.extension.unidad_negocio:
+                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
+        except UserExtension.DoesNotExist:
+            pass
+        return obra_qs
 
 
 class CCT(models.Model):

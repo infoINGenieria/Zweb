@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login, logout as django_logout
 from django.core.cache import cache
-from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.utils import six
 from django.utils.encoding import force_text
@@ -109,7 +109,11 @@ def logout(request):
 
 def generate_menu_user(user):
     menu = []
-    ext = user.extension
+    try:
+        ext = user.extension
+    except ObjectDoesNotExist:
+        return menu
+
     if user.has_perm('costos.can_view_panel_control'):
         if not ext.unidad_negocio or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS'):
             menu.append({
