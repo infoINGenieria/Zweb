@@ -32,3 +32,12 @@ class FamiliaEquipoAdmin(admin.ModelAdmin):
 class PeriodoAdmin(admin.ModelAdmin):
     list_display = ('descripcion', 'fecha_inicio', 'fecha_fin', )
     ordering = ('-fecha_inicio', )
+
+    def get_form(self, *args, **kwargs):
+        """
+        Hacemos readonly los datepicker.ArithmeticError
+        """
+        f = super(PeriodoAdmin, self).get_form(*args, **kwargs)
+        f.base_fields["fecha_inicio"].widget.attrs.update({"readonly": "readonly"})
+        f.base_fields["fecha_fin"].widget.attrs.update({"readonly": "readonly"})
+        return f

@@ -70,7 +70,7 @@ class TipoCosto(models.Model):
 
 
 class Periodo(models.Model):
-    descripcion = models.CharField(verbose_name="Periodo", max_length=255)
+    descripcion = models.CharField(verbose_name="Periodo", max_length=255, unique=True)
     fecha_inicio = models.DateField(verbose_name="Fecha de inicio")
     fecha_fin = models.DateField(verbose_name="Fecha de cierre")
 
