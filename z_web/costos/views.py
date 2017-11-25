@@ -4,7 +4,7 @@ from django.apps import apps
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from django.db.transaction import atomic
 from django.views.generic import TemplateView, CreateView, ListView, UpdateView, DeleteView
 from django.forms.utils import ErrorList
@@ -13,7 +13,7 @@ from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.shortcuts import render
 
-from core.models import Obras
+from core.models import Obras, UserExtension
 from parametros.models import Periodo, FamiliaEquipo
 from zweb_utils.mixins import TableFilterListView, ModalViewMixin
 from zweb_utils.views import LoginAndPermissionRequiredMixin
@@ -135,8 +135,17 @@ class CostosList(BaseCostosMixin, TableFilterListView):
         return fs
 
     def get_queryset(self):
-        return CostoReal.objects.filter(
-            centro_costo__in=Obras.get_centro_costos(self.request.user))
+        un = UserExtension.get_unidad_negocio(self.request.user)
+        if un:
+            if un.codigo == "OS":  # OS no tiene costos por equipos
+                return CostoReal.objects.filter(
+                    centro_costo__in=Obras.get_centro_costos(self.request.user))
+            elif un.codigo == "MS":
+                return CostoReal.objects.filter(
+                    models.Q(centro_costo__in=Obras.get_centro_costos(self.request.user)) |
+                    models.Q(centro_costo__isnull=True))
+        # otro caso
+        return CostoReal.objects.all()
 
     def get_table_class(self, **kwargs):
         if self.filterset.form.is_valid():
@@ -182,7 +191,6 @@ class CostosAltaCC(BaseCostosMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         p_form = self._form_class()(self.request.user, self.request.POST)
         formsets = self._get_formset()(self.request.POST)
-
         if p_form.is_valid() and formsets.is_valid():
             return self.form_valid(p_form, formsets)
         else:
@@ -376,8 +384,17 @@ class CostosProyeccionListView(CostosList):
         return ProyeccionTableGeneric
 
     def get_queryset(self):
-        return CostoProyeccion.objects.filter(
-            centro_costo__in=Obras.get_centro_costos(self.request.user))
+        un = UserExtension.get_unidad_negocio(self.request.user)
+        if un:
+            if un.codigo == "OS":  # OS no tiene costos por equipos
+                return CostoProyeccion.objects.filter(
+                    centro_costo__in=Obras.get_centro_costos(self.request.user))
+            elif un.codigo == "MS":
+                return CostoProyeccion.objects.filter(
+                    models.Q(centro_costo__in=Obras.get_centro_costos(self.request.user)) |
+                    models.Q(centro_costo__isnull=True))
+        # otro caso
+        return CostoProyeccion.objects.all()
 
 
 class CostosProyeccionAltaCC(CostosAltaCC):

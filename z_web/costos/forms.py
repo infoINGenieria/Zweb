@@ -9,6 +9,7 @@ from crispy_forms.layout import Layout, Div
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
 from costos.models import CostoReal, CostoTipo, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion, AvanceObra
+from zweb_utils.fields import FlexibleDecimalField
 
 
 # class PeriodoSelectForm(forms.Form):
@@ -65,7 +66,7 @@ class PeriodoCCForm(forms.Form):
 class CostoCCForm(forms.Form):
     tipo_costo = forms.ModelChoiceField(CostoTipo.objects.filter(relacionado_con='cc'), widget=forms.HiddenInput())
     observacion = forms.CharField(label='Observación', required=False)
-    monto_total = forms.DecimalField(label='Monto ($)', required=False)
+    monto_total = FlexibleDecimalField(label='Monto ($)', required=False)
 
 
 class PeriodoCostoTipoForm(forms.Form):
@@ -77,9 +78,9 @@ class PeriodoCostoTipoForm(forms.Form):
 
 
 class CostoEquipoForm(forms.Form):
-    monto_hora = forms.DecimalField(label='Monto ($/hs)', required=False)
-    monto_mes = forms.DecimalField(label='Monto ($/mes)', required=False)
-    monto_anio = forms.DecimalField(label='Monto ($/año)', required=False)
+    monto_hora = FlexibleDecimalField(label='Monto ($/hs)', required=False)
+    monto_mes = FlexibleDecimalField(label='Monto ($/mes)', required=False)
+    monto_anio = FlexibleDecimalField(label='Monto ($/año)', required=False)
     observacion = forms.CharField(label='Observación', required=False)
     familia_equipo = forms.ModelChoiceField(FamiliaEquipo.objects.all(), widget=forms.HiddenInput())
 
@@ -107,6 +108,7 @@ Forms usados por los popup
 
 class CostoEditPorCCForm(forms.ModelForm):
     periodo = forms.ModelChoiceField(queryset=Periodo.con_parametros_costos.all(), required=True)
+    monto_total = FlexibleDecimalField()
 
     class Meta:
         model = CostoReal
@@ -129,13 +131,16 @@ class CostoEditPorCCForm(forms.ModelForm):
 
 class CostoEditPorEquipoForm(forms.ModelForm):
     periodo = forms.ModelChoiceField(queryset=Periodo.con_parametros_costos.all(), required=True)
+    monto_hora = FlexibleDecimalField(label='Monto ($/hs)', required=False)
+    monto_mes = FlexibleDecimalField(label='Monto ($/mes)', required=False)
+    monto_anio = FlexibleDecimalField(label='Monto ($/año)', required=False)
 
     class Meta:
         model = CostoReal
         fields = ('periodo', 'familia_equipo', 'monto_hora', 'monto_mes',
                   'monto_anio', 'observacion', )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(CostoEditPorEquipoForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_class = 'horizontal-form'
@@ -172,6 +177,7 @@ class ProyeccionEditPorEquipoForm(CostoEditPorEquipoForm):
 
 class AvanceObraEditForm(forms.ModelForm):
     periodo = forms.ModelChoiceField(queryset=Periodo.con_parametros_costos.all(), required=True)
+    avance = FlexibleDecimalField()
 
     class Meta:
         model = AvanceObraReal

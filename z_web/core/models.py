@@ -249,3 +249,12 @@ class UserExtension(models.Model):
 
     def __str__(self):
         return "información de {}".format(self.user)
+
+    @classmethod
+    def get_unidad_negocio(cls, user):
+        try:
+            if user.extension.unidad_negocio:
+                return user.extension.unidad_negocio
+        except UserExtension.DoesNotExist:
+            pass
+        return None
