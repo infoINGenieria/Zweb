@@ -1,7 +1,7 @@
 <h2>Aplicaciones y herramientas disponibles</h2>
 <div class="row zille-tools">
   <div *ngFor="let entry of menu" class="col-lg-6 col-md-9" [@fadeInAnimation]>
-      <a class="btn btn-{{ entry.btn_class }} btn-lg btn-block" href="{{ entry.url }}">
+      <a *ngIf="!entry.link" class="btn btn-{{ entry.btn_class }} btn-lg btn-block" href="{{ entry.url }}">
           <div class="col-xs-2">
               <i class="fa fa-{{ entry.icon }}"></i>
           </div>
@@ -10,5 +10,14 @@
               <h5>{{ entry.section }}</h5>
           </div>
       </a>
+      <a *ngIf="entry.link" class="btn btn-{{ entry.btn_class }} btn-lg btn-block" [routerLink]="get_link(entry.url)">
+        <div class="col-xs-2">
+            <i class="fa fa-{{ entry.icon }}"></i>
+        </div>
+        <div class="col-xs-10 text-left">
+            <h4><strong>{{ entry.name }}</strong></h4>
+            <h5>{{ entry.section }}</h5>
+        </div>
+    </a>
   </div>
 </div>

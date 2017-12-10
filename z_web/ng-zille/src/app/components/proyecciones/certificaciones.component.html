@@ -1,0 +1,52 @@
+<div class="col-lg-10">
+  <h1><a class="btn btn-default" [routerLink]="['/proyecciones']"><i class="fa fa-chevron-left"></i> </a>
+    Proyección de certificación - {{ centro_costo?.obra }}</h1>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Periodo</th>
+        <th>Items</th>
+        <th>Acumulado</th>
+        <th>Real</th>
+        <th>Acumulado Consolidado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cert of certificaciones;" [@fadeInAnimation] [ngClass]="itemIsValid(cert) ? '' : 'danger'">
+        <td>
+          <select class="form-control input-sm" name="periodo" [(ngModel)]="cert.periodo_id" required [disabled]="isDisabled">
+            <option *ngFor="let periodo of periodos" [value]='periodo.pk'>
+              {{periodo.descripcion}}
+            </option>
+          </select>
+        </td>
+        <td>
+          <div class="input-group input-group-sm">
+            <input myCurrencyFormatter [readonly]="isDisabled"
+                type="tel" class="form-control input-sm number" name="monto_0"
+                [(ngModel)]="cert.items[0].monto" />
+            <span class="input-group-addon">{{ cert.items[0].monto || 0 | moneda }}</span>
+          </div>
+        </td>
+        <td class="info">
+          {{ acumulado(cert) | moneda }}
+        </td>
+        <td class="success">
+          <span *ngIf="find_real(cert); let real">{{ real?.total | moneda }}</span>
+        </td>
+        <td class="danger">
+          {{ acumuladoConsolidado(cert) | moneda }}
+        </td>
+        <td>
+          <button class="btn btn-success btn-sm"
+            (click)="guardarCertificacion(cert)"><i class="fa fa-save"></i> Guardar</button>
+          <button class="btn btn-danger btn-sm"
+            (click)="eliminarCertificacion(cert)"><i class="fa fa-trash"></i> Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-info" (click)="aniadirCertificacion()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
+  <button class="btn btn-success" (click)="guardarTodos()"><i class="fa fa-save"></i> Guardar proyección</button>
+</div>

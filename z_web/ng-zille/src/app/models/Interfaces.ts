@@ -5,6 +5,7 @@ export interface MenuEntry {
     url: string;
     section: string;
     btn_class: string;
+    link: boolean;
 }
 
 export interface IPresupuesto {

@@ -1,3 +1,4 @@
+import { Certificacion } from './../../models/Certificacion';
 import { Observable } from 'rxjs/Observable';
 import { ICertificacion } from './../../models/Interfaces';
 import { Response, URLSearchParams } from '@angular/http';
@@ -75,5 +76,15 @@ export class RegistroService {
     const bodyString = JSON.stringify(certificacion_proyeccion);
     return this.http.put(`/api/certificaciones_proyeccion/${certificacion_proyeccion.pk}`, bodyString)
       .map((r: Response) => r.json() as ICertificacion);
+  }
+
+  get_certificacion_proyeccion_by_obra(obra_id: number): Observable<Certificacion[]> {
+    return this.http.get(`/api/centro_costos/${obra_id}/certificaciones-proyecciones/`)
+      .map((r: Response) => r.json() as Certificacion[]);
+  }
+
+  get_certificacion_real_by_obra(obra_id: number): Observable<Certificacion[]> {
+    return this.http.get(`/api/centro_costos/${obra_id}/certificaciones-reales/`)
+      .map((r: Response) => r.json() as Certificacion[]);
   }
 }

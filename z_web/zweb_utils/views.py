@@ -127,7 +127,12 @@ def generate_menu_user(user):
                 'name': "Tablero de control", 'icon': 'area-chart',
                 'url': '/~/tablero-control/os/', 'section': "{}".format(
                     ext.unidad_negocio if ext else 'Obras de superficie'
-                ), 'btn_class': 'warning'
+                ), 'btn_class': 'warning', 'link': True
+            })
+            menu.append({
+                'name': "Proyecciones", 'icon': 'line-chart',
+                'url': '/~/proyecciones/', 'section': "Administrar proyecciones",
+                'btn_class': 'info', 'link': True
             })
     if user.has_perm('costos.can_manage_costos'):
         menu.append({'name': "Costos", 'icon': 'list',
@@ -138,10 +143,12 @@ def generate_menu_user(user):
                      'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes', 'btn_class': 'warning'})
     if user.has_perm("organizacion.can_manage_presupuestos"):
         menu.append({'name': "Presupuestos", 'icon': 'file-text-o',
-                     'url': '/~/presupuestos/', 'section': 'Administrar presupuestos', 'btn_class': 'info'})
+                     'url': '/~/presupuestos/', 'section': 'Administrar presupuestos',
+                     'btn_class': 'info', 'link': True})
     if user.has_perm("registro.can_manage_certificacion"):
         menu.append({'name': "Certificaciones", 'icon': 'certificate',
-                     'url': '/~/certificaciones/index', 'section': 'Administrar certificaciones', 'btn_class': 'success'})
+                     'url': '/~/certificaciones', 'section': 'Administrar certificaciones',
+                     'btn_class': 'success', 'link': True})
     if user.is_staff:
         menu.append({'name': "Administración", 'icon': 'cogs',
                      'url': reverse('admin:index'), 'section': 'Gestionar entidades',

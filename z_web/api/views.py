@@ -1,8 +1,10 @@
 # coding: utf-8
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.db.models import Sum, Max, Min
 
 from rest_framework import status
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.exceptions import MethodNotAllowed, ValidationError, ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
@@ -11,7 +13,8 @@ from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelV
 from api.serializers import (
     PresupuestoSerializer, RevisionSerializer, CostoTipoSerializer,
     ItemPresupuestoSerializer, ObrasSerializer, CertificacionProyeccionSerializer,
-    CertificacionRealSerializer, CertificacionItemSerializer, PeriodoSerializer)
+    CertificacionRealSerializer, CertificacionItemSerializer, PeriodoSerializer,
+    CertificacionesSummary)
 from api.filters import PresupuestoFilter, CertificacionFilter
 from core.models import Obras, UserExtension
 from costos.models import CostoTipo
@@ -190,6 +193,52 @@ class CentroCostoViewSet(ModelViewSet, AuthView):
 
     def get_queryset(self):
         return self.get_centros_costos()
+
+    @detail_route(methods=['get'], url_path='certificaciones-reales')
+    def cert_reales(self, request, **kwargs):
+        cc = self.get_object()
+        certs = cc.certificaciones_obras.filter(es_proyeccion=False).order_by('periodo__fecha_fin')
+        serializer = CertificacionRealSerializer(certs, many=True)
+        return Response(serializer.data)
+
+    @detail_route(methods=['get'], url_path='certificaciones-reales/resumen')
+    def cert_reales_summary(self, request, **kwargs):
+        cc = self.get_object()
+        data_dict = cc.certificaciones_obras.filter(
+            es_proyeccion=False).aggregate(
+                start=Min('periodo__fecha_fin'),
+                end=Max('periodo__fecha_fin'),
+                acumulado=Sum('items__monto')
+                )
+        data_dict.update({
+            'cc': cc,
+            'start': Periodo.objects.get(fecha_fin=data_dict["start"]),
+            'end': Periodo.objects.get(fecha_fin=data_dict["end"]),
+        })
+        return Response(CertificacionesSummary(data_dict).data)
+
+    @detail_route(methods=['get'], url_path='certificaciones-proyecciones')
+    def cert_proyecciones(self, request, **kwargs):
+        cc = self.get_object()
+        certs = cc.certificaciones_obras.filter(es_proyeccion=True).order_by('periodo__fecha_fin')
+        serializer = CertificacionProyeccionSerializer(certs, many=True)
+        return Response(serializer.data)
+
+    @detail_route(methods=['get'], url_path='certificaciones-proyecciones/resumen')
+    def cert_proyecciones_summary(self, request, **kwargs):
+        cc = self.get_object()
+        data_dict = cc.certificaciones_obras.filter(
+            es_proyeccion=True).aggregate(
+                start=Min('periodo__fecha_fin'),
+                end=Max('periodo__fecha_fin'),
+                acumulado=Sum('items__monto')
+                )
+        data_dict.update({
+            'cc': cc,
+            'start': Periodo.objects.get(fecha_fin=data_dict["start"]),
+            'end': Periodo.objects.get(fecha_fin=data_dict["end"]),
+        })
+        return Response(CertificacionesSummary(data_dict).data)
 
 
 class CertificacionRealViewSet(ModelViewSet, AuthView):

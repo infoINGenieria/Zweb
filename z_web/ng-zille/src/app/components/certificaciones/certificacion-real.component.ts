@@ -173,7 +173,7 @@ export class CertificacionRealComponent implements OnInit {
     this.registroServ.create_certificacion_real(this.certificacion).subscribe(certificacion => {
       this.certificacion = certificacion;
       this._notifications.success('Certificación guardado correctamente.');
-      this.router.navigate(['/certificaciones', 'real', this.certificacion.pk]);
+      this.router.navigate(['/certificaciones', this.certificacion.pk]);
     }, error => this.handleError(error));
   }
 

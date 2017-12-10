@@ -1,3 +1,5 @@
+import { MyCurrencyPipe } from './pipes/my-currency.pipe';
+import { MyCurrencyFormatterDirective } from './directives/currency-formatter.directive';
 import { TableroService } from './services/tablero.service';
 import { RegistroService } from './services/registro/registro.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -26,14 +28,17 @@ import { PresupuestoComponent } from './components/presupuesto/presupuesto.compo
 import { PresupuestosComponent } from './components/presupuestos/presupuestos.component';
 import { PresupuestosService } from './services/presupuestos/presupuestos.service';
 import {
-  CertificacionesIndexComponent, CertificacionesRealComponent, CertificacionRealComponent,
-  CertificacionesProyeccionComponent, CertificacionProyeccionComponent } from './components/certificaciones';
+  CertificacionesRealComponent, CertificacionRealComponent,
+  } from './components/certificaciones';
 import { IndexComponent } from './components/index/index.component';
 import { TableroControlOsComponent } from './components/tablero-control-os/tablero-control-os.component';
+import { ProyeccionesComponent } from './components/proyecciones/proyecciones.component';
+import { CertificacionesComponent } from './components/proyecciones/certificaciones.component';
 
 // d3 and nvd3 should be included somewhere
 import 'd3';
 import 'nvd3';
+import { MonedaPipe } from './pipes/moneda.pipe';
 
 
 @NgModule({
@@ -44,10 +49,12 @@ import 'nvd3';
     IndexComponent,
     CertificacionesRealComponent,
     CertificacionRealComponent,
-    CertificacionesProyeccionComponent,
-    CertificacionesIndexComponent,
-    CertificacionProyeccionComponent,
     TableroControlOsComponent,
+    ProyeccionesComponent,
+    CertificacionesComponent,
+    MonedaPipe,
+    MyCurrencyPipe,
+    MyCurrencyFormatterDirective
   ],
   imports: [
     BrowserModule,

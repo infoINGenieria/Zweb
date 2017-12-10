@@ -2,6 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import {Http, Headers, RequestOptions, Response, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { environment } from '../../../environments/environment';
 
 import { MenuEntry } from './../../models/Interfaces';
 
@@ -29,24 +30,24 @@ export class BaseApiService {
   }
 
   get(url, params?: URLSearchParams): Observable<Response> {
-    return this.http.get(url, this.getRequestOptions(params));
+    return this.http.get(`${environment.apiUrl}${url}`, this.getRequestOptions(params));
   }
 
   post(url, payload): Observable<Response> {
-    return this.http.post(url, payload, this.getRequestOptions());
+    return this.http.post(`${environment.apiUrl}${url}`, payload, this.getRequestOptions());
   }
 
   put(url, payload): Observable<Response> {
-    return this.http.put(url, payload, this.getRequestOptions());
+    return this.http.put(`${environment.apiUrl}${url}`, payload, this.getRequestOptions());
   }
   delete(url): Observable<Response> {
-    return this.http.delete(url, this.getRequestOptions());
+    return this.http.delete(`${environment.apiUrl}${url}`, this.getRequestOptions());
   }
 
   /*   Common methods API */
 
   get_my_menu(): Observable<MenuEntry[]> {
-    return this.get('/api/my_menu/')
+    return this.get(`${environment.apiUrl}/api/my_menu/`)
       .map((r: Response) => r.json());
   }
 }

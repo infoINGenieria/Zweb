@@ -1,0 +1,32 @@
+<h1><a class="btn btn-default" [routerLink]="['']"><i class="fa fa-chevron-left"></i> </a>
+  Proyecciones</h1>
+
+  <table class="table table-hover" *ngIf="centro_costos.length>0" [@fadeInAnimation]>
+      <thead>
+        <tr>
+          <th>Centro de costos</th>
+          <th>Código</th>
+          <th>Lugar</th>
+          <th>Plazo</th>
+          <th>Responsable</th>
+          <th>Gestionar proyecciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cc of centro_costos" [@fadeInAnimation]>
+          <td><a href="/admin/core/obras/{{cc.id}}/" target="_blank">{{ cc.obra }}</a></td>
+          <td>{{ cc.codigo }}</td>
+          <td>{{ cc.lugar }}</td>
+          <td>{{ cc.plazo }}</td>
+          <td>{{ cc.responsable }}</td>
+          <td>
+            <a class="btn btn-warning btn-sm">De costos</a>
+            <a class="btn btn-primary btn-sm">De avance de obra</a>
+            <a class="btn btn-info btn-sm" [routerLink]="['/proyecciones', cc.id, 'certificaciones']">De certificación</a>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <p *ngIf="centro_costos.length==0 && loaded" class="alert alert-warning ">No hay centro de costos para visualizar.</p>

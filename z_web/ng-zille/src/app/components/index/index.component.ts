@@ -24,4 +24,7 @@ export class IndexComponent implements OnInit {
     );
   }
 
+  get_link(url: String) {
+    return url.substr(2);  // remove duplicate ~/
+  }
 }

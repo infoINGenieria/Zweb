@@ -5,7 +5,7 @@
   </div>
   <div *ngSwitchCase="false" [@fadeInAnimation]>
     <h2>
-      <a class="btn btn-default" [routerLink]="['/certificaciones', 'real']">
+      <a class="btn btn-default" [routerLink]="['/certificaciones']">
         <i class="fa fa-chevron-left"></i>
       </a>
       <span *ngIf="!certificacion?.pk">Nueva Certificación</span>
@@ -79,7 +79,7 @@
             </tbody>
           </table>
           <fieldset [disabled]="!checkAllItem() || !f.valid">
-              <a class="btn btn-default" [routerLink]="['/certificaciones', 'real']">
+              <a class="btn btn-default" [routerLink]="['/certificaciones']">
                 <i class="fa fa-chevron-left"></i> Volver
               </a>
               <button *ngIf="!certificacion?.pk" class="btn btn-success"

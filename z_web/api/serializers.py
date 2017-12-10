@@ -176,3 +176,11 @@ class CertificacionProyeccionSerializer(CertificacionRealSerializer):
         model = CertificacionProyeccion
         fields = ('pk', 'periodo', 'periodo_id', 'obra', 'obra_id', 'items', 'total',
                   'total_sin_adicional', 'total_adicional')
+
+
+class CertificacionesSummary(serializers.Serializer):
+    start = PeriodoSerializer(read_only=True)
+    end = PeriodoSerializer(read_only=True)
+    cc = ObrasSerializer(read_only=True)
+    acumulado = serializers.DecimalField(
+        max_digits=18, decimal_places=2, read_only=True)
