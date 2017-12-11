@@ -29,8 +29,8 @@ export class AvanceObraComponent implements OnInit {
   ) { }
 
   centro_costo: ICentroCosto;
-  avances: IAvanceObra[];
-  real_avances: IAvanceObra[];
+  avances: IAvanceObra[] = [];
+  real_avances: IAvanceObra[] = [];
   periodos: IPeriodo[];
 
   isDisabled = false;
@@ -88,9 +88,11 @@ export class AvanceObraComponent implements OnInit {
   }
 
   find_real(item: IAvanceObra) {
-    return this.real_avances.find((i) => {
-      return i.periodo_id === item.periodo_id;
-    })
+    if (this.real_avances){
+      return this.real_avances.find((i) => {
+        return i.periodo_id === item.periodo_id;
+      });
+    }
   }
 
   acumulado(item: IAvanceObra): number {

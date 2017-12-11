@@ -81,9 +81,11 @@ export class CertificacionesComponent implements OnInit {
   }
 
   find_real(item: ICertificacion) {
-    return this.real_certificaciones.find((i) => {
-      return i.periodo_id === item.periodo_id;
-    })
+    if (this.real_certificaciones) {
+      return this.real_certificaciones.find((i) => {
+        return i.periodo_id === item.periodo_id;
+      });
+    }
   }
 
   acumulado(item: ICertificacion): number {
