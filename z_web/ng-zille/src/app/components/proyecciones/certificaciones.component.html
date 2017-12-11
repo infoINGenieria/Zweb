@@ -25,8 +25,8 @@
           <div class="input-group input-group-sm">
             <input myCurrencyFormatter [readonly]="isDisabled"
                 type="tel" class="form-control input-sm number" name="monto_0"
-                [(ngModel)]="cert.items[0].monto" />
-            <span class="input-group-addon">{{ cert.items[0].monto || 0 | moneda }}</span>
+                [(ngModel)]="cert.items[0].monto" #certificacionVal />
+            <span class="input-group-addon">{{ certificacionVal.value | moneda }}</span>
           </div>
         </td>
         <td class="info">
@@ -48,5 +48,9 @@
     </tbody>
   </table>
   <button class="btn btn-info" (click)="aniadirCertificacion()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
-  <button class="btn btn-success" (click)="guardarTodos()"><i class="fa fa-save"></i> Guardar proyección</button>
+  <button class="btn btn-success" (click)="guardarTodos()" [disabled]="isDisabled">
+    <i class="fa fa-save"></i>
+    <span *ngIf="!isDisabled">Guardar proyección</span>
+    <span *ngIf="isDisabled">Guardando...</span>
+  </button>
 </div>

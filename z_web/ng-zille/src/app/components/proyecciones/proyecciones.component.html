@@ -1,6 +1,7 @@
 <h1><a class="btn btn-default" [routerLink]="['']"><i class="fa fa-chevron-left"></i> </a>
   Proyecciones</h1>
 
+  <a class="btn btn-warning btn-sm" href="/costos/proyecciones/">Gestionar proyecciones de costos</a>
   <table class="table table-hover" *ngIf="centro_costos.length>0" [@fadeInAnimation]>
       <thead>
         <tr>
@@ -20,7 +21,6 @@
           <td>{{ cc.plazo }}</td>
           <td>{{ cc.responsable }}</td>
           <td>
-            <a class="btn btn-warning btn-sm">De costos</a>
             <a class="btn btn-primary btn-sm" [routerLink]="['/proyecciones', cc.id, 'avances-obra']">De avance de obra</a>
             <a class="btn btn-info btn-sm" [routerLink]="['/proyecciones', cc.id, 'certificaciones']">De certificación</a>
           </td>

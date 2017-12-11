@@ -134,9 +134,15 @@ def generate_menu_user(user):
                 'url': '/~/proyecciones/', 'section': "Administrar proyecciones",
                 'btn_class': 'info', 'link': True
             })
+            menu.append({
+                'name': "Avance de obra", 'icon': 'play',
+                'url': reverse('costos:avances_obra_list'), 'section': "Gestionar el avance de obra",
+                'btn_class': 'danger'
+            })
     if user.has_perm('costos.can_manage_costos'):
         menu.append({'name': "Costos", 'icon': 'list',
-                     'url': reverse('costos:index'), 'section': 'Administrar costos y avance de obra', 'btn_class': 'primary'})
+                     'url': reverse('costos:costos_list'), 'section': 'Administrar costos',
+                     'btn_class': 'primary'})
     if user.has_perm("costos.can_generate_reports") and (
             not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS')):
         menu.append({'name': "Reportes", 'icon': 'print',

@@ -52,6 +52,10 @@
     </tbody>
   </table>
   <button class="btn btn-info" (click)="aniadirAvanceObra()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
-  <button class="btn btn-success" (click)="guardarTodos()"><i class="fa fa-save"></i> Guardar proyección</button>
+  <button class="btn btn-success" (click)="guardarTodos()" [disabled]="isDisabled">
+    <i class="fa fa-save"></i>
+    <span *ngIf="!isDisabled">Guardar proyección</span>
+    <span *ngIf="isDisabled">Guardando...</span>
+  </button>
 </div>
 

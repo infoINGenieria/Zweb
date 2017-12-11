@@ -71,10 +71,11 @@ export class CertificacionesComponent implements OnInit {
   isAllValid() {
     let periodos = [];
     for (let cert of this.certificaciones) {
-      if (periodos.indexOf(cert.periodo_id) !== -1) {
+      const id = this._tonum(cert.periodo_id)
+      if (periodos.indexOf(id) !== -1) {
         return false;
       }
-      periodos.push(String(cert.periodo_id));
+      periodos.push(id);
     }
     return true;
   }

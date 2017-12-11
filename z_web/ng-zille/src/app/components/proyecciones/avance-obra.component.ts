@@ -77,11 +77,12 @@ export class AvanceObraComponent implements OnInit {
 
   isAllValid() {
     let periodos = [];
-    for (let cert of this.avances) {
-      if (periodos.indexOf(cert.periodo_id) !== -1) {
+    for (const av of this.avances) {
+      const id = this._tonum(av.periodo_id)
+      if (periodos.indexOf(id) !== -1) {
         return false;
       }
-      periodos.push(String(cert.periodo_id));
+      periodos.push(id);
     }
     return true;
   }
@@ -140,10 +141,10 @@ export class AvanceObraComponent implements OnInit {
     for (let avance of this.avances) {
       if (avance.pk) {
         this.avanceobra_serv.update_avance_obra_proyeccion(avance).subscribe(
-          certificacion => {}, error => this.handleError(error));
+          _avance => {}, error => this.handleError(error));
       } else {
         this.avanceobra_serv.create_avance_obra_proyeccion(avance).subscribe(
-          certificacion => {}, error => this.handleError(error));
+          _avance => {}, error => this.handleError(error));
       }
     }
     setTimeout(() => {
@@ -161,7 +162,7 @@ export class AvanceObraComponent implements OnInit {
     if (obj.pk) {
       this.avanceobra_serv.update_avance_obra_proyeccion(obj)
         .subscribe(
-          certificacion => {
+          _avance => {
             this._notifications.success('Datos guardado correctamente.');
             this.refresh();
           },
@@ -169,7 +170,7 @@ export class AvanceObraComponent implements OnInit {
     } else {
       this.avanceobra_serv.create_avance_obra_proyeccion(obj)
         .subscribe(
-          certificacion => {
+          _avance => {
             this._notifications.success('Datos guardado correctamente.');
             this.refresh();
           },

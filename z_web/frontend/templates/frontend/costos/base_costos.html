@@ -10,59 +10,7 @@
 
 {% block wide_class %}container{% endblock %}
 {% block content %}
-    <h1>
-        <a class="btn btn-default" href="{% url 'index' %}"><i class="fa fa-chevron-left"></i></a> Costos
-    </h1>
-    <div class="row zille-tools">
-        <div class="col-lg-6 col-md-9">
-            <a class="btn btn-primary btn-md btn-block" href="{% url 'costos:costos_list' %}">
-                <div class="col-xs-2">
-                    <i class="fa fa-list"></i>
-                </div>
-                <div class="col-xs-10 text-left">
-                    <h4><strong>Costos</strong></h4>
-                    <h5>Gestionar costos</h5>
-                </div>
 
-            </a>
-        </div>
-        <div class="col-lg-6 col-md-9">
-            <a class="btn btn-info btn-md btn-block" href="{% url 'costos:proyecciones_list' %}">
-                <div class="col-xs-2">
-                    <i class="fa fa-line-chart"></i>
-                </div>
-                <div class="col-xs-10 text-left">
-                    <h4><strong>Proyecciones de costos</strong></h4>
-                    <h5>Gestionar proyecciones</h5>
-                </div>
-
-            </a>
-        </div>
-        <div class="col-lg-6 col-md-9">
-            <a class="btn btn-danger btn-md btn-block" href="{% url 'costos:avances_obra_list' %}">
-                <div class="col-xs-2">
-                    <i class="fa fa-play"></i>
-                </div>
-                <div class="col-xs-10 text-left">
-                    <h4><strong>Avance de obra</strong></h4>
-                    <h5>Gestionar el avance de obra</h5>
-                </div>
-
-            </a>
-        </div>
-        <div class="col-lg-6 col-md-9">
-            <a class="btn btn-warning btn-md btn-block" href="{% url 'costos:avances_obra_proyeccion_list' %}">
-                <div class="col-xs-2">
-                    <i class="fa fa-forward"></i>
-                </div>
-                <div class="col-xs-10 text-left">
-                    <h4><strong>Proyección de avance de obra</strong></h4>
-                    <h5>Gestionar las proyecciones</h5>
-                </div>
-
-            </a>
-        </div>
-    </div>
 {% endblock %}
 
 {% block extra_js %}
