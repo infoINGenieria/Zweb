@@ -14,10 +14,10 @@ from api.serializers import (
     PresupuestoSerializer, RevisionSerializer, CostoTipoSerializer,
     ItemPresupuestoSerializer, ObrasSerializer, CertificacionProyeccionSerializer,
     CertificacionRealSerializer, CertificacionItemSerializer, PeriodoSerializer,
-    CertificacionesSummary)
-from api.filters import PresupuestoFilter, CertificacionFilter
+    CertificacionesSummary, AvanceObraProyeccionSerializer, AvanceObraRealSerializer)
+from api.filters import PresupuestoFilter, CertificacionFilter, AvanceObraFilter
 from core.models import Obras, UserExtension
-from costos.models import CostoTipo
+from costos.models import CostoTipo, AvanceObraReal, AvanceObraProyeccion
 from parametros.models import Periodo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
@@ -262,3 +262,22 @@ class CertificacionProyeccionViewSet(ModelViewSet, AuthView):
 class PeriodoViewSet(ModelViewSet, AuthView):
     serializer_class = PeriodoSerializer
     queryset = Periodo.objects.all().order_by('-fecha_fin')
+
+
+class AvanceObraRealViewSet(ModelViewSet, AuthView):
+    serializer_class = AvanceObraRealSerializer
+    filter_class = AvanceObraFilter
+
+    def get_queryset(self):
+        obra_qs = self.get_centros_costos()
+        return AvanceObraReal.objects.filter(
+            centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
+
+
+class AvanceObraProyectadoViewSet(AvanceObraRealViewSet):
+    serializer_class = AvanceObraProyeccionSerializer
+
+    def get_queryset(self):
+        obra_qs = self.get_centros_costos()
+        return AvanceObraProyeccion.objects.filter(
+            centro_costo__in=obra_qs).order_by('periodo__fecha_fin')

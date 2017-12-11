@@ -4,7 +4,7 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 
 from core.models import Obras
-from costos.models import CostoTipo
+from costos.models import CostoTipo, AvanceObraProyeccion, AvanceObraReal
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from registro.models import CertificacionItem, CertificacionReal, CertificacionProyeccion
@@ -184,3 +184,44 @@ class CertificacionesSummary(serializers.Serializer):
     cc = ObrasSerializer(read_only=True)
     acumulado = serializers.DecimalField(
         max_digits=18, decimal_places=2, read_only=True)
+
+
+class AvanceObraProyeccionSerializer(serializers.ModelSerializer):
+    periodo = PeriodoSerializer(read_only=True)
+    periodo_id = serializers.IntegerField(source='periodo.pk')
+    centro_costo = ObrasSerializer(read_only=True)
+    centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
+
+    class Meta:
+        model = AvanceObraProyeccion
+        fields = ('pk', 'periodo', 'periodo_id', 'centro_costo', 'centro_costo_id',
+                  'avance', 'observacion')
+
+    def create(self, validated_data):
+        centro_costo = validated_data.pop('centro_costo')
+        periodo = validated_data.pop('periodo')
+        avance = self.Meta.model(**validated_data)
+        avance.centro_costo_id = centro_costo["pk"]
+        avance.periodo_id = periodo["pk"]
+        try:
+            avance.save()
+        except IntegrityError:
+            raise serializers.ValidationError('%s existente' % self.Meta.model._meta.verbose_name)
+        return avance
+
+    def update(self, instance, validated_data):
+        centro_costo = validated_data.pop('centro_costo')
+        periodo = validated_data.pop('periodo')
+        instance.centro_costo_id = centro_costo.get('pk', instance.centro_costo_id)
+        instance.periodo_id = periodo.get('pk', instance.periodo)
+        instance.avance = validated_data.get("avance", instance.avance)
+        instance.observacion = validated_data.get("observacion", instance.observacion)
+        instance.save()
+        return instance
+
+
+class AvanceObraRealSerializer(AvanceObraProyeccionSerializer):
+    class Meta:
+        model = AvanceObraReal
+        fields = ('pk', 'periodo', 'periodo_id', 'centro_costo', 'centro_costo_id',
+                  'avance', 'observacion')

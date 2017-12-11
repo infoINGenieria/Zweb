@@ -8,3 +8,6 @@
 .text-right {
     text-align: right;
 }
+table input[type="tel"], table .number {
+    text-align: right;
+}

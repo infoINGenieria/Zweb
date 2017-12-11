@@ -21,7 +21,7 @@
           <td>{{ cc.responsable }}</td>
           <td>
             <a class="btn btn-warning btn-sm">De costos</a>
-            <a class="btn btn-primary btn-sm">De avance de obra</a>
+            <a class="btn btn-primary btn-sm" [routerLink]="['/proyecciones', cc.id, 'avances-obra']">De avance de obra</a>
             <a class="btn btn-info btn-sm" [routerLink]="['/proyecciones', cc.id, 'certificaciones']">De certificación</a>
           </td>
         </tr>

@@ -136,21 +136,18 @@ export class CertificacionesComponent implements OnInit {
       return;
     }
     this.isDisabled = true;
-    let count = 0;
     for (let cert of this.certificaciones) {
       if (cert.pk) {
         this.registro_service.update_certificacion_proyeccion(cert).subscribe(certificacion => {
-          count++;
         }, error => this.handleError(error));
       } else {
         this.registro_service.create_certificacion_proyeccion(cert).subscribe(certificacion => {
-          count++;
         }, error => this.handleError(error));
       }
     }
     setTimeout(() => {
       this.isDisabled = false;
-      this._notifications.success("Se guardó correctamente la proyección.");
+      this._notifications.success('Se guardó correctamente la proyección.');
     }, 1000);
   }
 

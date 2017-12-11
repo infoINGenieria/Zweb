@@ -102,3 +102,12 @@ export interface ICertificacion {
     total_adicional: number;
 }
 
+export interface IAvanceObra {
+    pk?: number;
+    periodo: IPeriodo;
+    periodo_id: number;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    avance: number;
+    observacion: string;
+}

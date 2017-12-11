@@ -1,7 +1,3 @@
-import { MyCurrencyPipe } from './pipes/my-currency.pipe';
-import { MyCurrencyFormatterDirective } from './directives/currency-formatter.directive';
-import { TableroService } from './services/tablero.service';
-import { RegistroService } from './services/registro/registro.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -20,16 +16,20 @@ import { APP_ROUTING } from './app.routes';
 // Services
 import { BaseApiService } from './services/base-api/base-api.service';
 import { CoreService } from './services/core/core.service';
+import { TableroService } from './services/tablero.service';
+import { RegistroService } from './services/registro/registro.service';
 import { NotificationService } from './services/core/notifications.service';
+import { PresupuestosService } from './services/presupuestos/presupuestos.service';
+import { AvanceObraService } from './services/avanceobra.service';
 
 // Own
 import { AppComponent } from './app.component';
 import { PresupuestoComponent } from './components/presupuesto/presupuesto.component';
 import { PresupuestosComponent } from './components/presupuestos/presupuestos.component';
-import { PresupuestosService } from './services/presupuestos/presupuestos.service';
+import { AvanceObraComponent } from './components/proyecciones/avance-obra.component';
 import {
   CertificacionesRealComponent, CertificacionRealComponent,
-  } from './components/certificaciones';
+} from './components/certificaciones';
 import { IndexComponent } from './components/index/index.component';
 import { TableroControlOsComponent } from './components/tablero-control-os/tablero-control-os.component';
 import { ProyeccionesComponent } from './components/proyecciones/proyecciones.component';
@@ -38,7 +38,12 @@ import { CertificacionesComponent } from './components/proyecciones/certificacio
 // d3 and nvd3 should be included somewhere
 import 'd3';
 import 'nvd3';
+
+// pipe
 import { MonedaPipe } from './pipes/moneda.pipe';
+import { PorcientoPipe } from './pipes/porciento.pipe';
+import { MyCurrencyPipe } from './pipes/my-currency.pipe';
+import { MyCurrencyFormatterDirective } from './directives/currency-formatter.directive';
 
 
 @NgModule({
@@ -54,7 +59,9 @@ import { MonedaPipe } from './pipes/moneda.pipe';
     CertificacionesComponent,
     MonedaPipe,
     MyCurrencyPipe,
-    MyCurrencyFormatterDirective
+    MyCurrencyFormatterDirective,
+    PorcientoPipe,
+    AvanceObraComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +83,8 @@ import { MonedaPipe } from './pipes/moneda.pipe';
     CoreService,
     NotificationService,
     RegistroService,
-    TableroService
+    TableroService,
+    AvanceObraService
   ],
   bootstrap: [AppComponent]
 })
