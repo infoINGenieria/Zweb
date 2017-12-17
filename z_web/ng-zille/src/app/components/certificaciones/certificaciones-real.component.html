@@ -10,7 +10,7 @@
       <select class="form-control input-sm" name="centro_costo" ngModel>
         <option value="">Seleccione un centro de costo</option>
         <option *ngFor="let centro of centro_costos" [value]='centro.id' >
-            {{ centro.codigo }}
+            {{ centro.obra }}
         </option>
       </select>
     </div>
@@ -38,12 +38,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let certificacion of certificaciones" [@fadeInAnimation]>
-          <td>{{ certificacion.obra.codigo }}</td>
+          <td>{{ certificacion.obra.obra }} - {{ certificacion.obra.codigo }}</td>
           <td>{{ certificacion.periodo.descripcion }}</td>
-          <td>{{ certificacion.total | number:'1.2-2' }}</td>
+          <td>{{ certificacion.total | moneda }}</td>
           <td>
               <a class="btn btn-primary btn-sm"
-                [routerLink]="['/certificaciones', certificacion.pk]">Modificacr</a>
+                [routerLink]="['/certificaciones', certificacion.pk]">Modificar</a>
             <a class="btn btn-danger btn-sm" (click)="delete(certificacion)">Eliminar</a>
           </td>
         </tr>

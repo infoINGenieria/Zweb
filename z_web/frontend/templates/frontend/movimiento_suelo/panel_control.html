@@ -13,7 +13,7 @@
                 <label for="periodo-sel">Periodo: </label>
                 <select name="periodo" id="periodo-sel" placeholder="Periodo">
                     {% for pe in periodos %}
-                        <option value="{{ pe.pk }}" {% if pe.pk == periodo.pk %} selected{% endif %}>{{ pe }}</option>
+                        <option value="{{ pe.pk }}">{{ pe }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -78,6 +78,9 @@
                     'search_contains':true,
                     'no_results_text': "No se encontraron coicidencias!",
                 });
+                $("#periodo-sel").val({{ periodo.pk }});
+                $("#periodo-sel").trigger("chosen:updated");
+
                 var data = [
                     {% if resumen_costos %}
                             {% for i in resumen_costos|extraer_data_grafico_costos:-1 %}{

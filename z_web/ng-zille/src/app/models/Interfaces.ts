@@ -78,9 +78,9 @@ export interface ICostoTipo {
 
 export interface ICertificacionItem {
     pk?: number;
-    descripcion: string;
+    concepto: string;
     monto: number;
-    adicional: string;
+    observaciones?: string;
 }
 
 export interface IPeriodo {

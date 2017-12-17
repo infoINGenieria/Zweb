@@ -114,43 +114,46 @@ def generate_menu_user(user):
     except ObjectDoesNotExist:
         ext = False
 
-    if user.has_perm('costos.can_view_panel_control'):
-        if not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS'):
+    if not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS'):
+        if user.has_perm('costos.can_view_panel_control'):
             menu.append({
                 'name': "Panel de control", 'icon': 'dashboard',
                 'url': reverse('frontend:ms_panel_control'), 'section': "{}".format(
                     ext.unidad_negocio if ext else 'Movimiento de suelo'
                 ), 'btn_class': 'success'
             })
-        if not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'OS'):
+        if user.has_perm("costos.can_generate_reports"):
             menu.append({
-                'name': "Tablero de control", 'icon': 'area-chart',
-                'url': '/~/tablero-control/os/', 'section': "{}".format(
-                    ext.unidad_negocio if ext else 'Obras de superficie'
-                ), 'btn_class': 'warning', 'link': True
-            })
+                'name': "Reportes", 'icon': 'print',
+                'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes',
+                'btn_class': 'warning'})
+    if not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'OS'):
+        menu.append({
+            'name': "Tablero de control", 'icon': 'area-chart',
+            'url': '/~/tablero-control/os/', 'section': "{}".format(
+                ext.unidad_negocio if ext else 'Obras de superficie'
+            ), 'btn_class': 'warning', 'link': True
+        })
+        menu.append({
+            'name': "Proyecciones", 'icon': 'line-chart',
+            'url': '/~/proyecciones/', 'section': "Administrar proyecciones",
+            'btn_class': 'info', 'link': True
+        })
+        menu.append({
+            'name': "Avance de obra", 'icon': 'play',
+            'url': reverse('costos:avances_obra_list'), 'section': "Gestionar el avance de obra",
+            'btn_class': 'danger'
+        })
+        if user.has_perm("organizacion.can_manage_presupuestos"):
             menu.append({
-                'name': "Proyecciones", 'icon': 'line-chart',
-                'url': '/~/proyecciones/', 'section': "Administrar proyecciones",
-                'btn_class': 'info', 'link': True
-            })
-            menu.append({
-                'name': "Avance de obra", 'icon': 'play',
-                'url': reverse('costos:avances_obra_list'), 'section': "Gestionar el avance de obra",
-                'btn_class': 'danger'
-            })
+                'name': "Presupuestos", 'icon': 'file-text-o',
+                'url': '/~/presupuestos/', 'section': 'Administrar presupuestos',
+                'btn_class': 'info', 'link': True})
+    # generales
     if user.has_perm('costos.can_manage_costos'):
         menu.append({'name': "Costos", 'icon': 'list',
                      'url': reverse('costos:costos_list'), 'section': 'Administrar costos',
                      'btn_class': 'primary'})
-    if user.has_perm("costos.can_generate_reports") and (
-            not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS')):
-        menu.append({'name': "Reportes", 'icon': 'print',
-                     'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes', 'btn_class': 'warning'})
-    if user.has_perm("organizacion.can_manage_presupuestos"):
-        menu.append({'name': "Presupuestos", 'icon': 'file-text-o',
-                     'url': '/~/presupuestos/', 'section': 'Administrar presupuestos',
-                     'btn_class': 'info', 'link': True})
     if user.has_perm("registro.can_manage_certificacion"):
         menu.append({'name': "Certificaciones", 'icon': 'certificate',
                      'url': '/~/certificaciones', 'section': 'Administrar certificaciones',

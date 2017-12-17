@@ -156,30 +156,6 @@ export class AvanceObraComponent implements OnInit {
     }, 1000);
   }
 
-  guardarAvanceObra(obj: IAvanceObra) {
-    if (!this.itemIsValid(obj)) {
-      this._notifications.error('Asegúrese que los campos están completos.');
-      return;
-    }
-    if (obj.pk) {
-      this.avanceobra_serv.update_avance_obra_proyeccion(obj)
-        .subscribe(
-          _avance => {
-            this._notifications.success('Datos guardado correctamente.');
-            this.refresh();
-          },
-          error => this.handleError(error));
-    } else {
-      this.avanceobra_serv.create_avance_obra_proyeccion(obj)
-        .subscribe(
-          _avance => {
-            this._notifications.success('Datos guardado correctamente.');
-            this.refresh();
-          },
-          error => this.handleError(error));
-    }
-  }
-
   eliminarAvanceObra(obj: IAvanceObra) {
     const dialogRef = this.modal.confirm()
     .showClose(true)

@@ -107,30 +107,31 @@ class PartediarioAdmin(admin.ModelAdmin):
 #         return cur(obj.valor)
 #     valor_format.short_description = "Valor ($)"
 
-class CertificacionItemAdminInline(admin.TabularInline):
-    model = CertificacionItem
-    extra = 1
+# Usamos la gestión de certificaciones del frontend
+# class CertificacionItemAdminInline(admin.TabularInline):
+#     model = CertificacionItem
+#     extra = 1
 
 
-class CertificacionAdminForm(forms.ModelForm):
-    obra = forms.ModelChoiceField(queryset=Obras.objects.filter(
-        es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio'))
+# class CertificacionAdminForm(forms.ModelForm):
+#     obra = forms.ModelChoiceField(queryset=Obras.objects.filter(
+#         es_cc=True, fecha_fin__isnull=True).order_by('fecha_inicio'))
 
-    class Meta:
-        model = CertificacionReal
-        fields = ('periodo', 'obra', )
+#     class Meta:
+#         model = CertificacionReal
+#         fields = ('periodo', 'obra', )
 
 
-@admin.register(CertificacionReal)
-class CertificacionAdmin(admin.ModelAdmin):
-    list_display = ('periodo', 'obra', 'valor_format')
-    list_filter = ('periodo', 'obra', )
-    form = CertificacionAdminForm
-    inlines = (CertificacionItemAdminInline, )
+# @admin.register(CertificacionReal)
+# class CertificacionAdmin(admin.ModelAdmin):
+#     list_display = ('periodo', 'obra', 'valor_format')
+#     list_filter = ('periodo', 'obra', )
+#     form = CertificacionAdminForm
+#     inlines = (CertificacionItemAdminInline, )
 
-    def valor_format(self, obj):
-        return cur(obj.total)
-    valor_format.short_description = "Monto ($)"
+#     def valor_format(self, obj):
+#         return cur(obj.total)
+#     valor_format.short_description = "Monto ($)"
 
 
 class AjusteCombustibleAdminForm(forms.ModelForm):

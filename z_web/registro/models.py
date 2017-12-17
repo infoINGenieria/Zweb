@@ -209,25 +209,32 @@ class Certificacion(models.Model):
 
     @property
     def total_sin_adicional(self):
-        return sum(self.items.filter(adicional=False).values_list('monto', flat=True))
+        return sum(self.items.filter(concepto='basica').values_list('monto', flat=True))
 
     @property
     def total_adicional(self):
-        return sum(self.items.filter(adicional=True).values_list('monto', flat=True))
+        return sum(self.items.exclude(concepto='basica').values_list('monto', flat=True))
 
 
 class CertificacionItem(BaseModel):
+
+    CONCEPTO = (
+        ('basica', 'Básica'),
+        ('cambios', 'Órdenes de cambio'),
+        ('reajuste', 'Reajuste de precios'),
+        ('reclamos', 'Reclamos reconocidos')
+    )
     certificacion = models.ForeignKey(Certificacion, verbose_name='certificación', related_name='items')
-    descripcion = models.CharField('descripción', max_length=255)
+    concepto = models.CharField('concepto', max_length=16, choices=CONCEPTO, default='basica')
     monto = models.DecimalField(verbose_name="Monto ($)", max_digits=18, decimal_places=2)
-    adicional = models.BooleanField('adicional', default=False)
+    observaciones = models.CharField('observaciones', max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name = 'ítem certificación'
         verbose_name_plural = 'ítemes de certificaciones'
 
     def __str__(self):
-        return "{} ($ {})".format(self.descripcion, self.monto)
+        return "{} ($ {})".format(self.get_concepto_display(), self.monto)
 
 
 class CertificacionReal(Certificacion):

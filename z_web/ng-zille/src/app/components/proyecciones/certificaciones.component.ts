@@ -119,7 +119,6 @@ export class CertificacionesComponent implements OnInit {
   aniadirCertificacion() {
     let item = new Object as ICertificacionItem;
     item.monto = 0;
-    item.descripcion = 'Certificacion básica';
     let certificacion = new Certificacion();
     certificacion.items = Array<ICertificacionItem>();
     certificacion.items.push(item);
@@ -152,30 +151,6 @@ export class CertificacionesComponent implements OnInit {
       this.isDisabled = false;
       this._notifications.success('Se guardó correctamente la proyección.');
     }, 1000);
-  }
-
-  guardarCertificacion(obj: ICertificacion) {
-    if (!this.itemIsValid(obj)) {
-      this._notifications.error('Asegúrese que los campos están completos.');
-      return;
-    }
-    if (obj.pk) {
-      this.registro_service.update_certificacion_proyeccion(obj)
-        .subscribe(
-          certificacion => {
-            this._notifications.success('Datos guardado correctamente.');
-            this.refresh();
-          },
-          error => this.handleError(error));
-    } else {
-      this.registro_service.create_certificacion_proyeccion(obj)
-        .subscribe(
-          certificacion => {
-            this._notifications.success('Datos guardado correctamente.');
-            this.refresh();
-          },
-          error => this.handleError(error));
-    }
   }
 
   eliminarCertificacion(obj: ICertificacion) {

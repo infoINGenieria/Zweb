@@ -22,6 +22,13 @@ export class CertificacionRealComponent implements OnInit {
   centro_costos: ICentroCosto[] = [];
   periodos: IPeriodo[] = [];
 
+  CONCEPTOS: any = [
+    {'key': 'basica', 'text': 'Certificación Básica'},
+    {'key': 'cambios', 'text': 'Órdenes de cambio'},
+    {'key': 'reajuste', 'text': 'Reajuste de precios'},
+    {'key': 'reclamos', 'text': 'Reclamos reconocidos'},
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -34,6 +41,7 @@ export class CertificacionRealComponent implements OnInit {
     this.certificacion = new Object as ICertificacion;
     this.certificacion.obra_id = null;
     this.certificacion.periodo_id = null;
+    this.addItem();
     route.params.subscribe(val => {
       const pk = val['pk'];
       if (pk) {
@@ -70,17 +78,12 @@ export class CertificacionRealComponent implements OnInit {
   }
 
   trackByIndex(index: number, item: ICertificacionItem) {
-    if (item && item.pk) {
-      return item.pk;
-    }
     return index;
   }
 
   itemIsValid(item: ICertificacionItem): boolean {
-    if (item.descripcion) {
-      if (item.descripcion.trim().length > 0 && this._tonum(item.monto) > 0) {
-        return true;
-      }
+    if (item.concepto && this._tonum(item.monto) > 0) {
+      return true;
     }
     return false;
   }
@@ -102,6 +105,8 @@ export class CertificacionRealComponent implements OnInit {
   addItem() {
     const item = new Object as ICertificacionItem;
     item.monto = 0;
+    item.concepto = 'basica';
+    item.observaciones = '';
     if (this.certificacion.items === undefined) {
       this.certificacion.items = [];
     }

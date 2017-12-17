@@ -164,10 +164,10 @@ def generar_tabla_tablero(obra, periodo):
     certificaciones = CertificacionReal.objects.filter(
         obra=obra, periodo__fecha_fin__lte=periodo.fecha_fin)
     venta["acumulado"] = {
-        "venta_contractual": certificaciones.filter(items__adicional=False).aggregate(total=Sum('items__monto'))["total"] or 0,
-        "ordenes_cambio": certificaciones.filter(items__adicional=True).aggregate(total=Sum('items__monto'))["total"] or 0,
-        "reajustes_precios": revision.reajustes_precio or 0,
-        "reclamos_reconocidos": revision.reclamos_reconocidos or 0
+        "venta_contractual": certificaciones.filter(items__concepto="basica").aggregate(total=Sum('items__monto'))["total"] or 0,
+        "ordenes_cambio": certificaciones.filter(items__concepto="cambios").aggregate(total=Sum('items__monto'))["total"] or 0,
+        "reajustes_precios": certificaciones.filter(items__concepto="reajuste").aggregate(total=Sum('items__monto'))["total"] or 0,
+        "reclamos_reconocidos": certificaciones.filter(items__concepto="reclamos").aggregate(total=Sum('items__monto'))["total"] or 0
     }
     venta["acumulado"]["subtotal"] = sum(venta["acumulado"].values())
     # en el futuro
@@ -176,11 +176,13 @@ def generar_tabla_tablero(obra, periodo):
     # faltante
     venta["faltante_estimado"] = {
         "venta_contractual": proyecciones_cert.filter(
-            items__adicional=False).aggregate(total=Sum('items__monto'))["total"] or 0,
+            items__concepto="basica").aggregate(total=Sum('items__monto'))["total"] or 0,
         "ordenes_cambio": proyecciones_cert.filter(
-            items__adicional=True).aggregate(total=Sum('items__monto'))["total"] or 0,
-        "reajustes_precios": 0,
-        "reclamos_reconocidos": 0
+            items__concepto="cambios").aggregate(total=Sum('items__monto'))["total"] or 0,
+        "reajustes_precios": proyecciones_cert.filter(
+            items__concepto="reajuste").aggregate(total=Sum('items__monto'))["total"] or 0,
+        "reclamos_reconocidos": proyecciones_cert.filter(
+            items__concepto="reclamos").aggregate(total=Sum('items__monto'))["total"] or 0
     }
     venta["faltante_estimado"]["subtotal"] = sum(venta["faltante_estimado"].values())
 
@@ -188,8 +190,8 @@ def generar_tabla_tablero(obra, periodo):
     venta["faltante_presupuesto"] = {
         "venta_contractual": revision.total_venta - venta["acumulado"]["venta_contractual"],
         "ordenes_cambio": (revision.ordenes_cambio or 0) - venta["acumulado"]["ordenes_cambio"],
-        "reajustes_precios": 0,  # revision.reajustes_precio - revision.reajustes_precio,
-        "reclamos_reconocidos": 0  # revision.reclamos_reconocidos - revision.reclamos_reconocidos
+        "reajustes_precios": (revision.reajustes_precio or 0) - venta["acumulado"]["reajustes_precios"],
+        "reclamos_reconocidos": (revision.reclamos_reconocidos or 0)  - venta["acumulado"]["reclamos_reconocidos"]
     }
     venta["faltante_presupuesto"]["subtotal"] = sum(venta["faltante_presupuesto"].values())
 

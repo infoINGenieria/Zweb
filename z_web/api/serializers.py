@@ -106,7 +106,7 @@ class CertificacionItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CertificacionItem
-        fields = ('pk', 'descripcion', 'monto', 'adicional')
+        fields = ('pk', 'concepto', 'monto', 'observaciones')
 
 
 class PeriodoSerializer(serializers.ModelSerializer):

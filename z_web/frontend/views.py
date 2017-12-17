@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 from django.utils.safestring import mark_safe
 from django.views.generic import TemplateView, RedirectView
+from django.utils.timezone import now
 
 from core.models import Obras
 from frontend.forms import CustomPanelControlForm
@@ -36,7 +37,8 @@ class MSPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
         if 'periodo' in self.request.GET:
             periodo = Periodo.objects.get(pk=self.request.GET["periodo"])
         else:
-            periodo = periodos[0] if periodos else None
+            today = now()
+            periodo = periodos.filter(fecha_fin__lt=today).first()
         context["periodo"] = periodo
         try:
             context["equipos"], context["totales"] = get_utilizacion_equipo(periodo)
@@ -50,7 +52,7 @@ class MSPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
         except CertificacionReal.DoesNotExist as e:
             messages.add_message(self.request, messages.WARNING,
                                  mark_safe("No hay <a href='{}'>certificaciones de obras</a> para el "
-                                           "periodo {}".format('/~/certificaciones/real', periodo)))
+                                           "periodo {}".format('/~/certificaciones/nuevo', periodo)))
         return context
 
     def get(self, request, *args, **kwargs):
@@ -136,7 +138,7 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
                 if not no_show_message:
                     messages.add_message(self.request, messages.WARNING, mark_safe(
                         "No hay <a href='{}'>certificaciones de obras</a> para el "
-                        "periodo <strong>{}</strong>. Se ignora el periodo.".format("/~/certificaciones/real", periodo)))
+                        "periodo <strong>{}</strong>. Se ignora el periodo.".format("/~/certificaciones/nuevo", periodo)))
         data_costos, header_costos = self.remove_zero_values(data_costos)
         cc_headers = dict(Obras.objects.filter(es_cc=True, pk__in=data_cert_costos.keys()).values_list('pk', 'codigo'))
         return {

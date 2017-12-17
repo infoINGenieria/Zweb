@@ -37,9 +37,9 @@
                 <th colspan="5" class="text-center">Ítems</th>
               </tr>
               <tr>
-                <th colspan="2">Descripción</th>
+                <th colspan="2">Concepto</th>
                 <th>Monto ($)</th>
-                <th>¿Es adicional?</th>
+                <th>Observaciones</th>
                 <th class="trash">
                   <i class="fa fa-trash"></i>
                 </th>
@@ -52,18 +52,21 @@
                   <i class="fa fa-2x" [ngClass]="itemIsValid(item) ? 'fa-check text-success' : 'fa-exclamation text-warning'"></i>
                 </td>
                 <td>
-                  <input type="text" class="form-control input-sm" name="descripcion_{{i}}" [(ngModel)]="certificacion.items[i].descripcion"
-                    required>
+                  <select class="form-control input-sm" name="concepto_{{i}}" [(ngModel)]="certificacion.items[i].concepto" required>
+                    <option *ngFor="let concepto of CONCEPTOS" [value]='concepto.key'>
+                      {{concepto.text}}
+                    </option>
+                  </select>
                 </td>
                 <td>
                   <div class="input-group input-group-sm">
-                    <input type="tel" class="form-control input-sm number" name="monto_{{i}}" [(ngModel)]="certificacion.items[i].monto" />
-                    <span class="input-group-addon">$ {{ certificacion.items[i].monto || 0 | number:'1.2-2' }}</span>
+                    <input type="tel" class="form-control input-sm number" name="monto_{{i}}"
+                      [(ngModel)]="certificacion.items[i].monto" myCurrencyFormatter #montoVal/>
+                    <span class="input-group-addon">{{ montoVal.value | moneda }}</span>
                   </div>
                 </td>
                 <td>
-                  <input type="checkbox" class="form-control input-sm" name="adicional_{{i}}" [(ngModel)]="certificacion.items[i].adicional"
-                  />
+                    <input type="text" class="form-control input-sm" name="observaciones_{{i}}" [(ngModel)]="certificacion.items[i].observaciones">
                 </td>
                 <td class="trash">
                   <i class="fa fa-2x fa-trash clickable text-danger" (click)="removeItem(item)"></i>
@@ -73,18 +76,18 @@
                 <th colspan="2">
                   <button class="btn btn-info btn-sm" (click)="addItem()">Añadir ítem</button>
                 </th>
-                <th class="text-right">$ {{ total_items || 0 | number:'1.2-2' }}</th>
+                <th class="text-right">{{ total_items || 0 | moneda }}</th>
                 <th colspan="2"></th>
               </tr>
             </tbody>
           </table>
-          <fieldset [disabled]="!checkAllItem() || !f.valid">
+          <fieldset >
               <a class="btn btn-default" [routerLink]="['/certificaciones']">
                 <i class="fa fa-chevron-left"></i> Volver
               </a>
-              <button *ngIf="!certificacion?.pk" class="btn btn-success"
+              <button *ngIf="!certificacion?.pk" class="btn btn-success" [disabled]="!checkAllItem() || !f.valid"
                   (click)="create_certificacion_modal()">Crear Certificación</button>
-              <button *ngIf="certificacion?.pk" class="btn btn-success"
+              <button *ngIf="certificacion?.pk" class="btn btn-success" [disabled]="!checkAllItem() || !f.valid"
                   (click)="save_certificacion_modal()">Guardar cambios</button>
               <span class="text text-danger" *ngIf="!checkAllItem() || !f.valid">Por favor, corrija todos los errores para habilitar los botones.</span>
             </fieldset>
