@@ -69,17 +69,17 @@
   <button class="btn btn-success" (click)="guardarActual()" [disabled]="isDisabled">
     <i class="fa fa-save"></i>
     <span *ngIf="!isDisabled">Guardar proyección - {{ revision_actual?.periodo.descripcion }}<em *ngIf="revision_actual?.es_base"> (Base {{ revision_actual?.base_numero }})</em></span>
-    <span *ngIf="isDisabled">Guardando...</span>
+    <span *ngIf="isDisabled">Procesando...</span>
   </button>
   <button class="btn btn-primary" (click)="create_new_version_modal()" [disabled]="isDisabled">
       <i class="fa fa-plus"></i>
       <span *ngIf="!isDisabled">Crear nueva revisión</span>
-      <span *ngIf="isDisabled">Creando...</span>
+      <span *ngIf="isDisabled">Procesando...</span>
     </button>
     <button class="btn btn-danger pull-right" (click)="deleteRevisionActual()" [disabled]="isDisabled" *ngIf="!revision_actual?.es_base">
       <i class="fa fa-trash"></i>
       <span *ngIf="!isDisabled">Eliminar revisión - {{ revision_actual?.periodo.descripcion }}</span>
-      <span *ngIf="isDisabled">Eliminando...</span>
+      <span *ngIf="isDisabled">Procesando...</span>
     </button>
     <button class="btn btn-info" (click)="establecerComoBase()" [disabled]="isDisabled" *ngIf="!revision_actual?.es_base">
       <span *ngIf="!isDisabled">Establecer esta revisión como BASE</span>

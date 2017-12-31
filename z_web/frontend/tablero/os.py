@@ -14,9 +14,9 @@ from core.models import Obras
 from organizacion.models import UnidadNegocio
 from parametros.models import Periodo
 from presupuestos.models import Presupuesto, Revision
-from registro.models import CertificacionReal, CertificacionItem, CertificacionProyeccion, Certificacion
+from registro.models import CertificacionItem, Certificacion
 from costos.models import CostoReal, CostoProyeccion, AvanceObra, Costo
-from proyecciones.models import ProyeccionAvanceObra
+from proyecciones.models import ProyeccionAvanceObra, ProyeccionCertificacion
 
 
 class MarkUpColumn(object):
@@ -162,7 +162,7 @@ def generar_tabla_tablero(obra, periodo):
     # acumulados
     venta = {}
 
-    certificaciones = CertificacionReal.objects.filter(
+    certificaciones = Certificacion.objects.filter(
         obra=obra, periodo__fecha_fin__lte=periodo.fecha_fin)
     venta["acumulado"] = {
         "venta_contractual": certificaciones.filter(items__concepto="basica").aggregate(total=Sum('items__monto'))["total"] or 0,
@@ -172,18 +172,22 @@ def generar_tabla_tablero(obra, periodo):
     }
     venta["acumulado"]["subtotal"] = sum(venta["acumulado"].values())
     # en el futuro
-    proyecciones_cert = CertificacionProyeccion.objects.filter(
-        obra=obra, periodo__fecha_inicio__gt=periodo.fecha_fin)
+    proyecciones_cert = ProyeccionCertificacion.objects.filter(
+        centro_costo=obra, periodo__fecha_inicio__gt=periodo.fecha_fin)
     # faltante
     venta["faltante_estimado"] = {
-        "venta_contractual": proyecciones_cert.filter(
-            items__concepto="basica").aggregate(total=Sum('items__monto'))["total"] or 0,
-        "ordenes_cambio": proyecciones_cert.filter(
-            items__concepto="cambios").aggregate(total=Sum('items__monto'))["total"] or 0,
-        "reajustes_precios": proyecciones_cert.filter(
-            items__concepto="reajuste").aggregate(total=Sum('items__monto'))["total"] or 0,
-        "reclamos_reconocidos": proyecciones_cert.filter(
-            items__concepto="reclamos").aggregate(total=Sum('items__monto'))["total"] or 0
+        # "venta_contractual": proyecciones_cert.filter(
+        #     items__concepto="basica").aggregate(total=Sum('items__monto'))["total"] or 0,
+        # "ordenes_cambio": proyecciones_cert.filter(
+        #     items__concepto="cambios").aggregate(total=Sum('items__monto'))["total"] or 0,
+        # "reajustes_precios": proyecciones_cert.filter(
+        #     items__concepto="reajuste").aggregate(total=Sum('items__monto'))["total"] or 0,
+        # "reclamos_reconocidos": proyecciones_cert.filter(
+        #     items__concepto="reclamos").aggregate(total=Sum('items__monto'))["total"] or 0
+        "venta_contractual": proyecciones_cert.all().aggregate(total=Sum('items__monto'))["total"] or 0,
+        "ordenes_cambio": 0,
+        "reajustes_precios":  0,
+        "reclamos_reconocidos":  0
     }
     venta["faltante_estimado"]["subtotal"] = sum(venta["faltante_estimado"].values())
 
@@ -357,20 +361,20 @@ def datetime_to_epoch(date):
 
 def get_certificacion_graph(obra):
     try:
-        first_real = CertificacionReal.objects.filter(obra=obra).earliest('periodo__fecha_fin')
-        last_real = CertificacionReal.objects.filter(obra=obra).latest('periodo__fecha_fin')
+        first_real = Certificacion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
+        last_real = Certificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
         cert_real = dict(
-            CertificacionReal.objects.filter(obra=obra).values(
+            Certificacion.objects.filter(obra=obra).values(
                 'periodo').annotate(total=Sum('items__monto')).values_list(
                     'periodo', 'total').order_by('periodo__fecha_fin'))  #
 
         cert_proyeccion = dict(
-            CertificacionProyeccion.objects.filter(obra=obra).values(
+            ProyeccionCertificacion.objects.filter(centro_costo=obra).values(
                 'periodo').annotate(total=Sum('items__monto')).values_list(
                     'periodo', 'total').order_by('periodo__fecha_fin'))  #
 
-        first_proy = CertificacionProyeccion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
-        last_proy = CertificacionProyeccion.objects.filter(obra=obra).latest('periodo__fecha_fin')
+        first_proy = ProyeccionCertificacion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
+        last_proy = ProyeccionCertificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
     except ObjectDoesNotExist:
         raise ValueError("No hay certificaciones cargadas para el proyecto.")
 
@@ -502,11 +506,11 @@ def get_consolidado_graph(obra):
         raise ValueError("No pudo generarse el gráfico consolidado.")
 
     cert_real = dict(
-        CertificacionReal.objects.filter(obra=obra).values(
+        Certificacion.objects.filter(obra=obra).values(
             'periodo').annotate(total=Sum('items__monto')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))
     cert_proyeccion = dict(
-        CertificacionProyeccion.objects.filter(obra=obra).values(
+        ProyeccionCertificacion.objects.filter(obra=obra).values(
             'periodo').annotate(total=Sum('items__monto')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))  #
     costo_real = dict(

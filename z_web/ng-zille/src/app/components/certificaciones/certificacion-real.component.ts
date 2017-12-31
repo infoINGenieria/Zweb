@@ -46,7 +46,7 @@ export class CertificacionRealComponent implements OnInit {
       const pk = val['pk'];
       if (pk) {
         const version = val['version'];
-        this.registroServ.get_certificacion_real(pk).subscribe(cert => {
+        this.registroServ.get_certificacion(pk).subscribe(cert => {
           this.certificacion = cert as ICertificacion;
           this.certificacion.items = this.certificacion.items.map(item => item as ICertificacionItem);
         });
@@ -175,7 +175,7 @@ export class CertificacionRealComponent implements OnInit {
   }
 
   create_certificacion() {
-    this.registroServ.create_certificacion_real(this.certificacion).subscribe(certificacion => {
+    this.registroServ.create_certificacion(this.certificacion).subscribe(certificacion => {
       this.certificacion = certificacion;
       this._notifications.success('Certificación guardado correctamente.');
       this.router.navigate(['/certificaciones', this.certificacion.pk]);
@@ -201,7 +201,7 @@ export class CertificacionRealComponent implements OnInit {
   }
 
   save_certificacion() {
-    this.registroServ.update_certificacion_real(this.certificacion).subscribe(certificacion => {
+    this.registroServ.update_certificacion(this.certificacion).subscribe(certificacion => {
       this.certificacion = certificacion;
       this._notifications.success(`Certificación actualizada correctamente.`);
     }, error => this.handleError(error));

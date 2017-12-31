@@ -11,7 +11,7 @@ from core.models import Obras
 from frontend.forms import CustomPanelControlForm
 from parametros.models import Periodo
 from costos.models import CostoParametro, ArchivosAdjuntosPeriodo
-from registro.models import CertificacionReal
+from registro.models import Certificacion
 from zweb_utils.views import LoginAndPermissionRequiredMixin, LoginRequiredMixin
 from .stats import get_utilizacion_equipo, get_cc_on_periodo, get_ventas_costos, get_headers_costos
 
@@ -49,7 +49,7 @@ class MSPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
             messages.add_message(self.request, messages.WARNING,
                                  mark_safe("No están definidos los <a href='/costos/costoparametro'>parámetros de costos</a> para el "
                                            "periodo {}".format(periodo)))
-        except CertificacionReal.DoesNotExist as e:
+        except Certificacion.DoesNotExist as e:
             messages.add_message(self.request, messages.WARNING,
                                  mark_safe("No hay <a href='{}'>certificaciones de obras</a> para el "
                                            "periodo {}".format('/~/certificaciones/nuevo', periodo)))
@@ -134,7 +134,7 @@ class MSCustomPanelControl(LoginAndPermissionRequiredMixin, TemplateView):
                         self.request, messages.WARNING, mark_safe(
                             "No están definidos los <a href='/admin/costos/costoparametro'>parámetros de costos</a> para el "
                             "periodo <strong>{}</strong>. Se ignora el periodo.".format(periodo)))
-            except CertificacionReal.DoesNotExist as e:
+            except Certificacion.DoesNotExist as e:
                 if not no_show_message:
                     messages.add_message(self.request, messages.WARNING, mark_safe(
                         "No hay <a href='{}'>certificaciones de obras</a> para el "

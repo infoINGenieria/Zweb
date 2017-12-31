@@ -40,23 +40,30 @@ export class AvanceObraComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(val => {
       const obra_id = val['obra_id'];
+      const rev = val['rev'] || null;
       this.core_service.get_centro_costos(obra_id).subscribe(cc => this.centro_costo = cc);
       this.core_service.get_periodos_list().subscribe(periodos => this.periodos = periodos);
-      this.refresh(obra_id);
+      this.refresh(obra_id, rev);
     });
   }
 
-  refresh(obra_id?) {
+  refresh(obra_id?, rev?) {
     obra_id = obra_id || this.centro_costo.id;
     this.proyecciones_service
     .get_proyeccion_avance_obra_list(obra_id)
     .subscribe(revisiones => {
-      revisiones.map(rev => {
-        rev.items.map(item => {
+      revisiones.map(revision => {
+        revision.items.map(item => {
           item.avance = Number.parseFloat(String(item.avance));
         });
       });
       this.revisiones = revisiones;
+      if (rev) {
+        this.revision_actual = revisiones.find((i) => i.pk == rev);
+        if (this.revision_actual) {
+          return;
+        }
+      }
       this.revision_actual = revisiones[revisiones.length - 1];
     });
   }
@@ -71,7 +78,7 @@ export class AvanceObraComponent implements OnInit {
   isAllValid() {
     let periodos = [];
     for (const av of this.revision_actual.items) {
-      const id = this._tonum(av.periodo)
+      const id = this._tonum(av.periodo);
       if (periodos.indexOf(id) !== -1) {
         return false;
       }
@@ -196,8 +203,8 @@ export class AvanceObraComponent implements OnInit {
     this.proyecciones_service.create_avance_obra_proyeccion(new_revision).subscribe(
       revision => {
         this._notifications.success('Se creó una nueva revisión de la proyección');
-        this.refresh();
-        this.router.navigate(['/proyecciones', this.centro_costo.id, 'avances-obra']);
+        // this.refresh();
+        this.router.navigate(['/proyecciones', this.centro_costo.id, 'avances-obra', revision.pk]);
       },
       error => this.handleError(error)
     );
@@ -269,7 +276,7 @@ export class AvanceObraComponent implements OnInit {
             this.proyecciones_service.hacer_vigente_avance_obra_proyeccion(this.revision_actual).subscribe(
               r => {
                 this.refresh();
-                this._notifications.success('La revisión fue establecida como vigente.');
+                this._notifications.success(`La revisión fue establecida como BASE ${r.base_numero}.`);
               },
               error => this.handleError(error));
           },

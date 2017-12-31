@@ -8,10 +8,10 @@ from rest_framework import routers
 from api.views import (
     PresupuestoViewSet, RevisionViewSet, TipoCostoViewSet,
     ItemPresupuestoViewSet, DynamicMenuView, CentroCostoViewSet,
-    CertificacionRealViewSet, CertificacionProyeccionViewSet,
+    CertificacionRealViewSet,
     PeriodoViewSet, TableroControTablalView, TCCertficacionGraphView,
     TCCostoGraphView, TCAvanceGraphView, TCConsolidadoGraphView,
-    AvanceObraViewSet, ProyeccionAvanceObraViewSet
+    AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet
 )
 
 router = routers.DefaultRouter()
@@ -29,10 +29,7 @@ router.register(
     r'centro_costos', CentroCostoViewSet, base_name='centro_costo'
 )
 router.register(
-    r'certificaciones_real', CertificacionRealViewSet, base_name='certificacion_real'
-)
-router.register(
-    r'certificaciones_proyeccion', CertificacionProyeccionViewSet, base_name='certificacion_proyeccion'
+    r'certificaciones', CertificacionRealViewSet, base_name='certificacion'
 )
 router.register(
     r'periodos', PeriodoViewSet, base_name='periodo'
@@ -42,6 +39,9 @@ router.register(
 )
 router.register(
     r'proyecciones/avance_obra', ProyeccionAvanceObraViewSet, base_name='proyeccion_avanceobra'
+)
+router.register(
+    r'proyecciones/certificacion', ProyeccionCertificacionViewSet, base_name='proyeccion_certificacion'
 )
 
 urlpatterns = [

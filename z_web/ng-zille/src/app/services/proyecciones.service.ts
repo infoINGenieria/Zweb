@@ -6,7 +6,8 @@ import 'rxjs/add/operator/map';
 
 import {
   ICentroCosto, IPeriodo,
-  IProyeccionAvanceObra, IItemProyeccionAvanceObra
+  IProyeccionAvanceObra, IItemProyeccionAvanceObra,
+  IItemProyeccionCertificacion, IProyeccionCertificacion
 } from './../models/Interfaces';
 
 @Injectable()
@@ -54,5 +55,47 @@ export class ProyeccionesService {
     const bodyString = JSON.stringify(avance_obra_proyeccion);
     return this.http.post(`/api/proyecciones/avance_obra/${avance_obra_proyeccion.pk}/hacer-vigente/`, bodyString)
       .map((r: Response) => r.json() as IProyeccionAvanceObra);
+  }
+
+  // proyección de Certificacion
+
+  get_proyeccion_certificacion_list(centro_costo?, periodo?) {
+    let myParams = new URLSearchParams();
+    myParams.set('centro_costo', centro_costo || '');
+    myParams.set('periodo', periodo || '');
+    return this.http.get('/api/proyecciones/certificacion/', myParams)
+    .map((r: Response) => {
+      let r_json = r.json();
+      return r_json['results'] as IProyeccionCertificacion[];
+    });
+  }
+
+  get_proyeccion_certificacion(pk: number): Observable<IProyeccionCertificacion> {
+    return this.http.get(`'/api/proyecciones/certificacion/'${pk}/`)
+      .map((r: Response) => r.json() as IProyeccionCertificacion);
+  }
+
+  delete_proyeccion_certificacion(certificacion: IProyeccionCertificacion): Observable<IProyeccionCertificacion> {
+    return this.http.delete(`/api/proyecciones/certificacion/${certificacion.pk}/`)
+    .map((res: Response) => res.json())
+    .catch((error: any) => Observable.throw(error.json().detail || 'Error en el servidor'));
+  }
+
+  create_certificacion_proyeccion(certificacion_proyeccion: IProyeccionCertificacion): Observable<IProyeccionCertificacion> {
+    const bodyString = JSON.stringify(certificacion_proyeccion);
+    return this.http.post(`/api/proyecciones/certificacion/`, bodyString)
+      .map((r: Response) => r.json() as IProyeccionCertificacion);
+  }
+
+  update_certificacion_proyeccion(certificacion_proyeccion: IProyeccionCertificacion): Observable<IProyeccionCertificacion> {
+    const bodyString = JSON.stringify(certificacion_proyeccion);
+    return this.http.put(`/api/proyecciones/certificacion/${certificacion_proyeccion.pk}`, bodyString)
+      .map((r: Response) => r.json() as IProyeccionCertificacion);
+  }
+
+  hacer_vigente_certificacion_proyeccion(certificacion_proyeccion: IProyeccionCertificacion): Observable<IProyeccionCertificacion> {
+    const bodyString = JSON.stringify(certificacion_proyeccion);
+    return this.http.post(`/api/proyecciones/certificacion/${certificacion_proyeccion.pk}/hacer-vigente/`, bodyString)
+      .map((r: Response) => r.json() as IProyeccionCertificacion);
   }
 }
