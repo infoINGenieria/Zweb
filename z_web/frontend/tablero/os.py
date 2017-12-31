@@ -15,7 +15,8 @@ from organizacion.models import UnidadNegocio
 from parametros.models import Periodo
 from presupuestos.models import Presupuesto, Revision
 from registro.models import CertificacionReal, CertificacionItem, CertificacionProyeccion, Certificacion
-from costos.models import CostoReal, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion, Costo
+from costos.models import CostoReal, CostoProyeccion, AvanceObra, Costo
+from proyecciones.models import ProyeccionAvanceObra
 
 
 class MarkUpColumn(object):
@@ -439,19 +440,19 @@ def get_costos_graph(obra):
 
 def get_avances_graph(obra):
     try:
-        first_real = AvanceObraReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_real = AvanceObraReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-        first_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_proy = AvanceObraProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+        first_real = AvanceObra.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_real = AvanceObra.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+        first_proy = ProyeccionAvanceObra.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_proy = ProyeccionAvanceObra.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
     except ObjectDoesNotExist:
         raise ValueError("No hay avances de obra cargados para el proyecto.")
     costo_real = dict(
-        AvanceObraReal.objects.filter(centro_costo=obra).values(
+        AvanceObra.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('avance')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))
 
     costo_proy = dict(
-        AvanceObraProyeccion.objects.filter(centro_costo=obra).values(
+        ProyeccionAvanceObra.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('avance')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))
 

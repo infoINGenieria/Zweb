@@ -66,6 +66,7 @@ INSTALLED_APPS = (
     'zweb_utils',
     'reportes',
     'api',
+    'proyecciones',
 )
 
 REST_FRAMEWORK = {

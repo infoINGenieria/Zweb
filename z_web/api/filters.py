@@ -3,6 +3,7 @@ import django_filters
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
 from costos.models import AvanceObra
+from proyecciones.models import ProyeccionAvanceObra
 
 
 class PresupuestoFilter(django_filters.FilterSet):
@@ -24,4 +25,11 @@ class AvanceObraFilter(django_filters.FilterSet):
 
     class Meta:
         model = AvanceObra
+        fields = ('centro_costo', 'periodo')
+
+
+class ProyeccionAvanceObraFilter(django_filters.FilterSet):
+
+    class Meta:
+        model = ProyeccionAvanceObra
         fields = ('centro_costo', 'periodo')

@@ -4,11 +4,12 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 
 from core.models import Obras
-from costos.models import CostoTipo, AvanceObraProyeccion, AvanceObraReal
+from costos.models import CostoTipo, AvanceObra
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from registro.models import CertificacionItem, CertificacionReal, CertificacionProyeccion
 from parametros.models import Periodo
+from proyecciones.models import ProyeccionAvanceObra, ItemProyeccionAvanceObra
 
 
 class CostoTipoSerializer(serializers.ModelSerializer):
@@ -186,16 +187,23 @@ class CertificacionesSummary(serializers.Serializer):
         max_digits=18, decimal_places=2, read_only=True)
 
 
-class AvanceObraProyeccionSerializer(serializers.ModelSerializer):
-    periodo = PeriodoSerializer(read_only=True)
+class ThinAvanceObraSerializer(serializers.ModelSerializer):
     periodo_id = serializers.IntegerField(source='periodo.pk')
-    centro_costo = ObrasSerializer(read_only=True)
     centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
 
     class Meta:
-        model = AvanceObraProyeccion
+        model = AvanceObra
+        fields = ('pk', 'periodo_id', 'centro_costo_id', 'avance', 'observacion')
+
+
+class AvanceObraSerializer(ThinAvanceObraSerializer):
+    class Meta:
+        model = AvanceObra
         fields = ('pk', 'periodo', 'periodo_id', 'centro_costo', 'centro_costo_id',
                   'avance', 'observacion')
+
+    periodo = PeriodoSerializer(read_only=True)
+    centro_costo = ObrasSerializer(read_only=True)
 
     def create(self, validated_data):
         centro_costo = validated_data.pop('centro_costo')
@@ -220,8 +228,77 @@ class AvanceObraProyeccionSerializer(serializers.ModelSerializer):
         return instance
 
 
-class AvanceObraRealSerializer(AvanceObraProyeccionSerializer):
+class ItemProyeccionAvanceObraSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+
     class Meta:
-        model = AvanceObraReal
+        model = ItemProyeccionAvanceObra
+        fields = ('pk', 'periodo', 'avance')
+
+
+class ProyeccionAvanceObraSerializer(serializers.ModelSerializer):
+    periodo = PeriodoSerializer(read_only=True)
+    periodo_id = serializers.IntegerField(source='periodo.pk')
+    centro_costo = ObrasSerializer(read_only=True)
+    centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
+    items = ItemProyeccionAvanceObraSerializer(many=True)
+    avance_real = ThinAvanceObraSerializer(many=True)
+
+    class Meta:
+        model = ProyeccionAvanceObra
         fields = ('pk', 'periodo', 'periodo_id', 'centro_costo', 'centro_costo_id',
-                  'avance', 'observacion')
+                  'observacion', 'es_base', 'base_numero', 'items', 'avance_real')
+
+    def create(self, validated_data):
+        centro_costo = validated_data.pop('centro_costo')
+        periodo = validated_data.pop('periodo')
+        items = validated_data.pop('items')
+        avance = ProyeccionAvanceObra(**validated_data)
+        avance.centro_costo_id = centro_costo["pk"]
+        avance.periodo_id = periodo["pk"]
+        try:
+            avance.save()
+        except IntegrityError:
+            periodo = Periodo.objects.get(pk=avance.periodo_id)
+            raise serializers.ValidationError(
+                'Ya existe una %s ajustado en el periodo %s.' % (
+                    ProyeccionAvanceObra._meta.verbose_name,
+                    periodo))
+        for item_data in items:
+            ItemProyeccionAvanceObra.objects.create(
+                proyeccion=avance,
+                periodo=item_data["periodo"],
+                avance=item_data["avance"]
+            )
+        return avance
+
+    def update(self, instance, validated_data):
+        centro_costo = validated_data.pop('centro_costo')
+        periodo = validated_data.pop('periodo')
+        items = validated_data.pop('items')
+        instance.centro_costo_id = centro_costo.get('pk', instance.centro_costo_id)
+        instance.periodo_id = periodo.get('pk', instance.periodo)
+        instance.observacion = validated_data.get("observacion", instance.observacion)
+        instance.es_base = validated_data.get("es_base", instance.es_base)
+        instance.base_numero = validated_data.get("base_numero", instance.base_numero)
+        instance.save()
+        exists_pks = []
+        for item in items:
+            if "pk" in item:
+                pk = item.pop('pk')
+                exists_pks.append(pk)
+                item_obj, _ = ItemProyeccionAvanceObra.objects.update_or_create(
+                    pk=pk, proyeccion=instance, defaults={
+                        'periodo': item.get('periodo'),
+                        'avance': item.get("avance")
+                    })
+            else:
+                item_obj = ItemProyeccionAvanceObra(
+                    proyeccion=instance,
+                    periodo=item.get('periodo'),
+                    avance=item.get('avance'))
+                item_obj.save()
+                exists_pks.append(item_obj.pk)
+        # eliminar items no enviados
+        instance.items.exclude(pk__in=exists_pks).delete()
+        return instance

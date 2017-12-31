@@ -111,3 +111,30 @@ export interface IAvanceObra {
     avance: number;
     observacion: string;
 }
+
+export interface IAvanceObraThin {
+    pk?: number;
+    periodo_id: number;
+    centro_costo_id: number;
+    avance: number;
+    observacion: string;
+}
+
+export interface IItemProyeccionAvanceObra {
+    pk?: number;
+    periodo: number;
+    avance: number;
+}
+
+export interface IProyeccionAvanceObra {
+    pk?: number;
+    periodo: IPeriodo;
+    periodo_id: number;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    observacion: string;
+    es_base: boolean;
+    base_numero: number;
+    items: Array<IItemProyeccionAvanceObra>;
+    avance_real: Array<IAvanceObraThin>;
+}

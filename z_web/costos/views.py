@@ -18,17 +18,16 @@ from parametros.models import Periodo, FamiliaEquipo
 from zweb_utils.mixins import TableFilterListView, ModalViewMixin
 from zweb_utils.views import LoginAndPermissionRequiredMixin
 from .models import (CostoParametro, Costo, CostoTipo, CostoProyeccion, CostoReal,
-                     AvanceObraReal, AvanceObraProyeccion, AvanceObra)
+                     AvanceObra)
 from .forms import (CostoItemForm, CostoItemFamiliaForm,
                     CopiaCostoForm, CostoCCForm, PeriodoCCForm, PeriodoCostoTipoForm,
                     CostoEquipoForm, CostoEditPorCCForm, CostoEditPorEquipoForm,
                     ProyeccionEditPorCCForm, ProyeccionEditPorEquipoForm,
-                    AvanceObraEditForm, AvanceObraProyectadoEditForm,
-                    CentroCostoSelectForm, AvanceObraCreateForm)
+                    AvanceObraEditForm, CentroCostoSelectForm, AvanceObraCreateForm)
 from .tables import (CostoTableGeneric, CostosByCCTotalTable,
                      CostosByEquipoMontoHSTable, ProyeccionTableGeneric,
                      ProyeccionByCCTotalTable, ProyeccionByEquipoMontoHSTable,
-                     AvanceObraProyeccionTable, AvanceObraRealTable)
+                     AvanceObraTable)
 from .filters import CostosFilter, AvanceObraFilter
 
 
@@ -448,22 +447,22 @@ class EliminarProyeccionesView(EliminarCostosView):
 ##################
 
 
-class AvanceObraRealList(BaseCostosMixin, TableFilterListView):
+class AvanceObraList(BaseCostosMixin, TableFilterListView):
     template_name = 'frontend/costos/avance_obra_list.html'
     filterset_class = AvanceObraFilter
-    model = AvanceObraReal
-    table_class = AvanceObraRealTable
+    model = AvanceObra
+    table_class = AvanceObraTable
 
     def get_filterset(self, *args, **kwargs):
         """
         Solo mostramos centro de costos de la unidad de negocio del usuario
         """
-        fs = super(AvanceObraRealList, self).get_filterset(*args, **kwargs)
+        fs = super(AvanceObraList, self).get_filterset(*args, **kwargs)
         fs.filters['centro_costo'].field.queryset = Obras.get_centro_costos(self.request.user)
         return fs
 
     def get_context_data(self, **kwargs):
-        ctx = super(AvanceObraRealList, self).get_context_data(**kwargs)
+        ctx = super(AvanceObraList, self).get_context_data(**kwargs)
         ctx["is_filtered"] = self.filterset.form.is_valid()
         return ctx
 
@@ -473,7 +472,7 @@ class AvanceObraRealList(BaseCostosMixin, TableFilterListView):
 
 
 class AvanceObraEditView(BaseCostosMixin, FormWithUserMixin, ModalViewMixin, UpdateView):
-    model = AvanceObraReal
+    model = AvanceObra
     form_class = AvanceObraEditForm
 
     def get_url_post_form(self):
@@ -490,7 +489,7 @@ class AvanceObraEditView(BaseCostosMixin, FormWithUserMixin, ModalViewMixin, Upd
 
 
 class AvanceObraDeleteView(BaseCostosMixin, ModalViewMixin, DeleteView):
-    model = AvanceObraReal
+    model = AvanceObra
     template_name = "modal_delete_form.html"
 
     def get_url_post_form(self):
@@ -507,7 +506,6 @@ class AvanceObraCreateView(BaseCostosMixin, TemplateView):
     template_name = "frontend/costos/avance_obra_create.html"
     form_class = CentroCostoSelectForm
     formset_avance = formset_factory(AvanceObraCreateForm, extra=0, min_num=1, can_delete=True, validate_min=True)
-    es_proyeccion = False
 
     def get_context_data(self, **kwargs):
         context = super(AvanceObraCreateView, self).get_context_data(**kwargs)
@@ -538,8 +536,8 @@ class AvanceObraCreateView(BaseCostosMixin, TemplateView):
                 for f in avances_formset.forms:
                     if f in avances_formset.deleted_forms:
                         continue
-                    if self.model.objects.filter(periodo=f.cleaned_data["periodo"], centro_costo=centro_costo,
-                                                 es_proyeccion=self.es_proyeccion).exists():
+                    if self.model.objects.filter(
+                        periodo=f.cleaned_data["periodo"], centro_costo=centro_costo).exists():
                         errors = f._errors.setdefault("avance", ErrorList())
                         errors.append(u"Ya existe un valor para el periodo y centro de costo seleccionado.")
                         has_error = True
@@ -569,7 +567,8 @@ proyecciones_alta_cc = CostosProyeccionAltaCC.as_view()
 proyecciones_alta_eq = CostosProyeccionAltaEquipos.as_view()
 proyecciones_edit = EditarProyeccionesView.as_view()
 proyecciones_delete = EliminarProyeccionesView.as_view()
-avances_obra_list = AvanceObraRealList.as_view()
+
+avances_obra_list = AvanceObraList.as_view()
 avances_obra_edit = AvanceObraEditView.as_view()
 avances_obra_delete = AvanceObraDeleteView.as_view()
 avances_obra_create = AvanceObraCreateView.as_view()

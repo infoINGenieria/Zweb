@@ -11,7 +11,7 @@ from api.views import (
     CertificacionRealViewSet, CertificacionProyeccionViewSet,
     PeriodoViewSet, TableroControTablalView, TCCertficacionGraphView,
     TCCostoGraphView, TCAvanceGraphView, TCConsolidadoGraphView,
-    AvanceObraProyectadoViewSet, AvanceObraRealViewSet
+    AvanceObraViewSet, ProyeccionAvanceObraViewSet
 )
 
 router = routers.DefaultRouter()
@@ -38,10 +38,10 @@ router.register(
     r'periodos', PeriodoViewSet, base_name='periodo'
 )
 router.register(
-    r'avanceobra_real', AvanceObraRealViewSet, base_name='avanceobra_real'
+    r'avanceobra', AvanceObraViewSet, base_name='avanceobra'
 )
 router.register(
-    r'avanceobra_proyeccion', AvanceObraProyectadoViewSet, base_name='avanceobra_proyeccion'
+    r'proyecciones/avance_obra', ProyeccionAvanceObraViewSet, base_name='proyeccion_avanceobra'
 )
 
 urlpatterns = [

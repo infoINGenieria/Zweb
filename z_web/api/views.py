@@ -14,13 +14,16 @@ from api.serializers import (
     PresupuestoSerializer, RevisionSerializer, CostoTipoSerializer,
     ItemPresupuestoSerializer, ObrasSerializer, CertificacionProyeccionSerializer,
     CertificacionRealSerializer, CertificacionItemSerializer, PeriodoSerializer,
-    CertificacionesSummary, AvanceObraProyeccionSerializer, AvanceObraRealSerializer)
-from api.filters import PresupuestoFilter, CertificacionFilter, AvanceObraFilter
+    CertificacionesSummary, AvanceObraSerializer, ProyeccionAvanceObraSerializer)
+from api.filters import (
+    PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
+    ProyeccionAvanceObraFilter)
 from core.models import Obras, UserExtension
-from costos.models import CostoTipo, AvanceObraReal, AvanceObraProyeccion
+from costos.models import CostoTipo, AvanceObra
 from parametros.models import Periodo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
+from proyecciones.models import ProyeccionAvanceObra
 from zweb_utils.views import generate_menu_user
 from registro.models import CertificacionProyeccion, CertificacionReal, Certificacion
 from organizacion.models import UnidadNegocio
@@ -264,20 +267,34 @@ class PeriodoViewSet(ModelViewSet, AuthView):
     queryset = Periodo.objects.all().order_by('-fecha_fin')
 
 
-class AvanceObraRealViewSet(ModelViewSet, AuthView):
-    serializer_class = AvanceObraRealSerializer
+class AvanceObraViewSet(ModelViewSet, AuthView):
+    serializer_class = AvanceObraSerializer
     filter_class = AvanceObraFilter
 
     def get_queryset(self):
         obra_qs = self.get_centros_costos()
-        return AvanceObraReal.objects.filter(
+        return AvanceObra.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
 
 
-class AvanceObraProyectadoViewSet(AvanceObraRealViewSet):
-    serializer_class = AvanceObraProyeccionSerializer
+class ProyeccionAvanceObraViewSet(ModelViewSet, AuthView):
+    serializer_class = ProyeccionAvanceObraSerializer
+    filter_class = ProyeccionAvanceObraFilter
 
     def get_queryset(self):
         obra_qs = self.get_centros_costos()
-        return AvanceObraProyeccion.objects.filter(
+        return ProyeccionAvanceObra.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
+
+    @detail_route(methods=['post'], url_path='hacer-vigente')
+    def hacer_vigente(self, request, **kwargs):
+        pao = self.get_object()
+        last = ProyeccionAvanceObra.objects.filter(
+            centro_costo=pao.centro_costo,
+            es_base=True).aggregate(last=Max("base_numero"))
+        pao.es_base = True
+        pao.base_numero = 0
+        if last.get("last") != None:
+            pao.base_numero = last.get("last") + 1
+        pao.save()
+        return Response(ProyeccionAvanceObraSerializer(pao).data)

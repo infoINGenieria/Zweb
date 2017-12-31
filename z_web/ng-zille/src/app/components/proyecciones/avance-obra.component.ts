@@ -1,3 +1,4 @@
+import { ProyeccionesService } from './../../services/proyecciones.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
 
@@ -7,9 +8,8 @@ import { fadeInAnimation } from '../../_animations/index';
 
 import { CoreService } from '../../services/core/core.service';
 import { NotificationService } from '../../services/core/notifications.service';
-import { AvanceObraService } from './../../services/avanceobra.service';
 
-import { ICentroCosto, ICertificacion, IAvanceObra, IPeriodo } from './../../models/Interfaces';
+import { ICentroCosto, IProyeccionAvanceObra, IItemProyeccionAvanceObra, IPeriodo } from './../../models/Interfaces';
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -22,16 +22,18 @@ export class AvanceObraComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private avanceobra_serv: AvanceObraService,
+    private router: Router,
+    private proyecciones_service: ProyeccionesService,
     private core_service: CoreService,
     private _notifications: NotificationService,
     private modal: Modal
   ) { }
 
   centro_costo: ICentroCosto;
-  avances: IAvanceObra[] = [];
-  real_avances: IAvanceObra[] = [];
   periodos: IPeriodo[];
+
+  revisiones: IProyeccionAvanceObra[] = [];
+  revision_actual: IProyeccionAvanceObra = null;
 
   isDisabled = false;
 
@@ -46,30 +48,21 @@ export class AvanceObraComponent implements OnInit {
 
   refresh(obra_id?) {
     obra_id = obra_id || this.centro_costo.id;
-    this.avanceobra_serv
-    .get_avance_obra_proyeccion_list(obra_id)
-    .subscribe(avances => {
-      this.avances = [];
-      avances.map(item => {
-        let avance = item;
-        avance.avance = Number.parseFloat(String(avance.avance));
-        this.avances.push(avance);
-      })
-    });
-  this.avanceobra_serv
-    .get_avance_obra_real_list(obra_id)
-    .subscribe(avances => {
-      this.real_avances = [];
-      avances.map(item => {
-        let avance = item;
-        avance.avance = Number.parseFloat(String(avance.avance));
-        this.real_avances.push(avance);
+    this.proyecciones_service
+    .get_proyeccion_avance_obra_list(obra_id)
+    .subscribe(revisiones => {
+      revisiones.map(rev => {
+        rev.items.map(item => {
+          item.avance = Number.parseFloat(String(item.avance));
+        });
       });
+      this.revisiones = revisiones;
+      this.revision_actual = revisiones[revisiones.length - 1];
     });
   }
 
-  itemIsValid(item: IAvanceObra): boolean {
-    if (item.periodo_id && item.avance) {
+  itemIsValid(item: IItemProyeccionAvanceObra): boolean {
+    if (item.periodo && item.avance) {
       return true;
     }
     return false;
@@ -77,8 +70,8 @@ export class AvanceObraComponent implements OnInit {
 
   isAllValid() {
     let periodos = [];
-    for (const av of this.avances) {
-      const id = this._tonum(av.periodo_id)
+    for (const av of this.revision_actual.items) {
+      const id = this._tonum(av.periodo)
       if (periodos.indexOf(id) !== -1) {
         return false;
       }
@@ -87,31 +80,36 @@ export class AvanceObraComponent implements OnInit {
     return true;
   }
 
-  find_real(item: IAvanceObra) {
-    if (this.real_avances){
-      return this.real_avances.find((i) => {
-        return i.periodo_id === item.periodo_id;
+  find_real(item: IItemProyeccionAvanceObra) {
+    if (this.revision_actual && this.revision_actual.avance_real) {
+      return this.revision_actual.avance_real.find((i) => {
+        return i.periodo_id === item.periodo;
       });
     }
   }
 
-  acumulado(item: IAvanceObra): number {
-    const posicion = this.avances.indexOf(item);
+  find_periodo(periodo_id: Number): IPeriodo {
+    let periodo = this.periodos.find(i => i.pk == periodo_id);
+    return periodo;
+  }
+
+  acumulado(item: IItemProyeccionAvanceObra): number {
+    const posicion = this.revision_actual.items.indexOf(item);
     let acumulado = 0.0;
-    for (const av of this.avances.slice(0, posicion + 1)) {
+    for (const av of this.revision_actual.items.slice(0, posicion + 1)) {
       acumulado += this._tonum(av.avance);
     }
     return acumulado;
   }
 
-  acumuladoConsolidado(item: IAvanceObra): number {
+  acumuladoConsolidado(item: IItemProyeccionAvanceObra): number {
     /*
       Suma acumulado de los datos reales y, cuando estos no existan,
       la proyección del mes correspondiente.
     */
-    const posicion = this.avances.indexOf(item);
+    const posicion = this.revision_actual.items.indexOf(item);
     let acumulado = 0.0;
-    for (const av of this.avances.slice(0, posicion + 1)) {
+    for (const av of this.revision_actual.items.slice(0, posicion + 1)) {
       let real = this.find_real(av);
       if (real) {
         acumulado += this._tonum(real.avance);
@@ -123,14 +121,13 @@ export class AvanceObraComponent implements OnInit {
   }
 
   aniadirAvanceObra() {
-    let avanceobra = new Object as IAvanceObra;
-    avanceobra.centro_costo_id = this.centro_costo.id;
-    this.avances.push(avanceobra);
+    let item = new Object as IItemProyeccionAvanceObra;
+    this.revision_actual.items.push(item);
   }
 
-  guardarTodos() {
-    for (let avance of this.avances) {
-      if (!this.itemIsValid(avance)) {
+  guardarActual() {
+    for (let item of this.revision_actual.items) {
+      if (!this.itemIsValid(item)) {
         this._notifications.error('Corrija primero los ítems con fondo rojo.');
         return;
       }
@@ -140,42 +137,88 @@ export class AvanceObraComponent implements OnInit {
       return;
     }
     this.isDisabled = true;
-    for (let avance of this.avances) {
-      if (avance.pk) {
-        this.avanceobra_serv.update_avance_obra_proyeccion(avance).subscribe(
-          _avance => {}, error => this.handleError(error));
-      } else {
-        this.avanceobra_serv.create_avance_obra_proyeccion(avance).subscribe(
-          _avance => {}, error => this.handleError(error));
-      }
+
+    if (this.revision_actual.pk) {
+      this.proyecciones_service.update_avance_obra_proyeccion(this.revision_actual).subscribe(
+        avance => {
+          this._notifications.success('Se guardó correctamente la proyección.');
+          this.refresh();
+        },
+        error => this.handleError(error),
+        () => this.isDisabled = false
+      );
+    } else {
+      this.proyecciones_service.create_avance_obra_proyeccion(this.revision_actual).subscribe(
+        avance => {
+          this._notifications.success('Se creó correctamente la proyección.');
+          this.refresh();
+        },
+        error => this.handleError(error),
+        () => this.isDisabled = false
+      );
     }
-    setTimeout(() => {
-      this.isDisabled = false;
-      this._notifications.success('Se guardó correctamente la proyección.');
-      this.refresh();
-    }, 1000);
   }
 
-  eliminarAvanceObra(obj: IAvanceObra) {
+  create_new_version_modal() {
+    const periodo = this.find_periodo(this.revision_actual.periodo_id);
+    const msg = `Está a punto de crear una nueva revisión de la proyección como ` +
+                `ajuste de <b>${periodo.descripcion}</b>. ¿Continuar?`;
     const dialogRef = this.modal.confirm()
     .showClose(true)
-    .title('Confirmación de eliminación')
-    .message(
-      '¿Está seguro que desea <b>eliminar</b> este ítem de la proyección ' +
-      'de avance de obra del sistema?<br><b>Esta acción no puede deshacerse.</b>')
+    .title('Crear nueva revisión')
+    .message(msg)
     .cancelBtn('Cancelar')
-    .okBtn('Eliminar')
+    .okBtn('Si, crear!')
+    .open();
+    dialogRef.then(
+      dialog => {
+        dialog.result.then(
+          result => this.crearRevision(),
+          () => {}
+        );
+      },
+    );
+  }
+
+  crearRevision() {
+    let new_revision: IProyeccionAvanceObra = Object.assign({}, this.revision_actual);
+    new_revision.es_base = false;
+    new_revision.base_numero = null;
+    new_revision.pk = null;
+    new_revision.items = this.revision_actual.items.map(
+      item => {
+        let new_item = new Object as IItemProyeccionAvanceObra;
+        new_item.avance = item.avance;
+        new_item.periodo = item.periodo;
+        return new_item;
+      }
+    );
+    this.proyecciones_service.create_avance_obra_proyeccion(new_revision).subscribe(
+      revision => {
+        this._notifications.success('Se creó una nueva revisión de la proyección');
+        this.refresh();
+        this.router.navigate(['/proyecciones', this.centro_costo.id, 'avances-obra']);
+      },
+      error => this.handleError(error)
+    );
+  }
+
+  eliminarAvanceObra(obj: IItemProyeccionAvanceObra) {
+    const dialogRef = this.modal.confirm()
+    .showClose(true)
+    .title('Quitar ítem')
+    .message(
+      '¿Está seguro que desea <b>quitar</b> este ítem de la proyección ' +
+      'de avance de obra del sistema?<br><b>Esta acción se confirmará al guardar.</b>')
+    .cancelBtn('Cancelar')
+    .okBtn('Quitar')
     .open();
     dialogRef.then(
       dialog => {
         dialog.result.then(
           result => {
-            this.avanceobra_serv.delete_avance_obra_proyeccion(obj).subscribe(
-              r => {
-                this.refresh();
-                this._notifications.success('Ítem eliminado correctamente.');
-              },
-              error => this.handleError(error));
+            const idx = this.revision_actual.items.indexOf(obj);
+            this.revision_actual.items.splice(idx, 1);
           },
           () => {}
         );
@@ -183,7 +226,9 @@ export class AvanceObraComponent implements OnInit {
     );
   }
 
-
+  trackByIndex(index: number, item: IItemProyeccionAvanceObra) {
+    return index;
+  }
 
   _tonum(val): number {
     if (typeof val === 'number') {
@@ -197,6 +242,71 @@ export class AvanceObraComponent implements OnInit {
   }
 
   handleError(error: any) {
-    this._notifications.error(error.statusText || 'Un error ha ocurrido. Por favor, intente nuevamente.');
+    if (error.status === 400) {
+      let error_json = JSON.parse(error._body);
+      this._notifications.error(error_json.join());
+    } else {
+      this._notifications.error('Un error ha ocurrido. Por favor, intente nuevamente.');
+    }
+  }
+
+  establecerComoBase() {
+    if (this.revision_actual.es_base) {
+      this._notifications.error('Esta revisión ya es BASE.');
+      return;
+    }
+    const dialogRef = this.modal.confirm()
+    .showClose(true)
+    .title('Establecer revisión como BASE')
+    .message(`¿Está seguro que desea <b>establecer como BASE</b> esta revisión?`)
+    .cancelBtn('Cancelar')
+    .okBtn('Si, establecer!')
+    .open();
+    dialogRef.then(
+      dialog => {
+        dialog.result.then(
+          result => {
+            this.proyecciones_service.hacer_vigente_avance_obra_proyeccion(this.revision_actual).subscribe(
+              r => {
+                this.refresh();
+                this._notifications.success('La revisión fue establecida como vigente.');
+              },
+              error => this.handleError(error));
+          },
+          () => {}
+        );
+      },
+    );
+
+  }
+
+  deleteRevisionActual() {
+    if (this.revision_actual.es_base) {
+      this._notifications.error('No puede quitarse una revisión BASE.');
+      return;
+    }
+    const dialogRef = this.modal.confirm()
+    .showClose(true)
+    .title('Confirmación de eliminación')
+    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión de la proyección del sistema?` +
+             `<br><b>Esta acción no puede deshacerse.</b>`)
+    .cancelBtn('Cancelar')
+    .okBtn('Eliminar')
+    .open();
+    dialogRef.then(
+      dialog => {
+        dialog.result.then(
+          result => {
+            this.proyecciones_service.delete_proyeccion_avance_obra(this.revision_actual).subscribe(
+              r => {
+                this.refresh();
+                this._notifications.success('Revisión eliminada correctamente.');
+              },
+              error => this.handleError(error));
+          },
+          () => {}
+        );
+      },
+    );
   }
 }

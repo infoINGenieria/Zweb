@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from model_utils.managers import QueryManager
 
-from .models import CostoParametro, ArchivosAdjuntosPeriodo, CostoReal, CostoTipo, CostoProyeccion
+from .models import CostoParametro, ArchivosAdjuntosPeriodo, CostoReal, CostoTipo, CostoProyeccion, AvanceObra
 from .forms import CostoEditPorCCForm, CostoEditPorEquipoForm
 
 
@@ -25,6 +25,12 @@ class CostoParametroAdmin(admin.ModelAdmin):
 @admin.register(ArchivosAdjuntosPeriodo)
 class ArchivosAdjuntosPeriodoAdmin(admin.ModelAdmin):
     list_display = ('periodo', 'archivo', 'comentario')
+
+
+
+@admin.register(AvanceObra)
+class AvanceObraAdmin(admin.ModelAdmin):
+    list_display = ('centro_costo', 'periodo', 'avance')
 
 
 @admin.register(CostoTipo)

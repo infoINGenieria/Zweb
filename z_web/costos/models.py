@@ -313,7 +313,7 @@ class CostoProyeccion(Costo):
 
 class AvanceObra(BaseModel):
     """
-    Esta entidad registra el avance de obra real y proyectado para una obra y periodo específico.
+    Esta entidad registra el avance de obra real para una obra y periodo específico.
     """
     periodo = models.ForeignKey(Periodo, verbose_name="periodo")
     centro_costo = models.ForeignKey(
