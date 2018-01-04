@@ -156,7 +156,7 @@ export class CertificacionesComponent implements OnInit {
       this.proyecciones_service.update_certificacion_proyeccion(this.revision_actual).subscribe(
         avance => {
           this._notifications.success('Se guardó correctamente la proyección.');
-          this.refresh();
+          this.refresh(this.centro_costo.id, avance.pk);
         },
         error => this.handleError(error),
         () => this.isDisabled = false
@@ -165,7 +165,7 @@ export class CertificacionesComponent implements OnInit {
       this.proyecciones_service.create_certificacion_proyeccion(this.revision_actual).subscribe(
         avance => {
           this._notifications.success('Se creó correctamente la proyección.');
-          this.refresh();
+          this.refresh(this.centro_costo.id, avance.pk);
         },
         error => this.handleError(error),
         () => this.isDisabled = false
@@ -210,7 +210,6 @@ export class CertificacionesComponent implements OnInit {
     this.proyecciones_service.create_certificacion_proyeccion(new_revision).subscribe(
       revision => {
         this._notifications.success('Se creó una nueva revisión de la proyección');
-        this.refresh();
         this.router.navigate(['/proyecciones', this.centro_costo.id, 'certificaciones', revision.pk]);
       },
       error => this.handleError(error)
@@ -258,7 +257,7 @@ export class CertificacionesComponent implements OnInit {
           result => {
             this.proyecciones_service.hacer_vigente_certificacion_proyeccion(this.revision_actual).subscribe(
               r => {
-                this.refresh();
+                this.refresh(this.centro_costo.id, this.revision_actual.pk);
                 this._notifications.success(`La revisión fue establecida como BASE ${r.base_numero}.`);
               },
               error => this.handleError(error));

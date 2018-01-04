@@ -50,16 +50,25 @@ class DynamicMenuView(APIView):
         return Response(menu)
 
 
-class TCCertficacionGraphView(AuthView):
+class GraphDataMixin(object):
+
+    def get_data(self, obra, periodo):
+        raise NotImplementedError
+
     def get(self, request, *args, **kwargs):
         unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
         obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
                                  unidad_negocio=unidad_negocio)
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
         try:
-            data_graph = get_certificacion_graph(obra)
+            data_graph = self.get_data(obra, periodo)
         except Exception as e:
             raise ParseError(e)
         return Response(data_graph)
+
+class TCCertficacionGraphView(GraphDataMixin, AuthView):
+    def get_data(self, obra, periodo):
+        return get_certificacion_graph(obra, periodo)
 
 
 class TCCostoGraphView(AuthView):
@@ -74,16 +83,9 @@ class TCCostoGraphView(AuthView):
         return Response(data_graph)
 
 
-class TCAvanceGraphView(AuthView):
-    def get(self, request, *args, **kwargs):
-        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
-        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
-                                 unidad_negocio=unidad_negocio)
-        try:
-            data_graph = get_avances_graph(obra)
-        except Exception as e:
-            raise ParseError(e)
-        return Response(data_graph)
+class TCAvanceGraphView(GraphDataMixin, AuthView):
+    def get_data(self, obra, periodo):
+        return get_avances_graph(obra, periodo)
 
 
 class TableroControTablalView(AuthView):

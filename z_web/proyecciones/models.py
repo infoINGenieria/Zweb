@@ -28,7 +28,9 @@ class ProyeccionAvanceObra(BaseModel):
 
     @property
     def avance_real(self):
-        return self.centro_costo.mis_avances.order_by("periodo__fecha_fin")
+        return self.centro_costo.mis_avances.filter(
+            periodo__fecha_fin__lt=self.periodo.fecha_fin
+        ).order_by("periodo__fecha_fin")
 
 class ItemProyeccionAvanceObra(BaseModel):
     proyeccion = models.ForeignKey(
@@ -73,7 +75,9 @@ class ProyeccionCertificacion(BaseModel):
 
     @property
     def certificacion_real(self):
-        return self.centro_costo.certificaciones_obras.order_by("periodo__fecha_fin")
+        return self.centro_costo.certificaciones_obras.filter(
+            periodo__fecha_fin__lt=self.periodo.fecha_fin
+        ).order_by("periodo__fecha_fin")
 
 
 class ItemProyeccionCertificacion(BaseModel):

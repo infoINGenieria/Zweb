@@ -93,10 +93,9 @@ class AvanceObraCreateForm(forms.ModelForm):
         model = AvanceObra
         fields = ('periodo', 'avance', 'observacion')
 
-    def save(self, centro_costo, es_proyeccion, commit=True):
+    def save(self, centro_costo, commit=True):
         avance = super(AvanceObraCreateForm, self).save(False)
         avance.centro_costo = centro_costo
-        avance.es_proyeccion = es_proyeccion
         if commit:
             avance.save()
         return avance

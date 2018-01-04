@@ -6,7 +6,7 @@ import time
 from decimal import Decimal as D
 
 from django.core.cache import cache
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Min, Max
 from django.forms.models import model_to_dict
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -359,46 +359,56 @@ def datetime_to_epoch(date):
     return int(time.mktime(date.timetuple())) * 1000
 
 
-def get_certificacion_graph(obra):
-    try:
-        first_real = Certificacion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
-        last_real = Certificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
-        cert_real = dict(
-            Certificacion.objects.filter(obra=obra).values(
-                'periodo').annotate(total=Sum('items__monto')).values_list(
-                    'periodo', 'total').order_by('periodo__fecha_fin'))  #
+def get_certificacion_graph(obra, periodo):
+    # buscar linea base
+    line_base = ProyeccionCertificacion.objects.filter(
+        centro_costo=obra, es_base=True).order_by('-base_numero').first()
 
-        cert_proyeccion = dict(
-            ProyeccionCertificacion.objects.filter(centro_costo=obra).values(
-                'periodo').annotate(total=Sum('items__monto')).values_list(
-                    'periodo', 'total').order_by('periodo__fecha_fin'))  #
+    # buscar certificaciones reales, y completar con la ultima revision
+    certificaciones = Certificacion.objects.filter(
+        obra=obra, periodo__fecha_fin__lt=periodo.fecha_fin)
 
-        first_proy = ProyeccionCertificacion.objects.filter(obra=obra).earliest('periodo__fecha_fin')
-        last_proy = ProyeccionCertificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
-    except ObjectDoesNotExist:
-        raise ValueError("No hay certificaciones cargadas para el proyecto.")
+    revision = ProyeccionCertificacion.objects.filter(
+        centro_costo=obra).order_by('-periodo__fecha_fin').first()
+
+    # bucle por los periodos de la proyección
+
+    periodo_range = ProyeccionCertificacion.objects.filter(
+        centro_costo=obra).aggregate(
+            ini_fecha=Min('items__periodo__fecha_fin'),
+            fin_fecha=Max('items__periodo__fecha_fin'))
+
+    cert_base = dict(line_base.items.values_list('periodo', 'monto'))
+    cert_real = dict([(cert.periodo_id, cert.total) for cert in certificaciones])
+    cert_revision = dict(revision.items.values_list('periodo', 'monto'))
 
     data_real = []
-    #{       'key': "Cert. Real"}
     data_proy = []
-    # {      'key': "Cert. Proyectado"}
-    for periodo in Periodo.objects.filter(
-            fecha_fin__gte=min(first_real.periodo.fecha_fin, first_proy.periodo.fecha_fin),
-            fecha_fin__lte=max(last_real.periodo.fecha_fin, last_proy.periodo.fecha_fin)).order_by('fecha_fin'):
-        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': cert_real.get(periodo.pk, 0)})
-        data_proy.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': cert_proyeccion.get(periodo.pk, 0)})
 
+    for periodo in Periodo.objects.filter(
+            fecha_fin__gte=periodo_range["ini_fecha"],
+            fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
+        # lo obtengo de la linea base
+        data_proy.append({
+            'x': datetime_to_epoch(periodo.fecha_fin),
+            'y': cert_base.get(periodo.pk, 0)
+        })
+        # lo obtengo de la certificaciones, si no existe, de la ultima revisión o 0
+        data_real.append({
+            'x': datetime_to_epoch(periodo.fecha_fin),
+            'y': cert_real.get(periodo.pk, cert_revision.get(periodo.pk, 0))
+        })
     return [
+        {
+            'key': "Certificación Proyectada",
+            'values': data_proy,
+            'color': '#2ca02c'
+        },
         {
             'key': "Certificación Real",
             'values': data_real,
             'color': '#ff7f0e'
         },
-        {
-            'key': "Certificación Proyectada",
-            'values': data_proy,
-            'color': '#2ca02c'
-        }
     ]
 
 def get_costos_graph(obra):
@@ -442,55 +452,63 @@ def get_costos_graph(obra):
     ]
 
 
-def get_avances_graph(obra):
-    try:
-        first_real = AvanceObra.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_real = AvanceObra.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-        first_proy = ProyeccionAvanceObra.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_proy = ProyeccionAvanceObra.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-    except ObjectDoesNotExist:
-        raise ValueError("No hay avances de obra cargados para el proyecto.")
-    costo_real = dict(
-        AvanceObra.objects.filter(centro_costo=obra).values(
-            'periodo').annotate(total=Sum('avance')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))
+def get_avances_graph(obra, periodo):
+    # buscar linea base
+    line_base = ProyeccionAvanceObra.objects.filter(
+        centro_costo=obra, es_base=True).order_by('-base_numero').first()
 
-    costo_proy = dict(
-        ProyeccionAvanceObra.objects.filter(centro_costo=obra).values(
-            'periodo').annotate(total=Sum('avance')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))
+    # buscar avance_obra reales, y completar con la ultima revision
+    avance_obra = AvanceObra.objects.filter(
+        centro_costo=obra, periodo__fecha_fin__lt=periodo.fecha_fin)
+
+    revision = ProyeccionAvanceObra.objects.filter(
+        centro_costo=obra).order_by('-periodo__fecha_fin').first()
+
+    # bucle por los periodos de la proyección
+
+    periodo_range = ProyeccionAvanceObra.objects.filter(
+        centro_costo=obra).aggregate(
+            ini_fecha=Min('items__periodo__fecha_fin'),
+            fin_fecha=Max('items__periodo__fecha_fin'))
+
+    avance_obra_base = dict(line_base.items.values_list('periodo', 'avance'))
+    avance_obra_real = dict([(avance.periodo_id, avance.avance) for avance in avance_obra])
+    avance_obra_revision = dict(revision.items.values_list('periodo', 'avance'))
 
     data_real = []
     data_proy = []
-    real_acumulado = 0;
+
+    real_acumulado = 0
     proyectado_acumulado = 0
+    is_first = True
+
     for periodo in Periodo.objects.filter(
-            fecha_fin__gte=min(first_real.periodo.fecha_fin, first_proy.periodo.fecha_fin),
-            fecha_fin__lte=max(last_real.periodo.fecha_fin, last_proy.periodo.fecha_fin)).order_by('fecha_fin'):
-        real_acumulado += costo_real.get(periodo.pk, 0)
-        proyectado_acumulado += costo_proy.get(periodo.pk, 0)
-        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': real_acumulado})
+            fecha_fin__gte=periodo_range["ini_fecha"],
+            fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
+        if is_first:
+            data_proy.append({'x': datetime_to_epoch(periodo.fecha_inicio), 'y': 0})
+            data_real.append({'x': datetime_to_epoch(periodo.fecha_inicio), 'y': 0})
+            is_first = False
+
+        proyectado_acumulado += avance_obra_base.get(periodo.pk, 0)
         data_proy.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': proyectado_acumulado})
+
+        real_acumulado += avance_obra_real.get(periodo.pk, avance_obra_revision.get(periodo.pk, 0))
+        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': real_acumulado})
+
     return [
-        {
-            'key': "Avance real",
-            'values': data_real,
-            'color': '#ff7f0e',
-            'strokeWidth': 2,
-        },
         {
             'key': "Avance Proyectado",
             'values': data_proy,
             'color': '#2ca02c',
             'strokeWidth': 2,
         },
-        # {
-        #     'key': "Avance Proyectado",
-        #     'values': data_proy2,
-        #     'strokeWidth': 2,
-        #     'classed': 'dashed',
-        #     'color': '#2ca02c'
-        # }
+        {
+            'key': "Avance real",
+            'values': data_real,
+            'color': '#ff7f0e',
+            'strokeWidth': 2,
+        },
     ]
 
 

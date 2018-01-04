@@ -47,15 +47,15 @@ router.register(
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^my_menu/', DynamicMenuView.as_view(), name="my_menu"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/$',
         TableroControTablalView.as_view(), name="tablero_control_tabla"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_certificacion',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/graph_certificacion/$',
         TCCertficacionGraphView.as_view(), name="tablero_control_curva_cert"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_costo',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_costo/$',
         TCCostoGraphView.as_view(), name="tablero_control_curva_costo"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_avance',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/graph_avance/$',
         TCAvanceGraphView.as_view(), name="tablero_control_curva_avance"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/consolidado',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/consolidado/$',
         TCConsolidadoGraphView.as_view(), name="tablero_control_consolidado"),
 
 ]

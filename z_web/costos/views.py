@@ -319,11 +319,6 @@ class CostosAltaEquipos(BaseCostosMixin, TemplateView):
 class CargarCostosSelectView(BaseCostosMixin, TemplateView):
     template_name = 'frontend/costos/modal/cargar_costos_select.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(CargarCostosSelectView, self).get_context_data(**kwargs)
-        context["es_proyeccion"] = kwargs.get("es_proyeccion", False)
-        return context
-
 
 class EditarCostosView(BaseCostosMixin, FormWithUserMixin, ModalViewMixin, UpdateView):
     model = CostoReal
@@ -542,7 +537,7 @@ class AvanceObraCreateView(BaseCostosMixin, TemplateView):
                         errors.append(u"Ya existe un valor para el periodo y centro de costo seleccionado.")
                         has_error = True
                     else:
-                        f.save(centro_costo, self.es_proyeccion)
+                        f.save(centro_costo)
                 if has_error:
                     raise IntegrityError
         except IntegrityError:
