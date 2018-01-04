@@ -28,7 +28,7 @@ export class CertificacionesRealComponent implements OnInit {
 
   refresh() {
     this.loaded = false;
-    this.registroServ.get_certificacion_real_list().subscribe(
+    this.registroServ.get_certificacion_list().subscribe(
       certs => {
         this.certificaciones = certs as ICertificacion[];
       },
@@ -54,7 +54,7 @@ export class CertificacionesRealComponent implements OnInit {
   filterList(form: NgForm) {
     const { centro_costo, periodo } = form.value;
     this.loaded = false;
-    this.registroServ.get_certificacion_real_list(centro_costo, periodo).subscribe(certificaciones => {
+    this.registroServ.get_certificacion_list(centro_costo, periodo).subscribe(certificaciones => {
       this.certificaciones = certificaciones as ICertificacion[];
       this.loaded = true;
     }, error => this.handleError(error));
@@ -72,7 +72,7 @@ export class CertificacionesRealComponent implements OnInit {
       dialog => {
         dialog.result.then(
           result => {
-            this.registroServ.delete_certificacion_real(cert).subscribe(
+            this.registroServ.delete_certificacion(cert).subscribe(
               r => {
                 this.refresh();
                 this._notifications.success('Certificación eliminada correctamente.');

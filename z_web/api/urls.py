@@ -8,10 +8,10 @@ from rest_framework import routers
 from api.views import (
     PresupuestoViewSet, RevisionViewSet, TipoCostoViewSet,
     ItemPresupuestoViewSet, DynamicMenuView, CentroCostoViewSet,
-    CertificacionRealViewSet, CertificacionProyeccionViewSet,
+    CertificacionRealViewSet,
     PeriodoViewSet, TableroControTablalView, TCCertficacionGraphView,
     TCCostoGraphView, TCAvanceGraphView, TCConsolidadoGraphView,
-    AvanceObraProyectadoViewSet, AvanceObraRealViewSet
+    AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet
 )
 
 router = routers.DefaultRouter()
@@ -29,33 +29,33 @@ router.register(
     r'centro_costos', CentroCostoViewSet, base_name='centro_costo'
 )
 router.register(
-    r'certificaciones_real', CertificacionRealViewSet, base_name='certificacion_real'
-)
-router.register(
-    r'certificaciones_proyeccion', CertificacionProyeccionViewSet, base_name='certificacion_proyeccion'
+    r'certificaciones', CertificacionRealViewSet, base_name='certificacion'
 )
 router.register(
     r'periodos', PeriodoViewSet, base_name='periodo'
 )
 router.register(
-    r'avanceobra_real', AvanceObraRealViewSet, base_name='avanceobra_real'
+    r'avanceobra', AvanceObraViewSet, base_name='avanceobra'
 )
 router.register(
-    r'avanceobra_proyeccion', AvanceObraProyectadoViewSet, base_name='avanceobra_proyeccion'
+    r'proyecciones/avance_obra', ProyeccionAvanceObraViewSet, base_name='proyeccion_avanceobra'
+)
+router.register(
+    r'proyecciones/certificacion', ProyeccionCertificacionViewSet, base_name='proyeccion_certificacion'
 )
 
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^my_menu/', DynamicMenuView.as_view(), name="my_menu"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/$',
         TableroControTablalView.as_view(), name="tablero_control_tabla"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_certificacion',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/graph_certificacion/$',
         TCCertficacionGraphView.as_view(), name="tablero_control_curva_cert"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_costo',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_costo/$',
         TCCostoGraphView.as_view(), name="tablero_control_curva_costo"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/graph_avance',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/graph_avance/$',
         TCAvanceGraphView.as_view(), name="tablero_control_curva_avance"),
-    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/consolidado',
+    url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/consolidado/$',
         TCConsolidadoGraphView.as_view(), name="tablero_control_consolidado"),
 
 ]

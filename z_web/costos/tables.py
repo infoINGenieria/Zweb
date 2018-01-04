@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse_lazy
 from django_tables2 import A, URLColumn, BooleanColumn, Column
 
 from zweb_utils.tables_filters import DefaultTable
-from .models import CostoReal, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion
+from .models import CostoReal, CostoProyeccion, AvanceObra
 
 
 class CostoBaseTable(DefaultTable):
@@ -86,24 +86,12 @@ class ProyeccionByEquipoMontoHSTable(ProyeccionBaseTable):
 # AVANCE DE OBRA #
 ##################
 
-class AvanceObraRealTable(CostoBaseTable):
+class AvanceObraTable(CostoBaseTable):
     delete_link = 'costos:avances_obra_delete'
     edit_link = 'costos:avances_obra_edit'
 
     class Meta(CostoBaseTable.Meta):
-        model = AvanceObraReal
-        fields = ('periodo', 'centro_costo', 'avance', 'observacion', 'links_action')
-
-    def render_avance(self, value):
-        return "{:.1f} %".format(value)
-
-
-class AvanceObraProyeccionTable(CostoBaseTable):
-    delete_link = 'costos:avances_obra_proyeccion_delete'
-    edit_link = 'costos:avances_obra_proyeccion_edit'
-
-    class Meta(CostoBaseTable.Meta):
-        model = AvanceObraProyeccion
+        model = AvanceObra
         fields = ('periodo', 'centro_costo', 'avance', 'observacion', 'links_action')
 
     def render_avance(self, value):

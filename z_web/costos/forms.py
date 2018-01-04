@@ -8,7 +8,8 @@ from crispy_forms.layout import Layout, Div
 
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
-from costos.models import CostoReal, CostoTipo, CostoProyeccion, AvanceObraReal, AvanceObraProyeccion, AvanceObra
+from costos.models import CostoReal, CostoTipo, CostoProyeccion, AvanceObra
+from proyecciones.models import ProyeccionAvanceObra
 from zweb_utils.fields import FlexibleDecimalField
 
 
@@ -92,10 +93,9 @@ class AvanceObraCreateForm(forms.ModelForm):
         model = AvanceObra
         fields = ('periodo', 'avance', 'observacion')
 
-    def save(self, centro_costo, es_proyeccion, commit=True):
+    def save(self, centro_costo, commit=True):
         avance = super(AvanceObraCreateForm, self).save(False)
         avance.centro_costo = centro_costo
-        avance.es_proyeccion = es_proyeccion
         if commit:
             avance.save()
         return avance
@@ -180,7 +180,7 @@ class AvanceObraEditForm(forms.ModelForm):
     avance = FlexibleDecimalField()
 
     class Meta:
-        model = AvanceObraReal
+        model = AvanceObra
         fields = ('periodo', 'centro_costo', 'avance', 'observacion', )
 
     def __init__(self, user, *args, **kwargs):
@@ -195,10 +195,3 @@ class AvanceObraEditForm(forms.ModelForm):
             Div('avance', css_class='col-sm-6'),
             Div('observacion', css_class="col-sm-12"),
         )
-
-
-class AvanceObraProyectadoEditForm(AvanceObraEditForm):
-
-    class Meta:
-        model = AvanceObraProyeccion
-        fields = ('periodo', 'centro_costo', 'avance', 'observacion')

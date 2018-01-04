@@ -215,6 +215,22 @@ class Certificacion(models.Model):
     def total_adicional(self):
         return sum(self.items.exclude(concepto='basica').values_list('monto', flat=True))
 
+    @property
+    def basicos(self):
+        return sum(self.items.filter(concepto='basica').values_list('monto', flat=True))
+
+    @property
+    def cambios(self):
+        return sum(self.items.filter(concepto='cambios').values_list('monto', flat=True))
+
+    @property
+    def reajustes(self):
+        return sum(self.items.filter(concepto='reajuste').values_list('monto', flat=True))
+
+    @property
+    def reclamos(self):
+        return sum(self.items.filter(concepto='reclamos').values_list('monto', flat=True))
+
 
 class CertificacionItem(BaseModel):
 
@@ -235,38 +251,6 @@ class CertificacionItem(BaseModel):
 
     def __str__(self):
         return "{} ($ {})".format(self.get_concepto_display(), self.monto)
-
-
-class CertificacionReal(Certificacion):
-    objects = QueryManager(es_proyeccion=False)
-
-    class Meta:
-        proxy = True
-        verbose_name = 'certificación'
-        verbose_name_plural = 'certificaciones'
-
-    def save(self, *args, **kwargs):
-        """
-        Siempre hago False a es_proyeccion!!
-        """
-        self.es_proyeccion = False
-        return super(CertificacionReal, self).save(*args, **kwargs)
-
-
-class CertificacionProyeccion(Certificacion):
-    objects = QueryManager(es_proyeccion=True)
-
-    class Meta:
-        proxy = True
-        verbose_name = 'proyección de certificación'
-        verbose_name_plural = 'proyecciones de certificación'
-
-    def save(self, *args, **kwargs):
-        """
-        Siempre hago True a es_proyeccion!!
-        """
-        self.es_proyeccion = True
-        return super(CertificacionProyeccion, self).save(*args, **kwargs)
 
 
 class Materiales(models.Model):

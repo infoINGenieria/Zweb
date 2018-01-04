@@ -12,17 +12,21 @@ from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelV
 
 from api.serializers import (
     PresupuestoSerializer, RevisionSerializer, CostoTipoSerializer,
-    ItemPresupuestoSerializer, ObrasSerializer, CertificacionProyeccionSerializer,
-    CertificacionRealSerializer, CertificacionItemSerializer, PeriodoSerializer,
-    CertificacionesSummary, AvanceObraProyeccionSerializer, AvanceObraRealSerializer)
-from api.filters import PresupuestoFilter, CertificacionFilter, AvanceObraFilter
+    ItemPresupuestoSerializer, ObrasSerializer,
+    CertificacionSerializer, CertificacionItemSerializer, PeriodoSerializer,
+    AvanceObraSerializer, ProyeccionAvanceObraSerializer,
+    ProyeccionCertificacionSerializer)
+from api.filters import (
+    PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
+    ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter)
 from core.models import Obras, UserExtension
-from costos.models import CostoTipo, AvanceObraReal, AvanceObraProyeccion
+from costos.models import CostoTipo, AvanceObra
 from parametros.models import Periodo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
+from proyecciones.models import ProyeccionAvanceObra, ProyeccionCertificacion
 from zweb_utils.views import generate_menu_user
-from registro.models import CertificacionProyeccion, CertificacionReal, Certificacion
+from registro.models import Certificacion
 from organizacion.models import UnidadNegocio
 from frontend.tablero.os import (
     generar_tabla_tablero, get_certificacion_graph, get_costos_graph,
@@ -46,16 +50,25 @@ class DynamicMenuView(APIView):
         return Response(menu)
 
 
-class TCCertficacionGraphView(AuthView):
+class GraphDataMixin(object):
+
+    def get_data(self, obra, periodo):
+        raise NotImplementedError
+
     def get(self, request, *args, **kwargs):
         unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
         obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
                                  unidad_negocio=unidad_negocio)
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
         try:
-            data_graph = get_certificacion_graph(obra)
+            data_graph = self.get_data(obra, periodo)
         except Exception as e:
             raise ParseError(e)
         return Response(data_graph)
+
+class TCCertficacionGraphView(GraphDataMixin, AuthView):
+    def get_data(self, obra, periodo):
+        return get_certificacion_graph(obra, periodo)
 
 
 class TCCostoGraphView(AuthView):
@@ -70,16 +83,9 @@ class TCCostoGraphView(AuthView):
         return Response(data_graph)
 
 
-class TCAvanceGraphView(AuthView):
-    def get(self, request, *args, **kwargs):
-        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
-        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
-                                 unidad_negocio=unidad_negocio)
-        try:
-            data_graph = get_avances_graph(obra)
-        except Exception as e:
-            raise ParseError(e)
-        return Response(data_graph)
+class TCAvanceGraphView(GraphDataMixin, AuthView):
+    def get_data(self, obra, periodo):
+        return get_avances_graph(obra, periodo)
 
 
 class TableroControTablalView(AuthView):
@@ -194,69 +200,14 @@ class CentroCostoViewSet(ModelViewSet, AuthView):
     def get_queryset(self):
         return self.get_centros_costos()
 
-    @detail_route(methods=['get'], url_path='certificaciones-reales')
-    def cert_reales(self, request, **kwargs):
-        cc = self.get_object()
-        certs = cc.certificaciones_obras.filter(es_proyeccion=False).order_by('periodo__fecha_fin')
-        serializer = CertificacionRealSerializer(certs, many=True)
-        return Response(serializer.data)
-
-    @detail_route(methods=['get'], url_path='certificaciones-reales/resumen')
-    def cert_reales_summary(self, request, **kwargs):
-        cc = self.get_object()
-        data_dict = cc.certificaciones_obras.filter(
-            es_proyeccion=False).aggregate(
-                start=Min('periodo__fecha_fin'),
-                end=Max('periodo__fecha_fin'),
-                acumulado=Sum('items__monto')
-                )
-        data_dict.update({
-            'cc': cc,
-            'start': Periodo.objects.get(fecha_fin=data_dict["start"]),
-            'end': Periodo.objects.get(fecha_fin=data_dict["end"]),
-        })
-        return Response(CertificacionesSummary(data_dict).data)
-
-    @detail_route(methods=['get'], url_path='certificaciones-proyecciones')
-    def cert_proyecciones(self, request, **kwargs):
-        cc = self.get_object()
-        certs = cc.certificaciones_obras.filter(es_proyeccion=True).order_by('periodo__fecha_fin')
-        serializer = CertificacionProyeccionSerializer(certs, many=True)
-        return Response(serializer.data)
-
-    @detail_route(methods=['get'], url_path='certificaciones-proyecciones/resumen')
-    def cert_proyecciones_summary(self, request, **kwargs):
-        cc = self.get_object()
-        data_dict = cc.certificaciones_obras.filter(
-            es_proyeccion=True).aggregate(
-                start=Min('periodo__fecha_fin'),
-                end=Max('periodo__fecha_fin'),
-                acumulado=Sum('items__monto')
-                )
-        data_dict.update({
-            'cc': cc,
-            'start': Periodo.objects.get(fecha_fin=data_dict["start"]),
-            'end': Periodo.objects.get(fecha_fin=data_dict["end"]),
-        })
-        return Response(CertificacionesSummary(data_dict).data)
-
 
 class CertificacionRealViewSet(ModelViewSet, AuthView):
-    serializer_class = CertificacionRealSerializer
+    serializer_class = CertificacionSerializer
     filter_class = CertificacionFilter
 
     def get_queryset(self):
         obra_qs = self.get_centros_costos()
-        return CertificacionReal.objects.filter(obra__in=obra_qs).order_by('-periodo__fecha_fin')
-
-
-class CertificacionProyeccionViewSet(ModelViewSet, AuthView):
-    serializer_class = CertificacionProyeccionSerializer
-    filter_class = CertificacionFilter
-
-    def get_queryset(self):
-        obra_qs = self.get_centros_costos()
-        return CertificacionProyeccion.objects.filter(obra__in=obra_qs).order_by('-periodo__fecha_fin')
+        return Certificacion.objects.filter(obra__in=obra_qs).order_by('-periodo__fecha_fin')
 
 
 class PeriodoViewSet(ModelViewSet, AuthView):
@@ -264,20 +215,57 @@ class PeriodoViewSet(ModelViewSet, AuthView):
     queryset = Periodo.objects.all().order_by('-fecha_fin')
 
 
-class AvanceObraRealViewSet(ModelViewSet, AuthView):
-    serializer_class = AvanceObraRealSerializer
+class AvanceObraViewSet(ModelViewSet, AuthView):
+    serializer_class = AvanceObraSerializer
     filter_class = AvanceObraFilter
 
     def get_queryset(self):
         obra_qs = self.get_centros_costos()
-        return AvanceObraReal.objects.filter(
+        return AvanceObra.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
 
 
-class AvanceObraProyectadoViewSet(AvanceObraRealViewSet):
-    serializer_class = AvanceObraProyeccionSerializer
+class ProyeccionAvanceObraViewSet(ModelViewSet, AuthView):
+    serializer_class = ProyeccionAvanceObraSerializer
+    filter_class = ProyeccionAvanceObraFilter
 
     def get_queryset(self):
         obra_qs = self.get_centros_costos()
-        return AvanceObraProyeccion.objects.filter(
+        return ProyeccionAvanceObra.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
+
+    @detail_route(methods=['post'], url_path='hacer-vigente')
+    def hacer_vigente(self, request, **kwargs):
+        pao = self.get_object()
+        last = ProyeccionAvanceObra.objects.filter(
+            centro_costo=pao.centro_costo,
+            es_base=True).aggregate(last=Max("base_numero"))
+        pao.es_base = True
+        pao.base_numero = 0
+        if last.get("last") != None:
+            pao.base_numero = last.get("last") + 1
+        pao.save()
+        return Response(ProyeccionAvanceObraSerializer(pao).data)
+
+
+class ProyeccionCertificacionViewSet(ModelViewSet, AuthView):
+    serializer_class = ProyeccionCertificacionSerializer
+    filter_class = ProyeccionCertificacionFilter
+
+    def get_queryset(self):
+        obra_qs = self.get_centros_costos()
+        return ProyeccionCertificacion.objects.filter(
+            centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
+
+    @detail_route(methods=['post'], url_path='hacer-vigente')
+    def hacer_vigente(self, request, **kwargs):
+        pao = self.get_object()
+        last = ProyeccionCertificacion.objects.filter(
+            centro_costo=pao.centro_costo,
+            es_base=True).aggregate(last=Max("base_numero"))
+        pao.es_base = True
+        pao.base_numero = 0
+        if last.get("last") != None:
+            pao.base_numero = last.get("last") + 1
+        pao.save()
+        return Response(ProyeccionCertificacionSerializer(pao).data)

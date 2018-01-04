@@ -1,12 +1,19 @@
 <div class="col-lg-12">
   <h1><a class="btn btn-default" [routerLink]="['/proyecciones']"><i class="fa fa-chevron-left"></i> </a>
     Proyección de avance de obra - {{ centro_costo?.obra }}</h1>
-  <table class="table table-hover">
+    <h2>Revisiones:
+      <select class="form-control input-sm select_title" name="revision_actual" [(ngModel)]="revision_actual" required [disabled]="isDisabled">
+        <option *ngFor="let rev of revisiones" [ngValue]='rev'>
+          {{ rev.periodo.descripcion }} <span *ngIf="rev.es_base">(Base {{ rev.base_numero }})</span>
+        </option>
+      </select>
+      <small>Seleccione la revisión de la proyección que desea visualizar.</small>
+    </h2>
+  <table class="table table-hover table-bordered" *ngIf="revision_actual?.items.length > 0">
     <thead>
       <tr>
         <th>Periodo</th>
         <th>Avance</th>
-        <th>Observación</th>
         <th>Acumulado</th>
         <th>Real</th>
         <th>Acumulado Consolidado</th>
@@ -14,9 +21,9 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let avance of avances;" [@fadeInAnimation] [ngClass]="itemIsValid(avance) ? '' : 'danger'">
+      <tr *ngFor="let avance of revision_actual?.items; let i = index; trackBy:trackByIndex" [@fadeInAnimation] [ngClass]="itemIsValid(avance) ? '' : 'danger'">
         <td>
-          <select class="form-control input-sm" name="periodo" [(ngModel)]="avance.periodo_id" required [disabled]="isDisabled">
+          <select class="form-control input-sm" name="periodo_{{i}}" [(ngModel)]="revision_actual?.items[i].periodo" required [disabled]="isDisabled">
             <option *ngFor="let periodo of periodos" [value]='periodo.pk'>
               {{ periodo.descripcion }}
             </option>
@@ -25,13 +32,10 @@
         <td>
           <div class="input-group input-group-sm">
             <input myCurrencyFormatter [readonly]="isDisabled"
-                type="tel" class="form-control input-sm number" name="avance"
-                [(ngModel)]="avance.avance" #avanceVal/>
+                type="tel" class="form-control input-sm number" name="avance_{{i}}"
+                [(ngModel)]="revision_actual?.items[i].avance" #avanceVal/>
             <span class="input-group-addon">{{ avanceVal.value | porciento }}</span>
           </div>
-        </td>
-        <td>
-            <input type="text" class="form-control input-sm" name="observacion" [(ngModel)]="avance.observacion"/>
         </td>
         <td class="info number">
           {{ acumulado(avance) | porciento }}
@@ -44,16 +48,43 @@
         </td>
         <td>
           <button class="btn btn-danger btn-sm"
-            (click)="eliminarAvanceObra(avance)"><i class="fa fa-trash"></i> Eliminar</button>
+            (click)="eliminarAvanceObra(avance)"><i class="fa fa-trash"></i> Quitar</button>
         </td>
       </tr>
     </tbody>
   </table>
   <button class="btn btn-info" (click)="aniadirAvanceObra()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
-  <button class="btn btn-success" (click)="guardarTodos()" [disabled]="isDisabled">
+  <p class="alert alert-warning" *ngIf="revision_actual?.items.length == 0">
+    Sin ítem en esta revisión. Añadílos haciendo clic en "Añadir ítem a proyección"
+  </p>
+  <h3 *ngIf="revision_actual">Periodo de ajuste:
+    <select class="form-control input-sm select_title" name="periodo_ajuste" [(ngModel)]="revision_actual.periodo_id" required [disabled]="isDisabled">
+      <option *ngFor="let periodo of periodos" [value]='periodo.pk'>
+        {{ periodo.descripcion }}
+      </option>
+    </select>
+    <small>Periodo relacionado con el ajuste de la proyección. Sólo se permite uno por periodo.</small>
+  </h3>
+
+  <button class="btn btn-success" (click)="guardarActual()" [disabled]="isDisabled">
     <i class="fa fa-save"></i>
-    <span *ngIf="!isDisabled">Guardar proyección</span>
-    <span *ngIf="isDisabled">Guardando...</span>
+    <span *ngIf="!isDisabled">Guardar proyección - {{ revision_actual?.periodo.descripcion }}<em *ngIf="revision_actual?.es_base"> (Base {{ revision_actual?.base_numero }})</em></span>
+    <span *ngIf="isDisabled">Procesando...</span>
   </button>
+  <button class="btn btn-primary" (click)="create_new_version_modal()" [disabled]="isDisabled">
+      <i class="fa fa-plus"></i>
+      <span *ngIf="!isDisabled">Crear nueva revisión</span>
+      <span *ngIf="isDisabled">Procesando...</span>
+    </button>
+    <button class="btn btn-danger pull-right" (click)="deleteRevisionActual()" [disabled]="isDisabled" *ngIf="!revision_actual?.es_base">
+      <i class="fa fa-trash"></i>
+      <span *ngIf="!isDisabled">Eliminar revisión - {{ revision_actual?.periodo.descripcion }}</span>
+      <span *ngIf="isDisabled">Procesando...</span>
+    </button>
+    <button class="btn btn-info" (click)="establecerComoBase()" [disabled]="isDisabled" *ngIf="!revision_actual?.es_base">
+      <span *ngIf="!isDisabled">Establecer esta revisión como BASE</span>
+      <span *ngIf="isDisabled">Procesando...</span>
+    </button>
+
 </div>
 

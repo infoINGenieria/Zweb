@@ -4,7 +4,7 @@ from django import forms
 
 from core.models import Obras
 from .models import (Alarma, Combustible, Partediario, Registro, Materiales,
-                     RegistroEquipo, PrecioHistorico, CertificacionReal, AjusteCombustible,
+                     RegistroEquipo, PrecioHistorico, Certificacion, AjusteCombustible,
                      CertificacionInterna, CertificacionItem)
 from zweb_utils.format import currency_format as cur
 

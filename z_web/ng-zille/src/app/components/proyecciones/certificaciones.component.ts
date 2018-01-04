@@ -2,13 +2,16 @@ import { NotificationService } from './../../services/core/notifications.service
 import { Certificacion } from './../../models/Certificacion';
 import { MyCurrencyFormatterDirective } from './../../directives/currency-formatter.directive';
 import { MyCurrencyPipe } from './../../pipes/my-currency.pipe';
-import { ICertificacion, ICentroCosto, IPeriodo, ICertificacionItem } from './../../models/Interfaces';
+import {
+  IProyeccionCertificacion, ICentroCosto, IPeriodo,
+  IItemProyeccionCertificacion } from './../../models/Interfaces';
 import { RegistroService } from './../../services/registro/registro.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
 import { CoreService } from '../../services/core/core.service';
 import { fadeInAnimation } from '../../_animations/index';
 import { Modal } from 'ngx-modialog/plugins/bootstrap';
+import { ProyeccionesService } from '../../services/proyecciones.service';
 
 @Component({
   selector: 'app-certificaciones',
@@ -17,61 +20,71 @@ import { Modal } from 'ngx-modialog/plugins/bootstrap';
   animations: [fadeInAnimation],
 })
 export class CertificacionesComponent implements OnInit {
-  centro_costo: ICentroCosto;
-  certificaciones: ICertificacion[];
-  real_certificaciones: ICertificacion[];
-  periodos: IPeriodo[];
-
-  isDisabled = false;
 
   constructor(
     private route: ActivatedRoute,
     private registro_service: RegistroService,
     private core_service: CoreService,
+    private proyecciones_service: ProyeccionesService,
     private _notifications: NotificationService,
-    private modal: Modal
+    private modal: Modal,
+    private router: Router,
   ) { }
+
+  centro_costo: ICentroCosto;
+  periodos: IPeriodo[];
+
+  revisiones: IProyeccionCertificacion[] = [];
+  revision_actual: IProyeccionCertificacion = null;
+
+  isDisabled = false;
 
   ngOnInit() {
     this.route.params.subscribe(val => {
       const obra_id = val['obra_id'];
+      const rev = val['rev'] || null;
       this.core_service.get_centro_costos(obra_id).subscribe(cc => this.centro_costo = cc);
       this.core_service.get_periodos_list().subscribe(periodos => this.periodos = periodos);
-      this.registro_service
-        .get_certificacion_proyeccion_by_obra(obra_id)
-        .subscribe(certs => this.certificaciones = certs);
-      this.registro_service
-        .get_certificacion_real_by_obra(obra_id)
-        .subscribe(certs => this.real_certificaciones = certs);
+      this.refresh(obra_id, rev);
     });
   }
 
-  refresh() {
-    this.registro_service
-      .get_certificacion_proyeccion_by_obra(this.centro_costo.id)
-      .subscribe(certs => this.certificaciones = certs);
-    this.registro_service
-      .get_certificacion_real_by_obra(this.centro_costo.id)
-      .subscribe(certs => this.real_certificaciones = certs);
+  refresh(obra_id?, rev?) {
+    obra_id = obra_id || this.centro_costo.id;
+    this.proyecciones_service
+      .get_proyeccion_certificacion_list(obra_id)
+      .subscribe(revisiones => {
+        revisiones.map(revision => {
+          revision.items.map(item => {
+            item.monto = Number.parseFloat(String(item.monto));
+          });
+        });
+        this.revisiones = revisiones;
+        if (rev) {
+          this.revision_actual = revisiones.find((i) => i.pk == rev);
+          if (this.revision_actual) {
+            return;
+          }
+        }
+        this.revision_actual = revisiones[revisiones.length - 1];
+      });
   }
 
-  trackByIndex(index: number, item: ICertificacionItem) {
+  trackByIndex(index: number, item: IItemProyeccionCertificacion) {
     return index;
   }
 
-  itemIsValid(item: ICertificacion): boolean {
-    if (item.periodo_id) {
-      if (this._tonum(item.items[0].monto) > 0) {
-        return true;
-      }
-    return false;
+  itemIsValid(item: IItemProyeccionCertificacion): boolean {
+    if (item.periodo && item.monto) {
+      return true;
     }
+    return false;
   }
 
   isAllValid() {
     let periodos = [];
-    for (let cert of this.certificaciones) {
-      const id = this._tonum(cert.periodo_id)
+    for (const av of this.revision_actual.items) {
+      const id = this._tonum(av.periodo);
       if (periodos.indexOf(id) !== -1) {
         return false;
       }
@@ -80,55 +93,55 @@ export class CertificacionesComponent implements OnInit {
     return true;
   }
 
-  find_real(item: ICertificacion) {
-    if (this.real_certificaciones) {
-      return this.real_certificaciones.find((i) => {
-        return i.periodo_id === item.periodo_id;
+  find_real(item: IItemProyeccionCertificacion) {
+    if (this.revision_actual && this.revision_actual.certificacion_real) {
+      return this.revision_actual.certificacion_real.find((i) => {
+        return i.periodo_id === item.periodo;
       });
     }
   }
 
-  acumulado(item: ICertificacion): number {
-    const posicion = this.certificaciones.indexOf(item);
+  find_periodo(periodo_id: Number): IPeriodo {
+    let periodo = this.periodos.find(i => i.pk == periodo_id);
+    return periodo;
+  }
+
+  acumulado(item: IItemProyeccionCertificacion): number {
+    const posicion = this.revision_actual.items.indexOf(item);
     let acumulado = 0.0;
-    for (const cert of this.certificaciones.slice(0, posicion + 1)) {
-      acumulado += this._tonum(cert.items[0].monto);
+    for (const av of this.revision_actual.items.slice(0, posicion + 1)) {
+      acumulado += this._tonum(av.monto);
     }
     return acumulado;
   }
 
 
-  acumuladoConsolidado(item: ICertificacion): number {
+  acumuladoConsolidado(item: IItemProyeccionCertificacion): number {
     /*
       Suma acumulado de los datos reales y, cuando estos no existan,
       la proyección del mes correspondiente.
     */
-    const posicion = this.certificaciones.indexOf(item);
+    const posicion = this.revision_actual.items.indexOf(item);
     let acumulado = 0.0;
-    for (const cert of this.certificaciones.slice(0, posicion + 1)) {
-      let real = this.find_real(cert);
+    for (const _item of this.revision_actual.items.slice(0, posicion + 1)) {
+      let real = this.find_real(_item);
       if (real) {
         acumulado += this._tonum(real.total);
       } else {
-        acumulado += this._tonum(cert.items[0].monto);
+        acumulado += this._tonum(_item.monto);
       }
     }
     return acumulado;
   }
 
   aniadirCertificacion() {
-    let item = new Object as ICertificacionItem;
-    item.monto = 0;
-    let certificacion = new Certificacion();
-    certificacion.items = Array<ICertificacionItem>();
-    certificacion.items.push(item);
-    certificacion.obra_id = this.centro_costo.id;
-    this.certificaciones.push(certificacion);
+    let item = new Object as IItemProyeccionCertificacion;
+    this.revision_actual.items.push(item);
   }
 
-  guardarTodos() {
-    for (let cert of this.certificaciones) {
-      if (!this.itemIsValid(cert)) {
+  guardarActual() {
+    for (let item of this.revision_actual.items) {
+      if (!this.itemIsValid(item)) {
         this._notifications.error('Corrija primero los ítems con fondo rojo.');
         return;
       }
@@ -138,28 +151,133 @@ export class CertificacionesComponent implements OnInit {
       return;
     }
     this.isDisabled = true;
-    for (let cert of this.certificaciones) {
-      if (cert.pk) {
-        this.registro_service.update_certificacion_proyeccion(cert).subscribe(certificacion => {
-        }, error => this.handleError(error));
-      } else {
-        this.registro_service.create_certificacion_proyeccion(cert).subscribe(certificacion => {
-        }, error => this.handleError(error));
-      }
+
+    if (this.revision_actual.pk) {
+      this.proyecciones_service.update_certificacion_proyeccion(this.revision_actual).subscribe(
+        avance => {
+          this._notifications.success('Se guardó correctamente la proyección.');
+          this.refresh(this.centro_costo.id, avance.pk);
+        },
+        error => this.handleError(error),
+        () => this.isDisabled = false
+      );
+    } else {
+      this.proyecciones_service.create_certificacion_proyeccion(this.revision_actual).subscribe(
+        avance => {
+          this._notifications.success('Se creó correctamente la proyección.');
+          this.refresh(this.centro_costo.id, avance.pk);
+        },
+        error => this.handleError(error),
+        () => this.isDisabled = false
+      );
     }
-    setTimeout(() => {
-      this.isDisabled = false;
-      this._notifications.success('Se guardó correctamente la proyección.');
-    }, 1000);
   }
 
-  eliminarCertificacion(obj: ICertificacion) {
+  create_new_version_modal() {
+    const periodo = this.find_periodo(this.revision_actual.periodo_id);
+    const msg = `Está a punto de crear una nueva revisión de la proyección como ` +
+                `ajuste de <b>${periodo.descripcion}</b>. ¿Continuar?`;
+    const dialogRef = this.modal.confirm()
+    .showClose(true)
+    .title('Crear nueva revisión')
+    .message(msg)
+    .cancelBtn('Cancelar')
+    .okBtn('Si, crear!')
+    .open();
+    dialogRef.then(
+      dialog => {
+        dialog.result.then(
+          result => this.crearRevision(),
+          () => {}
+        );
+      },
+    );
+  }
+
+  crearRevision() {
+    let new_revision: IProyeccionCertificacion = Object.assign({}, this.revision_actual);
+    new_revision.es_base = false;
+    new_revision.base_numero = null;
+    new_revision.pk = null;
+    new_revision.items = this.revision_actual.items.map(
+      item => {
+        let new_item = new Object as IItemProyeccionCertificacion;
+        new_item.monto = item.monto;
+        new_item.periodo = item.periodo;
+        return new_item;
+      }
+    );
+    this.proyecciones_service.create_certificacion_proyeccion(new_revision).subscribe(
+      revision => {
+        this._notifications.success('Se creó una nueva revisión de la proyección');
+        this.router.navigate(['/proyecciones', this.centro_costo.id, 'certificaciones', revision.pk]);
+      },
+      error => this.handleError(error)
+    );
+  }
+
+  eliminarItemProyeccion(obj: IItemProyeccionCertificacion) {
+    const dialogRef = this.modal.confirm()
+    .showClose(true)
+    .title('Quitar ítem')
+    .message(
+      '¿Está seguro que desea <b>quitar</b> este ítem de la proyección ' +
+      'de certificacion del sistema?<br><b>Esta acción se confirmará al guardar.</b>')
+    .cancelBtn('Cancelar')
+    .okBtn('Quitar')
+    .open();
+    dialogRef.then(
+      dialog => {
+        dialog.result.then(
+          result => {
+            const idx = this.revision_actual.items.indexOf(obj);
+            this.revision_actual.items.splice(idx, 1);
+          },
+          () => {}
+        );
+      },
+    );
+  }
+
+  establecerComoBase() {
+    if (this.revision_actual.es_base) {
+      this._notifications.error('Esta revisión ya es BASE.');
+      return;
+    }
+    const dialogRef = this.modal.confirm()
+    .showClose(true)
+    .title('Establecer revisión como BASE')
+    .message(`¿Está seguro que desea <b>establecer como BASE</b> esta revisión?`)
+    .cancelBtn('Cancelar')
+    .okBtn('Si, establecer!')
+    .open();
+    dialogRef.then(
+      dialog => {
+        dialog.result.then(
+          result => {
+            this.proyecciones_service.hacer_vigente_certificacion_proyeccion(this.revision_actual).subscribe(
+              r => {
+                this.refresh(this.centro_costo.id, this.revision_actual.pk);
+                this._notifications.success(`La revisión fue establecida como BASE ${r.base_numero}.`);
+              },
+              error => this.handleError(error));
+          },
+          () => {}
+        );
+      },
+    );
+  }
+
+  deleteRevisionActual() {
+    if (this.revision_actual.es_base) {
+      this._notifications.error('No puede quitarse una revisión BASE.');
+      return;
+    }
     const dialogRef = this.modal.confirm()
     .showClose(true)
     .title('Confirmación de eliminación')
-    .message(
-      '¿Está seguro que desea <b>eliminar</b> este ítem de la proyección ' +
-      'de certificación del sistema?<br><b>Esta acción no puede deshacerse.</b>')
+    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión de la proyección del sistema?` +
+             `<br><b>Esta acción no puede deshacerse.</b>`)
     .cancelBtn('Cancelar')
     .okBtn('Eliminar')
     .open();
@@ -167,10 +285,10 @@ export class CertificacionesComponent implements OnInit {
       dialog => {
         dialog.result.then(
           result => {
-            this.registro_service.delete_certificacion_proyeccion(obj).subscribe(
+            this.proyecciones_service.delete_proyeccion_certificacion(this.revision_actual).subscribe(
               r => {
                 this.refresh();
-                this._notifications.success('Ítem eliminado correctamente.');
+                this._notifications.success('Revisión eliminada correctamente.');
               },
               error => this.handleError(error));
           },
@@ -192,6 +310,11 @@ export class CertificacionesComponent implements OnInit {
   }
 
   handleError(error: any) {
-    this._notifications.error(error.statusText || 'Un error ha ocurrido. Por favor, intente nuevamente.');
+    if (error.status === 400) {
+      let error_json = JSON.parse(error._body);
+      this._notifications.error(error_json.join());
+    } else {
+      this._notifications.error('Un error ha ocurrido. Por favor, intente nuevamente.');
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { ICentroCosto, ICertificacionItem } from './Interfaces';
+import { ICentroCosto, ICertificacionItem, IItemProyeccionCertificacion } from './Interfaces';
 export interface MenuEntry {
     name: string;
     icon: string;
@@ -110,4 +110,57 @@ export interface IAvanceObra {
     centro_costo_id: number;
     avance: number;
     observacion: string;
+}
+
+export interface IAvanceObraThin {
+    pk?: number;
+    periodo_id: number;
+    centro_costo_id: number;
+    avance: number;
+    observacion: string;
+}
+
+export interface IItemProyeccionAvanceObra {
+    pk?: number;
+    periodo: number;
+    avance: number;
+}
+
+export interface IProyeccionAvanceObra {
+    pk?: number;
+    periodo: IPeriodo;
+    periodo_id: number;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    observacion: string;
+    es_base: boolean;
+    base_numero: number;
+    items: Array<IItemProyeccionAvanceObra>;
+    avance_real: Array<IAvanceObraThin>;
+}
+
+export interface ICertificacionThin {
+    pk?: number;
+    periodo_id: number;
+    centro_costo_id: number;
+    total: number;
+}
+
+export interface IItemProyeccionCertificacion {
+    pk?: number;
+    periodo: number;
+    monto: number;
+}
+
+export interface IProyeccionCertificacion {
+    pk?: number;
+    periodo: IPeriodo;
+    periodo_id: number;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    observacion: string;
+    es_base: boolean;
+    base_numero: number;
+    items: Array<IItemProyeccionCertificacion>;
+    certificacion_real: Array<ICertificacionThin>;
 }

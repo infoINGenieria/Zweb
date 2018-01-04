@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from model_utils.managers import QueryManager
 
-from .models import CostoParametro, ArchivosAdjuntosPeriodo, CostoReal, CostoTipo, CostoProyeccion
+from .models import CostoParametro, ArchivosAdjuntosPeriodo, CostoReal, CostoTipo, CostoProyeccion, AvanceObra
 from .forms import CostoEditPorCCForm, CostoEditPorEquipoForm
 
 

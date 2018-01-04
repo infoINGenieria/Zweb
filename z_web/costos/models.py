@@ -313,7 +313,7 @@ class CostoProyeccion(Costo):
 
 class AvanceObra(BaseModel):
     """
-    Esta entidad registra el avance de obra real y proyectado para una obra y periodo específico.
+    Esta entidad registra el avance de obra real para una obra y periodo específico.
     """
     periodo = models.ForeignKey(Periodo, verbose_name="periodo")
     centro_costo = models.ForeignKey(
@@ -335,37 +335,4 @@ class AvanceObra(BaseModel):
 
     @property
     def render(self):
-        if self.es_proyeccion:
-            return "Proyección de avance de obra de {} ({})".format(self.centro_costo, self.periodo)
         return "Avance de obra de {} ({})".format(self.centro_costo, self.periodo)
-
-class AvanceObraReal(AvanceObra):
-    objects = QueryManager(es_proyeccion=False)
-
-    class Meta:
-        proxy = True
-        verbose_name = 'avance de obra'
-        verbose_name_plural = 'avances de obra'
-
-    def save(self, *args, **kwargs):
-        """
-        Siempre hago False a es_proyeccion!!
-        """
-        self.es_proyeccion = False
-        return super(AvanceObraReal, self).save(*args, **kwargs)
-
-
-class AvanceObraProyeccion(AvanceObra):
-    objects = QueryManager(es_proyeccion=True)
-
-    class Meta:
-        proxy = True
-        verbose_name = 'proyección de avance de obra'
-        verbose_name_plural = 'proyecciones de avance de obra'
-
-    def save(self, *args, **kwargs):
-        """
-        Siempre hago True a es_proyeccion!!
-        """
-        self.es_proyeccion = True
-        return super(AvanceObraProyeccion, self).save(*args, **kwargs)

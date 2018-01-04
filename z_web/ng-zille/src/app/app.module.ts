@@ -21,7 +21,7 @@ import { RegistroService } from './services/registro/registro.service';
 import { NotificationService } from './services/core/notifications.service';
 import { PresupuestosService } from './services/presupuestos/presupuestos.service';
 import { AvanceObraService } from './services/avanceobra.service';
-
+import { ProyeccionesService} from './services/proyecciones.service';
 // Own
 import { AppComponent } from './app.component';
 import { PresupuestoComponent } from './components/presupuesto/presupuesto.component';
@@ -84,7 +84,8 @@ import { MyCurrencyFormatterDirective } from './directives/currency-formatter.di
     NotificationService,
     RegistroService,
     TableroService,
-    AvanceObraService
+    AvanceObraService,
+    ProyeccionesService
   ],
   bootstrap: [AppComponent]
 })
