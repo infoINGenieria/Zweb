@@ -27,12 +27,6 @@ class ArchivosAdjuntosPeriodoAdmin(admin.ModelAdmin):
     list_display = ('periodo', 'archivo', 'comentario')
 
 
-
-@admin.register(AvanceObra)
-class AvanceObraAdmin(admin.ModelAdmin):
-    list_display = ('centro_costo', 'periodo', 'avance')
-
-
 @admin.register(CostoTipo)
 class CostoTipoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'codigo', 'relacionado_con', 'unidad_monto')
