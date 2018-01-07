@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from model_utils.managers import QueryManager
 
-from .models import CostoParametro, ArchivosAdjuntosPeriodo, CostoReal, CostoTipo, CostoProyeccion, AvanceObra
+from .models import CostoParametro, ArchivosAdjuntosPeriodo, Costo, CostoTipo, AvanceObra
 from .forms import CostoEditPorCCForm, CostoEditPorEquipoForm
 
 
@@ -31,30 +31,6 @@ class ArchivosAdjuntosPeriodoAdmin(admin.ModelAdmin):
 class CostoTipoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'codigo', 'relacionado_con', 'unidad_monto')
     list_filter = ('relacionado_con', 'unidad_monto', )
-
-
-# @admin.register(CostoReal)
-# class CostoAdmin(admin.ModelAdmin):
-#     list_display = ('tipo_costo', 'periodo', 'centro_costo', 'familia_equipo')
-#     list_filter = ('periodo', 'tipo_costo', 'centro_costo', 'familia_equipo', )
-
-#     def get_form(self, request, obj=None, **kwargs):
-#         if not obj:
-#             return super(CostoAdmin, self).get_form(request, obj, **kwargs)
-#         if obj.tipo_costo.es_por_cc:
-#             return CostoEditPorCCForm
-#         else:
-#             return CostoEditPorEquipoForm
-
-#     def has_add_permission(self, request):
-#         return False
-
-
-# @admin.register(CostoProyeccion)
-# class CostoProyeccionAdmin(CostoAdmin):
-
-#     def has_add_permission(self, request):
-#         return False
 
 
 # # Registramos todos los proxies de los costos

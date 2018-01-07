@@ -1,3 +1,4 @@
+import { Periodo } from './../../models/Periodo';
 import { ProyeccionesService } from './../../services/proyecciones.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
@@ -37,12 +38,31 @@ export class AvanceObraComponent implements OnInit {
 
   isDisabled = false;
 
+  initialLoading = true;
+  loadingProgress = 0;
+
+  set_progress() {
+    if (this.initialLoading) {
+      this.loadingProgress += 1;
+      if (this.loadingProgress > 2) {
+        setTimeout(() => this.initialLoading = false, 500);
+      }
+    }
+  }
+
   ngOnInit() {
     this.route.params.subscribe(val => {
       const obra_id = val['obra_id'];
       const rev = val['rev'] || null;
-      this.core_service.get_centro_costos(obra_id).subscribe(cc => this.centro_costo = cc);
-      this.core_service.get_periodos_list().subscribe(periodos => this.periodos = periodos);
+      this.core_service.get_centro_costos(obra_id).subscribe(cc => {
+        this.centro_costo = cc;
+        this.set_progress();
+      });
+      this.core_service.get_periodos_list().subscribe(periodos => {
+        this.periodos = [];
+        periodos.map(p => this.periodos.push(new Periodo(p)));
+        this.set_progress();
+      });
       this.refresh(obra_id, rev);
     });
   }
@@ -61,10 +81,20 @@ export class AvanceObraComponent implements OnInit {
       if (rev) {
         this.revision_actual = revisiones.find((i) => i.pk == rev);
         if (this.revision_actual) {
+          this.set_progress();
           return;
         }
       }
-      this.revision_actual = revisiones[revisiones.length - 1];
+      if (revisiones.length > 0) {
+        this.revision_actual = revisiones[revisiones.length - 1];
+      } else {
+        this.revision_actual = new Object as IProyeccionAvanceObra;
+        this.revision_actual.items = [];
+        this.revision_actual.periodo = this.periodos[this.periodos.length - 1];
+        this.revision_actual.periodo_id = this.revision_actual.periodo.pk;
+        this.revision_actual.centro_costo_id = this.centro_costo.id;
+      }
+      this.set_progress();
     });
   }
 
@@ -98,7 +128,7 @@ export class AvanceObraComponent implements OnInit {
     }
   }
 
-  find_periodo(periodo_id: Number): IPeriodo {
+  find_periodo(periodo_id: Number): Periodo {
     let periodo = this.periodos.find(i => i.pk == periodo_id);
     return periodo;
   }
@@ -135,15 +165,22 @@ export class AvanceObraComponent implements OnInit {
     this.revision_actual.items.push(item);
   }
 
-  guardarActual() {
+  validate() :boolean {
     for (let item of this.revision_actual.items) {
       if (!this.itemIsValid(item)) {
         this._notifications.error('Corrija primero los ítems con fondo rojo.');
-        return;
+        return false;
       }
     }
     if ( !this.isAllValid()) {
       this._notifications.error('Hay más de un ítem con el mismo periodo seleccionado.');
+      return false;
+    }
+    return true;
+  }
+
+  guardarActual() {
+    if (!this.validate()) {
       return;
     }
     this.isDisabled = true;
@@ -170,6 +207,9 @@ export class AvanceObraComponent implements OnInit {
   }
 
   create_new_version_modal() {
+    if (!this.validate()) {
+      return;
+    }
     const periodo = this.find_periodo(this.revision_actual.periodo_id);
     const msg = `Está a punto de crear una nueva revisión de la proyección como ` +
                 `ajuste de <b>${periodo.descripcion}</b>. ¿Continuar?`;
@@ -260,6 +300,9 @@ export class AvanceObraComponent implements OnInit {
   }
 
   establecerComoBase() {
+    if (!this.validate()) {
+      return;
+    }
     if (this.revision_actual.es_base) {
       this._notifications.error('Esta revisión ya es BASE.');
       return;

@@ -416,9 +416,9 @@ class ProyeccionCostoSerializer(serializers.ModelSerializer):
                   'base_numero', 'items', 'costo_real', 'periodos')
 
     def get_periodos(self, obj):
-        periodos = obj.items.values_list(
-            'periodo_id', flat=True).order_by('periodo__fecha_fin')
-        return set(periodos)
+        return obj.items.values_list(
+            'periodo__id', flat=True).distinct().order_by(
+                'periodo__fecha_fin')
 
     def create(self, validated_data):
         centro_costo = validated_data.pop('centro_costo')

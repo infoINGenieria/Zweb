@@ -8,7 +8,7 @@ from crispy_forms.layout import Layout, Div
 
 from core.models import Obras
 from parametros.models import Periodo, FamiliaEquipo
-from costos.models import CostoReal, CostoTipo, CostoProyeccion, AvanceObra
+from costos.models import Costo, CostoTipo, AvanceObra
 from proyecciones.models import ProyeccionAvanceObra
 from zweb_utils.fields import FlexibleDecimalField
 
@@ -111,7 +111,7 @@ class CostoEditPorCCForm(forms.ModelForm):
     monto_total = FlexibleDecimalField()
 
     class Meta:
-        model = CostoReal
+        model = Costo
         fields = ('periodo', 'centro_costo', 'monto_total', 'observacion', )
 
     def __init__(self, user, *args, **kwargs):
@@ -136,7 +136,7 @@ class CostoEditPorEquipoForm(forms.ModelForm):
     monto_anio = FlexibleDecimalField(label='Monto ($/año)', required=False)
 
     class Meta:
-        model = CostoReal
+        model = Costo
         fields = ('periodo', 'familia_equipo', 'monto_hora', 'monto_mes',
                   'monto_anio', 'observacion', )
 
@@ -158,21 +158,6 @@ class CostoEditPorEquipoForm(forms.ModelForm):
                 css_class='row'
             )
         )
-
-
-class ProyeccionEditPorCCForm(CostoEditPorCCForm):
-
-    class Meta:
-        model = CostoProyeccion
-        fields = ('periodo', 'centro_costo', 'monto_total', 'observacion', )
-
-
-class ProyeccionEditPorEquipoForm(CostoEditPorEquipoForm):
-
-    class Meta:
-        model = CostoProyeccion
-        fields = ('periodo', 'familia_equipo', 'monto_hora', 'monto_mes',
-                  'monto_anio', 'observacion', )
 
 
 class AvanceObraEditForm(forms.ModelForm):

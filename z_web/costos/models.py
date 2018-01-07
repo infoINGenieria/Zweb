@@ -151,23 +151,14 @@ class Costo(BaseModel):
     monto_mes = models.DecimalField(verbose_name="$/mes", decimal_places=2, max_digits=18, null=True, blank=True)
     monto_anio = models.DecimalField(verbose_name="$/año", decimal_places=2, max_digits=18, null=True, blank=True)
 
-    es_proyeccion = models.BooleanField(verbose_name="Es una proyección", default=False)
-
     class Meta:
         verbose_name = 'costo'
         verbose_name_plural = 'costos'
         ordering = ('periodo', )
 
-    def get_base_qs_clean(self):
-        """
-        Devuelve la base del query para comprobar si es único el costo. Necesario
-        para proyeccion de costos, que herada todo de costos.
-        """
-        return Costo.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)
-
     def clean(self):
         super(Costo, self).clean()
-        is_unique = self.get_base_qs_clean()
+        is_unique_qs = Costo.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)
         non_unique = None
 
         if self.tipo_costo.es_por_cc:
@@ -176,7 +167,7 @@ class Costo(BaseModel):
             if not self.monto_total:
                 raise ValidationError("El monto total es obligatorio")
 
-            is_unique = is_unique.filter(centro_costo=self.centro_costo)
+            is_unique_qs = is_unique_qs.filter(centro_costo=self.centro_costo)
             non_unique = 'centro de costo'
 
         else:
@@ -186,11 +177,11 @@ class Costo(BaseModel):
             if not any([self.monto_hora, self.monto_mes, self.monto_anio]):
                 raise ValidationError("Debe ingresar al menos un monto para calcular los restantes.")
 
-            is_unique = is_unique.filter(familia_equipo=self.familia_equipo)
+            is_unique_qs = is_unique_qs.filter(familia_equipo=self.familia_equipo)
             non_unique = 'familia de equipo'
         if self.pk:
-            is_unique = is_unique.exclude(pk=self.pk)
-        if is_unique.exists():
+            is_unique_qs = is_unique_qs.exclude(pk=self.pk)
+        if is_unique_qs.exists():
             raise ValidationError("El costo para el periodo {} y {} ya existe.".format(self.periodo, non_unique))
 
     def __str__(self):
@@ -265,50 +256,6 @@ class Costo(BaseModel):
             return "{} | CC: {}".format(self, self.centro_costo)
         else:
             return "{} | Equipo: {}".format(self, self.familia_equipo)
-
-
-class CostoReal(Costo):
-    objects = QueryManager(es_proyeccion=False)
-
-    class Meta:
-        proxy = True
-        verbose_name = 'costo'
-        verbose_name_plural = 'costos'
-
-    def save(self, *args, **kwargs):
-        """
-        Siempre hago False a es_proyeccion!!
-        Calculo costos restantes basados en los parámetros y los valores existentes.
-        """
-        self.es_proyeccion = False
-        return super(CostoReal, self).save(*args, **kwargs)
-
-
-class CostoProyeccion(Costo):
-
-    objects = QueryManager(es_proyeccion=True)
-
-    class Meta:
-        proxy = True
-        verbose_name = 'proyección de costo'
-        verbose_name_plural = 'proyecciones de costo'
-
-    def save(self, *args, **kwargs):
-        """
-        Siempre hago True a es_proyeccion!!
-        Calculo costos restantes basados en los parámetros y los valores existentes.
-        """
-        self.es_proyeccion = True
-        return super(CostoProyeccion, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return "Proyección del costo de {} - {} - {}".format(
-            self.tipo_costo,
-            self.periodo,
-            self.centro_costo if self.tipo_costo.es_por_cc else self.familia_equipo)
-
-    def get_base_qs_clean(self):
-        return CostoProyeccion.objects.filter(periodo=self.periodo, tipo_costo=self.tipo_costo)
 
 
 class AvanceObra(BaseModel):

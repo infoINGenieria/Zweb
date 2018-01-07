@@ -1,6 +1,13 @@
 <div class="col-lg-12">
   <h1><a class="btn btn-default" [routerLink]="['/proyecciones']"><i class="fa fa-chevron-left"></i> </a>
     Proyección de avance de obra - {{ centro_costo?.obra }}</h1>
+
+  <div [ngSwitch]='initialLoading'>
+    <div *ngSwitchCase="true">
+      <div class="loader">Loading...</div>
+    </div>
+    <div *ngSwitchCase="false" [@fadeInAnimation]>
+
     <h2>Revisiones:
       <select class="form-control input-sm select_title" name="revision_actual" [(ngModel)]="revision_actual" required [disabled]="isDisabled">
         <option *ngFor="let rev of revisiones" [ngValue]='rev'>
@@ -9,6 +16,8 @@
       </select>
       <small>Seleccione la revisión de la proyección que desea visualizar.</small>
     </h2>
+    <hr />
+
   <table class="table table-hover table-bordered" *ngIf="revision_actual?.items.length > 0">
     <thead>
       <tr>
@@ -53,7 +62,7 @@
       </tr>
     </tbody>
   </table>
-  <button class="btn btn-info" (click)="aniadirAvanceObra()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
+  <button class="btn btn-warning btn-sm" (click)="aniadirAvanceObra()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
   <p class="alert alert-warning" *ngIf="revision_actual?.items.length == 0">
     Sin ítem en esta revisión. Añadílos haciendo clic en "Añadir ítem a proyección"
   </p>
@@ -85,6 +94,6 @@
       <span *ngIf="!isDisabled">Establecer esta revisión como BASE</span>
       <span *ngIf="isDisabled">Procesando...</span>
     </button>
-
+  </div>
 </div>
 

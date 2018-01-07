@@ -45,6 +45,7 @@ export class CostoComponent implements OnInit {
   revision_actual: IProyeccionCosto = null;
 
   isDisabled = false;
+
   initialLoading = true;
   loadingProgress = 0;
 

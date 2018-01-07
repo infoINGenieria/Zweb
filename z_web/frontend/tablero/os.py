@@ -15,8 +15,8 @@ from organizacion.models import UnidadNegocio
 from parametros.models import Periodo
 from presupuestos.models import Presupuesto, Revision
 from registro.models import CertificacionItem, Certificacion
-from costos.models import CostoReal, CostoProyeccion, AvanceObra, Costo
-from proyecciones.models import ProyeccionAvanceObra, ProyeccionCertificacion
+from costos.models import Costo, AvanceObra, Costo
+from proyecciones.models import ProyeccionAvanceObra, ProyeccionCertificacion, ProyeccionCosto
 
 
 class MarkUpColumn(object):
@@ -235,7 +235,7 @@ def generar_tabla_tablero(obra, periodo):
     costos = {}
 
     # acumulado de costos reales
-    costos_reales = dict(CostoReal.objects.filter(
+    costos_reales = dict(Costo.objects.filter(
         centro_costo=obra,
         periodo__fecha_fin__lte=periodo.fecha_fin).values(
             'tipo_costo__nombre').annotate(
@@ -244,7 +244,7 @@ def generar_tabla_tablero(obra, periodo):
     costos_reales["subtotal"] = sum(costos_reales.values())
 
     # Faltante estimado son las proyecciones de costos
-    costos_proyectados = dict(CostoProyeccion.objects.filter(
+    costos_proyectados = dict(ProyeccionCosto.objects.filter(
         centro_costo=obra, periodo__fecha_inicio__gt=periodo.fecha_fin).values(
             'tipo_costo__nombre').annotate(total=Sum('monto_total')).values_list(
                 'tipo_costo__nombre', 'total').order_by())
@@ -413,19 +413,19 @@ def get_certificacion_graph(obra, periodo):
 
 def get_costos_graph(obra):
     try:
-        first_real = CostoReal.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_real = CostoReal.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-        first_proy = CostoProyeccion.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_proy = CostoProyeccion.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+        first_real = Costo.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_real = Costo.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
+        first_proy = ProyeccionCosto.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
+        last_proy = ProyeccionCosto.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
     except ObjectDoesNotExist:
         raise ValueError("No hay costos reales cargados para el proyecto.")
     costo_real = dict(
-        CostoReal.objects.filter(centro_costo=obra).values(
+        Costo.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('monto_total')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))  #
 
     costo_proy = dict(
-        CostoProyeccion.objects.filter(centro_costo=obra).values(
+        ProyeccionCosto.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('monto_total')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))  #
 
@@ -532,11 +532,11 @@ def get_consolidado_graph(obra):
             'periodo').annotate(total=Sum('items__monto')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))  #
     costo_real = dict(
-        CostoReal.objects.filter(centro_costo=obra).values(
+        Costo.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('monto_total')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))  #
     costo_proy = dict(
-        CostoProyeccion.objects.filter(centro_costo=obra).values(
+        ProyeccionCosto.objects.filter(centro_costo=obra).values(
             'periodo').annotate(total=Sum('monto_total')).values_list(
                 'periodo', 'total').order_by('periodo__fecha_fin'))  #
 

@@ -17,17 +17,13 @@ from core.models import Obras, UserExtension
 from parametros.models import Periodo, FamiliaEquipo
 from zweb_utils.mixins import TableFilterListView, ModalViewMixin
 from zweb_utils.views import LoginAndPermissionRequiredMixin
-from .models import (CostoParametro, Costo, CostoTipo, CostoProyeccion, CostoReal,
-                     AvanceObra)
+from .models import (CostoParametro, Costo, CostoTipo, AvanceObra)
 from .forms import (CostoItemForm, CostoItemFamiliaForm,
                     CopiaCostoForm, CostoCCForm, PeriodoCCForm, PeriodoCostoTipoForm,
                     CostoEquipoForm, CostoEditPorCCForm, CostoEditPorEquipoForm,
-                    ProyeccionEditPorCCForm, ProyeccionEditPorEquipoForm,
                     AvanceObraEditForm, CentroCostoSelectForm, AvanceObraCreateForm)
 from .tables import (CostoTableGeneric, CostosByCCTotalTable,
-                     CostosByEquipoMontoHSTable, ProyeccionTableGeneric,
-                     ProyeccionByCCTotalTable, ProyeccionByEquipoMontoHSTable,
-                     AvanceObraTable)
+                     CostosByEquipoMontoHSTable, AvanceObraTable)
 from .filters import CostosFilter, AvanceObraFilter
 
 
@@ -120,7 +116,7 @@ class CopiaCostosView(BaseCostosMixin, TemplateView):
 class CostosList(BaseCostosMixin, TableFilterListView):
     template_name = 'frontend/costos/costo_list.html'
     filterset_class = CostosFilter
-    model = CostoReal
+    model = Costo
 
     def get_filterset(self, *args, **kwargs):
         """
@@ -134,14 +130,14 @@ class CostosList(BaseCostosMixin, TableFilterListView):
         un = UserExtension.get_unidad_negocio(self.request.user)
         if un:
             if un.codigo == "OS":  # OS no tiene costos por equipos
-                return CostoReal.objects.filter(
+                return Costo.objects.filter(
                     centro_costo__in=Obras.get_centro_costos(self.request.user))
             elif un.codigo == "MS":
-                return CostoReal.objects.filter(
+                return Costo.objects.filter(
                     models.Q(centro_costo__in=Obras.get_centro_costos(self.request.user)) |
                     models.Q(centro_costo__isnull=True))
         # otro caso
-        return CostoReal.objects.all()
+        return Costo.objects.all()
 
     def get_table_class(self, **kwargs):
         if self.filterset.form.is_valid():
@@ -161,7 +157,7 @@ class CostosList(BaseCostosMixin, TableFilterListView):
 
 
 class CostosAltaCC(BaseCostosMixin, TemplateView):
-    model = CostoReal
+    model = Costo
     template_name = "frontend/costos/costos_cc_form.html"
 
     def _form_class(self):
@@ -237,7 +233,7 @@ class CostosAltaCC(BaseCostosMixin, TemplateView):
 class CostosAltaEquipos(BaseCostosMixin, TemplateView):
     template_name = "frontend/costos/costos_eq_form.html"
     form_class = CostoItemForm
-    model = CostoProyeccion
+    model = Costo
 
     def _form_class(self):
         return PeriodoCostoTipoForm
@@ -321,7 +317,7 @@ class CargarCostosSelectView(BaseCostosMixin, TemplateView):
 
 
 class EditarCostosView(BaseCostosMixin, FormWithUserMixin, ModalViewMixin, UpdateView):
-    model = CostoReal
+    model = Costo
 
     def get_form_class(self, **kwargs):
         return CostoEditPorCCForm if self.object.tipo_costo.es_por_cc else CostoEditPorEquipoForm
@@ -341,7 +337,7 @@ class EditarCostosView(BaseCostosMixin, FormWithUserMixin, ModalViewMixin, Updat
 
 class EliminarCostosView(BaseCostosMixin, ModalViewMixin, DeleteView):
     # http_method_names = ["post", ]
-    model = CostoReal
+    model = Costo
     template_name = "modal_delete_form.html"
 
     def get_url_post_form(self):
@@ -351,90 +347,6 @@ class EliminarCostosView(BaseCostosMixin, ModalViewMixin, DeleteView):
         obj = self.get_object()
         obj.delete()
         return render(self.request, 'modal_delete_success.html', {'obj': obj})
-
-
-################
-# PROYECCIONES #
-################
-
-
-class CostosProyeccionListView(CostosList):
-    model = CostoProyeccion
-    # context_object_name = 'proyecciones'
-    template_name = 'frontend/costos/proyeccion_list.html'
-
-    def get_table_class(self, **kwargs):
-        if self.filterset.form.is_valid():
-            tipo_costo = self.filterset.form.cleaned_data["tipo_costo"]
-            relacionado_con = self.filterset.form.cleaned_data["relacionado_con"]
-            if tipo_costo:
-                return ProyeccionByCCTotalTable if tipo_costo.es_por_cc else ProyeccionByEquipoMontoHSTable
-            if relacionado_con:
-                return ProyeccionByCCTotalTable if relacionado_con == 'cc' else ProyeccionByEquipoMontoHSTable
-
-        return ProyeccionTableGeneric
-
-    def get_queryset(self):
-        un = UserExtension.get_unidad_negocio(self.request.user)
-        if un:
-            if un.codigo == "OS":  # OS no tiene costos por equipos
-                return CostoProyeccion.objects.filter(
-                    centro_costo__in=Obras.get_centro_costos(self.request.user))
-            elif un.codigo == "MS":
-                return CostoProyeccion.objects.filter(
-                    models.Q(centro_costo__in=Obras.get_centro_costos(self.request.user)) |
-                    models.Q(centro_costo__isnull=True))
-        # otro caso
-        return CostoProyeccion.objects.all()
-
-
-class CostosProyeccionAltaCC(CostosAltaCC):
-    model = CostoProyeccion
-    template_name = "frontend/costos/proyeccion_cc_form.html"
-
-    def response_result(self, p_form, formsets, saved_count):
-        if saved_count:
-            messages.add_message(
-                self.request, messages.SUCCESS,
-                "Se añadieron correctamente {} proyecciones al centro de costos '{}' para el periodo '{}'".format(
-                    saved_count, p_form.cleaned_data["centro_costo"], p_form.cleaned_data["periodo"]))
-            return HttpResponseRedirect(reverse('costos:proyecciones_alta_cc'))
-        else:
-            messages.add_message(self.request, messages.WARNING, "No íngresó valores de costos")
-            return self.form_invalid(p_form, formsets)
-
-
-class CostosProyeccionAltaEquipos(CostosAltaEquipos):
-    model = CostoProyeccion
-    template_name = "frontend/costos/proyeccion_eq_form.html"
-
-    def response_result(self, p_form, formsets, saved_count):
-        if saved_count:
-            messages.add_message(
-                self.request, messages.SUCCESS,
-                "Se añadieron correctamente {} proyecciones de costos del tipo '{}' para el periodo '{}'".format(
-                    saved_count, p_form.cleaned_data["tipo_costo"], p_form.cleaned_data["periodo"]))
-            return HttpResponseRedirect(reverse('costos:proyecciones_alta_eq'))
-        else:
-            messages.add_message(self.request, messages.WARNING, "No íngresó valores de costos")
-            return self.form_invalid(p_form, formsets)
-
-
-class EditarProyeccionesView(EditarCostosView, UpdateView):
-    model = CostoProyeccion
-
-    def get_form_class(self, **kwargs):
-        return ProyeccionEditPorCCForm if self.object.tipo_costo.es_por_cc else ProyeccionEditPorEquipoForm
-
-    def get_url_post_form(self):
-        return reverse_lazy('costos:proyecciones_edit', args=(self.object.pk, ))
-
-
-class EliminarProyeccionesView(EliminarCostosView):
-    model = CostoProyeccion
-
-    def get_url_post_form(self):
-        return reverse_lazy('costos:proyecciones_delete', args=(self.object.pk, ))
 
 
 ##################
@@ -557,11 +469,6 @@ costos_alta_eq = CostosAltaEquipos.as_view()
 costos_select = CargarCostosSelectView.as_view()
 costos_edit = EditarCostosView.as_view()
 costos_delete = EliminarCostosView.as_view()
-proyecciones_list = CostosProyeccionListView.as_view()
-proyecciones_alta_cc = CostosProyeccionAltaCC.as_view()
-proyecciones_alta_eq = CostosProyeccionAltaEquipos.as_view()
-proyecciones_edit = EditarProyeccionesView.as_view()
-proyecciones_delete = EliminarProyeccionesView.as_view()
 
 avances_obra_list = AvanceObraList.as_view()
 avances_obra_edit = AvanceObraEditView.as_view()

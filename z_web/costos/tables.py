@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse_lazy
 from django_tables2 import A, URLColumn, BooleanColumn, Column
 
 from zweb_utils.tables_filters import DefaultTable
-from .models import CostoReal, CostoProyeccion, AvanceObra
+from costos.models import Costo, AvanceObra
 
 
 class CostoBaseTable(DefaultTable):
@@ -31,7 +31,7 @@ class CostoBaseTable(DefaultTable):
 class CostoTableGeneric(CostoBaseTable):
 
     class Meta(CostoBaseTable.Meta):
-        model = CostoReal
+        model = Costo
         fields = ('periodo', 'tipo_costo', 'centro_costo', 'familia_equipo', 'observacion',
                   'monto_total', 'monto_hora', 'links_action')
 
@@ -39,7 +39,7 @@ class CostoTableGeneric(CostoBaseTable):
 class CostosByCCTotalTable(CostoBaseTable):
 
     class Meta(CostoBaseTable.Meta):
-        model = CostoReal
+        model = Costo
         fields = ('periodo', 'tipo_costo', 'centro_costo', 'observacion',
                   'monto_total', 'links_action')
 
@@ -47,37 +47,7 @@ class CostosByCCTotalTable(CostoBaseTable):
 class CostosByEquipoMontoHSTable(CostoBaseTable):
 
     class Meta(CostoBaseTable.Meta):
-        model = CostoReal
-        fields = ('periodo', 'tipo_costo', 'familia_equipo', 'observacion',
-                  'monto_hora', 'monto_mes', 'monto_anio', 'links_action')
-
-
-#################
-# Proyecciones  #
-#################
-
-class ProyeccionBaseTable(CostoBaseTable):
-    delete_link = 'costos:proyecciones_delete'
-    edit_link = 'costos:proyecciones_edit'
-
-
-class ProyeccionTableGeneric(ProyeccionBaseTable):
-    class Meta(ProyeccionBaseTable.Meta):
-        model = CostoProyeccion
-        fields = ('periodo', 'tipo_costo', 'centro_costo', 'familia_equipo', 'observacion',
-                  'monto_total', 'monto_hora', 'links_action')
-
-
-class ProyeccionByCCTotalTable(ProyeccionBaseTable):
-    class Meta(ProyeccionBaseTable.Meta):
-        model = CostoProyeccion
-        fields = ('periodo', 'tipo_costo', 'centro_costo', 'observacion',
-                  'monto_total', 'links_action')
-
-
-class ProyeccionByEquipoMontoHSTable(ProyeccionBaseTable):
-    class Meta(ProyeccionBaseTable.Meta):
-        model = CostoProyeccion
+        model = Costo
         fields = ('periodo', 'tipo_costo', 'familia_equipo', 'observacion',
                   'monto_hora', 'monto_mes', 'monto_anio', 'links_action')
 

@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "identifier": "ng serve",
+        "type": "npm",
+        "script": "start",
+        "problemMatcher": [],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "identifier": "ng test",
+        "type": "npm",
+        "script": "test",
+        "problemMatcher": [],
+        "group": {
+          "kind": "test",
+          "isDefault": true
+        }
+      },
+      {
+        "type": "typescript",
+        "tsconfig": "z_web/ng-zille/e2e/tsconfig.e2e.json",
+        "problemMatcher": [
+          "$tsc"
+        ]
+      }
+    ]
+  }
