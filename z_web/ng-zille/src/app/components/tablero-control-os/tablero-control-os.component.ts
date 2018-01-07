@@ -201,7 +201,6 @@ export class TableroControlOsComponent implements OnInit {
           },
           axisLabelDistance: 20
         },
-        yDomain: [0, 100],
         forceY: [0],
         callback: this.avanceCallBack
       }
@@ -274,8 +273,16 @@ export class TableroControlOsComponent implements OnInit {
     };
   }
 
+  setNullGraph() {
+    this.graph_data = null;
+    this.graph_costo_data = null;
+    this.graph_avance_data = null;
+    this.graph_consol_data = null;
+  }
 
   showTablero() {
+    this.setNullGraph();
+
     if (this.centro_costo && this.periodo) {
       periodoGlobal = this.periodo;
       this._tableroServ.get_data_table(this.centro_costo, this.periodo).subscribe(
@@ -295,10 +302,6 @@ export class TableroControlOsComponent implements OnInit {
   }
 
   get_data_graphs() {
-    this.graph_data = null;
-    this.graph_costo_data = null;
-    this.graph_avance_data = null;
-    this.graph_consol_data = null;
 
     this._tableroServ.get_graph_certificacion(this.centro_costo, this.periodo).subscribe(
       data => {

@@ -7,7 +7,8 @@ import 'rxjs/add/operator/map';
 import {
   ICentroCosto, IPeriodo,
   IProyeccionAvanceObra, IItemProyeccionAvanceObra,
-  IItemProyeccionCertificacion, IProyeccionCertificacion
+  IItemProyeccionCertificacion, IProyeccionCertificacion,
+  IItemProyeccionCosto, IProyeccionCosto
 } from './../models/Interfaces';
 
 @Injectable()
@@ -97,5 +98,47 @@ export class ProyeccionesService {
     const bodyString = JSON.stringify(certificacion_proyeccion);
     return this.http.post(`/api/proyecciones/certificacion/${certificacion_proyeccion.pk}/hacer-vigente/`, bodyString)
       .map((r: Response) => r.json() as IProyeccionCertificacion);
+  }
+
+  // proyección de Costo
+
+  get_proyeccion_costo_list(centro_costo?, periodo?) {
+    let myParams = new URLSearchParams();
+    myParams.set('centro_costo', centro_costo || '');
+    myParams.set('periodo', periodo || '');
+    return this.http.get('/api/proyecciones/costo/', myParams)
+    .map((r: Response) => {
+      let r_json = r.json();
+      return r_json['results'] as IProyeccionCosto[];
+    });
+  }
+
+  get_proyeccion_costo(pk: number): Observable<IProyeccionCosto> {
+    return this.http.get(`'/api/proyecciones/costo/'${pk}/`)
+      .map((r: Response) => r.json() as IProyeccionCosto);
+  }
+
+  delete_proyeccion_costo(costo: IProyeccionCosto): Observable<IProyeccionCosto> {
+    return this.http.delete(`/api/proyecciones/costo/${costo.pk}/`)
+    .map((res: Response) => res.json())
+    .catch((error: any) => Observable.throw(error.json().detail || 'Error en el servidor'));
+  }
+
+  create_costo_proyeccion(costo_proyeccion: IProyeccionCosto): Observable<IProyeccionCosto> {
+    const bodyString = JSON.stringify(costo_proyeccion);
+    return this.http.post(`/api/proyecciones/costo/`, bodyString)
+      .map((r: Response) => r.json() as IProyeccionCosto);
+  }
+
+  update_costo_proyeccion(costo_proyeccion: IProyeccionCosto): Observable<IProyeccionCosto> {
+    const bodyString = JSON.stringify(costo_proyeccion);
+    return this.http.put(`/api/proyecciones/costo/${costo_proyeccion.pk}`, bodyString)
+      .map((r: Response) => r.json() as IProyeccionCosto);
+  }
+
+  hacer_vigente_costo_proyeccion(costo_proyeccion: IProyeccionCosto): Observable<IProyeccionCosto> {
+    const bodyString = JSON.stringify(costo_proyeccion);
+    return this.http.post(`/api/proyecciones/costo/${costo_proyeccion.pk}/hacer-vigente/`, bodyString)
+      .map((r: Response) => r.json() as IProyeccionCosto);
   }
 }

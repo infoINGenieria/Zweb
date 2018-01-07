@@ -1,4 +1,3 @@
-import { ICentroCosto, ICertificacionItem, IItemProyeccionCertificacion } from './Interfaces';
 export interface MenuEntry {
     name: string;
     icon: string;
@@ -88,6 +87,9 @@ export interface IPeriodo {
     descripcion: string;
     fecha_inicio: string;
     fecha_fin: string;
+
+    fecha_inicio_obj(): any;
+    fecha_fin_obj(): any;
 }
 
 export interface ICertificacion {
@@ -163,4 +165,36 @@ export interface IProyeccionCertificacion {
     base_numero: number;
     items: Array<IItemProyeccionCertificacion>;
     certificacion_real: Array<ICertificacionThin>;
+}
+
+
+export interface ICostoThin {
+    pk?: number;
+    periodo_id: number;
+    centro_costo_id: number;
+    tipo_costo_id: number;
+    monto_total: number;
+}
+
+export interface IItemProyeccionCosto {
+    pk?: number;
+    periodo: number;
+    tipo_costo: number;
+    monto: number;
+}
+
+export interface IProyeccionCosto {
+    pk?: number;
+    periodo: IPeriodo;
+    periodo_id: number;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    tipo_costo: ICostoTipo;
+    tipo_costo_id: number;
+    observacion: string;
+    es_base: boolean;
+    base_numero: number;
+    items: Array<IItemProyeccionCosto>;
+    costo_real: Array<ICostoThin>;
+    periodos: Array<Number>;
 }

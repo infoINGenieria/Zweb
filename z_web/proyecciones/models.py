@@ -2,6 +2,7 @@
 from django.db import models
 
 from core.models import Obras
+from costos.models import CostoTipo
 from parametros.models import Periodo
 from zweb_utils.models import BaseModel
 
@@ -96,3 +97,49 @@ class ItemProyeccionCertificacion(BaseModel):
     def __str__(self):
         return "Certificación de $ {:.1f} para {} en {}".format(
             self.monto, self.proyeccion.centro_costo, self.periodo)
+
+
+
+class ProyeccionCosto(BaseModel):
+    centro_costo = models.ForeignKey(
+        Obras, verbose_name="centro de costo", related_name="mis_proyecciones_costos",
+        limit_choices_to={'es_cc':True})
+    periodo = models.ForeignKey(Periodo, verbose_name="periodo de proyección")
+    observacion = models.CharField(
+        verbose_name='observación', max_length=255, null=True, blank=True)
+    es_base = models.BooleanField(verbose_name="Es linea base", default=False)
+    base_numero = models.PositiveSmallIntegerField(
+        verbose_name='Base número', null=True, blank=True)
+
+    class Meta:
+        unique_together = ('periodo', 'centro_costo')
+        verbose_name = 'proyección de costo'
+        verbose_name_plural = 'proyecciones de costo'
+
+    def __str__(self):
+        return "Proyección de costo de {} para {}".format(
+            self.centro_costo, self.periodo)
+
+    @property
+    def costo_real(self):
+        # todo!!!!!
+        return []
+
+
+class ItemProyeccionCosto(BaseModel):
+    proyeccion = models.ForeignKey(
+        ProyeccionCosto, verbose_name="proyección", related_name='items')
+    periodo = models.ForeignKey(Periodo, verbose_name="periodo")
+    tipo_costo = models.ForeignKey(CostoTipo, verbose_name="tipo de costo")
+    monto = models.DecimalField(
+        verbose_name="Monto ($)", max_digits=18, decimal_places=2)
+
+    class Meta:
+        verbose_name = 'item de proyección de costo'
+        verbose_name = 'ítemes de proyección de costo'
+        ordering = ('periodo__fecha_fin', )
+
+    def __str__(self):
+        return "{}: $ {:.1f} para {} en {}".format(
+            self.tipo_costo, self.monto, self.proyeccion.centro_costo,
+            self.periodo)

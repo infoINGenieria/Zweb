@@ -75,7 +75,10 @@ export class CertificacionesComponent implements OnInit {
   }
 
   itemIsValid(item: IItemProyeccionCertificacion): boolean {
-    if (item.periodo && item.monto) {
+    if (item.periodo) {
+      if (item.monto != null && isNaN(item.monto)) {
+        return false;
+      }
       return true;
     }
     return false;

@@ -69,7 +69,10 @@ export class AvanceObraComponent implements OnInit {
   }
 
   itemIsValid(item: IItemProyeccionAvanceObra): boolean {
-    if (item.periodo && item.avance) {
+    if (item.periodo) {
+      if (item.avance != null && isNaN(item.avance)) {
+        return false;
+      }
       return true;
     }
     return false;

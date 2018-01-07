@@ -44,6 +44,7 @@ import { MonedaPipe } from './pipes/moneda.pipe';
 import { PorcientoPipe } from './pipes/porciento.pipe';
 import { MyCurrencyPipe } from './pipes/my-currency.pipe';
 import { MyCurrencyFormatterDirective } from './directives/currency-formatter.directive';
+import { CostoComponent } from './components/proyecciones/costo.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { MyCurrencyFormatterDirective } from './directives/currency-formatter.di
     MyCurrencyPipe,
     MyCurrencyFormatterDirective,
     PorcientoPipe,
-    AvanceObraComponent
+    AvanceObraComponent,
+    CostoComponent
   ],
   imports: [
     BrowserModule,

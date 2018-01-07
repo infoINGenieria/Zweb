@@ -7,6 +7,7 @@ import { PresupuestosComponent } from './components/presupuestos/presupuestos.co
 import { TableroControlOsComponent } from './components/tablero-control-os/tablero-control-os.component';
 import { ProyeccionesComponent } from './components/proyecciones/proyecciones.component';
 import { CertificacionesComponent } from './components/proyecciones/certificaciones.component';
+import { CostoComponent } from './components/proyecciones/costo.component';
 import { AvanceObraComponent } from './components/proyecciones/avance-obra.component';
 import {
     CertificacionRealComponent, CertificacionesRealComponent,
@@ -22,6 +23,8 @@ const APP_ROUTES: Routes = [
   { path: 'proyecciones/:obra_id/certificaciones/:rev', component: CertificacionesComponent },
   { path: 'proyecciones/:obra_id/avances-obra', component: AvanceObraComponent },
   { path: 'proyecciones/:obra_id/avances-obra/:rev', component: AvanceObraComponent },
+  { path: 'proyecciones/:obra_id/costo', component: CostoComponent },
+  { path: 'proyecciones/:obra_id/costo/:rev', component: CostoComponent },
   { path: 'certificaciones', component: CertificacionesRealComponent },
   { path: 'certificaciones/nuevo', component: CertificacionRealComponent },
   { path: 'certificaciones/:pk', component: CertificacionRealComponent },

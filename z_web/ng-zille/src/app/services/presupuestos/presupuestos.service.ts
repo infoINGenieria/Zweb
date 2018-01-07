@@ -53,7 +53,7 @@ export class PresupuestosService {
   }
 
 
-  /* Tipo de Item de presupuesto */
+  /* Tipo de Item de presupuesto (aka Tipo de costo)*/
   get_tipo_items(): Observable<ICostoTipo[]> {
     return this.http.get(`/api/tipo_costos/`)
       .map((r: Response) => r.json()['results'] as ICostoTipo[]);
