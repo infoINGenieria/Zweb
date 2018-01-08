@@ -244,10 +244,14 @@ def generar_tabla_tablero(obra, periodo):
     costos_reales["subtotal"] = sum(costos_reales.values())
 
     # Faltante estimado son las proyecciones de costos
-    costos_proyectados = dict(ProyeccionCosto.objects.filter(
-        centro_costo=obra, periodo__fecha_inicio__gt=periodo.fecha_fin).values(
-            'tipo_costo__nombre').annotate(total=Sum('monto_total')).values_list(
-                'tipo_costo__nombre', 'total').order_by())
+
+    proyeccion_costo_ultimo_ajuste = ProyeccionCosto.objects.filter(
+        centro_costo=obra, periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
+            '-periodo__fecha_fin').first()
+
+    costos_proyectados = dict(proyeccion_costo_ultimo_ajuste.items.values(
+        'tipo_costo__nombre').annotate(
+            total=Sum('monto')).values_list('tipo_costo__nombre', 'total').order_by())
     costos_proyectados["subtotal"] = sum(costos_proyectados.values())
 
     # Total presupuesto: busco el valor del item del presupuesto (directo e indirecto)
@@ -411,44 +415,55 @@ def get_certificacion_graph(obra, periodo):
         },
     ]
 
-def get_costos_graph(obra):
-    try:
-        first_real = Costo.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_real = Costo.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-        first_proy = ProyeccionCosto.objects.filter(centro_costo=obra).earliest('periodo__fecha_fin')
-        last_proy = ProyeccionCosto.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-    except ObjectDoesNotExist:
-        raise ValueError("No hay costos reales cargados para el proyecto.")
-    costo_real = dict(
-        Costo.objects.filter(centro_costo=obra).values(
-            'periodo').annotate(total=Sum('monto_total')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+def get_costos_graph(obra, periodo):
+    # buscar linea base
+    line_base = ProyeccionCosto.objects.filter(
+        centro_costo=obra, es_base=True).order_by('-base_numero').first()
 
-    costo_proy = dict(
-        ProyeccionCosto.objects.filter(centro_costo=obra).values(
-            'periodo').annotate(total=Sum('monto_total')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+    # buscar costos reales, y completar con la ultima revision
+    costos = Costo.objects.filter(
+        centro_costo=obra, periodo__fecha_fin__lt=periodo.fecha_fin)
 
+    revision = ProyeccionCosto.objects.filter(
+        centro_costo=obra).order_by('-periodo__fecha_fin').first()
+
+    # bucle por los periodos de la proyección
+    periodo_range = ProyeccionCosto.objects.filter(
+        centro_costo=obra).aggregate(
+            ini_fecha=Min('items__periodo__fecha_fin'),
+            fin_fecha=Max('items__periodo__fecha_fin'))
+
+    costo_base = dict(line_base.items.values_list('periodo', 'monto'))
+    costo_real = dict([(costo.periodo_id, costo.monto_total) for costo in costos])
+    costo_revision = dict(revision.items.values_list('periodo', 'monto'))
 
     data_real = []
     data_proy = []
-    for periodo in Periodo.objects.filter(
-            fecha_fin__gte=min(first_real.periodo.fecha_fin, first_proy.periodo.fecha_fin),
-            fecha_fin__lte=max(last_real.periodo.fecha_fin, last_proy.periodo.fecha_fin)).order_by('fecha_fin'):
-        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': costo_real.get(periodo.pk, 0)})
-        data_proy.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': costo_proy.get(periodo.pk, 0)})
 
+    for periodo in Periodo.objects.filter(
+            fecha_fin__gte=periodo_range["ini_fecha"],
+            fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
+        # lo obtengo de la linea base
+        data_proy.append({
+            'x': datetime_to_epoch(periodo.fecha_fin),
+            'y': costo_base.get(periodo.pk, 0)
+        })
+        # lo obtengo de la costos, si no existe, de la ultima revisión o 0
+        data_real.append({
+            'x': datetime_to_epoch(periodo.fecha_fin),
+            'y': costo_real.get(periodo.pk, costo_revision.get(periodo.pk, 0))
+        })
     return [
         {
-            'key': "Costos Reales",
+            'key': "Proyección de costos",
+            'values': data_proy,
+            'color': '#2ca02c'
+        },
+        {
+            'key': "Costos reales",
             'values': data_real,
             'color': '#ff7f0e'
         },
-        {
-            'key': "Costos Proyectados",
-            'values': data_proy,
-            'color': '#2ca02c'
-        }
     ]
 
 
@@ -512,7 +527,7 @@ def get_avances_graph(obra, periodo):
     ]
 
 
-def get_consolidado_graph(obra):
+def get_consolidado_graph(obra, periodo):
     try:
         first_periodo = Periodo.objects.filter(fecha_inicio__lte=obra.fecha_inicio).latest("fecha_inicio")
         ultimo_dato_cert = Certificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')

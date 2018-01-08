@@ -4,6 +4,7 @@ import { ICentroCosto, IPeriodo } from './../../models/Interfaces';
 import { CoreService } from './../../services/core/core.service';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
+import * as moment from 'moment';
 declare let d3: any;
 
 let periodoGlobal: IPeriodo;
@@ -38,6 +39,7 @@ export class TableroControlOsComponent implements OnInit {
 
   g_consol_options = null;
   graph_consol_data = null;
+
   constructor(
     private _coreServ: CoreService,
     private _tableroServ: TableroService,
@@ -46,15 +48,15 @@ export class TableroControlOsComponent implements OnInit {
 
   certCallBack(chart) {
     // drawing the line
-    const fecha = periodoGlobal.fecha_fin.split('/');
-    let limit = new Date(Number.parseInt(fecha[2]), Number.parseInt(fecha[1]) - 1, Number.parseInt(fecha[0])).getTime();
+    const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY');
+    let limit = fecha.toDate().getTime();
     // limit = new Date(limit + 864e5 * 5).getTime();
     const xgrid = [limit];
     const max_value = d3.max([
       d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
       d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
     ]);
-    let custLine = d3.select('#nvs3-graph-cert')
+    let custLine = d3.select('#nvd3-graph-cert')
       .select('.nv-multibar')
       .append('g');
 
@@ -90,16 +92,62 @@ export class TableroControlOsComponent implements OnInit {
 
   avanceCallBack(chart) {
     // drawing the line
-    const fecha = periodoGlobal.fecha_fin.split('/');
-    let limit = new Date(Number.parseInt(fecha[2]), Number.parseInt(fecha[1]) - 1, Number.parseInt(fecha[0])).getTime();
+    const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY');
+    let limit = fecha.toDate().getTime();
     // limit = new Date(limit - (864e5 * 15)).getTime();
+
     const xgrid = [limit];
     const max_value = d3.max([
       d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
       d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
     ]);
-    let custLine = d3.select('#nvs3-graph-avance')
+    let custLine = d3.select('#nvd3-graph-avance')
       .select('.nv-linesWrap')
+      .append('g');
+
+    custLine.selectAll('line')
+      .data(xgrid)
+      .enter()
+      .append('line')
+      .attr({
+        x1: function (d) { return chart.xAxis.scale()(d); },
+        y1: function (d) { return chart.yAxis.scale()(0); },
+        x2: function (d) { return chart.xAxis.scale()(d); },
+        y2: function (d) { return chart.yAxis.scale()(max_value); }
+      })
+      .style('stroke', '#0000FF')
+      .style('stroke-dasharray', '5,5')
+      .style('stroke-width', '2px')
+      ;
+
+    // resize the chart with vertical lines
+    // but only the third line will be scaled properly...
+    nv.utils.windowResize(function () {
+      chart.update();
+      custLine.selectAll('line')
+        .transition()
+        .attr({
+          x1: function (d) { return chart.xAxis.scale()(d); },
+          y1: function (d) { return chart.yAxis.scale()(0); },
+          x2: function (d) { return chart.xAxis.scale()(d); },
+          y2: function (d) { return chart.yAxis.scale()(max_value); }
+        });
+    });
+  }
+
+  costosCallBack(chart) {
+    // drawing the line
+    const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY');
+    let limit = fecha.toDate().getTime();
+    // limit = new Date(limit - (864e5 * 15)).getTime();
+
+    const xgrid = [limit];
+    const max_value = d3.max([
+      d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
+      d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
+    ]);
+    let custLine = d3.select('#nvd3-graph-costo')
+      .select('.nv-multibar')
       .append('g');
 
     custLine.selectAll('line')
@@ -209,19 +257,20 @@ export class TableroControlOsComponent implements OnInit {
 
     this.g_costo_options = {
       chart: {
-        type: 'lineChart',
+        type: 'multiBarChart',
         height: 350,
         margin: {
-          top: 80,
-          right: 80,
+          top: 60,
+          right: 30,
           bottom: 60,
-          left: 80
+          left: 120
         },
         x: function (d) { return d.x; },
         y: function (d) { return d.y; },
-        useInteractiveGuideline: true,
-        // interpolate: 'basis',
+        stacked: false,
         showLegend: true,
+        duration: 500,
+        showControls: false,
         xAxis: {
           axisLabel: 'Periodo',
           tickFormat: function (d) {
@@ -233,8 +282,9 @@ export class TableroControlOsComponent implements OnInit {
           tickFormat: function (d) {
             return '$ ' + d3.format(',.2f')(d);
           },
-          // axisLabelDistance: -10
-        }
+          axisLabelDistance: 50
+        },
+        callback: this.costosCallBack
       }
     };
 
@@ -311,14 +361,14 @@ export class TableroControlOsComponent implements OnInit {
         this.handleError(error);
       }
     );
-    // this._tableroServ.get_graph_costo(this.centro_costo).subscribe(
-    //   data => {
-    //     setTimeout(() => this.graph_costo_data = data, 1000);
-    //   },
-    //   error => {
-    //     this.handleError(error);
-    //   }
-    // );
+    this._tableroServ.get_graph_costo(this.centro_costo, this.periodo).subscribe(
+      data => {
+        setTimeout(() => this.graph_costo_data = data, 1000);
+      },
+      error => {
+        this.handleError(error);
+      }
+    );
     this._tableroServ.get_graph_avance(this.centro_costo, this.periodo).subscribe(
       data => {
         setTimeout(() => this.graph_avance_data = data, 1000);

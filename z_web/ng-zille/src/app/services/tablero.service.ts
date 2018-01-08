@@ -20,8 +20,8 @@ export class TableroService {
     .map((r: Response) => r.json());
   }
 
-  get_graph_costo(centro_costo: ICentroCosto): Observable<any> {
-    return this.http.get(`/api/tablero/os/${centro_costo.id}/graph_costo/`)
+  get_graph_costo(centro_costo: ICentroCosto, periodo: IPeriodo): Observable<any> {
+    return this.http.get(`/api/tablero/os/${centro_costo.id}/${periodo.pk}/graph_costo/`)
     .map((r: Response) => r.json());
   }
   get_graph_avance(centro_costo: ICentroCosto, periodo: IPeriodo): Observable<any> {
@@ -29,8 +29,8 @@ export class TableroService {
     .map((r: Response) => r.json());
   }
 
-  get_graph_consolidado(centro_costo: ICentroCosto): Observable<any> {
-    return this.http.get(`/api/tablero/os/${centro_costo.id}/consolidado/`)
+  get_graph_consolidado(centro_costo: ICentroCosto, periodo: IPeriodo): Observable<any> {
+    return this.http.get(`/api/tablero/os/${centro_costo.id}/${periodo.pk}/consolidado/`)
     .map((r: Response) => r.json());
   }
 }
