@@ -35,7 +35,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('proyecciones', '0003_auto_20171231_0950'),
-        ('registro', '0036_auto_20171216_1236'),
     ]
 
     operations = [
