@@ -62,12 +62,15 @@
       </tr>
     </tbody>
   </table>
-  <button class="btn btn-warning btn-sm" (click)="aniadirAvanceObra()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
-  <p class="alert alert-warning" *ngIf="revision_actual?.items.length == 0">
+  <button class="btn btn-warning btn-sm mb10" (click)="aniadirAvanceObra()"><i class="fa fa-plus"></i> Añadir item a proyección</button>
+  <p class="alert alert-info" *ngIf="revision_actual?.items.length == 0">
     Sin ítem en esta revisión. Añadílos haciendo clic en "Añadir ítem a proyección"
   </p>
   <h3 *ngIf="revision_actual">Periodo de ajuste:
-    <select class="form-control input-sm select_title" name="periodo_ajuste" [(ngModel)]="revision_actual.periodo_id" required [disabled]="isDisabled">
+    <select class="form-control input-sm select_title" name="periodo_ajuste"
+       [(ngModel)]="revision_actual.periodo_id" required [disabled]="isDisabled"
+       (change)="actualizarPeriodo()"
+       >
       <option *ngFor="let periodo of periodos" [value]='periodo.pk'>
         {{ periodo.descripcion }}
       </option>

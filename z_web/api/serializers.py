@@ -239,7 +239,7 @@ class ProyeccionAvanceObraSerializer(serializers.ModelSerializer):
     centro_costo = ObrasSerializer(read_only=True)
     centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
     items = ItemProyeccionAvanceObraSerializer(many=True)
-    avance_real = ThinAvanceObraSerializer(many=True)
+    avance_real = ThinAvanceObraSerializer(many=True, read_only=True)
 
     class Meta:
         model = ProyeccionAvanceObra
@@ -253,6 +253,11 @@ class ProyeccionAvanceObraSerializer(serializers.ModelSerializer):
         avance = ProyeccionAvanceObra(**validated_data)
         avance.centro_costo_id = centro_costo["pk"]
         avance.periodo_id = periodo["pk"]
+        if not ProyeccionAvanceObra.objects.filter(
+                centro_costo_id=avance.centro_costo_id).exists():
+            avance.base_numero = 0
+            avance.es_base = True
+
         try:
             avance.save()
         except IntegrityError:
@@ -261,6 +266,7 @@ class ProyeccionAvanceObraSerializer(serializers.ModelSerializer):
                 'Ya existe una %s ajustado en el periodo %s.' % (
                     ProyeccionAvanceObra._meta.verbose_name,
                     periodo))
+
         for item_data in items:
             ItemProyeccionAvanceObra.objects.create(
                 proyeccion=avance,
@@ -315,7 +321,7 @@ class ProyeccionCertificacionSerializer(serializers.ModelSerializer):
     centro_costo = ObrasSerializer(read_only=True)
     centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
     items = ItemProyeccionCertificacionSerializer(many=True)
-    certificacion_real = ThinCertificacionSerializer(many=True)
+    certificacion_real = ThinCertificacionSerializer(many=True, read_only=True)
 
     class Meta:
         model = ProyeccionAvanceObra
@@ -330,6 +336,10 @@ class ProyeccionCertificacionSerializer(serializers.ModelSerializer):
         certificacion = ProyeccionCertificacion(**validated_data)
         certificacion.centro_costo_id = centro_costo["pk"]
         certificacion.periodo_id = periodo["pk"]
+        if not ProyeccionCertificacion.objects.filter(
+                centro_costo_id=certificacion.centro_costo_id).exists():
+            certificacion.base_numero = 0
+            certificacion.es_base = True
         try:
             certificacion.save()
         except IntegrityError:
@@ -427,6 +437,10 @@ class ProyeccionCostoSerializer(serializers.ModelSerializer):
         costo = ProyeccionCosto(**validated_data)
         costo.centro_costo_id = centro_costo["pk"]
         costo.periodo_id = periodo["pk"]
+        if not ProyeccionCosto.objects.filter(
+                centro_costo_id=costo.centro_costo_id).exists():
+            costo.base_numero = 0
+            costo.es_base = True
         try:
             costo.save()
         except IntegrityError:

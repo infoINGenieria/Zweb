@@ -57,13 +57,13 @@ export class AvanceObraComponent implements OnInit {
       this.core_service.get_centro_costos(obra_id).subscribe(cc => {
         this.centro_costo = cc;
         this.set_progress();
+        this.refresh(obra_id, rev);
       });
       this.core_service.get_periodos_list().subscribe(periodos => {
         this.periodos = [];
         periodos.map(p => this.periodos.push(new Periodo(p)));
         this.set_progress();
       });
-      this.refresh(obra_id, rev);
     });
   }
 
@@ -131,6 +131,12 @@ export class AvanceObraComponent implements OnInit {
   find_periodo(periodo_id: Number): Periodo {
     let periodo = this.periodos.find(i => i.pk == periodo_id);
     return periodo;
+  }
+
+  actualizarPeriodo() {
+    if (this.revision_actual) {
+      this.revision_actual.periodo = this.find_periodo(this.revision_actual.periodo_id);
+    }
   }
 
   acumulado(item: IItemProyeccionAvanceObra): number {

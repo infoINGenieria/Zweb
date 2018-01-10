@@ -65,7 +65,9 @@
 
 
     <h3 *ngIf="revision_actual">Periodo de ajuste:
-      <select class="form-control input-sm select_title" name="periodo_ajuste" [(ngModel)]="revision_actual.periodo_id" required [disabled]="isDisabled" (change)="actualizarPeriodo()">
+      <select class="form-control input-sm select_title" name="periodo_ajuste"
+          [(ngModel)]="revision_actual.periodo_id" required [disabled]="isDisabled"
+          (change)="actualizarPeriodo()">
         <option *ngFor="let periodo of periodos" [value]='periodo.pk'>
           {{ periodo.descripcion }}
         </option>

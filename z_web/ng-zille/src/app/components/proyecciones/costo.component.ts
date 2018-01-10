@@ -65,6 +65,7 @@ export class CostoComponent implements OnInit {
       this.core_service.get_centro_costos(obra_id).subscribe(cc => {
         this.centro_costo = cc;
         this.set_progress();
+        this.refresh(obra_id, rev);
       });
       this.core_service.get_periodos_list().subscribe(periodos => {
         this.periodos = [];
@@ -75,7 +76,6 @@ export class CostoComponent implements OnInit {
         this.tipo_costos = tipos;
         this.set_progress();
       });
-      this.refresh(obra_id, rev);
     });
   }
 
