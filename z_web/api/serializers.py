@@ -1,5 +1,6 @@
 # coding: utf-8
 from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
@@ -240,11 +241,13 @@ class ProyeccionAvanceObraSerializer(serializers.ModelSerializer):
     centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
     items = ItemProyeccionAvanceObraSerializer(many=True)
     avance_real = ThinAvanceObraSerializer(many=True, read_only=True)
+    base_vigente = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = ProyeccionAvanceObra
         fields = ('pk', 'periodo', 'periodo_id', 'centro_costo', 'centro_costo_id',
-                  'observacion', 'es_base', 'base_numero', 'items', 'avance_real')
+                  'observacion', 'es_base', 'base_numero', 'items', 'avance_real',
+                  'base_vigente')
 
     def create(self, validated_data):
         centro_costo = validated_data.pop('centro_costo')
@@ -260,12 +263,8 @@ class ProyeccionAvanceObraSerializer(serializers.ModelSerializer):
 
         try:
             avance.save()
-        except IntegrityError:
-            periodo = Periodo.objects.get(pk=avance.periodo_id)
-            raise serializers.ValidationError(
-                'Ya existe una %s ajustado en el periodo %s.' % (
-                    ProyeccionAvanceObra._meta.verbose_name,
-                    periodo))
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message)
 
         for item_data in items:
             ItemProyeccionAvanceObra.objects.create(
@@ -284,7 +283,11 @@ class ProyeccionAvanceObraSerializer(serializers.ModelSerializer):
         instance.observacion = validated_data.get("observacion", instance.observacion)
         instance.es_base = validated_data.get("es_base", instance.es_base)
         instance.base_numero = validated_data.get("base_numero", instance.base_numero)
-        instance.save()
+        try:
+            instance.save()
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message)
+
         exists_pks = []
         for item in items:
             if "pk" in item:
@@ -323,10 +326,13 @@ class ProyeccionCertificacionSerializer(serializers.ModelSerializer):
     items = ItemProyeccionCertificacionSerializer(many=True)
     certificacion_real = ThinCertificacionSerializer(many=True, read_only=True)
 
+    base_vigente = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = ProyeccionAvanceObra
         fields = ('pk', 'periodo', 'periodo_id', 'centro_costo', 'centro_costo_id',
-                  'observacion', 'es_base', 'base_numero', 'items', 'certificacion_real')
+                  'observacion', 'es_base', 'base_numero', 'items', 'certificacion_real',
+                  'base_vigente')
 
 
     def create(self, validated_data):
@@ -342,12 +348,8 @@ class ProyeccionCertificacionSerializer(serializers.ModelSerializer):
             certificacion.es_base = True
         try:
             certificacion.save()
-        except IntegrityError:
-            periodo = Periodo.objects.get(pk=certificacion.periodo_id)
-            raise serializers.ValidationError(
-                'Ya existe una %s ajustado en el periodo %s.' % (
-                    ProyeccionAvanceObra._meta.verbose_name,
-                    periodo))
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message)
         for item_data in items:
             ItemProyeccionCertificacion.objects.create(
                 proyeccion=certificacion,
@@ -365,7 +367,10 @@ class ProyeccionCertificacionSerializer(serializers.ModelSerializer):
         instance.observacion = validated_data.get("observacion", instance.observacion)
         instance.es_base = validated_data.get("es_base", instance.es_base)
         instance.base_numero = validated_data.get("base_numero", instance.base_numero)
-        instance.save()
+        try:
+            instance.save()
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message)
         exists_pks = []
         for item in items:
             if "pk" in item:
@@ -418,11 +423,12 @@ class ProyeccionCostoSerializer(serializers.ModelSerializer):
     costo_real = ThinCostoSerializer(many=True, read_only=True)
 
     periodos = serializers.SerializerMethodField()
+    base_vigente = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = ProyeccionCosto
         fields = ('pk', 'periodo', 'periodo_id', 'centro_costo', 'centro_costo_id',
-                  'observacion', 'es_base',
+                  'observacion', 'es_base', 'base_vigente',
                   'base_numero', 'items', 'costo_real', 'periodos')
 
     def get_periodos(self, obj):
@@ -443,12 +449,8 @@ class ProyeccionCostoSerializer(serializers.ModelSerializer):
             costo.es_base = True
         try:
             costo.save()
-        except IntegrityError:
-            periodo = Periodo.objects.get(pk=costo.periodo_id)
-            raise serializers.ValidationError(
-                'Ya existe una %s ajustado en el periodo %s.' % (
-                    ProyeccionAvanceObra._meta.verbose_name,
-                    periodo))
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message)
         for item_data in items:
             ItemProyeccionCosto.objects.create(
                 proyeccion=costo,
@@ -467,7 +469,10 @@ class ProyeccionCostoSerializer(serializers.ModelSerializer):
         instance.observacion = validated_data.get("observacion", instance.observacion)
         instance.es_base = validated_data.get("es_base", instance.es_base)
         instance.base_numero = validated_data.get("base_numero", instance.base_numero)
-        instance.save()
+        try:
+            instance.save()
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message)
         exists_pks = []
         for item in items:
             if "pk" in item:

@@ -224,19 +224,6 @@ class ProyeccionAvanceObraViewSet(ModelViewSet, AuthView):
         return ProyeccionAvanceObra.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
 
-    @detail_route(methods=['post'], url_path='hacer-vigente')
-    def hacer_vigente(self, request, **kwargs):
-        pao = self.get_object()
-        last = ProyeccionAvanceObra.objects.filter(
-            centro_costo=pao.centro_costo,
-            es_base=True).aggregate(last=Max("base_numero"))
-        pao.es_base = True
-        pao.base_numero = 0
-        if last.get("last") != None:
-            pao.base_numero = last.get("last") + 1
-        pao.save()
-        return Response(ProyeccionAvanceObraSerializer(pao).data)
-
 
 class ProyeccionCertificacionViewSet(ModelViewSet, AuthView):
     serializer_class = ProyeccionCertificacionSerializer
@@ -247,19 +234,6 @@ class ProyeccionCertificacionViewSet(ModelViewSet, AuthView):
         return ProyeccionCertificacion.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
 
-    @detail_route(methods=['post'], url_path='hacer-vigente')
-    def hacer_vigente(self, request, **kwargs):
-        pao = self.get_object()
-        last = ProyeccionCertificacion.objects.filter(
-            centro_costo=pao.centro_costo,
-            es_base=True).aggregate(last=Max("base_numero"))
-        pao.es_base = True
-        pao.base_numero = 0
-        if last.get("last") != None:
-            pao.base_numero = last.get("last") + 1
-        pao.save()
-        return Response(ProyeccionCertificacionSerializer(pao).data)
-
 
 class ProyeccionCostoViewSet(ModelViewSet, AuthView):
     serializer_class = ProyeccionCostoSerializer
@@ -269,16 +243,3 @@ class ProyeccionCostoViewSet(ModelViewSet, AuthView):
         obra_qs = self.get_centros_costos()
         return ProyeccionCosto.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
-
-    @detail_route(methods=['post'], url_path='hacer-vigente')
-    def hacer_vigente(self, request, **kwargs):
-        pao = self.get_object()
-        last = ProyeccionCosto.objects.filter(
-            centro_costo=pao.centro_costo,
-            es_base=True).aggregate(last=Max("base_numero"))
-        pao.es_base = True
-        pao.base_numero = 0
-        if last.get("last") != None:
-            pao.base_numero = last.get("last") + 1
-        pao.save()
-        return Response(ProyeccionCostoSerializer(pao).data)

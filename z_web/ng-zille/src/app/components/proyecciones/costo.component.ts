@@ -110,6 +110,7 @@ export class CostoComponent implements OnInit {
         }
         this.set_progress();
       });
+      this.isDisabled = false;
   }
 
   get periodosDisponibles(): Periodo[] {
@@ -121,10 +122,11 @@ export class CostoComponent implements OnInit {
 
   getColumnClass(id_periodo) {
     let periodo = this.find_periodo(id_periodo);
-    if (periodo.fecha_fin_obj().isSame(this.revision_actual.periodo.fecha_fin_obj())) {
+    let perdiod_revision = this.find_periodo(this.revision_actual.periodo_id);
+    if (periodo.fecha_fin_obj().isSame(perdiod_revision.fecha_fin_obj())) {
       return 'current';
     } else {
-      if (periodo.fecha_fin_obj().isAfter(this.revision_actual.periodo.fecha_fin_obj())) {
+      if (periodo.fecha_fin_obj().isAfter(perdiod_revision.fecha_fin_obj())) {
         return 'future';
       } else {
         return 'pass';
@@ -247,12 +249,6 @@ export class CostoComponent implements OnInit {
     return periodo;
   }
 
-  actualizarPeriodo() {
-    if (this.revision_actual) {
-      this.revision_actual.periodo = this.find_periodo(this.revision_actual.periodo_id);
-    }
-  }
-
   _tonum(val): number {
     if (typeof val === 'number') {
       return val;
@@ -271,6 +267,7 @@ export class CostoComponent implements OnInit {
     } else {
       this._notifications.error('Un error ha ocurrido. Por favor, intente nuevamente.');
     }
+    this.isDisabled = false;
   }
 
 
@@ -287,6 +284,34 @@ export class CostoComponent implements OnInit {
     }
     return true;
   }
+
+  guardarActualModal() {
+    if (!this.validate()) {
+      return;
+    }
+    if (this.revision_actual.es_base) {
+      const msg = `Está a punto de guardar los cambios en la línea BASE ` +
+                  `${this.revision_actual.base_numero}</b>. ¿Continuar?`;
+      const dialogRef = this.modal.confirm()
+      .showClose(true)
+      .title('Guardar línea base')
+      .message(msg)
+      .cancelBtn('Cancelar')
+      .okBtn('Si, continuar!')
+      .open();
+      dialogRef.then(
+        dialog => {
+          dialog.result.then(
+            result => this.guardarActual(),
+            () => {}
+          );
+        },
+      );
+    } else {
+      this.guardarActual();
+    }
+  }
+
   guardarActual() {
     if (!this.validate()) {
       return;
@@ -320,11 +345,11 @@ export class CostoComponent implements OnInit {
       return;
     }
     const periodo = this.find_periodo(this.revision_actual.periodo_id);
-    const msg = `Está a punto de crear una nueva revisión de la proyección como ` +
-                `ajuste de <b>${periodo.descripcion}</b>. ¿Continuar?`;
+    const msg = `Está a punto de crear una nueva revisión de la proyección ` +
+                `para el periodo de <b>${periodo.descripcion}</b>. ¿Continuar?`;
     const dialogRef = this.modal.confirm()
     .showClose(true)
-    .title('Crear nueva revisión')
+    .title('Guardar como nueva revisión')
     .message(msg)
     .cancelBtn('Cancelar')
     .okBtn('Si, crear!')
@@ -340,6 +365,7 @@ export class CostoComponent implements OnInit {
   }
 
   crearRevision() {
+    this.isDisabled = true;
     let new_revision: IProyeccionCosto = Object.assign({}, this.revision_actual);
     new_revision.es_base = false;
     new_revision.base_numero = null;
@@ -366,7 +392,7 @@ export class CostoComponent implements OnInit {
     );
   }
 
-  establecerComoBase() {
+  establecerComoBaseModal() {
     if (!this.validate()) {
       return;
     }
@@ -377,25 +403,46 @@ export class CostoComponent implements OnInit {
 
     const dialogRef = this.modal.confirm()
     .showClose(true)
-    .title('Establecer revisión como BASE')
-    .message(`¿Está seguro que desea <b>establecer como BASE</b> esta revisión?`)
+    .title('Establecer nueva línea BASE')
+    .message(`¿Está seguro que desea establecer una <b>nueva línea BASE</b> a partir de esta revisión?`)
     .cancelBtn('Cancelar')
     .okBtn('Si')
     .open();
     dialogRef.then(
       dialog => {
         dialog.result.then(
-          result => {
-            this.proyecciones_service.hacer_vigente_costo_proyeccion(this.revision_actual).subscribe(
-              r => {
-                this._notifications.success(`La revisión fue establecida como BASE ${r.base_numero}.`);
-                this.refresh(this.centro_costo.id, r.pk);
-              },
-              error => this.handleError(error));
-          },
+          result => this.establecerComoBase(),
           () => {}
         );
       },
+    );
+  }
+
+  establecerComoBase() {
+    this.isDisabled = true;
+    let new_revision: IProyeccionCosto = Object.assign({}, this.revision_actual);
+    new_revision.es_base = true;
+    new_revision.base_numero = this.revision_actual.base_vigente + 1;
+    new_revision.pk = null;
+    new_revision.items = this.revision_actual.items.map(
+      item => {
+        let new_item = new Object as IItemProyeccionCosto;
+        new_item.monto = item.monto;
+        new_item.tipo_costo = item.tipo_costo;
+        new_item.periodo = item.periodo;
+        return new_item;
+      }
+    );
+
+    let items = new_revision.items.filter(i => this._tonum(i.monto) > 0);
+    new_revision.items = items;
+
+    this.proyecciones_service.create_costo_proyeccion(new_revision).subscribe(
+      revision => {
+        this._notifications.success(`Se creó la nueva revisión BASE ${revision.base_numero}`);
+        this.router.navigate(['/proyecciones', this.centro_costo.id, 'costo', revision.pk]);
+      },
+      error => this.handleError(error)
     );
   }
 
@@ -411,7 +458,7 @@ export class CostoComponent implements OnInit {
     const dialogRef = this.modal.confirm()
     .showClose(true)
     .title('Confirmación de eliminación')
-    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión de la proyección del sistema?` +
+    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión del sistema?` +
              `<br><b>Esta acción no puede deshacerse.</b>`)
     .cancelBtn('Cancelar')
     .okBtn('Eliminar')
@@ -420,6 +467,7 @@ export class CostoComponent implements OnInit {
       dialog => {
         dialog.result.then(
           result => {
+            this.isDisabled = true;
             this.proyecciones_service.delete_proyeccion_costo(this.revision_actual).subscribe(
               r => {
                 this.refresh();

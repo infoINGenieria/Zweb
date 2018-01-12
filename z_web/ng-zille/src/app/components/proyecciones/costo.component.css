@@ -1,6 +1,8 @@
 select.select_title {
     display:  inline-block;
     width: auto;
+    position: relative;
+    top: -4px;
 }
 table {
     display: block;

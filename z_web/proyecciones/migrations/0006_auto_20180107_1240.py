@@ -30,7 +30,7 @@ def migrar_proyeccion_costos(apps, schema_editor):
                 monto=item.monto_total
             )
         c = Costo.objects.filter(centro_costo=cc, es_proyeccion=True).delete()
-        print(c)
+
 
 class Migration(migrations.Migration):
 

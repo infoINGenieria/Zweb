@@ -96,11 +96,12 @@ export class AvanceObraComponent implements OnInit {
       }
       this.set_progress();
     });
+    this.isDisabled = false;
   }
 
   itemIsValid(item: IItemProyeccionAvanceObra): boolean {
     if (item.periodo) {
-      if (item.avance != null && isNaN(item.avance)) {
+      if (item.avance == null || isNaN(Number.parseInt(item.avance + '')) || isNaN(item.avance)) {
         return false;
       }
       return true;
@@ -131,12 +132,6 @@ export class AvanceObraComponent implements OnInit {
   find_periodo(periodo_id: Number): Periodo {
     let periodo = this.periodos.find(i => i.pk == periodo_id);
     return periodo;
-  }
-
-  actualizarPeriodo() {
-    if (this.revision_actual) {
-      this.revision_actual.periodo = this.find_periodo(this.revision_actual.periodo_id);
-    }
   }
 
   acumulado(item: IItemProyeccionAvanceObra): number {
@@ -171,7 +166,7 @@ export class AvanceObraComponent implements OnInit {
     this.revision_actual.items.push(item);
   }
 
-  validate() :boolean {
+  validate(): boolean {
     for (let item of this.revision_actual.items) {
       if (!this.itemIsValid(item)) {
         this._notifications.error('Corrija primero los ítems con fondo rojo.');
@@ -185,10 +180,34 @@ export class AvanceObraComponent implements OnInit {
     return true;
   }
 
-  guardarActual() {
+  guardarActualModal() {
     if (!this.validate()) {
       return;
     }
+    if (this.revision_actual.es_base) {
+      const msg = `Está a punto de guardar los cambios en la línea BASE ` +
+                  `${this.revision_actual.base_numero}</b>. ¿Continuar?`;
+      const dialogRef = this.modal.confirm()
+      .showClose(true)
+      .title('Guardar línea base')
+      .message(msg)
+      .cancelBtn('Cancelar')
+      .okBtn('Si, continuar!')
+      .open();
+      dialogRef.then(
+        dialog => {
+          dialog.result.then(
+            result => this.guardarActual(),
+            () => {}
+          );
+        },
+      );
+    } else {
+      this.guardarActual();
+    }
+  }
+
+  guardarActual() {
     this.isDisabled = true;
 
     if (this.revision_actual.pk) {
@@ -217,11 +236,11 @@ export class AvanceObraComponent implements OnInit {
       return;
     }
     const periodo = this.find_periodo(this.revision_actual.periodo_id);
-    const msg = `Está a punto de crear una nueva revisión de la proyección como ` +
-                `ajuste de <b>${periodo.descripcion}</b>. ¿Continuar?`;
+    const msg = `Está a punto de crear una nueva revisión de la proyección ` +
+                `para el periodo de <b>${periodo.descripcion}</b>. ¿Continuar?`;
     const dialogRef = this.modal.confirm()
     .showClose(true)
-    .title('Crear nueva revisión')
+    .title('Guardar como nueva revisión')
     .message(msg)
     .cancelBtn('Cancelar')
     .okBtn('Si, crear!')
@@ -237,6 +256,7 @@ export class AvanceObraComponent implements OnInit {
   }
 
   crearRevision() {
+    this.isDisabled = true;
     let new_revision: IProyeccionAvanceObra = Object.assign({}, this.revision_actual);
     new_revision.es_base = false;
     new_revision.base_numero = null;
@@ -254,7 +274,7 @@ export class AvanceObraComponent implements OnInit {
         this._notifications.success('Se creó una nueva revisión de la proyección');
         this.router.navigate(['/proyecciones', this.centro_costo.id, 'avances-obra', revision.pk]);
       },
-      error => this.handleError(error)
+      error => this.handleError(error),
     );
   }
 
@@ -303,9 +323,10 @@ export class AvanceObraComponent implements OnInit {
     } else {
       this._notifications.error('Un error ha ocurrido. Por favor, intente nuevamente.');
     }
+    this.isDisabled = false;
   }
 
-  establecerComoBase() {
+  establecerComoBaseModal() {
     if (!this.validate()) {
       return;
     }
@@ -315,27 +336,42 @@ export class AvanceObraComponent implements OnInit {
     }
     const dialogRef = this.modal.confirm()
     .showClose(true)
-    .title('Establecer revisión como BASE')
-    .message(`¿Está seguro que desea <b>establecer como BASE</b> esta revisión?`)
+    .title('Establecer nueva línea BASE')
+    .message(`¿Está seguro que desea establecer una <b>nueva línea BASE</b> a partir de esta revisión?`)
     .cancelBtn('Cancelar')
     .okBtn('Si, establecer!')
     .open();
     dialogRef.then(
       dialog => {
         dialog.result.then(
-          result => {
-            this.proyecciones_service.hacer_vigente_avance_obra_proyeccion(this.revision_actual).subscribe(
-              r => {
-                this.refresh(this.centro_costo.id, this.revision_actual.pk);
-                this._notifications.success(`La revisión fue establecida como BASE ${r.base_numero}.`);
-              },
-              error => this.handleError(error));
-          },
+          result => this.establecerComoBase(),
           () => {}
         );
       },
     );
 
+  }
+  establecerComoBase() {
+    this.isDisabled = true;
+    let new_revision: IProyeccionAvanceObra = Object.assign({}, this.revision_actual);
+    new_revision.es_base = true;
+    new_revision.base_numero = this.revision_actual.base_vigente + 1;
+    new_revision.pk = null;
+    new_revision.items = this.revision_actual.items.map(
+      item => {
+        let new_item = new Object as IItemProyeccionAvanceObra;
+        new_item.avance = item.avance;
+        new_item.periodo = item.periodo;
+        return new_item;
+      }
+    );
+    this.proyecciones_service.create_avance_obra_proyeccion(new_revision).subscribe(
+      revision => {
+        this._notifications.success(`Se creó la nueva revisión base ${revision.base_numero}`);
+        this.router.navigate(['/proyecciones', this.centro_costo.id, 'avances-obra', revision.pk]);
+      },
+      error => this.handleError(error)
+    );
   }
 
   deleteRevisionActual() {
@@ -355,6 +391,7 @@ export class AvanceObraComponent implements OnInit {
       dialog => {
         dialog.result.then(
           result => {
+            this.isDisabled = true;
             this.proyecciones_service.delete_proyeccion_avance_obra(this.revision_actual).subscribe(
               r => {
                 this.refresh();

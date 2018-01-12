@@ -52,12 +52,6 @@ export class ProyeccionesService {
       .map((r: Response) => r.json() as IProyeccionAvanceObra);
   }
 
-  hacer_vigente_avance_obra_proyeccion(avance_obra_proyeccion: IProyeccionAvanceObra): Observable<IProyeccionAvanceObra> {
-    const bodyString = JSON.stringify(avance_obra_proyeccion);
-    return this.http.post(`/api/proyecciones/avance_obra/${avance_obra_proyeccion.pk}/hacer-vigente/`, bodyString)
-      .map((r: Response) => r.json() as IProyeccionAvanceObra);
-  }
-
   // proyección de Certificacion
 
   get_proyeccion_certificacion_list(centro_costo?, periodo?) {
@@ -91,12 +85,6 @@ export class ProyeccionesService {
   update_certificacion_proyeccion(certificacion_proyeccion: IProyeccionCertificacion): Observable<IProyeccionCertificacion> {
     const bodyString = JSON.stringify(certificacion_proyeccion);
     return this.http.put(`/api/proyecciones/certificacion/${certificacion_proyeccion.pk}`, bodyString)
-      .map((r: Response) => r.json() as IProyeccionCertificacion);
-  }
-
-  hacer_vigente_certificacion_proyeccion(certificacion_proyeccion: IProyeccionCertificacion): Observable<IProyeccionCertificacion> {
-    const bodyString = JSON.stringify(certificacion_proyeccion);
-    return this.http.post(`/api/proyecciones/certificacion/${certificacion_proyeccion.pk}/hacer-vigente/`, bodyString)
       .map((r: Response) => r.json() as IProyeccionCertificacion);
   }
 
@@ -136,9 +124,4 @@ export class ProyeccionesService {
       .map((r: Response) => r.json() as IProyeccionCosto);
   }
 
-  hacer_vigente_costo_proyeccion(costo_proyeccion: IProyeccionCosto): Observable<IProyeccionCosto> {
-    const bodyString = JSON.stringify(costo_proyeccion);
-    return this.http.post(`/api/proyecciones/costo/${costo_proyeccion.pk}/hacer-vigente/`, bodyString)
-      .map((r: Response) => r.json() as IProyeccionCosto);
-  }
 }

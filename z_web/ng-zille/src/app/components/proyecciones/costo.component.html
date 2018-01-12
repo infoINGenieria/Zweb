@@ -10,14 +10,28 @@
     <h2>Revisiones:
       <select class="form-control input-sm select_title" name="revision_actual" [(ngModel)]="revision_actual" required [disabled]="isDisabled">
         <option *ngFor="let rev of revisiones" [ngValue]='rev'>
-          {{ rev.periodo.descripcion }} <span *ngIf="rev.es_base">(Base {{ rev.base_numero }})</span>
+          <span *ngIf="rev.es_base">BASE {{ rev.base_numero }}</span>
+          <span *ngIf="!rev.es_base">{{ rev.periodo.descripcion }}</span>
         </option>
       </select>
+      <button class="btn btn-sm btn-info" title="Volver a cargar desde la base de datos"
+        (click)="refresh(centro_costo.id, revision_actual.periodo_id)">
+        <i class="fa fa-refresh"></i>
+      </button>
       <small>Seleccione la revisión de la proyección que desea visualizar.</small>
     </h2>
     <hr />
 
-    <table class="table" *ngIf="revision_actual">
+    <h3 *ngIf="revision_actual">Periodo del reporte:
+        <select class="form-control input-sm select_title" name="periodo_ajuste"
+            [(ngModel)]="revision_actual.periodo_id" required [disabled]="isDisabled">
+          <option *ngFor="let periodo of periodos" [value]='periodo.pk'>
+            {{ periodo.descripcion }}
+          </option>
+        </select>
+      </h3>
+
+    <table class="table table-hover" *ngIf="revision_actual">
       <thead>
         <tr>
           <th>Costo</th>
@@ -62,37 +76,25 @@
       <button (click)="addPeriodoToItems(addPeriodo.value)" class="btn btn-warning btn-sm">Añadir columna</button>
     </p>
 
-
-
-    <h3 *ngIf="revision_actual">Periodo de ajuste:
-      <select class="form-control input-sm select_title" name="periodo_ajuste"
-          [(ngModel)]="revision_actual.periodo_id" required [disabled]="isDisabled"
-          (change)="actualizarPeriodo()">
-        <option *ngFor="let periodo of periodos" [value]='periodo.pk'>
-          {{ periodo.descripcion }}
-        </option>
-      </select>
-      <small>Periodo relacionado con el ajuste de la proyección. Sólo se permite uno por periodo.</small>
-    </h3>
-
     <div>
-      <button class="btn btn-success" (click)="guardarActual()" [disabled]="isDisabled">
+      <button class="btn btn-success" (click)="guardarActualModal()" [disabled]="isDisabled">
         <i class="fa fa-save"></i>
-        <span *ngIf="!isDisabled">Guardar proyección {{ revision_actual?.periodo.descripcion }}<em *ngIf="revision_actual?.es_base"> (Base {{ revision_actual?.base_numero }})</em></span>
+        <span *ngIf="!isDisabled && revision_actual?.es_base"> Guardar linea base</span>
+        <span *ngIf="!isDisabled && !revision_actual?.es_base"> Guardar revisión</span>
         <span *ngIf="isDisabled">Procesando...</span>
       </button>
       <button class="btn btn-primary" (click)="create_new_version_modal()" [disabled]="isDisabled">
           <i class="fa fa-plus"></i>
-          <span *ngIf="!isDisabled">Guardar cómo nueva revisión</span>
+          <span *ngIf="!isDisabled">Guardar como nueva revisión</span>
           <span *ngIf="isDisabled">Procesando...</span>
         </button>
         <button class="btn btn-danger pull-right" (click)="deleteRevisionActual()" [disabled]="isDisabled" *ngIf="!revision_actual?.es_base && revision_actual?.pk">
           <i class="fa fa-trash"></i>
-          <span *ngIf="!isDisabled">Eliminar revisión {{ revision_actual?.periodo.descripcion }}</span>
+          <span *ngIf="!isDisabled">Eliminar revisión</span>
           <span *ngIf="isDisabled">Procesando...</span>
         </button>
-        <button class="btn btn-info" (click)="establecerComoBase()" [disabled]="isDisabled" *ngIf="!revision_actual?.es_base && revision_actual?.pk">
-          <span *ngIf="!isDisabled">Establecer esta revisión como BASE</span>
+        <button class="btn btn-info" (click)="establecerComoBaseModal()" [disabled]="isDisabled" *ngIf="!revision_actual?.es_base && revision_actual?.pk">
+          <span *ngIf="!isDisabled">Establecer nueva BASE a partir de esta revisión</span>
           <span *ngIf="isDisabled">Procesando...</span>
         </button>
     </div>

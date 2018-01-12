@@ -139,6 +139,7 @@ export interface IProyeccionAvanceObra {
     base_numero: number;
     items: Array<IItemProyeccionAvanceObra>;
     avance_real: Array<IAvanceObraThin>;
+    base_vigente: number;
 }
 
 export interface ICertificacionThin {
@@ -165,6 +166,7 @@ export interface IProyeccionCertificacion {
     base_numero: number;
     items: Array<IItemProyeccionCertificacion>;
     certificacion_real: Array<ICertificacionThin>;
+    base_vigente: number;
 }
 
 
@@ -197,4 +199,5 @@ export interface IProyeccionCosto {
     items: Array<IItemProyeccionCosto>;
     costo_real: Array<ICostoThin>;
     periodos: Array<Number>;
+    base_vigente: number;
 }

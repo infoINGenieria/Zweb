@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from core.models import Obras
 from costos.models import CostoTipo
@@ -7,7 +8,36 @@ from parametros.models import Periodo
 from zweb_utils.models import BaseModel
 
 
-class ProyeccionAvanceObra(BaseModel):
+class BaseProyeccion(BaseModel):
+
+    class Meta:
+        abstract = True
+
+    def clean(self):
+        if not self.es_base:
+            base_qs = self._meta.model.objects.filter(
+                centro_costo_id=self.centro_costo_id,
+                periodo_id=self.periodo_id,
+                es_base=False)
+            if self.pk:
+                base_qs = base_qs.exclude(pk=self.pk)
+            if base_qs.exists():
+                raise ValidationError(
+                    "Ya existe una revisión de proyección de {} para {}".format(
+                        self.centro_costo, self.periodo))
+
+    def save(self, **kwargs):
+        self.clean()
+        return super(BaseProyeccion, self).save(**kwargs)
+
+    @property
+    def base_vigente(self):
+        last = self._meta.model.objects.filter(
+            es_base=True).order_by('base_numero').last()
+        return last.base_numero or 0
+
+
+class ProyeccionAvanceObra(BaseProyeccion):
     centro_costo = models.ForeignKey(
         Obras, verbose_name="centro de costo", related_name="mis_proyecciones_avance",
         limit_choices_to={'es_cc':True})
@@ -21,7 +51,6 @@ class ProyeccionAvanceObra(BaseModel):
     class Meta:
         verbose_name = 'proyección de avance de obra'
         verbose_name_plural = 'proyecciones de avance de obra'
-        unique_together = ('periodo', 'centro_costo', )
 
     def __str__(self):
         return "Proyección de avance de obra de {} para {}".format(
@@ -30,8 +59,9 @@ class ProyeccionAvanceObra(BaseModel):
     @property
     def avance_real(self):
         return self.centro_costo.mis_avances.filter(
-            periodo__fecha_fin__lt=self.periodo.fecha_fin
+            periodo__fecha_fin__lte=self.periodo.fecha_fin
         ).order_by("periodo__fecha_fin")
+
 
 class ItemProyeccionAvanceObra(BaseModel):
     proyeccion = models.ForeignKey(
@@ -50,7 +80,7 @@ class ItemProyeccionAvanceObra(BaseModel):
             self.avance, self.proyeccion.centro_costo, self.periodo)
 
 
-class ProyeccionCertificacion(BaseModel):
+class ProyeccionCertificacion(BaseProyeccion):
     centro_costo = models.ForeignKey(
         Obras, verbose_name="centro de costo", related_name="mis_proyecciones_certificacion",
         limit_choices_to={'es_cc':True})
@@ -62,7 +92,6 @@ class ProyeccionCertificacion(BaseModel):
         verbose_name='Base número', null=True, blank=True)
 
     class Meta:
-        unique_together = ('periodo', 'centro_costo')
         verbose_name = 'proyeccion de certificación'
         verbose_name_plural = 'proyecciones de certificación'
 
@@ -77,7 +106,7 @@ class ProyeccionCertificacion(BaseModel):
     @property
     def certificacion_real(self):
         return self.centro_costo.certificaciones_obras.filter(
-            periodo__fecha_fin__lt=self.periodo.fecha_fin
+            periodo__fecha_fin__lte=self.periodo.fecha_fin
         ).order_by("periodo__fecha_fin")
 
 
@@ -100,7 +129,7 @@ class ItemProyeccionCertificacion(BaseModel):
 
 
 
-class ProyeccionCosto(BaseModel):
+class ProyeccionCosto(BaseProyeccion):
     centro_costo = models.ForeignKey(
         Obras, verbose_name="centro de costo", related_name="mis_proyecciones_costos",
         limit_choices_to={'es_cc':True})
@@ -112,7 +141,6 @@ class ProyeccionCosto(BaseModel):
         verbose_name='Base número', null=True, blank=True)
 
     class Meta:
-        unique_together = ('periodo', 'centro_costo')
         verbose_name = 'proyección de costo'
         verbose_name_plural = 'proyecciones de costo'
 
@@ -122,7 +150,6 @@ class ProyeccionCosto(BaseModel):
 
     @property
     def costo_real(self):
-        # todo!!!!!
         return []
 
 

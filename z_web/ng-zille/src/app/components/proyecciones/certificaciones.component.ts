@@ -99,6 +99,7 @@ export class CertificacionesComponent implements OnInit {
         }
         this.set_progress();
       });
+      this.isDisabled = false;
   }
 
   trackByIndex(index: number, item: IItemProyeccionCertificacion) {
@@ -107,7 +108,7 @@ export class CertificacionesComponent implements OnInit {
 
   itemIsValid(item: IItemProyeccionCertificacion): boolean {
     if (item.periodo) {
-      if (item.monto != null && isNaN(item.monto)) {
+      if (item.monto == null || isNaN(Number.parseInt(item.monto + '')) || isNaN(item.monto)) {
         return false;
       }
       return true;
@@ -193,6 +194,34 @@ export class CertificacionesComponent implements OnInit {
     return true;
   }
 
+  guardarActualModal() {
+    if (!this.validate()) {
+      return;
+    }
+    if (this.revision_actual.es_base) {
+      const msg = `Está a punto de guardar los cambios en la línea BASE ` +
+                  `${this.revision_actual.base_numero}</b>. ¿Continuar?`;
+      const dialogRef = this.modal.confirm()
+      .showClose(true)
+      .title('Guardar línea base')
+      .message(msg)
+      .cancelBtn('Cancelar')
+      .okBtn('Si, continuar!')
+      .open();
+      dialogRef.then(
+        dialog => {
+          dialog.result.then(
+            result => this.guardarActual(),
+            () => {}
+          );
+        },
+      );
+    } else {
+      this.guardarActual();
+    }
+  }
+
+
   guardarActual() {
     if (!this.validate()) {
       return;
@@ -225,11 +254,11 @@ export class CertificacionesComponent implements OnInit {
       return;
     }
     const periodo = this.find_periodo(this.revision_actual.periodo_id);
-    const msg = `Está a punto de crear una nueva revisión de la proyección como ` +
-                `ajuste de <b>${periodo.descripcion}</b>. ¿Continuar?`;
+    const msg = `Está a punto de crear una nueva revisión de la proyección ` +
+                `para el periodo de <b>${periodo.descripcion}</b>. ¿Continuar?`;
     const dialogRef = this.modal.confirm()
     .showClose(true)
-    .title('Crear nueva revisión')
+    .title('Guardar como nueva revisión')
     .message(msg)
     .cancelBtn('Cancelar')
     .okBtn('Si, crear!')
@@ -245,6 +274,7 @@ export class CertificacionesComponent implements OnInit {
   }
 
   crearRevision() {
+    this.isDisabled = true;
     let new_revision: IProyeccionCertificacion = Object.assign({}, this.revision_actual);
     new_revision.es_base = false;
     new_revision.base_numero = null;
@@ -289,7 +319,7 @@ export class CertificacionesComponent implements OnInit {
     );
   }
 
-  establecerComoBase() {
+  establecerComoBaseModal() {
     if (!this.validate()) {
       return;
     }
@@ -299,25 +329,41 @@ export class CertificacionesComponent implements OnInit {
     }
     const dialogRef = this.modal.confirm()
     .showClose(true)
-    .title('Establecer revisión como BASE')
-    .message(`¿Está seguro que desea <b>establecer como BASE</b> esta revisión?`)
+    .title('Establecer nueva línea BASE')
+    .message(`¿Está seguro que desea establecer una <b>nueva línea BASE</b> a partir de esta revisión?`)
     .cancelBtn('Cancelar')
     .okBtn('Si, establecer!')
     .open();
     dialogRef.then(
       dialog => {
         dialog.result.then(
-          result => {
-            this.proyecciones_service.hacer_vigente_certificacion_proyeccion(this.revision_actual).subscribe(
-              r => {
-                this.refresh(this.centro_costo.id, this.revision_actual.pk);
-                this._notifications.success(`La revisión fue establecida como BASE ${r.base_numero}.`);
-              },
-              error => this.handleError(error));
-          },
+          result => this.establecerComoBase(),
           () => {}
         );
       },
+    );
+  }
+
+  establecerComoBase() {
+    this.isDisabled = true;
+    let new_revision: IProyeccionCertificacion = Object.assign({}, this.revision_actual);
+    new_revision.es_base = true;
+    new_revision.base_numero = this.revision_actual.base_vigente + 1;
+    new_revision.pk = null;
+    new_revision.items = this.revision_actual.items.map(
+      item => {
+        let new_item = new Object as IItemProyeccionCertificacion;
+        new_item.monto = item.monto;
+        new_item.periodo = item.periodo;
+        return new_item;
+      }
+    );
+    this.proyecciones_service.create_certificacion_proyeccion(new_revision).subscribe(
+      revision => {
+        this._notifications.success(`Se creó la nueva revisión BASE ${revision.base_numero}`);
+        this.router.navigate(['/proyecciones', this.centro_costo.id, 'certificaciones', revision.pk]);
+      },
+      error => this.handleError(error)
     );
   }
 
@@ -329,7 +375,7 @@ export class CertificacionesComponent implements OnInit {
     const dialogRef = this.modal.confirm()
     .showClose(true)
     .title('Confirmación de eliminación')
-    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión de la proyección del sistema?` +
+    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión del sistema?` +
              `<br><b>Esta acción no puede deshacerse.</b>`)
     .cancelBtn('Cancelar')
     .okBtn('Eliminar')
@@ -338,6 +384,7 @@ export class CertificacionesComponent implements OnInit {
       dialog => {
         dialog.result.then(
           result => {
+            this.isDisabled = true;
             this.proyecciones_service.delete_proyeccion_certificacion(this.revision_actual).subscribe(
               r => {
                 this.refresh();
@@ -369,5 +416,6 @@ export class CertificacionesComponent implements OnInit {
     } else {
       this._notifications.error('Un error ha ocurrido. Por favor, intente nuevamente.');
     }
+    this.isDisabled = false;
   }
 }
