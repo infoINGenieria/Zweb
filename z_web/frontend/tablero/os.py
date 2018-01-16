@@ -152,7 +152,8 @@ def generar_tabla_tablero(obra, periodo):
     try:
         revision = presupuesto.revisiones.filter(fecha__lte=periodo.fecha_fin).latest('fecha')
     except Revision.DoesNotExist:
-        raise ValueError("Seleccione un periodo posterior. No existen revisiones anteriores a la fecha de fin del periodo")
+        raise ValueError("No existen revisiones anteriores a la fecha "
+                         "de fin del periodo ({0:%d-%m-%Y}".format(periodo.fecha_fin))
     revision_b0 = presupuesto.revisiones.get(version=0)
 
     markup = MarkUp(revision, revision_b0)
@@ -360,72 +361,123 @@ def generar_tabla_tablero(obra, periodo):
 
 
 def datetime_to_epoch(date):
+    # uso el primer día del mes como fecha del periodo, para que
+    # los gráficos coincidan en la escala
+    date = date.replace(day=1)
     return int(time.mktime(date.timetuple())) * 1000
 
 
-def get_certificacion_graph(obra, periodo):
+def get_certificacion_data_2_graph(obra, periodo):
     # buscar linea base
     line_base = ProyeccionCertificacion.objects.filter(
-        centro_costo=obra, es_base=True).order_by('-base_numero').first()
+        centro_costo=obra, es_base=True,
+        periodo__fecha_fin__lte=periodo.fecha_fin).order_by('-base_numero').first()
 
     # buscar certificaciones reales, y completar con la ultima revision
     certificaciones = Certificacion.objects.filter(
-        obra=obra, periodo__fecha_fin__lt=periodo.fecha_fin)
+        obra=obra, periodo__fecha_fin__lte=periodo.fecha_fin)
 
     revision = ProyeccionCertificacion.objects.filter(
-        centro_costo=obra).order_by('-periodo__fecha_fin').first()
+        centro_costo=obra,
+        periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
+            '-periodo__fecha_fin', 'es_base').first()
+
+    return {
+        'certificacion_base': dict(line_base.items.values_list('periodo', 'monto')),
+        'certificacion_real': dict([(cert.periodo_id, cert.total) for cert in certificaciones]),
+        'certificacion_proyeccion': dict(revision.items.values_list('periodo', 'monto')),
+        'base_nombre': "Base {}".format(line_base.base_numero)
+    }
+
+
+def get_costos_data_2_graph(obra, periodo):
+    # buscar linea base
+    line_base = ProyeccionCosto.objects.filter(
+        centro_costo=obra, es_base=True,
+        periodo__fecha_fin__lte=periodo.fecha_fin).order_by('-base_numero').first()
+
+    # buscar costos reales, y completar con la ultima revision
+    costos = Costo.objects.filter(
+        centro_costo__id=96,
+        periodo__fecha_fin__lte=periodo.fecha_fin).values('periodo').annotate(
+            total=Sum('monto_total')).values_list('periodo', 'total')
+
+    revision = ProyeccionCosto.objects.filter(
+        centro_costo=obra,
+        periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
+            '-periodo__fecha_fin', 'es_base').first()
+
+    return {
+        'costo_base': dict(
+            line_base.items.values('periodo').annotate(
+                total=Sum('monto')).values_list('periodo', 'total')
+            ),
+        'costo_real': dict(costos),
+        'costo_proyeccion': dict(
+            revision.items.values('periodo').annotate(
+                total=Sum('monto')).values_list('periodo', 'total')
+            ),
+        'base_nombre': "Base {}".format(line_base.base_numero)
+    }
+
+
+def get_certificacion_graph(obra, periodo):
 
     # bucle por los periodos de la proyección
-
     periodo_range = ProyeccionCertificacion.objects.filter(
         centro_costo=obra).aggregate(
             ini_fecha=Min('items__periodo__fecha_fin'),
             fin_fecha=Max('items__periodo__fecha_fin'))
 
-    cert_base = dict(line_base.items.values_list('periodo', 'monto'))
-    cert_real = dict([(cert.periodo_id, cert.total) for cert in certificaciones])
-    cert_revision = dict(revision.items.values_list('periodo', 'monto'))
+    data = get_certificacion_data_2_graph(obra, periodo)
+    cert_base = data['certificacion_base']
+    cert_real = data['certificacion_real']
+    cert_revision = data['certificacion_proyeccion']
 
     data_real = []
     data_proy = []
+    data_base = []
 
-    for periodo in Periodo.objects.filter(
+    for per in Periodo.objects.filter(
             fecha_fin__gte=periodo_range["ini_fecha"],
             fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
+
+        fecha = datetime_to_epoch(per.fecha_fin)
         # lo obtengo de la linea base
-        data_proy.append({
-            'x': datetime_to_epoch(periodo.fecha_fin),
-            'y': cert_base.get(periodo.pk, 0)
+        data_base.append({
+            'x': fecha,
+            'y': cert_base.get(per.pk, 0)
         })
-        # lo obtengo de la certificaciones, si no existe, de la ultima revisión o 0
-        data_real.append({
-            'x': datetime_to_epoch(periodo.fecha_fin),
-            'y': cert_real.get(periodo.pk, cert_revision.get(periodo.pk, 0))
-        })
+        if per.fecha_fin <= periodo.fecha_fin: # real
+            # lo obtengo de la certificaciones
+            data_real.append({
+                'x': fecha,
+                'y': cert_real.get(per.pk, 0)
+            })
+        else:  # proyección
+            data_proy.append({
+                'x': fecha,
+                'y': cert_revision.get(per.pk, 0)
+            })
     return [
         {
-            'key': "Certificación Proyectada",
-            'values': data_proy,
-            'color': '#2ca02c'
+            'key': data["base_nombre"],
+            'values': data_base,
+            'color': '#4461fc'
         },
         {
-            'key': "Certificación Real",
+            'key': "Cert. Real",
             'values': data_real,
             'color': '#ff7f0e'
+        },
+        {
+            'key': "Cert. Ajustada",
+            'values': data_proy,
+            'color': '#2ca02c'
         },
     ]
 
 def get_costos_graph(obra, periodo):
-    # buscar linea base
-    line_base = ProyeccionCosto.objects.filter(
-        centro_costo=obra, es_base=True).order_by('-base_numero').first()
-
-    # buscar costos reales, y completar con la ultima revision
-    costos = Costo.objects.filter(
-        centro_costo=obra, periodo__fecha_fin__lt=periodo.fecha_fin)
-
-    revision = ProyeccionCosto.objects.filter(
-        centro_costo=obra).order_by('-periodo__fecha_fin').first()
 
     # bucle por los periodos de la proyección
     periodo_range = ProyeccionCosto.objects.filter(
@@ -433,36 +485,52 @@ def get_costos_graph(obra, periodo):
             ini_fecha=Min('items__periodo__fecha_fin'),
             fin_fecha=Max('items__periodo__fecha_fin'))
 
-    costo_base = dict(line_base.items.values_list('periodo', 'monto'))
-    costo_real = dict([(costo.periodo_id, costo.monto_total) for costo in costos])
-    costo_revision = dict(revision.items.values_list('periodo', 'monto'))
+    data = get_costos_data_2_graph(obra, periodo)
+
+    costo_base = data['costo_base']
+    costo_real = data['costo_real']
+    costo_revision = data['costo_proyeccion']
 
     data_real = []
     data_proy = []
+    data_base = []
 
-    for periodo in Periodo.objects.filter(
+    for per in Periodo.objects.filter(
             fecha_fin__gte=periodo_range["ini_fecha"],
             fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
+
+        fecha = datetime_to_epoch(per.fecha_fin)
         # lo obtengo de la linea base
-        data_proy.append({
-            'x': datetime_to_epoch(periodo.fecha_fin),
-            'y': costo_base.get(periodo.pk, 0)
+        data_base.append({
+            'x': fecha,
+            'y': costo_base.get(per.pk, 0)
         })
-        # lo obtengo de la costos, si no existe, de la ultima revisión o 0
-        data_real.append({
-            'x': datetime_to_epoch(periodo.fecha_fin),
-            'y': costo_real.get(periodo.pk, costo_revision.get(periodo.pk, 0))
-        })
+        if per.fecha_fin <= periodo.fecha_fin: # real
+            # lo obtengo de costos
+            data_real.append({
+                'x': fecha,
+                'y': costo_real.get(per.pk, 0)
+            })
+        else:  # proyección
+            data_proy.append({
+                'x': fecha,
+                'y': costo_revision.get(per.pk, 0)
+            })
     return [
         {
-            'key': "Proyección de costos",
-            'values': data_proy,
-            'color': '#2ca02c'
+            'key': data['base_nombre'],
+            'values': data_base,
+            'color': '#4461fc'
         },
         {
             'key': "Costos reales",
             'values': data_real,
             'color': '#ff7f0e'
+        },
+        {
+            'key': "Proyección de costos",
+            'values': data_proy,
+            'color': '#2ca02c'
         },
     ]
 
@@ -470,14 +538,17 @@ def get_costos_graph(obra, periodo):
 def get_avances_graph(obra, periodo):
     # buscar linea base
     line_base = ProyeccionAvanceObra.objects.filter(
-        centro_costo=obra, es_base=True).order_by('-base_numero').first()
+        centro_costo=obra, es_base=True,
+        periodo__fecha_fin__lte=periodo.fecha_fin).order_by('-base_numero').first()
 
     # buscar avance_obra reales, y completar con la ultima revision
     avance_obra = AvanceObra.objects.filter(
-        centro_costo=obra, periodo__fecha_fin__lt=periodo.fecha_fin)
+        centro_costo=obra, periodo__fecha_fin__lte=periodo.fecha_fin)
 
     revision = ProyeccionAvanceObra.objects.filter(
-        centro_costo=obra).order_by('-periodo__fecha_fin').first()
+        centro_costo=obra,
+        periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
+            '-periodo__fecha_fin', 'es_base').first()
 
     # bucle por los periodos de la proyección
 
@@ -492,31 +563,50 @@ def get_avances_graph(obra, periodo):
 
     data_real = []
     data_proy = []
+    data_base = []
 
+    base_acumulada = 0
     real_acumulado = 0
     proyectado_acumulado = 0
     is_first = True
 
-    for periodo in Periodo.objects.filter(
+    for per in Periodo.objects.filter(
             fecha_fin__gte=periodo_range["ini_fecha"],
             fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
+
+
         if is_first:
-            data_proy.append({'x': datetime_to_epoch(periodo.fecha_inicio), 'y': 0})
-            data_real.append({'x': datetime_to_epoch(periodo.fecha_inicio), 'y': 0})
+            fecha_inicio = datetime_to_epoch(per.fecha_inicio)
+            data_base.append({'x': fecha_inicio, 'y': 0})
+            if per.fecha_fin <= periodo.fecha_fin:
+                data_real.append({'x': fecha_inicio, 'y': 0})
+            else:
+                data_proy.append({'x': fecha_inicio, 'y': 0})
             is_first = False
 
-        proyectado_acumulado += avance_obra_base.get(periodo.pk, 0)
-        data_proy.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': proyectado_acumulado})
+        fecha = datetime_to_epoch(per.fecha_fin)
+        base_acumulada += avance_obra_base.get(per.pk, 0)
+        data_base.append({'x': fecha, 'y': base_acumulada})
 
-        real_acumulado += avance_obra_real.get(periodo.pk, avance_obra_revision.get(periodo.pk, 0))
-        data_real.append({'x': datetime_to_epoch(periodo.fecha_fin), 'y': real_acumulado})
+        if per.fecha_fin < periodo.fecha_fin: # real
+            real_acumulado += avance_obra_real.get(per.pk, 0)
+            data_real.append({'x': fecha, 'y': real_acumulado})
+        elif per.fecha_fin == periodo.fecha_fin:  # intersección
+            real_acumulado += avance_obra_real.get(per.pk, 0)
+            proyectado_acumulado = real_acumulado
+            data_real.append({'x': fecha, 'y': real_acumulado})
+            data_proy.append({'x': fecha, 'y': proyectado_acumulado})
+        else:  # proyección
+            proyectado_acumulado += avance_obra_revision.get(per.pk, 0)
+            data_proy.append({'x': fecha, 'y': proyectado_acumulado})
+
 
     return [
         {
-            'key': "Avance Proyectado",
-            'values': data_proy,
-            'color': '#2ca02c',
-            'strokeWidth': 2,
+            'key': "Base {}".format(line_base.base_numero),
+            'values': data_base,
+            'color': '#4461fc',
+            'strokeWidth': 1,
         },
         {
             'key': "Avance real",
@@ -524,107 +614,140 @@ def get_avances_graph(obra, periodo):
             'color': '#ff7f0e',
             'strokeWidth': 2,
         },
+        {
+            'key': "Avance Proyectado",
+            'values': data_proy,
+            'color': '#2ca02c',
+            'classed': 'dashed',
+            'strokeWidth': 2,
+        },
     ]
 
 
 def get_consolidado_graph(obra, periodo):
-    try:
-        first_periodo = Periodo.objects.filter(fecha_inicio__lte=obra.fecha_inicio).latest("fecha_inicio")
-        ultimo_dato_cert = Certificacion.objects.filter(obra=obra).latest('periodo__fecha_fin')
-        ultimo_dato_costo = Costo.objects.filter(centro_costo=obra).latest('periodo__fecha_fin')
-        ultima_fecha = obra.fecha_fin
-        if not ultima_fecha:
-            ultima_fecha = max(ultimo_dato_costo.periodo.fecha_fin, ultimo_dato_cert.periodo.fecha_fin)
-    except ObjectDoesNotExist:
-        raise ValueError("No pudo generarse el gráfico consolidado.")
 
-    cert_real = dict(
-        Certificacion.objects.filter(obra=obra).values(
-            'periodo').annotate(total=Sum('items__monto')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))
-    cert_proyeccion = dict(
-        ProyeccionCertificacion.objects.filter(obra=obra).values(
-            'periodo').annotate(total=Sum('items__monto')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))  #
-    costo_real = dict(
-        Costo.objects.filter(centro_costo=obra).values(
-            'periodo').annotate(total=Sum('monto_total')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))  #
-    costo_proy = dict(
-        ProyeccionCosto.objects.filter(centro_costo=obra).values(
-            'periodo').annotate(total=Sum('monto_total')).values_list(
-                'periodo', 'total').order_by('periodo__fecha_fin'))  #
+    # ventas
+    data_ventas = get_certificacion_data_2_graph(obra, periodo)
+    cert_base = data_ventas['certificacion_base']
+    cert_real = data_ventas['certificacion_real']
+    cert_revision = data_ventas['certificacion_proyeccion']
 
-    data_cert_real = []
-    data_cert_proy = []
-    data_costo_real = []
-    data_costo_proy = []
-    data_revision_costos = []
-    data_revision_venta = []
+    # costos
+    data_costos = get_costos_data_2_graph(obra, periodo)
+    costo_base = data_costos['costo_base']
+    costo_real = data_costos['costo_real']
+    costo_revision = data_costos['costo_proyeccion']
 
-    data_cert_real_acumulado = 0
-    data_cert_proy_acumulado = 0
-    data_costo_real_acumulado = 0
-    data_costo_proy_acumulado = 0
-    presupuesto = Presupuesto.objects.filter(
-        centro_costo=obra).latest('fecha')
+    # bucle por los periodos de la proyección
+    periodo_range = ProyeccionAvanceObra.objects.filter(
+        centro_costo=obra).aggregate(
+            ini_fecha=Min('items__periodo__fecha_fin'),
+            fin_fecha=Max('items__periodo__fecha_fin'))
 
-    for periodo in Periodo.objects.filter(
-            fecha_fin__gte=first_periodo.fecha_fin,
-            fecha_fin__lte=ultima_fecha).order_by('fecha_fin'):
-        fecha = datetime_to_epoch(periodo.fecha_fin)
-        revision = presupuesto.revisiones.filter(fecha__lte=periodo.fecha_fin).latest('fecha')
+    data_real_ventas = []
+    data_proy_ventas = []
+    data_base_ventas = []
 
-        data_revision_costos.append({'x': fecha, 'y': revision.costo_industrial})
-        data_revision_venta.append({'x': fecha, 'y': revision.total_venta})
+    data_real_costos = []
+    data_proy_costos = []
+    data_base_costos = []
 
-        data_cert_real_acumulado += cert_real.get(periodo.pk, 0)
-        data_cert_proy_acumulado += cert_proyeccion.get(periodo.pk, 0)
-        data_costo_real_acumulado += costo_real.get(periodo.pk, 0)
-        data_costo_proy_acumulado += costo_proy.get(periodo.pk, 0)
+    ventas_base_acumulado = 0
+    ventas_real_acumulado = 0
+    ventas_proy_acumulado = 0
 
-        data_cert_real.append({'x': fecha, 'y': data_cert_real_acumulado})
-        data_cert_proy.append({'x': fecha, 'y': data_cert_proy_acumulado})
-        data_costo_real.append({'x': fecha, 'y': data_costo_real_acumulado})
-        data_costo_proy.append({'x': fecha, 'y': data_costo_proy_acumulado})
+    costos_base_acumulado = 0
+    costos_real_acumulado = 0
+    costos_proy_acumulado = 0
+
+    is_first = True
+
+    for per in Periodo.objects.filter(
+            fecha_fin__gte=periodo_range["ini_fecha"],
+            fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
+
+        fecha = datetime_to_epoch(per.fecha_fin)
+        if is_first:
+            fecha_inicio = datetime_to_epoch(per.fecha_inicio)
+            data_base_ventas.append({'x': fecha_inicio, 'y': 0})
+            data_base_costos.append({'x': fecha_inicio, 'y': 0})
+            if per.fecha_fin <= periodo.fecha_fin:
+                data_real_ventas.append({'x': fecha_inicio, 'y': 0})
+                data_real_costos.append({'x': fecha_inicio, 'y': 0})
+            else:
+                data_proy_costos.append({'x': fecha_inicio, 'y': 0})
+                data_proy_ventas.append({'x': fecha_inicio, 'y': 0})
+            is_first = False
+
+        # bases
+
+        ventas_base_acumulado += cert_base.get(per.pk, 0)
+        data_base_ventas.append({'x': fecha, 'y': ventas_base_acumulado})
+
+        costos_base_acumulado += costo_base.get(per.pk, 0)
+        data_base_costos.append({'x': fecha, 'y': costos_base_acumulado})
+
+        if per.fecha_fin < periodo.fecha_fin: # real
+            ventas_real_acumulado += cert_real.get(per.pk, 0)
+            data_real_ventas.append({'x': fecha, 'y': ventas_real_acumulado})
+
+            costos_real_acumulado += costo_real.get(per.pk, 0)
+            data_real_costos.append({'x': fecha, 'y': costos_real_acumulado})
+
+        elif per.fecha_fin == periodo.fecha_fin:  # intersección
+            ventas_real_acumulado += cert_real.get(per.pk, 0)
+            ventas_proy_acumulado = ventas_real_acumulado
+            data_real_ventas.append({'x': fecha, 'y': ventas_real_acumulado})
+            data_proy_ventas.append({'x': fecha, 'y': ventas_proy_acumulado})
+
+            costos_real_acumulado += costo_real.get(per.pk, 0)
+            costos_proy_acumulado = costos_real_acumulado
+            data_real_costos.append({'x': fecha, 'y': costos_real_acumulado})
+            data_proy_costos.append({'x': fecha, 'y': costos_proy_acumulado})
+
+        else:
+            ventas_proy_acumulado += cert_revision.get(per.pk, 0)
+            data_proy_ventas.append({'x': fecha, 'y': ventas_proy_acumulado})
+            costos_proy_acumulado += costo_revision.get(per.pk, 0)
+            data_proy_costos.append({'x': fecha, 'y': costos_proy_acumulado})
 
     return [
         {
-            'key': "Cert. Real",
-            'values': data_cert_real,
+            'key': "Venta %s" % data_ventas["base_nombre"],
+            'values': data_base_ventas,
+            'color': '#4461fc',
+            'strokeWidth': 1,
+        },
+        {
+            'key': "Costos %s" % data_costos["base_nombre"],
+            'values': data_base_costos,
+            'color': '#ff1101',
+            'strokeWidth': 1,
+        },
+        {
+            'key': "Venta Real",
+            'values': data_real_ventas,
+            'color': '#79a736',
+            'strokeWidth': 2,
+        },
+        {
+            'key': "Venta proyectada",
+            'values': data_proy_ventas,
+            'color': 'rgb(0, 255, 128)',
+            'strokeWidth': 2,
+            'classed': 'dashed',
+        },
+        {
+            'key': "Costos reales",
+            'values': data_real_costos,
             'color': '#f47c3c',
             'strokeWidth': 2,
         },
         {
-            'key': "Cert. Proyectada",
-            'values': data_cert_proy,
-            'color': '#ef5c0e',
+            'key': "Costos proeyctados",
+            'values': data_proy_costos,
+            'color': 'rgb(255, 102, 0)',
             'strokeWidth': 2,
             'classed': 'dashed',
-        },
-        {
-            'key': "Costos Reales",
-            'values': data_costo_real,
-            'color': '#93c54b',
-            'strokeWidth': 2,
-        },
-        {
-            'key': "Costos proyectados",
-            'values': data_costo_proy,
-            'color': '#79a736',
-            'strokeWidth': 2,
-            'classed': 'dashed',
-        },
-        {
-            'key': "Costos Presupuestados",
-            'values': data_revision_costos,
-            'color': '#17759c',
-            'strokeWidth': 2,
-        },
-        {
-            'key': "Venta presupuestada",
-            'values': data_revision_venta,
-            'color': '#ff0470',
-            'strokeWidth': 2,
         }
     ]

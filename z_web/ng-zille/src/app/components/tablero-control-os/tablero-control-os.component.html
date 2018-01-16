@@ -169,37 +169,17 @@
   </tbody>
 </table>
 <div class="row" *ngIf="graph_data">
-  <!--div class="col-md-12">
+  <div class="col-md-7">
       <div class="panel panel-primary">
         <div class="panel-heading">
           Consolidado
         </div>
         <div class="panel-body">
-          <nvd3 [options]="g_consol_options" [data]="graph_consol_data"></nvd3>
+          <nvd3 [options]="g_consol_options" [data]="graph_consol_data" id="nvd3-graph-consolidado"></nvd3>
         </div>
       </div>
-  </div-->
-  <div class="col-md-6 col-lg-4">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        Certificación REAL vs PROYECTADA
-      </div>
-      <div class="panel-body">
-        <nvd3 [options]="g_cert_options" [data]="graph_data" id="nvd3-graph-cert"></nvd3>
-      </div>
-    </div>
   </div>
-  <div class="col-md-6 col-lg-4">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        Costos REALES vs PROYECTADOS
-      </div>
-      <div class="panel-body">
-        <nvd3 [options]="g_costo_options" [data]="graph_costo_data" id="nvd3-graph-costo"></nvd3>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-4">
+  <div class="col-md-5">
     <div class="panel panel-primary">
       <div class="panel-heading">
         Avance de obra REAL vs PROYECTADO
@@ -209,4 +189,25 @@
       </div>
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        Certificación REAL vs PROYECTADA
+      </div>
+      <div class="panel-body">
+        <nvd3 [options]="g_cert_options" [data]="graph_data" id="nvd3-graph-cert"></nvd3>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        Costos REALES vs PROYECTADOS
+      </div>
+      <div class="panel-body">
+        <nvd3 [options]="g_costo_options" [data]="graph_costo_data" id="nvd3-graph-costo"></nvd3>
+      </div>
+    </div>
+  </div>
+
 </div>

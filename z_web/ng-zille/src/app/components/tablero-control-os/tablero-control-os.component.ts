@@ -47,137 +47,204 @@ export class TableroControlOsComponent implements OnInit {
   ) { }
 
   certCallBack(chart) {
-    // drawing the line
-    const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY');
-    let limit = fecha.toDate().getTime();
-    // limit = new Date(limit + 864e5 * 5).getTime();
-    const xgrid = [limit];
-    const max_value = d3.max([
-      d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
-      d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
-    ]);
-    let custLine = d3.select('#nvd3-graph-cert')
-      .select('.nv-multibar')
-      .append('g');
+    setTimeout(function() {
+      // drawing the line
+      const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').add(1, 'months').startOf('month');
+      console.log(fecha);
+      const limit = fecha.toDate().getTime();
+      const xgrid = [limit];
+      if (!chart.container) {
+        return;
+      }
 
-    custLine.selectAll('line')
-      .data(xgrid)
-      .enter()
-      .append('line')
-      .attr({
-        x1: function (d) { return chart.xAxis.scale()(d); },
-        y1: function (d) { return chart.yAxis.scale()(0); },
-        x2: function (d) { return chart.xAxis.scale()(d); },
-        y2: function (d) { return chart.yAxis.scale()(max_value); }
-      })
-      .style('stroke', '#0000FF')
-      .style('stroke-dasharray', '5,5')
-      .style('stroke-width', '2px')
-      ;
+      const max_value = d3.max([
+        d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
+        d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
+      ]);
+      let custLine = d3.select('#nvd3-graph-cert')
+        .select('.nv-multibar')
+        .append('g');
 
-    // resize the chart with vertical lines
-    // but only the third line will be scaled properly...
-    nv.utils.windowResize(function () {
-      chart.update();
       custLine.selectAll('line')
-        .transition()
+        .data(xgrid)
+        .enter()
+        .append('line')
         .attr({
           x1: function (d) { return chart.xAxis.scale()(d); },
           y1: function (d) { return chart.yAxis.scale()(0); },
           x2: function (d) { return chart.xAxis.scale()(d); },
           y2: function (d) { return chart.yAxis.scale()(max_value); }
-        });
-    });
+        })
+        .style('stroke', '#FF0000')
+        .style('stroke-dasharray', '5,5')
+        .style('stroke-width', '2px')
+        ;
+
+      // resize the chart with vertical lines
+      // but only the third line will be scaled properly...
+      nv.utils.windowResize(function () {
+        chart.update();
+        custLine.selectAll('line')
+          .transition()
+          .attr({
+            x1: function (d) { return chart.xAxis.scale()(d); },
+            y1: function (d) { return chart.yAxis.scale()(0); },
+            x2: function (d) { return chart.xAxis.scale()(d); },
+            y2: function (d) { return chart.yAxis.scale()(max_value); }
+          });
+      });
+    }, 500);
   }
 
   avanceCallBack(chart) {
-    // drawing the line
-    const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY');
-    let limit = fecha.toDate().getTime();
-    // limit = new Date(limit - (864e5 * 15)).getTime();
+    setTimeout(function() {
+      // drawing the line
+      const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').startOf('month');
+      let limit = fecha.toDate().getTime();
+      const xgrid = [limit];
 
-    const xgrid = [limit];
-    const max_value = d3.max([
-      d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
-      d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
-    ]);
-    let custLine = d3.select('#nvd3-graph-avance')
-      .select('.nv-linesWrap')
-      .append('g');
+      let custLine = d3.select('#nvd3-graph-avance')
+        .select('.nv-linesWrap')
+        .append('g');
 
-    custLine.selectAll('line')
-      .data(xgrid)
-      .enter()
-      .append('line')
-      .attr({
-        x1: function (d) { return chart.xAxis.scale()(d); },
-        y1: function (d) { return chart.yAxis.scale()(0); },
-        x2: function (d) { return chart.xAxis.scale()(d); },
-        y2: function (d) { return chart.yAxis.scale()(max_value); }
-      })
-      .style('stroke', '#0000FF')
-      .style('stroke-dasharray', '5,5')
-      .style('stroke-width', '2px')
-      ;
-
-    // resize the chart with vertical lines
-    // but only the third line will be scaled properly...
-    nv.utils.windowResize(function () {
-      chart.update();
       custLine.selectAll('line')
-        .transition()
+        .data(xgrid)
+        .enter()
+        .append('line')
         .attr({
           x1: function (d) { return chart.xAxis.scale()(d); },
           y1: function (d) { return chart.yAxis.scale()(0); },
           x2: function (d) { return chart.xAxis.scale()(d); },
-          y2: function (d) { return chart.yAxis.scale()(max_value); }
-        });
-    });
+          y2: function (d) { return chart.yAxis.scale()(100); }
+        })
+        .style('stroke', '#FF0000')
+        .style('stroke-dasharray', '5,5')
+        .style('stroke-width', '2px')
+        ;
+
+      chart.xScale(d3.time.scale());
+      chart.update();
+
+      // resize the chart with vertical lines
+      // but only the third line will be scaled properly...
+      nv.utils.windowResize(function () {
+        chart.update();
+        custLine.selectAll('line')
+          .transition()
+          .attr({
+            x1: function (d) { return chart.xAxis.scale()(d); },
+            y1: function (d) { return chart.yAxis.scale()(0); },
+            x2: function (d) { return chart.xAxis.scale()(d); },
+            y2: function (d) { return chart.yAxis.scale()(100); }
+          });
+      });
+    }, 500);
   }
 
   costosCallBack(chart) {
-    // drawing the line
-    const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY');
-    let limit = fecha.toDate().getTime();
-    // limit = new Date(limit - (864e5 * 15)).getTime();
+    setTimeout(function() {
+      // drawing the line
+      const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').add(1, 'months').startOf('month');
+      const limit = fecha.toDate().getTime();
 
-    const xgrid = [limit];
-    const max_value = d3.max([
-      d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
-      d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
-    ]);
-    let custLine = d3.select('#nvd3-graph-costo')
-      .select('.nv-multibar')
-      .append('g');
+      const xgrid = [limit];
+      let custLine = d3.select('#nvd3-graph-costo')
+        .select('.nv-multibar')
+        .append('g');
+      if (!chart.container) {
+        return;
+      }
 
-    custLine.selectAll('line')
-      .data(xgrid)
-      .enter()
-      .append('line')
-      .attr({
-        x1: function (d) { return chart.xAxis.scale()(d); },
-        y1: function (d) { return chart.yAxis.scale()(0); },
-        x2: function (d) { return chart.xAxis.scale()(d); },
-        y2: function (d) { return chart.yAxis.scale()(max_value); }
-      })
-      .style('stroke', '#0000FF')
-      .style('stroke-dasharray', '5,5')
-      .style('stroke-width', '2px')
-      ;
+      const max_value = d3.max([
+        d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
+        d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
+      ]);
 
-    // resize the chart with vertical lines
-    // but only the third line will be scaled properly...
-    nv.utils.windowResize(function () {
-      chart.update();
       custLine.selectAll('line')
-        .transition()
+        .data(xgrid)
+        .enter()
+        .append('line')
         .attr({
           x1: function (d) { return chart.xAxis.scale()(d); },
           y1: function (d) { return chart.yAxis.scale()(0); },
           x2: function (d) { return chart.xAxis.scale()(d); },
           y2: function (d) { return chart.yAxis.scale()(max_value); }
-        });
-    });
+        })
+        .style('stroke', '#FF0000')
+        .style('stroke-dasharray', '5,5')
+        .style('stroke-width', '2px')
+        ;
+
+      // resize the chart with vertical lines
+      // but only the third line will be scaled properly...
+      nv.utils.windowResize(function () {
+        chart.update();
+        custLine.selectAll('line')
+          .transition()
+          .attr({
+            x1: function (d) { return chart.xAxis.scale()(d); },
+            y1: function (d) { return chart.yAxis.scale()(0); },
+            x2: function (d) { return chart.xAxis.scale()(d); },
+            y2: function (d) { return chart.yAxis.scale()(max_value); }
+          });
+      });
+    }, 500);
+  }
+
+  consolidadoCallBack(chart) {
+    setTimeout(function() {
+      // drawing the line
+      const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').startOf('month');
+      const limit = fecha.toDate().getTime();
+
+      const xgrid = [limit];
+      let custLine = d3.select('#nvd3-graph-consolidado')
+        .select('.nv-linesWrap')
+        .append('g');
+      if (!chart.container) {
+        return;
+      }
+      const dataset = chart.container.__data__;
+
+      chart.xScale(d3.time.scale());
+      chart.update();
+
+      // hacer linea
+      const max_value = d3.max([
+        d3.max(dataset[0].values, function (d) { return d.y; }),
+        d3.max(dataset[1].values, function (d) { return d.y; })
+      ]);
+
+      custLine.selectAll('line')
+        .data(xgrid)
+        .enter()
+        .append('line')
+        .attr({
+          x1: function (d) { return chart.xAxis.scale()(d); },
+          y1: function (d) { return chart.yAxis.scale()(0); },
+          x2: function (d) { return chart.xAxis.scale()(d); },
+          y2: function (d) { return chart.yAxis.scale()(max_value); }
+        })
+        .style('stroke', '#FF0000')
+        .style('stroke-dasharray', '5,5')
+        .style('stroke-width', '2px')
+        ;
+
+      // resize the chart with vertical lines
+      // but only the third line will be scaled properly...
+      nv.utils.windowResize(function () {
+        chart.update();
+        custLine.selectAll('line')
+          .transition()
+          .attr({
+            x1: function (d) { return chart.xAxis.scale()(d); },
+            y1: function (d) { return chart.yAxis.scale()(0); },
+            x2: function (d) { return chart.xAxis.scale()(d); },
+            y2: function (d) { return chart.yAxis.scale()(max_value); }
+          });
+      });
+
+    }, 500);
   }
 
   ngOnInit() {
@@ -204,11 +271,13 @@ export class TableroControlOsComponent implements OnInit {
         showLegend: true,
         duration: 500,
         showControls: false,
+        reduceXticks: false,
         xAxis: {
           axisLabel: 'Periodo',
           tickFormat: function (d) {
             return d3.time.format('%Y-%m')(new Date(d));
-          }
+          },
+          ticks: 10,
         },
         yAxis: {
           axisLabel: 'Pesos ($)',
@@ -235,12 +304,13 @@ export class TableroControlOsComponent implements OnInit {
         y: function (d) { return d.y; },
         showLegend: true,
         duration: 500,
-        // interactive: true,
+        reduceXticks: false,
         xAxis: {
           axisLabel: 'Periodo',
           tickFormat: function (d) {
             return d3.time.format('%Y-%m')(new Date(d));
-          }
+          },
+          ticks: 10,
         },
         yAxis: {
           axisLabel: 'Avance de obra (%)',
@@ -271,6 +341,7 @@ export class TableroControlOsComponent implements OnInit {
         showLegend: true,
         duration: 500,
         showControls: false,
+        reduceXticks: false,
         xAxis: {
           axisLabel: 'Periodo',
           tickFormat: function (d) {
@@ -292,33 +363,33 @@ export class TableroControlOsComponent implements OnInit {
     this.g_consol_options = {
       chart: {
         type: 'lineChart',
-        height: 450,
+        height: 350,
         margin: {
           top: 80,
-          right: 80,
+          right: 30,
           bottom: 60,
           left: 120
         },
         x: function (d) { return d.x; },
         y: function (d) { return d.y; },
-        useInteractiveGuideline: true,
-        // interpolate: 'basis',
-        showLegend: true,
+        reduceXticks: false,
         xAxis: {
           axisLabel: 'Periodo',
           tickFormat: function (d) {
             return d3.time.format('%Y-%m')(new Date(d));
-          }
+          },
+          ticks: 10,
+          // rotateLabels: -45
         },
         yAxis: {
-          // axisLabel: 'Pesos ($)',
+          axisLabel: 'Pesos ($)',
           tickFormat: function (d) {
             return '$ ' + d3.format(',.2f')(d);
           },
-          // axisLabelDistance: -10
+          axisLabelDistance: 55
         },
-        // yDomain: [0]
-
+        forceY: [0],
+        callback: this.consolidadoCallBack
       }
     };
   }
@@ -377,14 +448,14 @@ export class TableroControlOsComponent implements OnInit {
         this.handleError(error);
       }
     );
-    // this._tableroServ.get_graph_consolidado(this.centro_costo).subscribe(
-    //   data => {
-    //     this.graph_consol_data = data;
-    //   },
-    //   error => {
-    //     this.handleError(error);
-    //   }
-    // );
+    this._tableroServ.get_graph_consolidado(this.centro_costo, this.periodo).subscribe(
+      data => {
+        this.graph_consol_data = data;
+      },
+      error => {
+        this.handleError(error);
+      }
+    );
   }
 
   get_items_costos(): String[] {
