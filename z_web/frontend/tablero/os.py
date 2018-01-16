@@ -744,7 +744,7 @@ def get_consolidado_graph(obra, periodo):
             'strokeWidth': 2,
         },
         {
-            'key': "Costos proeyctados",
+            'key': "Costos proyectados",
             'values': data_proy_costos,
             'color': 'rgb(255, 102, 0)',
             'strokeWidth': 2,

@@ -258,7 +258,7 @@ export class TableroControlOsComponent implements OnInit {
     this.g_cert_options = {
       chart: {
         type: 'multiBarChart',
-        height: 350,
+        height: 450,
         margin: {
           top: 60,
           right: 30,
@@ -293,7 +293,7 @@ export class TableroControlOsComponent implements OnInit {
     this.g_avance_options = {
       chart: {
         type: 'lineChart',
-        height: 350,
+        height: 450,
         margin: {
           top: 60,
           right: 30,
@@ -328,7 +328,7 @@ export class TableroControlOsComponent implements OnInit {
     this.g_costo_options = {
       chart: {
         type: 'multiBarChart',
-        height: 350,
+        height: 450,
         margin: {
           top: 60,
           right: 30,
@@ -363,7 +363,7 @@ export class TableroControlOsComponent implements OnInit {
     this.g_consol_options = {
       chart: {
         type: 'lineChart',
-        height: 350,
+        height: 450,
         margin: {
           top: 80,
           right: 30,
