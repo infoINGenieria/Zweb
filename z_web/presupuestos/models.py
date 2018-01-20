@@ -212,13 +212,13 @@ class Revision(BaseModelWithHistory):
     def costo_industrial(self):
         try:
             costo = self.costos_previstos
-            costo += self.contingencia
-            costo += self.estructura_no_ree
-            costo += self.aval_por_anticipos
-            costo += self.seguro_caucion
-            costo += self.aval_por_cumplimiento_contrato
-            costo += self.aval_por_cumplimiento_garantia
-            costo += self.seguro_5
+            costo += (self.contingencia or 0)
+            costo += (self.estructura_no_ree or 0)
+            costo += (self.aval_por_anticipos or 0)
+            costo += (self.seguro_caucion or 0)
+            costo += (self.aval_por_cumplimiento_contrato or 0)
+            costo += (self.aval_por_cumplimiento_garantia or 0)
+            costo += (self.seguro_5 or 0)
             return costo
         except TypeError:
             return 0
@@ -227,12 +227,12 @@ class Revision(BaseModelWithHistory):
     def ganancias(self):
         try:
             ganancia = self.total_venta
-            ganancia -= self.imprevistos_pesos
-            ganancia -= self.sellado_pesos
-            ganancia -= self.ingresos_brutos_pesos
-            ganancia -= self.impuestos_cheque_pesos
-            ganancia -= self.costo_financiero_pesos
-            ganancia -= self.costo_industrial
+            ganancia -= (self.imprevistos_pesos or 0)
+            ganancia -= (self.sellado_pesos or 0)
+            ganancia -= (self.ingresos_brutos_pesos or 0)
+            ganancia -= (self.impuestos_cheque_pesos or 0)
+            ganancia -= (self.costo_financiero_pesos or 0)
+            ganancia -= (self.costo_industrial or 0)
             ganancia = ganancia / (1 + (self.impuestos_ganancias / 100))
             return ganancia
         except TypeError:

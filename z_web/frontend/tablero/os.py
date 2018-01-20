@@ -110,16 +110,29 @@ class MarkUpColumnEstimado(MarkUpColumn):
     def costo_financiero_e_imprevistos(self):
         return self._2D(
             self.revision.imprevistos_pesos + (
-                self.revision.costo_financiero * self.subtotal_costo_industrial / 100))
+                self.revision.costo_financiero * self.subtotal_venta / 100))
 
     @property
     def ganancias_despues_impuestos(self):
-        calc = self.subtotal_venta - (
-            self.subtotal_costo_industrial + #I30
-            self.costo_financiero_e_imprevistos +  #I33
-            self.revision.sellado_pesos +  # $'Ppto. aprobado - R2'.I75
-            ((self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta / 100)
-        ) / (1 + (self.revision.impuestos_ganancias / 100))
+        """
+        (valor de venta total ESTIMADO -
+            {Costo industrial Estimado + Costo financiero e imprevistos Estimado + Sellado tomado del presupuesto VIGENTE + [
+                (
+                    valor porcentual de ingresos brutos según presupuesto VIGENTE +
+                    valor porcentual de impuestos al cheque según presupuesto VIGENTE
+                ) multiplicado por valor de venta total ESTIMADO
+                ]
+            }
+        ) / (1 + valor porcentual de impuesto a las ganancias según presupuesto VIGENTE)
+        """
+        calc = (
+            self.subtotal_venta - (
+                self.subtotal_costo_industrial +
+                self.costo_financiero_e_imprevistos +
+                self.revision.sellado_pesos + (
+                    (self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta / 100)
+                )
+            ) / (1 + (self.revision.impuestos_ganancias / 100))
         return self._2D(calc)
 
 
@@ -173,8 +186,10 @@ def generar_tabla_tablero(obra, periodo):
     }
     venta["acumulado"]["subtotal"] = sum(venta["acumulado"].values())
     # en el futuro
-    proyecciones_cert = ProyeccionCertificacion.objects.filter(
-        centro_costo=obra, periodo__fecha_inicio__gt=periodo.fecha_fin)
+    ultima_revision = ProyeccionCertificacion.objects.filter(
+        centro_costo=obra, periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
+            '-periodo__fecha_fin', 'es_base').first()
+
     # faltante
     venta["faltante_estimado"] = {
         # "venta_contractual": proyecciones_cert.filter(
@@ -185,7 +200,8 @@ def generar_tabla_tablero(obra, periodo):
         #     items__concepto="reajuste").aggregate(total=Sum('items__monto'))["total"] or 0,
         # "reclamos_reconocidos": proyecciones_cert.filter(
         #     items__concepto="reclamos").aggregate(total=Sum('items__monto'))["total"] or 0
-        "venta_contractual": proyecciones_cert.all().aggregate(total=Sum('items__monto'))["total"] or 0,
+        "venta_contractual": ultima_revision.items.filter(
+            periodo__fecha_fin__gt=periodo.fecha_fin).aggregate(total=Sum('monto'))["total"] or 0,
         "ordenes_cambio": 0,
         "reajustes_precios":  0,
         "reclamos_reconocidos":  0
@@ -263,7 +279,7 @@ def generar_tabla_tablero(obra, periodo):
     )
     costos_total_presupuesto["subtotal"] = sum(costos_total_presupuesto.values())
 
-    # Total comercial: busco el valor del items del presupuesto Base 9
+    # Total comercial: busco el valor del items del presupuesto Base 0
     costos_total_comercial = dict(
         revision_b0.items.values('tipo__nombre').annotate(
             total=Sum('pesos') + (Sum('dolares') * F('revision__valor_dolar'))
