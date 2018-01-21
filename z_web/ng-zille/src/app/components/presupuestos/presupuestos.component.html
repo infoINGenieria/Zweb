@@ -48,7 +48,7 @@
           <span *ngIf="!presupuesto.aprobado" class="label label-default">NO</span>
           <span *ngIf="presupuesto.aprobado" class="label label-success">Si</span>
       </td>
-      <td>{{ presupuesto.venta_actual | number:'1.2-2' }}</td>
+      <td>{{ presupuesto.venta_actual | moneda }}</td>
       <td>
         <div class="dropdown">
           <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-toggle="dropdown">Revisiones

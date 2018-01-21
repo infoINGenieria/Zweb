@@ -68,27 +68,27 @@
                 <td class="number total" [ngClass]="{ 'has-error': !f.form.controls.venta_contractual_b0?.valid }">
                   <input type="tel" class="form-control input-sm" name="venta_contractual_b0"
                     [(ngModel)]="revision.venta_contractual_b0" required/></td>
-                <th class="number total">$ {{ revision.venta_contractual_b0 || 0 | number:'1.2-2' }}</th>
+                <th class="number total">{{ revision.venta_contractual_b0 || 0 | moneda }}</th>
               </tr>
               <tr class="warning">
                 <th>Órdenes de cambio</th>
                 <td class="number"><input type="tel" class="form-control input-sm" name="ordenes_cambio" [(ngModel)]="revision.ordenes_cambio" /></td>
-                <th class="number">$ {{ revision.ordenes_cambio || 0 | number:'1.2-2' }}</th>
+                <th class="number">{{ revision.ordenes_cambio || 0 | moneda }}</th>
               </tr>
               <tr class="warning">
                 <th>Reajustes de precio</th>
                 <td class="number"><input type="tel" class="form-control input-sm" name="reajustes_precio" [(ngModel)]="revision.reajustes_precio" /></td>
-                <th class="number">$ {{ revision.reajustes_precio || 0 | number:'1.2-2' }}</th>
+                <th class="number">{{ revision.reajustes_precio || 0 | moneda }}</th>
               </tr>
               <tr class="warning">
                 <th>Reclamos reconocidos</th>
                 <td class="number"><input type="tel" class="form-control input-sm" name="reclamos_reconocidos" [(ngModel)]="revision.reclamos_reconocidos" /></td>
-                <th class="number">$ {{ revision.reclamos_reconocidos || 0 | number:'1.2-2' }}</th>
+                <th class="number">{{ revision.reclamos_reconocidos || 0 | moneda }}</th>
               </tr>
               <tr class="danger">
                 <th>Venta Total</th>
                 <th></th>
-                <th class="number">$ {{ calc_total_venta() | number:'1.2-2' }}</th>
+                <th class="number">{{ calc_total_venta() | moneda }}</th>
               </tr>
             </tbody>
           </table>
@@ -133,7 +133,7 @@
                 <td><input type="text" class="form-control input-sm" name="observaciones_d{{i}}" [(ngModel)]="items_directos[i].observaciones"
                   /></td>
                 <td class="number">
-                  {{ calc_subtotal_row(items_directos[i]) | number:'1.2-2'}}
+                  {{ calc_subtotal_row(items_directos[i]) | moneda }}
                 </td>
                 <td class="trash"><i class="fa fa-2x fa-trash clickable text-danger" (click)="removeItem(item)"></i></td>
               </tr>
@@ -145,7 +145,7 @@
                 <th class="number">$ {{ calc_total_items_pesos_directo() | number:'1.2-2' }}</th>
                 <th class="number">USD {{ calc_total_items_dolares_directo() | number:'1.2-2' }}</th>
                 <th></th>
-                <th colspan="2" class="number padd-total">$ {{ calc_total_items_directo() | number:'1.2-2' }}</th>
+                <th colspan="2" class="number padd-total">{{ calc_total_items_directo() | moneda }}</th>
               </tr>
             </tbody>
             <thead>
@@ -183,7 +183,7 @@
                 <td><input type="text" class="form-control input-sm" name="observaciones_i{{i}}" [(ngModel)]="items_indirectos[i].observaciones"
                   /></td>
                 <td class="number">
-                  {{ calc_subtotal_row(items_indirectos[i]) | number:'1.2-2'}}
+                  {{ calc_subtotal_row(items_indirectos[i]) | moneda }}
                 </td>
                 <td class="trash"><i class="fa fa-2x fa-trash clickable  text-danger" (click)="removeItem(item)"></i></td>
               </tr>
@@ -195,7 +195,7 @@
                 <th class="number">$ {{ calc_total_items_pesos_indirectos() | number:'1.2-2' }}</th>
                 <th class="number">USD {{ calc_total_items_dolares_indirectos() | number:'1.2-2' }}</th>
                 <th></th>
-                <th colspan="2" class="number padd-total">$ {{ calc_total_items_indirectos() | number:'1.2-2' }}</th>
+                <th colspan="2" class="number padd-total">{{ calc_total_items_indirectos() | moneda }}</th>
               </tr>
             </tbody>
             <tfoot>
@@ -204,7 +204,7 @@
                 <th class="number">$ {{ calc_total_items_pesos() | number:'1.2-2' }}</th>
                 <th class="number">USD {{ calc_total_items_dolares() | number:'1.2-2' }}</th>
                 <th></th>
-                <th colspan="2" class="number padd-total">$ {{ calc_total_items() | number:'1.2-2' }}</th>
+                <th colspan="2" class="number padd-total">{{ calc_total_items() | moneda }}</th>
               </tr>
             </tfoot>
           </table>
@@ -229,14 +229,14 @@
             <tbody>
               <tr>
                 <td>Contingencia:</td>
-                <td>{{ sobre_previstos_pesos(contingencia.value) | number:'1.2-2' }} %</td>
+                <td>{{ sobre_previstos_pesos(contingencia.value) | porciento }}</td>
                 <td><input type="tel" step="0.01" class="form-control number input-sm"
                     name="contingencia" [(ngModel)]="revision.contingencia" #contingencia/>
                 </td>
               </tr>
               <tr>
                 <td>Estructura no contemmpladas en el REE:</td>
-                <td>{{ sobre_previstos_pesos(estructura_no_ree.value) | number:'1.2-2' }} %</td>
+                <td>{{ sobre_previstos_pesos(estructura_no_ree.value) | porciento }} %</td>
                 <td><input type="tel" step="0.01" class="form-control input-sm" name="estructura_no_ree"
                     [(ngModel)]="revision.estructura_no_ree" #estructura_no_ree/></td>
               </tr>
@@ -284,32 +284,32 @@
               <tr class="info">
                 <th>Costo Industrial</th>
                 <th></th>
-                <th class="number">$ {{ costo_industrial_pesos() | number:'1.2-2' }}</th>
+                <th class="number">{{ costo_industrial_pesos() | moneda }}</th>
               </tr>
               <tr>
                 <td>IMPREVISTOS:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre costo industrial">
                     <input type="tel" step="0.01" class="form-control" name="imprevistos" [(ngModel)]="revision.imprevistos" #imprevistos/>
-                    <span class="input-group-addon">{{ imprevistos.value }}%</span>
+                    <span class="input-group-addon">{{ imprevistos.value | porciento }}</span>
                   </div>
                 </td>
-                <td>{{ sobre_costo_industrial_pesos(imprevistos.value) | number:'1.2-2' }}</td>
+                <td>{{ sobre_costo_industrial_pesos(imprevistos.value) | moneda }}</td>
               </tr>
               <tr>
                 <td>SELLADO:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre Venta">
                     <input type="tel" step="0.01" class="form-control" name="sellado" [(ngModel)]="revision.sellado" #sellado/>
-                    <span class="input-group-addon">{{ sellado.value }}%</span>
+                    <span class="input-group-addon">{{ sellado.value | porciento }}</span>
                   </div>
                 </td>
-                <td>{{ perc_de_venta_pesos(sellado.value) | number:'1.2-2' }}</td>
+                <td>{{ perc_de_venta_pesos(sellado.value) | moneda }}</td>
               </tr>
               <tr>
                 <td>GANANCIAS:</td>
-                <td><h3 class="label label-danger">{{ calcular_perc_ganancia() | number:'1.2-2' }} %</h3></td>
-                <td>{{ calcular_ganancia() | number:'1.2-2' }}</td>
+                <td><h3 class="label label-danger">{{ calcular_perc_ganancia() | porciento }}</h3></td>
+                <td>{{ calcular_ganancia() | moneda }}</td>
               </tr>
               <tr>
                 <td>IMPUESTOS GANANCIAS:</td>
@@ -317,10 +317,10 @@
                   <div class="input-group input-group-sm" title="Sobre Ganancia Neta">
                     <input type="tel" step="0.01" class="form-control" name="impuestos_ganancias"
                       [(ngModel)]="revision.impuestos_ganancias" #impuestos_ganancias/>
-                    <span class="input-group-addon">{{ impuestos_ganancias.value }}%</span>
+                    <span class="input-group-addon">{{ impuestos_ganancias.value | porciento }}</span>
                   </div>
                 </td>
-                <td>{{ sobre_ganancia_neta_pesos(impuestos_ganancias.value) | number:'1.2-2' }}</td>
+                <td>{{ sobre_ganancia_neta_pesos(impuestos_ganancias.value) | moneda }}</td>
               </tr>
               <tr>
                 <td>
@@ -330,35 +330,35 @@
                   <div class="input-group input-group-sm" title="Sobre venta">
                     <input type="tel" step="0.01" class="form-control" name="ingresos_brutos"
                       [(ngModel)]="revision.ingresos_brutos" #ingresos_brutos/>
-                    <span class="input-group-addon">{{ ingresos_brutos.value }}%</span>
+                    <span class="input-group-addon">{{ ingresos_brutos.value | porciento }}</span>
                   </div>
                 </td>
-                <td>{{ perc_de_venta_pesos(ingresos_brutos.value) | number:'1.2-2' }}</td>
+                <td>{{ perc_de_venta_pesos(ingresos_brutos.value) | moneda }}</td>
               </tr>
               <tr>
                 <td>IMPUESTOS AL CHEQUE:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre venta">
                     <input type="tel" step="0.01" class="form-control" name="impuestos_cheque" [(ngModel)]="revision.impuestos_cheque" #impuestos_cheque/>
-                    <span class="input-group-addon">{{ impuestos_cheque.value }}%</span>
+                    <span class="input-group-addon">{{ impuestos_cheque.value | porciento }}</span>
                   </div>
                 </td>
-                <td>{{ perc_de_venta_pesos(impuestos_cheque.value) | number:'1.2-2' }}</td>
+                <td>{{ perc_de_venta_pesos(impuestos_cheque.value) | moneda }}</td>
               </tr>
               <tr>
                 <td>COSTO FINANCIERO:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre costo industrial">
                     <input type="tel" step="0.01" class="form-control" name="costo_financiero" [(ngModel)]="revision.costo_financiero" #costo_financiero/>
-                    <span class="input-group-addon">{{ costo_financiero.value }}%</span>
+                    <span class="input-group-addon">{{ costo_financiero.value | porciento }}</span>
                   </div>
                 </td>
-                <td>{{ sobre_costo_industrial_pesos(costo_financiero.value) | number:'1.2-2'}}</td>
+                <td>{{ sobre_costo_industrial_pesos(costo_financiero.value) | moneda }}</td>
               </tr>
               <tr class="warning">
                 <th>MARK UP</th>
                 <th class="number">-</th>
-                <th class="number">$ {{ markup_pesos | number:'1.2-2' }}</th>
+                <th class="number">{{ markup_pesos | moneda }}</th>
               </tr>
             </tbody>
             <thead>
@@ -367,7 +367,7 @@
                 <th>
                   <span *ngIf="isWarningVenta" class="text text-danger">TOTAL VENTA es menor a los costos.</span>
                 </th>
-                <th class="number"><strong>$ {{ calc_total_venta() | number:'1.2-2' }}</strong></th>
+                <th class="number"><strong>{{ calc_total_venta() | moneda }}</strong></th>
               </tr>
             </thead>
           </table>

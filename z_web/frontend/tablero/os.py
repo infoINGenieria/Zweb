@@ -237,7 +237,7 @@ def generar_tabla_tablero(obra, periodo):
     markup.presupuesto.subtotal_venta = sum(venta["presupuesto"].values())
     venta["presupuesto"]["subtotal"] = markup.presupuesto.subtotal_venta
 
-    # totales base 9
+    # totales base 0
     venta["comercial"] = {
         "venta_contractual": revision_b0.venta_contractual_b0 or 0,
         "ordenes_cambio": revision_b0.ordenes_cambio or 0,
@@ -321,6 +321,7 @@ def generar_tabla_tablero(obra, periodo):
     markup.comercial.subtotal_costos_previstos = costos_total_comercial["subtotal"]
 
     data_table["costos"] = costos
+    data_table["costos_keys"] = claves_costos
 
     # Estructura de Costos
     estructura_costos = {

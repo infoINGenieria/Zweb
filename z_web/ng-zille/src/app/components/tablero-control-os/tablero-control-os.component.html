@@ -41,129 +41,129 @@
     <tr class="warning">
       <th>Venta</th>
       <th *ngFor="let h of headers">
-        {{ data["venta"][h]["subtotal"] | number:'1.2-2' }}
+        {{ data["venta"][h]["subtotal"] | moneda }}
       </th>
     </tr>
     <tr>
       <td>Venta contractual</td>
       <td *ngFor="let h of headers">
-        {{ data["venta"][h]["venta_contractual"] | number:'1.2-2' }}
+        {{ data["venta"][h]["venta_contractual"] | moneda }}
       </td>
     </tr>
     <tr>
       <td>Órdenes de cambio</td>
       <td *ngFor="let h of headers">
-        {{ data["venta"][h]["ordenes_cambio"] | number:'1.2-2' }}
+        {{ data["venta"][h]["ordenes_cambio"] | moneda }}
       </td>
     </tr>
     <tr>
       <td>Reajustes de precios</td>
       <td *ngFor="let h of headers">
-        {{ data["venta"][h]["reajustes_precios"] | number:'1.2-2' }}
+        {{ data["venta"][h]["reajustes_precios"] | moneda }}
       </td>
     </tr>
     <tr>
       <td>Reclamos reconocidos</td>
       <td *ngFor="let h of headers">
-        {{ data["venta"][h]["reclamos_reconocidos"] | number:'1.2-2' }}
+        {{ data["venta"][h]["reclamos_reconocidos"] | moneda }}
       </td>
     </tr>
     <tr class="warning">
       <th>Costos</th>
       <th *ngFor="let h of headers">
-        {{ data["costos"][h]["total_costos"] | number:'1.2-2' }}
+        {{ data["costos"][h]["total_costos"] | moneda }}
       </th>
     </tr>
     <tr *ngFor="let costo_str of get_items_costos()">
       <td>{{ costo_str }}</td>
       <td *ngFor="let h of headers">
-        {{ data["costos"][h][costo_str] | number:'1.2-2' }}
+        {{ data["costos"][h][costo_str] | moneda }}
       </td>
     </tr>
     <tr class="warning">
       <th>Costos previstos</th>
       <th *ngFor="let h of headers">
-        {{ data["costos"][h]["subtotal"] | number:'1.2-2' }}
+        {{ data["costos"][h]["subtotal"] | moneda }}
       </th>
     </tr>
     <tr>
       <td>Contingencia</td><td></td><td></td><td></td>
-      <td>{{ data["estructura_costos"]["estimado"]["contingencia"] | number:'1.2-2' }}</td>
-      <td>{{ data["estructura_costos"]["presupuesto"]["contingencia"] | number:'1.2-2' }}</td>
-      <td>{{ data["estructura_costos"]["comercial"]["contingencia"] | number:'1.2-2' }}</td>
+      <td>{{ data["estructura_costos"]["estimado"]["contingencia"] | moneda }}</td>
+      <td>{{ data["estructura_costos"]["presupuesto"]["contingencia"] | moneda }}</td>
+      <td>{{ data["estructura_costos"]["comercial"]["contingencia"] | moneda }}</td>
     </tr>
     <tr>
       <td>Estructura asignada</td><td></td><td></td><td></td>
-      <td>{{ data["estructura_costos"]["estimado"]["estructura"] | number:'1.2-2' }}</td>
-      <td>{{ data["estructura_costos"]["presupuesto"]["estructura"] | number:'1.2-2' }}</td>
-      <td>{{ data["estructura_costos"]["comercial"]["estructura"] | number:'1.2-2' }}</td>
+      <td>{{ data["estructura_costos"]["estimado"]["estructura"] | moneda }}</td>
+      <td>{{ data["estructura_costos"]["presupuesto"]["estructura"] | moneda }}</td>
+      <td>{{ data["estructura_costos"]["comercial"]["estructura"] | moneda }}</td>
     </tr>
     <tr>
       <td>Avales, garantías y seguros contractuales</td><td></td><td></td><td></td>
-      <td>{{ data["estructura_costos"]["estimado"]["avales_gtia_seguros"] | number:'1.2-2' }}</td>
-      <td>{{ data["estructura_costos"]["presupuesto"]["avales_gtia_seguros"] | number:'1.2-2' }}</td>
-      <td>{{ data["estructura_costos"]["comercial"]["avales_gtia_seguros"] | number:'1.2-2' }}</td>
+      <td>{{ data["estructura_costos"]["estimado"]["avales_gtia_seguros"] | moneda }}</td>
+      <td>{{ data["estructura_costos"]["presupuesto"]["avales_gtia_seguros"] | moneda }}</td>
+      <td>{{ data["estructura_costos"]["comercial"]["avales_gtia_seguros"] | moneda }}</td>
     </tr>
     <tr class="warning">
       <th>Costo industrial</th>
-      <th>{{ data["costos"]['acumulado']["subtotal"] | number:'1.2-2' }}</th>
-      <th>{{ data["costos"]['faltante_estimado']["subtotal"] | number:'1.2-2' }}</th>
-      <th>{{ data["costos"]['faltante_presupuesto']["subtotal"] | number:'1.2-2' }}</th>
-      <th>{{ data["estructura_costos"]["estimado"]["subtotal"] | number:'1.2-2' }}</th>
-      <th>{{ data["estructura_costos"]["presupuesto"]["subtotal"] | number:'1.2-2' }}</th>
-      <th>{{ data["estructura_costos"]["comercial"]["subtotal"] | number:'1.2-2' }}</th>
+      <th>{{ data["costos"]['acumulado']["subtotal"] | moneda }}</th>
+      <th>{{ data["costos"]['faltante_estimado']["subtotal"] | moneda }}</th>
+      <th>{{ data["costos"]['faltante_presupuesto']["subtotal"] | moneda }}</th>
+      <th>{{ data["estructura_costos"]["estimado"]["subtotal"] | moneda }}</th>
+      <th>{{ data["estructura_costos"]["presupuesto"]["subtotal"] | moneda }}</th>
+      <th>{{ data["estructura_costos"]["comercial"]["subtotal"] | moneda }}</th>
     </tr>
     <tr>
       <td rowspan="2">Impuestos y contribuciones</td>
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones"] | number:'1.2-2' }}</td>
+      <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones"] | moneda }}</td>
+      <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones"] | moneda }}</td>
+      <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones"] | moneda }}</td>
     </tr>
     <tr>
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones_perc"] | number:'1.2-2' }}%</td>
+      <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
     </tr>
     <tr>
       <td rowspan="2">Costo financiero e imprevistos</td>
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos"] | number:'1.2-2' }}</td>
+      <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos"] | moneda }}</td>
+      <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos"] | moneda }}</td>
+      <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos"] | moneda }}</td>
     </tr>
     <tr>
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos_perc"] | number:'1.2-2' }}%</td>
+      <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
     </tr>
     <tr>
       <td rowspan="2">Ganancia después de impuestos</td>
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos"] | number:'1.2-2' }}</td>
+      <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos"] | moneda }}</td>
+      <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos"] | moneda }}</td>
+      <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos"] | moneda }}</td>
     </tr>
     <tr>
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos_perc"] | number:'1.2-2' }}%</td>
+      <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
     </tr>
     <tr class="danger">
       <td rowspan="2">Margen Bruto</td>
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["margen_bruto"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["presupuesto"]["margen_bruto"] | number:'1.2-2' }}</td>
-      <td>{{ data["markup"]["comercial"]["margen_bruto"] | number:'1.2-2' }}</td>
+      <td>{{ data["markup"]["estimado"]["margen_bruto"] | moneda }}</td>
+      <td>{{ data["markup"]["presupuesto"]["margen_bruto"] | moneda }}</td>
+      <td>{{ data["markup"]["comercial"]["margen_bruto"] | moneda }}</td>
     </tr>
     <tr class="danger">
       <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["margen_bruto_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["presupuesto"]["margen_bruto_perc"] | number:'1.2-2' }}%</td>
-      <td>{{ data["markup"]["comercial"]["margen_bruto_perc"] | number:'1.2-2' }}%</td>
+      <td>{{ data["markup"]["estimado"]["margen_bruto_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["presupuesto"]["margen_bruto_perc"] | porciento }}</td>
+      <td>{{ data["markup"]["comercial"]["margen_bruto_perc"] | porciento }}</td>
     </tr>
 
   </tbody>

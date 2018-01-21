@@ -50,7 +50,6 @@ export class TableroControlOsComponent implements OnInit {
     setTimeout(function() {
       // drawing the line
       const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').add(1, 'months').startOf('month');
-      console.log(fecha);
       const limit = fecha.toDate().getTime();
       const xgrid = [limit];
       if (!chart.container) {
@@ -324,7 +323,6 @@ export class TableroControlOsComponent implements OnInit {
       }
     };
 
-
     this.g_costo_options = {
       chart: {
         type: 'multiBarChart',
@@ -358,7 +356,6 @@ export class TableroControlOsComponent implements OnInit {
         callback: this.costosCallBack
       }
     };
-
 
     this.g_consol_options = {
       chart: {
@@ -459,14 +456,7 @@ export class TableroControlOsComponent implements OnInit {
   }
 
   get_items_costos(): String[] {
-    try {
-      let keys = Object.keys(this.data['costos']['acumulado']);
-      keys.splice(keys.indexOf('subtotal'));
-      keys.splice(keys.indexOf('total_costos'));
-      return keys;
-    } catch (e) {
-      return [];
-    }
+    return this.data['costos_keys'];
   }
 
   handleError(error: any) {
