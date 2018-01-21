@@ -47,6 +47,10 @@ import { MyCurrencyFormatterDirective } from './directives/currency-formatter.di
 import { CostoComponent } from './components/proyecciones/costo.component';
 
 
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs, 'es-AR');
+
 @NgModule({
   declarations: [
     AppComponent,
