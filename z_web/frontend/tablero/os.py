@@ -261,14 +261,14 @@ def generar_tabla_tablero(obra, periodo):
     costos_reales["subtotal"] = sum(costos_reales.values())
 
     # Faltante estimado son las proyecciones de costos
-
     proyeccion_costo_ultimo_ajuste = ProyeccionCosto.objects.filter(
         centro_costo=obra, periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
             '-periodo__fecha_fin').first()
 
-    costos_proyectados = dict(proyeccion_costo_ultimo_ajuste.items.values(
-        'tipo_costo__nombre').annotate(
-            total=Sum('monto')).values_list('tipo_costo__nombre', 'total').order_by())
+    costos_proyectados = dict(proyeccion_costo_ultimo_ajuste.items.filter(
+        periodo__fecha_fin__gt=periodo.fecha_fin).values(
+            'tipo_costo__nombre').annotate(
+                total=Sum('monto')).values_list('tipo_costo__nombre', 'total').order_by())
     costos_proyectados["subtotal"] = sum(costos_proyectados.values())
 
     # Total presupuesto: busco el valor del item del presupuesto (directo e indirecto)
