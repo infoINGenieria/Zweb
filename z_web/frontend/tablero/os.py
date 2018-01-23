@@ -110,7 +110,7 @@ class MarkUpColumnEstimado(MarkUpColumn):
     def costo_financiero_e_imprevistos(self):
         return self._2D(
             self.revision.imprevistos_pesos + (
-                self.revision.costo_financiero * self.subtotal_venta / 100))
+                self.revision.costo_financiero * self.subtotal_costo_industrial / 100))
 
     @property
     def ganancias_despues_impuestos(self):
