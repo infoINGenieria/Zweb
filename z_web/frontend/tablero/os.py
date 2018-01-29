@@ -415,7 +415,7 @@ def get_costos_data_2_graph(obra, periodo):
 
     # buscar costos reales, y completar con la ultima revision
     costos = Costo.objects.filter(
-        centro_costo__id=96,
+        centro_costo=obra,
         periodo__fecha_fin__lte=periodo.fecha_fin).values('periodo').annotate(
             total=Sum('monto_total')).values_list('periodo', 'total')
 

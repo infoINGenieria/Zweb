@@ -4,7 +4,7 @@
   <div class="form-group">
     <label>Centro de costos:</label>
     <select name="centro_costo_sel" [(ngModel)]="centro_costo" class="form-control input-sm">
-      <option *ngFor="let cc of centro_costos" [ngValue]="cc">{{ cc.codigo }}</option>
+      <option *ngFor="let cc of centro_costos" [ngValue]="cc">{{ cc.obra }} ({{ cc.codigo }})</option>
     </select>
   </div>
   <div class="form-group">

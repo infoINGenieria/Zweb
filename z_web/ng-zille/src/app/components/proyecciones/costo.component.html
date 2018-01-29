@@ -57,7 +57,7 @@
         <tr>
           <th>Totales</th>
           <th *ngFor="let periodo_id of revision_actual?.periodos">{{ totalPeriodo(periodo_id) | moneda }}</th>
-          <th></th>
+          <th>{{ totalCostoAllPeriodos() | moneda }}</th>
         </tr>
       </tbody>
 

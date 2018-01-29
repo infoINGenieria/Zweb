@@ -163,7 +163,7 @@ export class CostoComponent implements OnInit {
     return item;
   }
 
-  totalCosto(tipo_id: number): number {
+  totalCosto(tipo_id): number {
     let total = 0;
     for (const item of this.revision_actual.items.filter(i => i.tipo_costo == tipo_id)) {
       if (item.monto) {
@@ -176,6 +176,16 @@ export class CostoComponent implements OnInit {
   totalPeriodo(periodo_id: number): number {
     let total = 0;
     for (const item of this.revision_actual.items.filter(i => i.periodo == periodo_id)) {
+      if (item.monto) {
+        total += Number(item.monto);
+      }
+    }
+    return total;
+  }
+
+  totalCostoAllPeriodos(): number {
+    let total = 0;
+    for (const item of this.revision_actual.items) {
       if (item.monto) {
         total += Number(item.monto);
       }
