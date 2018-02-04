@@ -61,7 +61,7 @@
                 <td>
                   <div class="input-group input-group-sm">
                     <input type="tel" class="form-control input-sm number" name="monto_{{i}}"
-                      [(ngModel)]="certificacion.items[i].monto" myCurrencyFormatter #montoVal/>
+                      [(ngModel)]="certificacion.items[i].monto" appMyCurrencyFormatter #montoVal/>
                     <span class="input-group-addon">{{ montoVal.value | moneda }}</span>
                   </div>
                 </td>

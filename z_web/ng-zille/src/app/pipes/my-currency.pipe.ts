@@ -12,7 +12,7 @@ export class MyCurrencyPipe implements PipeTransform {
 
   constructor() {
     // TODO comes from configuration settings
-    this.PREFIX = '';
+    this.PREFIX = '$ ';
     this.DECIMAL_SEPARATOR = ',';
     this.THOUSANDS_SEPARATOR = '.';
     this.SUFFIX = '';
@@ -20,7 +20,7 @@ export class MyCurrencyPipe implements PipeTransform {
 
   transform(value: string, fractionSize: number = 2): string {
     let [ integer, fraction = '' ] = (value || '').toString()
-      .split('.');
+      .split(this.DECIMAL_SEPARATOR);
 
     fraction = fractionSize > 0
       ? this.DECIMAL_SEPARATOR + (fraction + PADDING).substring(0, fractionSize)
@@ -36,10 +36,10 @@ export class MyCurrencyPipe implements PipeTransform {
       .replace(this.SUFFIX, '')
       .split(this.DECIMAL_SEPARATOR);
 
-    integer = integer.replace(new RegExp('\\.', 'g'), '');
+    integer = integer.replace(new RegExp(`\\${this.THOUSANDS_SEPARATOR}`, 'g'), '');
 
     fraction = parseInt(fraction, 10) > 0 && fractionSize > 0
-      ? '.' + (fraction + PADDING).substring(0, fractionSize)
+      ? `${this.DECIMAL_SEPARATOR}` + (fraction + PADDING).substring(0, fractionSize)
       : '';
 
     return integer + fraction;

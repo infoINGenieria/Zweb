@@ -56,7 +56,7 @@
         </td>
         <td>
           <div class="input-group input-group-sm">
-            <input myCurrencyFormatter [readonly]="isDisabled"
+            <input appMyCurrencyFormatter [readonly]="isDisabled"
                 type="tel" class="form-control input-sm number" name="avance_{{i}}"
                 [(ngModel)]="revision_actual?.items[i].avance" #avanceVal/>
             <span class="input-group-addon">{{ avanceVal.value | porciento }}</span>

@@ -20,7 +20,7 @@
                   <label>Centro de costos:</label>
                   <select class="form-control input-sm" name="centro_costo" [(ngModel)]="presupuesto.centro_costo_id" required>
                         <option *ngFor="let centro of centro_costos" [value]='centro.id' >
-                            {{centro.codigo}}
+                          {{centro.obra}} ({{centro.codigo}})
                         </option>
                   </select>
                 </div>
@@ -37,7 +37,7 @@
               </div>
               <div class="col-sm-2">
                 <div class="form-group">
-                  <label>Aprobado:
+                  <label title="Si el presupuesto no está aprobado, no será utilizado para calcular el tablero">Aprobado:
                     <input type="checkbox" class="form-control input-sm" name="aprobado" [(ngModel)]="presupuesto.aprobado">
                   </label>
                 </div>
@@ -48,9 +48,15 @@
                 <h3>Revisión: <strong>{{ revision.version }}</strong></h3>
               </div>
               <div class="col-sm-6">
-                <div class="form-group" [ngClass]="revision.valor_dolar > 0 ? '' : 'has-error'">
+                <div class="form-group" [ngClass]="valor_dolar.value > 0 ? '' : 'has-error'">
                   <label>Valor dolar:</label>
-                  <input type="tel" class="form-control input-sm" step="0.01" name="valor_dolar" [(ngModel)]="revision.valor_dolar" required>
+                  <div class="input-group input-group-sm" title="Valor del dolar para el presupuesto">
+                      <span class="input-group-addon">{{ valor_dolar.value | moneda }}</span>
+                      <input appMyCurrencyFormatter
+                      type="tel" class="form-control input-sm" step="0.01"
+                      name="valor_dolar" [(ngModel)]="revision.valor_dolar"
+                      required #valor_dolar>
+                  </div>
                   <p *ngIf="!revision.valor_dolar" class="text-danger">Debe definir el valor del dolar para calcular los totales.</p>
                 </div>
               </div>
@@ -66,24 +72,24 @@
               <tr class="success">
                 <th>Venta contractual base cero</th>
                 <td class="number total" [ngClass]="{ 'has-error': !f.form.controls.venta_contractual_b0?.valid }">
-                  <input type="tel" class="form-control input-sm" name="venta_contractual_b0"
+                  <input type="tel" class="form-control input-sm" name="venta_contractual_b0" appMyCurrencyFormatter #venta_contractual_b0
                     [(ngModel)]="revision.venta_contractual_b0" required/></td>
-                <th class="number total">{{ revision.venta_contractual_b0 || 0 | moneda }}</th>
+                <th class="number total">{{ venta_contractual_b0.value || 0 | moneda }}</th>
               </tr>
               <tr class="warning">
                 <th>Órdenes de cambio</th>
-                <td class="number"><input type="tel" class="form-control input-sm" name="ordenes_cambio" [(ngModel)]="revision.ordenes_cambio" /></td>
-                <th class="number">{{ revision.ordenes_cambio || 0 | moneda }}</th>
+                <td class="number"><input type="tel" class="form-control input-sm" name="ordenes_cambio" [(ngModel)]="revision.ordenes_cambio" appMyCurrencyFormatter #ordenes_cambio /></td>
+                <th class="number">{{ ordenes_cambio.value || 0 | moneda }}</th>
               </tr>
               <tr class="warning">
                 <th>Reajustes de precio</th>
-                <td class="number"><input type="tel" class="form-control input-sm" name="reajustes_precio" [(ngModel)]="revision.reajustes_precio" /></td>
-                <th class="number">{{ revision.reajustes_precio || 0 | moneda }}</th>
+                <td class="number"><input type="tel" class="form-control input-sm" name="reajustes_precio" [(ngModel)]="revision.reajustes_precio" appMyCurrencyFormatter #reajustes_precio /></td>
+                <th class="number">{{ reajustes_precio.value || 0 | moneda }}</th>
               </tr>
               <tr class="warning">
                 <th>Reclamos reconocidos</th>
-                <td class="number"><input type="tel" class="form-control input-sm" name="reclamos_reconocidos" [(ngModel)]="revision.reclamos_reconocidos" /></td>
-                <th class="number">{{ revision.reclamos_reconocidos || 0 | moneda }}</th>
+                <td class="number"><input type="tel" class="form-control input-sm" name="reclamos_reconocidos" [(ngModel)]="revision.reclamos_reconocidos" appMyCurrencyFormatter #reclamos_reconocidos /></td>
+                <th class="number">{{ reclamos_reconocidos.value || 0 | moneda }}</th>
               </tr>
               <tr class="danger">
                 <th>Venta Total</th>
@@ -126,10 +132,10 @@
                     </option>
                 </select>
                 </td>
-                <td><input type="tel" class="form-control input-sm" name="pesos_d{{i}}" [(ngModel)]="items_directos[i].pesos"
-                  /></td>
-                <td><input type="tel" class="form-control input-sm" name="dolares_d{{i}}" [(ngModel)]="items_directos[i].dolares"
-                  /></td>
+                <td><input type="tel" class="form-control input-sm" name="pesos_d{{i}}"
+                  [(ngModel)]="items_directos[i].pesos" appMyCurrencyFormatter/></td>
+                <td><input type="tel" class="form-control input-sm" name="dolares_d{{i}}"
+                  [(ngModel)]="items_directos[i].dolares" appMyCurrencyFormatter /></td>
                 <td><input type="text" class="form-control input-sm" name="observaciones_d{{i}}" [(ngModel)]="items_directos[i].observaciones"
                   /></td>
                 <td class="number">
@@ -142,7 +148,7 @@
               </tr>
               <tr class="info">
                 <th colspan="2">Costos directos</th>
-                <th class="number">$ {{ calc_total_items_pesos_directo() | number:'1.2-2' }}</th>
+                <th class="number">{{ calc_total_items_pesos_directo() | moneda }}</th>
                 <th class="number">USD {{ calc_total_items_dolares_directo() | number:'1.2-2' }}</th>
                 <th></th>
                 <th colspan="2" class="number padd-total">{{ calc_total_items_directo() | moneda }}</th>
@@ -176,10 +182,10 @@
                     </option>
                 </select>
                 </td>
-                <td><input type="tel" step="0.01" class="form-control input-sm" name="pesos_i{{i}}" [(ngModel)]="items_indirectos[i].pesos"
-                  /></td>
-                <td><input type="tel" step="0.01" class="form-control input-sm" name="dolares_i{{i}}" [(ngModel)]="items_indirectos[i].dolares"
-                  /></td>
+                <td><input type="tel" step="0.01" class="form-control input-sm" name="pesos_i{{i}}"
+                  [(ngModel)]="items_indirectos[i].pesos" appMyCurrencyFormatter/></td>
+                <td><input type="tel" step="0.01" class="form-control input-sm" name="dolares_i{{i}}"
+                  [(ngModel)]="items_indirectos[i].dolares" appMyCurrencyFormatter/></td>
                 <td><input type="text" class="form-control input-sm" name="observaciones_i{{i}}" [(ngModel)]="items_indirectos[i].observaciones"
                   /></td>
                 <td class="number">
@@ -230,21 +236,21 @@
               <tr>
                 <td>Contingencia:</td>
                 <td>{{ sobre_previstos_pesos(contingencia.value) | porciento }}</td>
-                <td><input type="tel" step="0.01" class="form-control number input-sm"
+                <td><input type="tel" class="form-control number input-sm" appMyCurrencyFormatter
                     name="contingencia" [(ngModel)]="revision.contingencia" #contingencia/>
                 </td>
               </tr>
               <tr>
                 <td>Estructura no contemmpladas en el REE:</td>
-                <td>{{ sobre_previstos_pesos(estructura_no_ree.value) | porciento }} %</td>
-                <td><input type="tel" step="0.01" class="form-control input-sm" name="estructura_no_ree"
+                <td>{{ sobre_previstos_pesos(estructura_no_ree.value) | porciento }}</td>
+                <td><input type="tel" step="0.01" class="form-control input-sm" name="estructura_no_ree" appMyCurrencyFormatter
                     [(ngModel)]="revision.estructura_no_ree" #estructura_no_ree/></td>
               </tr>
               <tr>
                 <td>Aval por anticipos:</td>
                 <td></td>
                 <td>
-                  <input type="tel" step="0.01" class="form-control input-sm" name="aval_por_anticipos"
+                  <input type="tel" step="0.01" class="form-control input-sm" name="aval_por_anticipos" appMyCurrencyFormatter
                     [(ngModel)]="revision.aval_por_anticipos" #aval_por_anticipos/>
                 </td>
               </tr>
@@ -253,7 +259,7 @@
                 </td>
                 <td></td>
                 <td>
-                    <input type="tel" step="0.01" class="form-control input-sm" name="seguro_caucion"
+                    <input type="tel" step="0.01" class="form-control input-sm" name="seguro_caucion" appMyCurrencyFormatter
                       [(ngModel)]="revision.seguro_caucion" #seguro_caucion/>
                 </td>
               </tr>
@@ -261,7 +267,7 @@
                 <td>Aval por complimiento de contrato:
                 </td>
                 <td></td>
-                <td><input type="tel" step="0.01" class="form-control input-sm" name="aval_por_cumplimiento_contrato"
+                <td><input type="tel" step="0.01" class="form-control input-sm" name="aval_por_cumplimiento_contrato" appMyCurrencyFormatter
                   [(ngModel)]="revision.aval_por_cumplimiento_contrato"  #aval_por_cumplimiento_contrato />
                 </td>
               </tr>
@@ -270,7 +276,7 @@
                 </td>
                 <td></td>
                 <td>
-                    <input type="tel" step="0.01" class="form-control input-sm" name="aval_por_cumplimiento_garantia"
+                    <input type="tel" step="0.01" class="form-control input-sm" name="aval_por_cumplimiento_garantia" appMyCurrencyFormatter
                       [(ngModel)]="revision.aval_por_cumplimiento_garantia" #aval_por_cumplimiento_garantia/>
                 </td>
               </tr>
@@ -278,7 +284,8 @@
                 <td>Seguro 5:</td>
                 <td></td>
                 <td>
-                    <input type="tel" step="0.01" class="form-control input-sm" name="seguro_5" [(ngModel)]="revision.seguro_5" #seguro_5/>
+                    <input type="tel" step="0.01" class="form-control input-sm" name="seguro_5"  appMyCurrencyFormatter
+                    [(ngModel)]="revision.seguro_5" #seguro_5/>
                 </td>
               </tr>
               <tr class="info">
@@ -290,7 +297,8 @@
                 <td>IMPREVISTOS:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre costo industrial">
-                    <input type="tel" step="0.01" class="form-control" name="imprevistos" [(ngModel)]="revision.imprevistos" #imprevistos/>
+                    <input type="tel" step="0.01" class="form-control" name="imprevistos" appMyCurrencyFormatter
+                      [(ngModel)]="revision.imprevistos" #imprevistos/>
                     <span class="input-group-addon">{{ imprevistos.value | porciento }}</span>
                   </div>
                 </td>
@@ -300,7 +308,8 @@
                 <td>SELLADO:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre Venta">
-                    <input type="tel" step="0.01" class="form-control" name="sellado" [(ngModel)]="revision.sellado" #sellado/>
+                    <input type="tel" step="0.01" class="form-control" name="sellado" appMyCurrencyFormatter
+                      [(ngModel)]="revision.sellado" #sellado/>
                     <span class="input-group-addon">{{ sellado.value | porciento }}</span>
                   </div>
                 </td>
@@ -315,7 +324,7 @@
                 <td>IMPUESTOS GANANCIAS:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre Ganancia Neta">
-                    <input type="tel" step="0.01" class="form-control" name="impuestos_ganancias"
+                    <input type="tel" step="0.01" class="form-control" name="impuestos_ganancias" appMyCurrencyFormatter
                       [(ngModel)]="revision.impuestos_ganancias" #impuestos_ganancias/>
                     <span class="input-group-addon">{{ impuestos_ganancias.value | porciento }}</span>
                   </div>
@@ -328,7 +337,7 @@
                   </td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre venta">
-                    <input type="tel" step="0.01" class="form-control" name="ingresos_brutos"
+                    <input type="tel" step="0.01" class="form-control" name="ingresos_brutos" appMyCurrencyFormatter
                       [(ngModel)]="revision.ingresos_brutos" #ingresos_brutos/>
                     <span class="input-group-addon">{{ ingresos_brutos.value | porciento }}</span>
                   </div>
@@ -339,7 +348,8 @@
                 <td>IMPUESTOS AL CHEQUE:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre venta">
-                    <input type="tel" step="0.01" class="form-control" name="impuestos_cheque" [(ngModel)]="revision.impuestos_cheque" #impuestos_cheque/>
+                    <input type="tel" step="0.01" class="form-control" name="impuestos_cheque" appMyCurrencyFormatter
+                      [(ngModel)]="revision.impuestos_cheque" #impuestos_cheque/>
                     <span class="input-group-addon">{{ impuestos_cheque.value | porciento }}</span>
                   </div>
                 </td>
@@ -349,7 +359,8 @@
                 <td>COSTO FINANCIERO:</td>
                 <td>
                   <div class="input-group input-group-sm" title="Sobre costo industrial">
-                    <input type="tel" step="0.01" class="form-control" name="costo_financiero" [(ngModel)]="revision.costo_financiero" #costo_financiero/>
+                    <input type="tel" step="0.01" class="form-control" name="costo_financiero" appMyCurrencyFormatter
+                      [(ngModel)]="revision.costo_financiero" #costo_financiero/>
                     <span class="input-group-addon">{{ costo_financiero.value | porciento }}</span>
                   </div>
                 </td>

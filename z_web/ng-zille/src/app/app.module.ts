@@ -63,11 +63,10 @@ registerLocaleData(localeEs, 'es-AR');
     ProyeccionesComponent,
     CertificacionesComponent,
     MonedaPipe,
-    MyCurrencyPipe,
     MyCurrencyFormatterDirective,
     PorcientoPipe,
     AvanceObraComponent,
-    CostoComponent
+    CostoComponent,
   ],
   imports: [
     BrowserModule,
@@ -91,7 +90,8 @@ registerLocaleData(localeEs, 'es-AR');
     RegistroService,
     TableroService,
     AvanceObraService,
-    ProyeccionesService
+    ProyeccionesService,
+    MyCurrencyPipe,
   ],
   bootstrap: [AppComponent]
 })

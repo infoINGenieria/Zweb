@@ -53,7 +53,7 @@
         </td>
         <td>
           <div class="input-group input-group-sm">
-            <input myCurrencyFormatter [readonly]="isDisabled"
+            <input appMyCurrencyFormatter [readonly]="isDisabled"
                 type="tel" class="form-control input-sm number" name="monto_{{i}}"
                 [(ngModel)]="revision_actual?.items[i].monto" #montoVal/>
             <span class="input-group-addon">{{ montoVal.value | moneda }}</span>

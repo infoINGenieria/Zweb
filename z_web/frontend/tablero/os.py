@@ -160,7 +160,7 @@ def generar_tabla_tablero(obra, periodo):
         return data_table
 
     presupuesto = Presupuesto.objects.filter(
-        centro_costo=obra).latest('fecha')
+        centro_costo=obra, aprobado=True).latest('fecha')
 
     try:
         revision = presupuesto.revisiones.filter(fecha__lte=periodo.fecha_fin).latest('fecha')

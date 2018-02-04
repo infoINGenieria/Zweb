@@ -47,7 +47,7 @@
           <td>{{ tcosto.nombre }}</td>
           <td *ngFor="let periodo_id of revision_actual?.periodos; let i = index; trackBy: trackByIndex"
           [ngClass]="getColumnClass(periodo_id)">
-            <input myCurrencyFormatter [ngClass]="itemIsValid(items_costo(periodo_id, tcosto.pk)) ? '' : 'has-error'"
+            <input appMyCurrencyFormatter [ngClass]="itemIsValid(items_costo(periodo_id, tcosto.pk)) ? '' : 'has-error'"
               type="tel" class="form-control input-sm number" name="item_{{tcosto.pk}}_{{periodo_id}}"
               [(ngModel)]="items_costo(periodo_id, tcosto.pk).monto"/>
 

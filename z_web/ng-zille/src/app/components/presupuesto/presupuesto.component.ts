@@ -4,7 +4,7 @@ import { itemAnim } from './../../_animations/itemAnim';
 import { fadeInAnimation } from './../../_animations/fade-in.animation';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {Router} from '@angular/router';
+import { Router} from '@angular/router';
 import 'rxjs/add/operator/map';
 import { DatePickerComponent, IDatePickerConfig, ECalendarValue } from 'ng2-date-picker';
 import * as moment from 'moment';
@@ -16,7 +16,7 @@ import { CoreService } from './../../services/core/core.service';
 import { PresupuestosService } from './../../services/presupuestos/presupuestos.service';
 import { NotificationService } from './../../services/core/notifications.service';
 
-
+import { MyCurrencyFormatterDirective } from '../../directives/currency-formatter.directive';
 
 @Component({
   selector: 'app-presupuesto',
@@ -175,7 +175,7 @@ export class PresupuestoComponent implements OnInit {
   calc_total_items_pesos_directo(): number {
     let total = 0;
     for (const item of this.items_directos) {
-      total += Number(item.pesos);
+      total += this._tonum(item.pesos);
     }
     return total;
   }
@@ -183,7 +183,7 @@ export class PresupuestoComponent implements OnInit {
   calc_total_items_dolares_directo(): number {
     let total = 0;
     for (const item of this.items_directos) {
-        total += Number(item.dolares);
+        total += this._tonum(item.dolares);
     }
     return total;
   }
@@ -200,7 +200,7 @@ export class PresupuestoComponent implements OnInit {
   calc_total_items_pesos_indirectos(): number {
     let total = 0;
     for (const item of this.items_indirectos) {
-      total += Number(item.pesos);
+      total += this._tonum(item.pesos);
     }
     return total;
   }
@@ -208,7 +208,7 @@ export class PresupuestoComponent implements OnInit {
   calc_total_items_dolares_indirectos(): number {
     let total = 0;
     for (const item of this.items_indirectos) {
-        total += Number(item.dolares);
+        total += this._tonum(item.dolares);
     }
     return total;
   }
@@ -225,7 +225,7 @@ export class PresupuestoComponent implements OnInit {
   calc_total_items_pesos(): number {
     let total = 0;
     for (const item of this.revision.items) {
-      total += Number(item.pesos);
+      total += this._tonum(item.pesos);
     }
     return total;
   }
@@ -233,7 +233,7 @@ export class PresupuestoComponent implements OnInit {
   calc_total_items_dolares(): number {
     let total = 0;
     for (const item of this.revision.items) {
-        total += Number(item.dolares);
+        total += this._tonum(item.dolares);
     }
     return total;
   }
