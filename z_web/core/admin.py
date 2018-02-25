@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from core.models import (Equipos, EstServicio, FrancoLicencia, Obras,
-                         Operarios, Usuario, CCT, UserExtension)
+from core.models import (
+    Equipos, EstServicio, FrancoLicencia, Obras,
+    Operarios, Usuario, CCT, UserExtension, InfoObra)
 
 
 @admin.register(Equipos)
@@ -34,6 +35,11 @@ class Equipos(admin.ModelAdmin):
 class EstacionServicioAdmin(admin.ModelAdmin):
     pass
 
+class InfoObraInline(admin.StackedInline):
+    model = InfoObra
+    can_delete = False
+    max_num = 1
+
 
 @admin.register(Obras)
 class ObrasAdmin(admin.ModelAdmin):
@@ -41,6 +47,7 @@ class ObrasAdmin(admin.ModelAdmin):
     list_filter = ('responsable', 'descuenta_francos', 'descuenta_licencias', "es_cc", 'prorratea_costos')
     search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', )
     ordering = ('fecha_fin', 'codigo', '-es_cc',)
+    inlines = [InfoObraInline, ]
     fieldsets = (
         (None, {
             'fields': (('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),

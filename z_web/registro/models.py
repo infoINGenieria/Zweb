@@ -1,7 +1,16 @@
-from django.core.exceptions import ValidationError
-from django.db import models
+import json
 
+from django.db import models
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.template import RequestContext
+from django.template.loader import render_to_string
+from django.utils.text import slugify
+
+from jsonfield import JSONField
 from model_utils.managers import QueryManager
+from weasyprint import HTML
 
 from core.models import EstServicio, Operarios, Obras, Equipos
 from documento.models import Ri
@@ -325,3 +334,64 @@ class CertificacionInterna(models.Model):
 
     def __str__(self):
         return "Certificación interna de {} en {}".format(self.obra, self.periodo)
+
+
+def get_path_images(instance, filename):
+    return 'tablero/{}/{}/{}'.format(slugify(instance.obra.codigo), slugify(instance.periodo), filename)
+
+
+class TableroControlOS(BaseModel):
+    """
+    Modelo que almacena la emisión de un tablero de control de OS.
+    Una vez emitido, se congela el tablero y se almacena su PDF en este modelo.
+
+    """
+    user = models.ForeignKey('auth.User')
+    obra = models.ForeignKey(Obras, limit_choices_to={'es_cc': True}, related_name="tc_emitidos")
+    periodo = models.ForeignKey(Periodo, verbose_name="Periodo", related_name="tc_emitidos_by_periodo")
+    pdf = models.FileField(verbose_name="PDF", upload_to=get_path_images)
+    comentario = models.TextField(verbose_name="comentario", null=True, blank=True)
+    # data frizada
+    info_obra = JSONField(verbose_name='info de obra')
+    revisiones_historico = JSONField(verbose_name='historico de revisiones')
+    tablero_data = JSONField(verbose_name='tabla del tablero')
+    consolidado_data = JSONField(verbose_name='data del gráfico consolidado')
+    certificacion_data = JSONField(verbose_name='data del gráfico de certificación')
+    costos_data = JSONField(verbose_name='data del gráfico de costos')
+    avance_data = JSONField(verbose_name='data del gráfico de avance de obra')
+    resultados_data = JSONField(verbose_name='data del gráfico de resultados', null=True, blank=True)
+
+    tablero_html = models.TextField(null=True)
+    consolidado_img = models.ImageField(upload_to=get_path_images, null=True)
+    certificacion_img = models.ImageField(upload_to=get_path_images, null=True)
+    costos_img = models.ImageField(upload_to=get_path_images, null=True)
+    avance_img = models.ImageField(upload_to=get_path_images, null=True)
+    resultado_img = models.ImageField(upload_to=get_path_images, null=True)
+
+    class Meta:
+        unique_together = ('periodo', 'obra', )
+        verbose_name = 'tablero de control'
+        verbose_name_plural = 'tableros de control'
+
+    def __str__(self):
+        return "Tablero de control de {} emitido en {}".format(self.obra, self.periodo)
+
+    def generate_pdf(self, request):
+        context = {
+            "tablero": self,
+            "data": json.loads(self.tablero_data),
+            "info_obra": json.loads(self.info_obra),
+            "revisiones_historico": json.loads(self.revisiones_historico),
+            "headers": [
+                'acumulado', 'faltante_estimado', 'faltante_presupuesto',
+                'estimado', 'presupuesto', 'comercial'
+            ],
+            "MEDIA_URL": settings.MEDIA_URL,
+            "MEDIA_ROOT": settings.MEDIA_ROOT
+        }
+        # Rendered
+        html_string = render_to_string('frontend/registro/tablero_emitido.html', context)
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        result = html.write_pdf()
+        self.pdf.save('TC_{}_{}.pdf'.format(self.obra, self.periodo), ContentFile(result))
+        return self.pdf

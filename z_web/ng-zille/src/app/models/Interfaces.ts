@@ -20,6 +20,24 @@ export interface IPresupuesto {
     centro_costo: ICentroCosto;
 }
 
+export interface IInfoObra {
+    pk: number;
+    cliente?: string;
+    gerente_proyecto?: string;
+    jefe_obra?: string;
+    planificador?: string;
+    control_gestion?: string;
+    inicio_comercial; Date;
+    inicio_contractual?: Date;
+    inicio_real?: Date;
+    plazo_comercial?: number;
+    plazo_contractual?: number;
+    plazo_con_ampliaciones?: number;
+    fin_previsto_comercial?: Date;
+    fin_contractual?: Date;
+    fin_contractual_con_ampliaciones?: Date;
+}
+
 export interface ICentroCosto {
     id: number;
     codigo: string;
@@ -28,6 +46,7 @@ export interface ICentroCosto {
     plazo: string;
     responsable: string;
     unidad_negocio: string;
+    info_obra?: IInfoObra;
 }
 
 export interface IRevision {
@@ -200,4 +219,30 @@ export interface IProyeccionCosto {
     costo_real: Array<ICostoThin>;
     periodos: Array<Number>;
     base_vigente: number;
+}
+
+export interface ITableroControlEmitido {
+    pk?: number;
+    periodo: IPeriodo;
+    periodo_id: number;
+    obra: ICentroCosto;
+    obra_id: number;
+    pdf: string;
+    comentario: string;
+
+    info_obra: string;
+    revisiones_historico: string;
+    tablero_data: string;
+    consolidado_data: string;
+    certificacion_data: string;
+    costos_data: string;
+    avance_data: string;
+    resultados_data: string;
+
+    tablero_html: string;
+    consolidado_img: string;
+    certificacion_img: string;
+    costos_img: string;
+    avance_img: string;
+    resultado_img: string;
 }

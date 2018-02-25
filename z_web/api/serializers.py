@@ -4,16 +4,17 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
-from core.models import Obras
+from core.models import Obras, InfoObra
 from costos.models import CostoTipo, AvanceObra, Costo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
-from registro.models import CertificacionItem, Certificacion
+from registro.models import CertificacionItem, Certificacion, TableroControlOS
 from parametros.models import Periodo
 from proyecciones.models import (
     ProyeccionAvanceObra, ItemProyeccionAvanceObra,
     ProyeccionCertificacion, ItemProyeccionCertificacion,
     ProyeccionCosto, ItemProyeccionCosto)
+from api.fields import Base64ImageField
 
 
 class CostoTipoSerializer(serializers.ModelSerializer):
@@ -30,12 +31,24 @@ class ItemPresupuestoSerializer(serializers.ModelSerializer):
         fields = ('pk', 'tipo', 'pesos', 'dolares', 'indirecto', 'observaciones')
 
 
+class InfoObraSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = InfoObra
+        fields = ('pk', 'cliente', 'gerente_proyecto', 'jefe_obra', 'planificador',
+                  'control_gestion', 'inicio_comercial', 'inicio_contractual', 'inicio_real',
+                  'plazo_comercial', 'plazo_contractual', 'plazo_con_ampliaciones',
+                  'fin_previsto_comercial', 'fin_contractual', 'fin_contractual_con_ampliaciones')
+
+
 class ObrasSerializer(serializers.ModelSerializer):
     unidad_negocio = serializers.CharField(source="unidad_negocio.codigo", read_only=True)
+    info_obra = InfoObraSerializer(read_only=True)
 
     class Meta:
         model = Obras
-        fields = ('id', 'codigo', 'obra', 'lugar', 'plazo', 'responsable', 'unidad_negocio')
+        fields = ('id', 'codigo', 'obra', 'lugar', 'plazo', 'responsable',
+                  'unidad_negocio', 'info_obra')
 
 
 class PresupuestoSerializer(serializers.ModelSerializer):
@@ -495,3 +508,40 @@ class ProyeccionCostoSerializer(serializers.ModelSerializer):
         # eliminar items no enviados
         instance.items.exclude(pk__in=exists_pks).delete()
         return instance
+
+
+
+class TableroControlOSSerializer(serializers.ModelSerializer):
+    periodo = PeriodoSerializer(read_only=True)
+    periodo_id = serializers.IntegerField(source='periodo.pk')
+    obra = ObrasSerializer(read_only=True)
+    obra_id = serializers.IntegerField(source='obra.pk')
+    user = serializers.CharField(source='user.username', read_only=True)
+
+    consolidado_img = Base64ImageField()
+    certificacion_img = Base64ImageField()
+    costos_img = Base64ImageField()
+    avance_img = Base64ImageField()
+    resultado_img = Base64ImageField(required=False)
+
+    pdf = serializers.FileField(read_only=True)
+
+    class Meta:
+        model = TableroControlOS
+        fields = ('pk', 'user', 'obra', 'obra_id', 'periodo', 'periodo_id', 'pdf', 'comentario',
+                  'info_obra', 'revisiones_historico', 'tablero_data', 'consolidado_data',
+                  'certificacion_data', 'costos_data', 'avance_data', 'resultados_data',
+                  'tablero_html', 'consolidado_img', 'certificacion_img', 'costos_img',
+                  'avance_img', 'resultado_img')
+
+    def create(self, validated_data):
+        centro_costo = validated_data.pop('obra')
+        periodo = validated_data.pop('periodo')
+
+        tablero = TableroControlOS(**validated_data)
+        tablero.obra_id = centro_costo["pk"]
+        tablero.periodo_id = periodo["pk"]
+        tablero.user = self.context["request"].user
+        tablero.generate_pdf(self.context["request"])
+        tablero.save()
+        return tablero

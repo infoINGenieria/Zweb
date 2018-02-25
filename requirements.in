@@ -21,3 +21,4 @@ django-formset-js
 django-crispy-forms
 factory_boy
 djangorestframework
+jsonfield

@@ -372,6 +372,18 @@ def generar_tabla_tablero(obra, periodo):
     data_table["markup"] = markup.to_dict()
     data_table["revision"] = model_to_dict(revision)
 
+    # historico de revisiones
+    data_table["revisiones_historico"] = []
+    revisiones_historico = presupuesto.revisiones.filter(
+        fecha__lte=periodo.fecha_fin).values(
+            'version', 'fecha', 'valor_dolar').order_by('fecha')
+    for rev in revisiones_historico:
+        data_table["revisiones_historico"].append({
+            'version': rev["version"],
+            'fecha': rev["fecha"].strftime('%d/%m/%Y'),
+            'valor_dolar': rev["valor_dolar"]
+        })
+
     # guardo en cache esto por 30 segundos
     cache.set(key_cache, data_table, 30)
     return data_table

@@ -1,4 +1,5 @@
 # coding: utf-8
+import json
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Max, Min
@@ -15,7 +16,8 @@ from api.serializers import (
     ItemPresupuestoSerializer, ObrasSerializer,
     CertificacionSerializer, CertificacionItemSerializer, PeriodoSerializer,
     AvanceObraSerializer, ProyeccionAvanceObraSerializer,
-    ProyeccionCertificacionSerializer, ProyeccionCostoSerializer)
+    ProyeccionCertificacionSerializer, ProyeccionCostoSerializer,
+    TableroControlOSSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
@@ -28,7 +30,7 @@ from presupuestos.models import (
 from proyecciones.models import (
     ProyeccionAvanceObra, ProyeccionCertificacion, ProyeccionCosto)
 from zweb_utils.views import generate_menu_user
-from registro.models import Certificacion
+from registro.models import Certificacion, TableroControlOS
 from organizacion.models import UnidadNegocio
 from frontend.tablero.os import (
     generar_tabla_tablero, get_certificacion_graph, get_costos_graph,
@@ -71,36 +73,60 @@ class GraphDataMixin(object):
 
 class TCCertficacionGraphView(GraphDataMixin, AuthView):
     def get_data(self, obra, periodo):
-        return get_certificacion_graph(obra, periodo)
+        try:
+            freeze = TableroControlOS.objects.get(periodo=periodo, obra=obra)
+            data = json.loads(freeze.certificacion_data)
+            return data
+        except TableroControlOS.DoesNotExist:
+            return get_certificacion_graph(obra, periodo)
 
 
 class TCCostoGraphView(GraphDataMixin, AuthView):
 
     def get_data(self, obra, periodo):
-        return get_costos_graph(obra, periodo)
+        try:
+            freeze = TableroControlOS.objects.get(periodo=periodo, obra=obra)
+            data = json.loads(freeze.costos_data)
+            return data
+        except TableroControlOS.DoesNotExist:
+            return get_costos_graph(obra, periodo)
 
 
 class TCAvanceGraphView(GraphDataMixin, AuthView):
     def get_data(self, obra, periodo):
-        return get_avances_graph(obra, periodo)
+        try:
+            freeze = TableroControlOS.objects.get(periodo=periodo, obra=obra)
+            data = json.loads(freeze.avance_data)
+            return data
+        except TableroControlOS.DoesNotExist:
+            return get_avances_graph(obra, periodo)
 
 
 class TCConsolidadoGraphView(GraphDataMixin, AuthView):
     def get_data(self, obra, periodo):
-        return get_consolidado_graph(obra, periodo)
-
-
-class TableroControTablalView(AuthView):
-    def get(self, request, *args, **kwargs):
-        unidad_negocio = get_object_or_404(UnidadNegocio, codigo=self.kwargs.get('un'))
-        obra = get_object_or_404(Obras, pk=self.kwargs.get('obra_pk'),
-                                 unidad_negocio=unidad_negocio)
-        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
         try:
-            data_tablero = generar_tabla_tablero(obra, periodo)
-        except Exception as e:
-            raise ParseError(e)
-        return Response(data_tablero)
+            freeze = TableroControlOS.objects.get(periodo=periodo, obra=obra)
+            data = json.loads(freeze.consolidado_data)
+            return data
+        except TableroControlOS.DoesNotExist:
+            return get_consolidado_graph(obra, periodo)
+
+
+class TableroControTablalView(GraphDataMixin, AuthView):
+    def get_data(self, obra, periodo):
+        try:
+            freeze = TableroControlOS.objects.get(periodo=periodo, obra=obra)
+            data = json.loads(freeze.tablero_data)
+            data.update({
+                'is_freeze': True,
+                'pdf': freeze.pdf.url,
+                'emitido': freeze.created_at.strftime("%d/%m/%Y %H:%M:%S"),
+                'info_obra': json.loads(freeze.info_obra),
+                'revisiones_historico': json.loads(freeze.revisiones_historico)
+                })
+            return data
+        except TableroControlOS.DoesNotExist:
+            return generar_tabla_tablero(obra, periodo)
 
 
 class PresupuestoRelatedMixin(object):
@@ -243,3 +269,13 @@ class ProyeccionCostoViewSet(ModelViewSet, AuthView):
         obra_qs = self.get_centros_costos()
         return ProyeccionCosto.objects.filter(
             centro_costo__in=obra_qs).order_by('periodo__fecha_fin')
+
+
+class TableroControlOSEmitidosView(ModelViewSet, AuthView):
+    serializer_class = TableroControlOSSerializer
+
+    def get_queryset(self):
+        return TableroControlOS.objects.filter(obra__in=self.get_centros_costos())
+
+    def get_serializer_context(self):
+        return {'request': self.request}

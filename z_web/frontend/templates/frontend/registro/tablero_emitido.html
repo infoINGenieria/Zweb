@@ -1,0 +1,312 @@
+{% load static i18n frontend_tags %}
+<html>
+<head>
+    <style>
+        @page {
+            size: landscape;
+            orientation: landscape;
+            margin: 3cm 2cm 3cm 2cm;
+            width: 100%;
+            height: 100%;
+            font-size: 9pt;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        @page {
+            @top-left {
+                width: 100%;
+                background: transparent url({% static 'frontend/img/footer-zille.png' %}) no-repeat center left / auto;
+                height: 3cm;
+                content: " ";
+                padding: 0.2cm 0;
+                margin-bottom: 0.1cm;
+                color: #035c5c;
+                font-size: 10pt;
+            }
+
+            @top-right {
+                width: 100%;
+                background: transparent;
+                height: 3cm;
+                content: "{% now "d/m/Y" %} - ZILLE S.R.L.";
+                padding: 0.2cm 0;
+                margin-bottom: 0.1cm;
+                color: #035c5c;
+                font-size: 10pt;
+            }
+
+            @bottom-left {
+                margin: 30pt 0 50pt 0;
+                border-top: .5pt solid #404040;
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 9pt;
+                padding: 0.5cm 0;
+                font-family: 'Open Sans', sans-serif;
+                width: 15%;
+            }
+
+            @bottom-right {
+                margin: 30pt 0 50pt 0;
+                border-top: .5pt solid #404040;
+                content: "Tablero de control. {{ tablero.obra.obra }}. {{ tablero.periodo }}. ZILLE S.R.L";
+                font-size: 9pt;
+                padding: 0.5cm 0;
+                width: 85%;
+                font-family: 'Open Sans', sans-serif;
+            }
+
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-weight: bold;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+            margin: 0 0 .5cm 0;
+        }
+
+        h1 + p, h2 + p, h3 + p {
+            page-break-before: avoid;
+        }
+        p {
+            page-break-inside: avoid;
+            margin-bottom: .15cm;
+            margin-top: 0;
+            color: #58595B;
+            font-size: 9pt;
+        }
+
+        table {
+            /*page-break-inside: avoid;*/
+            font-size: 9pt;
+            border: 1px solid #dfd7ca;
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        table td, table th {
+            border: 1px solid #dfd7ca;
+            padding: 5px 2px;
+        }
+        table th {
+            background-color: #fcf8e3;
+            text-align: left;
+        }
+        th.text-center {
+            text-align: right;
+            padding: 5px 2px;
+            background-color: #d9edf7;
+        }
+        tr.success th {
+            background-color: #dff0d8;
+        }
+        tr.danger {
+            background-color: #fcf8e3;
+        }
+        #noborder, #noborder td, #noborder th  {
+            border: 0px solid #000 !important;
+            vertical-align: top;
+        }
+        .content {
+            position: relative;
+        }
+
+        .titulo {
+            text-transform: uppercase;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: .5cm;
+            color: #009;
+        }
+
+        .entrada {
+            margin: .25cm 0;
+            padding-top: 0.25cm;
+            border-top: solid 1px #999;
+        }
+        .img-wrapper {
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            margin-bottom: 0.5cm
+        }
+        .img-wrapper > img{
+            max-width: 100%;
+        }
+
+        p.comments {
+            font-size: 12pt;
+        }
+    </style>
+</head>
+<body>
+<div class="content">
+    <div class="titulo">Tablero de control</div>
+    <h1>{{ tablero.obra.obra }} ({{ tablero.obra.codigo}})</h1>
+    <h2>{{ tablero.periodo }}</h2>
+    <p>
+        Tablero emitido por <strong>{{ tablero.user.username }}</strong> el {% now "SHORT_DATETIME_FORMAT" %}.
+    </p>
+    <br>
+    <div>
+        <table id="noborder">
+            <tr>
+                <td>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                            <th colspan="2">Datos generales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>Proyecto</td>
+                            <td>{{ tablero.obra.obra }}</td>
+                            </tr>
+                            <tr>
+                            <td>Cliente</td>
+                            <td>{{ info_obra.cliente }}</td>
+                            </tr>
+                            <tr>
+                            <td>Centro de costo</td>
+                            <td>{{ tablero.obra.codigo }}</td>
+                            </tr>
+                            <tr>
+                            <td>Localización del proyecto</td>
+                            <td>{{ tablero.obra.lugar }}</td>
+                            </tr>
+                            <tr>
+                            <td>Gerente del proyecto</td>
+                            <td>{{ info_obra.gerente_proyecto }}</td>
+                            </tr>
+                            <tr>
+                            <td>Jefe de obra</td>
+                            <td>{{ info_obra.jefe_obra }}</td>
+                            </tr>
+                            <tr>
+                            <td>Planificador</td>
+                            <td>{{ info_obra.planificador }}</td>
+                            </tr>
+                            <tr>
+                            <td>Control de gestión</td>
+                            <td>{{ info_obra.control_gestion }}</td>
+                            </tr>
+                            <tr>
+                            <td>Mergen de oferta</td>
+                            <td>{{ data.markup.comercial.ganancias_despues_impuestos_perc}} %</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                            <th colspan="2">Plazos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>Inicio según etapa comercial</td>
+                            <td>{{ info_obra.inicio_comercial }}</td>
+                            </tr>
+                            <tr>
+                            <td>Inicio contractual</td>
+                            <td>{{ info_obra.inicio_contractual }}</td>
+                            </tr>
+                            <tr>
+                            <td>Inicio real</td>
+                            <td>{{ info_obra.inicio_real }}</td>
+                            </tr>
+                            <tr>
+                            <td>Plazo comercial [meses]</td>
+                            <td>{{ info_obra.plazo_comercial }}</td>
+                            </tr>
+                            <tr>
+                            <td>Plazo contractual [meses]</td>
+                            <td>{{ info_obra.plazo_contractual }}</td>
+                            </tr>
+                            <tr>
+                            <td>Plazo con ampliaciones [meses]</td>
+                            <td>{{ info_obra.plazo_con_ampliaciones }}</td>
+                            </tr>
+                            <tr>
+                            <td>Fin previsto comercial</td>
+                            <td>{{ info_obra.fin_previsto_comercial }}</td>
+                            </tr>
+                            <tr>
+                            <td>Fin contractual</td>
+                            <td>{{ info_obra.fin_contractual }}</td>
+                            </tr>
+                            <tr>
+                            <td>Fin contractual con ampliaciones</td>
+                            <td>{{ info_obra.fin_contractual_con_ampliaciones }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                            <th colspan="3">Registro de aprobaciones presupuestarias</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td>Versión</td>
+                            <td>Fecha</td>
+                            <td>Valor del dolar</td>
+                            </tr>
+                            {% for rev in revisiones_historico %}
+                            <tr>
+                                <td>
+                                {% if forloop.first %}
+                                <span>Aprobación PPTO Base {{ rev.version }}</span></td>
+                                {% else %}
+                                <span>Cambio de presupuesto {{ rev.version }}</span>
+                                {% endif %}
+                                </td>
+                                <td>{{ rev.fecha }}</td>
+                                <td>$ {{ rev.valor_dolar }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="page-break-before:always">
+        {{ tablero.tablero_html|safe }}
+    </div>
+    <div class="img-wrapper">
+        <h3>Gráfico consolidado</h3>
+        <img src="data:image/png;base64, {{ tablero.consolidado_img | get_images_b64 }}" title="Grafico consolidado" />
+    </div>
+    <div class="img-wrapper">
+        <h3>Gráfico de avance de obra</h3>
+        <img src="data:image/png;base64, {{ tablero.avance_img | get_images_b64 }}" title="Grafico de avance de obra" />
+    </div>
+
+    <div class="img-wrapper">
+        <h3>Gráfico de certificaciones</h3>
+        <img src="data:image/png;base64, {{ tablero.certificacion_img | get_images_b64 }}" title="Grafico de certificación" />
+    </div>
+    <div class="img-wrapper">
+        <h3>Gráfico de costos</h3>
+        <img src="data:image/png;base64, {{ tablero.costos_img | get_images_b64 }}" title="Grafico de costos" />
+    </div>
+    {% if tablero.comentario %}
+    <h3>Comentarios añadidos al emitir el tablero:</h3>
+    <p class="comments">{{ tablero.comentario|safe }}</p>
+    {% endif %}
+
+</div>
+</body>
+</html>

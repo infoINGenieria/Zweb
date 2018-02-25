@@ -1,3 +1,4 @@
+import base64
 from django.template.defaulttags import register
 
 from zweb_utils.format import currency_format, decimal_format, number_js_format
@@ -78,3 +79,8 @@ def from_dict(dictionary, key):
 @register.filter
 def sum_dict(dictionary):
     return sum(dictionary.values())
+
+
+@register.filter
+def get_images_b64(img):
+    return base64.b64encode(img.read())

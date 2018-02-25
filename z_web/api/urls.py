@@ -12,7 +12,7 @@ from api.views import (
     PeriodoViewSet, TableroControTablalView, TCCertficacionGraphView,
     TCCostoGraphView, TCAvanceGraphView, TCConsolidadoGraphView,
     AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet,
-    ProyeccionCostoViewSet
+    ProyeccionCostoViewSet, TableroControlOSEmitidosView
 )
 
 router = routers.DefaultRouter()
@@ -28,6 +28,9 @@ router.register(
     r'tipo_costos', TipoCostoViewSet, base_name='tipo_costos')
 router.register(
     r'centro_costos', CentroCostoViewSet, base_name='centro_costo'
+)
+router.register(
+    r'centro_costos_emitidos', TableroControlOSEmitidosView, base_name='centro_costo_emitido'
 )
 router.register(
     r'certificaciones', CertificacionRealViewSet, base_name='certificacion'

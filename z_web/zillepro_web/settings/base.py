@@ -78,7 +78,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DATE_FORMAT': '%d/%m/%Y',
+    'DATETIME_FORMAT': '%d/%m/%Y %H:%M:%S',
     'DATE_INPUT_FORMATS': ['%d/%m/%Y', 'iso-8601'],
+    'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S', 'iso-8601'],
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', ),
     'PAGE_SIZE': 50,
@@ -270,6 +272,8 @@ LOCALE_PATHS = (normpath(join(DJANGO_ROOT, 'locale')), )
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+WEASYPRINT_BASEURL = ''
 
 SUIT_CONFIG = {
     'ADMIN_NAME': 'ZILLE - Administración',

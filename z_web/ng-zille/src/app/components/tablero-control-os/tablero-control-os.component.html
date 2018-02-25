@@ -1,213 +1,354 @@
 <h3><a class="btn btn-default" [routerLink]="['']"><i class="fa fa-chevron-left"></i> </a>
   Tablero de control</h3>
-<form class="form-inline">
-  <div class="form-group">
-    <label>Centro de costos:</label>
-    <select name="centro_costo_sel" [(ngModel)]="centro_costo" class="form-control input-sm">
-      <option *ngFor="let cc of centro_costos" [ngValue]="cc">{{ cc.obra }} ({{ cc.codigo }})</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label>Periodo:</label>
-    <select name="periodo_sel" [(ngModel)]="periodo" class="form-control input-sm">
-      <option *ngFor="let p of periodos" [ngValue]="p">{{ p.descripcion }}</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <button class="btn btn-success btn-sm" (click)="showTablero()">Ver tablero</button>
-  </div>
-</form>
-<hr />
+<div *ngIf="!showing_data">
+  <form class="form-inline">
+    <div class="form-group">
+      <label>Centro de costos:</label>
+      <select name="centro_costo_sel" [(ngModel)]="centro_costo" class="form-control">
+        <option *ngFor="let cc of centro_costos" [ngValue]="cc">{{ cc.obra }} ({{ cc.codigo }})</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Periodo:</label>
+      <select name="periodo_sel" [(ngModel)]="periodo" class="form-control">
+        <option *ngFor="let p of periodos" [ngValue]="p">{{ p.descripcion }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-success" (click)="showTablero()">
+        <i class="fa fa-area-chart"></i> Ver tablero</button>
+    </div>
+  </form>
+</div>
+<div *ngIf="showing_data">
 
-<table class="table table-bordered table-condensed" *ngIf="data != undefined || data != null">
-  <thead>
-    <tr class="info">
-      <th colspan="7" class="text-center">
-        Resultado económico
-        <span class="pull-right">Revisión {{ data["revision"]["version"] }} | Fecha {{ data["revision"]["fecha"]|date:"dd/MM/yyyy" }}</span>
-      </th>
-    </tr>
-    <tr class="success">
-      <th>Conceptos</th>
-      <th>Acumulado</th>
-      <th>Faltante estimado</th>
-      <th>Faltante presupuestado</th>
-      <th>Total estimado</th>
-      <th>Total vigente</th>
-      <th>Total comercial</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="warning">
-      <th>Venta</th>
-      <th *ngFor="let h of headers">
-        {{ data["venta"][h]["subtotal"] | moneda }}
-      </th>
-    </tr>
-    <tr>
-      <td>Venta contractual</td>
-      <td *ngFor="let h of headers">
-        {{ data["venta"][h]["venta_contractual"] | moneda }}
-      </td>
-    </tr>
-    <tr>
-      <td>Órdenes de cambio</td>
-      <td *ngFor="let h of headers">
-        {{ data["venta"][h]["ordenes_cambio"] | moneda }}
-      </td>
-    </tr>
-    <tr>
-      <td>Reajustes de precios</td>
-      <td *ngFor="let h of headers">
-        {{ data["venta"][h]["reajustes_precios"] | moneda }}
-      </td>
-    </tr>
-    <tr>
-      <td>Reclamos reconocidos</td>
-      <td *ngFor="let h of headers">
-        {{ data["venta"][h]["reclamos_reconocidos"] | moneda }}
-      </td>
-    </tr>
-    <tr class="warning">
-      <th>Costos</th>
-      <th *ngFor="let h of headers">
-        {{ data["costos"][h]["total_costos"] | moneda }}
-      </th>
-    </tr>
-    <tr *ngFor="let costo_str of get_items_costos()">
-      <td>{{ costo_str }}</td>
-      <td *ngFor="let h of headers">
-        {{ data["costos"][h][costo_str] | moneda }}
-      </td>
-    </tr>
-    <tr class="warning">
-      <th>Costos previstos</th>
-      <th *ngFor="let h of headers">
-        {{ data["costos"][h]["subtotal"] | moneda }}
-      </th>
-    </tr>
-    <tr>
-      <td>Contingencia</td><td></td><td></td><td></td>
-      <td>{{ data["estructura_costos"]["estimado"]["contingencia"] | moneda }}</td>
-      <td>{{ data["estructura_costos"]["presupuesto"]["contingencia"] | moneda }}</td>
-      <td>{{ data["estructura_costos"]["comercial"]["contingencia"] | moneda }}</td>
-    </tr>
-    <tr>
-      <td>Estructura asignada</td><td></td><td></td><td></td>
-      <td>{{ data["estructura_costos"]["estimado"]["estructura"] | moneda }}</td>
-      <td>{{ data["estructura_costos"]["presupuesto"]["estructura"] | moneda }}</td>
-      <td>{{ data["estructura_costos"]["comercial"]["estructura"] | moneda }}</td>
-    </tr>
-    <tr>
-      <td>Avales, garantías y seguros contractuales</td><td></td><td></td><td></td>
-      <td>{{ data["estructura_costos"]["estimado"]["avales_gtia_seguros"] | moneda }}</td>
-      <td>{{ data["estructura_costos"]["presupuesto"]["avales_gtia_seguros"] | moneda }}</td>
-      <td>{{ data["estructura_costos"]["comercial"]["avales_gtia_seguros"] | moneda }}</td>
-    </tr>
-    <tr class="warning">
-      <th>Costo industrial</th>
-      <th>{{ data["costos"]['acumulado']["subtotal"] | moneda }}</th>
-      <th>{{ data["costos"]['faltante_estimado']["subtotal"] | moneda }}</th>
-      <th>{{ data["costos"]['faltante_presupuesto']["subtotal"] | moneda }}</th>
-      <th>{{ data["estructura_costos"]["estimado"]["subtotal"] | moneda }}</th>
-      <th>{{ data["estructura_costos"]["presupuesto"]["subtotal"] | moneda }}</th>
-      <th>{{ data["estructura_costos"]["comercial"]["subtotal"] | moneda }}</th>
-    </tr>
-    <tr>
-      <td rowspan="2">Impuestos y contribuciones</td>
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones"] | moneda }}</td>
-      <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones"] | moneda }}</td>
-      <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones"] | moneda }}</td>
-    </tr>
-    <tr>
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
-    </tr>
-    <tr>
-      <td rowspan="2">Costo financiero e imprevistos</td>
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos"] | moneda }}</td>
-      <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos"] | moneda }}</td>
-      <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos"] | moneda }}</td>
-    </tr>
-    <tr>
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
-    </tr>
-    <tr>
-      <td rowspan="2">Ganancia después de impuestos</td>
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos"] | moneda }}</td>
-      <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos"] | moneda }}</td>
-      <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos"] | moneda }}</td>
-    </tr>
-    <tr>
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
-    </tr>
-    <tr class="danger">
-      <td rowspan="2">Margen Bruto</td>
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["margen_bruto"] | moneda }}</td>
-      <td>{{ data["markup"]["presupuesto"]["margen_bruto"] | moneda }}</td>
-      <td>{{ data["markup"]["comercial"]["margen_bruto"] | moneda }}</td>
-    </tr>
-    <tr class="danger">
-      <td></td><td></td><td></td>
-      <td>{{ data["markup"]["estimado"]["margen_bruto_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["presupuesto"]["margen_bruto_perc"] | porciento }}</td>
-      <td>{{ data["markup"]["comercial"]["margen_bruto_perc"] | porciento }}</td>
-    </tr>
+  <button type="button" (click)="cerrarTablero()" class="btn btn-default btn-sm">
+    <i class="fa fa-close"></i> Cerrar tablero</button>
+  <button type="button" (click)="printTableroPrompt()" class="btn btn-danger btn-sm" *ngIf="!is_freeze" >
+    <i class="fa fa-print"></i> Emitir tablero</button>
+  <a class="btn btn-success btn-sm" *ngIf="is_freeze && pdf" [href]="pdf" target="_blank">
+      <i class="fa fa-file"></i> Descargar PDF</a>
+  <hr />
+  <p class="alert alert-warning" *ngIf="is_freeze">
+      <strong>¡Atención!</strong> El tablero se encuentra emitido, por lo tanto es de sólo
+      lectura y no refleja cambios realizados porteriormente a su emisión ({{ emitido_el }}).
+    </p>
+</div>
 
-  </tbody>
-</table>
-<div class="row" *ngIf="graph_data">
-  <div class="col-md-7">
+
+<div id='tc-content' *ngIf="data != undefined || data != null">
+
+  <div class="well" *ngIf="info_obra != undefined || info_obra != null">
+    <div class="row">
+      <div class="col-sm-4">
+        <table class="table">
+          <thead>
+            <tr>
+              <th colspan="2">Datos generales</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Proyecto</td>
+              <td>{{ centro_costo.obra }}</td>
+            </tr>
+            <tr>
+              <td>Cliente</td>
+              <td>{{ info_obra.cliente }}</td>
+            </tr>
+            <tr>
+              <td>Centro de costo</td>
+              <td>{{ centro_costo.codigo }}</td>
+            </tr>
+            <tr>
+              <td>Localización del proyecto</td>
+              <td>{{ centro_costo.lugar }}</td>
+            </tr>
+            <tr>
+              <td>Gerente del proyecto</td>
+              <td>{{ info_obra.gerente_proyecto }}</td>
+            </tr>
+            <tr>
+              <td>Jefe de obra</td>
+              <td>{{ info_obra.jefe_obra }}</td>
+            </tr>
+            <tr>
+              <td>Planificador</td>
+              <td>{{ info_obra.planificador }}</td>
+            </tr>
+            <tr>
+              <td>Control de gestión</td>
+              <td>{{ info_obra.control_gestion }}</td>
+            </tr>
+            <tr>
+              <td>Mergen de oferta</td>
+              <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-sm-4">
+        <table class="table">
+          <thead>
+            <tr>
+              <th colspan="2">Plazos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Inicio según etapa comercial</td>
+              <td>{{ info_obra.inicio_comercial }}</td>
+            </tr>
+            <tr>
+              <td>Inicio contractual</td>
+              <td>{{ info_obra.inicio_contractual }}</td>
+            </tr>
+            <tr>
+              <td>Inicio real</td>
+              <td>{{ info_obra.inicio_real }}</td>
+            </tr>
+            <tr>
+              <td>Plazo comercial [meses]</td>
+              <td>{{ info_obra.plazo_comercial }}</td>
+            </tr>
+            <tr>
+              <td>Plazo contractual [meses]</td>
+              <td>{{ info_obra.plazo_contractual }}</td>
+            </tr>
+            <tr>
+              <td>Plazo con ampliaciones [meses]</td>
+              <td>{{ info_obra.plazo_con_ampliaciones }}</td>
+            </tr>
+            <tr>
+              <td>Fin previsto comercial</td>
+              <td>{{ info_obra.fin_previsto_comercial }}</td>
+            </tr>
+            <tr>
+              <td>Fin contractual</td>
+              <td>{{ info_obra.fin_contractual }}</td>
+            </tr>
+            <tr>
+              <td>Fin contractual con ampliaciones</td>
+              <td>{{ info_obra.fin_contractual_con_ampliaciones }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-sm-4">
+        <table class="table">
+          <thead>
+            <tr>
+              <th colspan="2">Registro de aprobaciones presupuestarias</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Versión</td>
+              <td>Fecha</td>
+              <td>Valor del dolar</td>
+            </tr>
+            <tr *ngFor='let rev of revisiones_historico'>
+              <td>
+                <span *ngIf="rev.version == 0">Aprobación PPTO Base {{ rev.version }}</span>
+                <span *ngIf="rev.version != 0">Cambio de presupuesto {{ rev.version }}</span>
+              </td>
+              <td>{{ rev.fecha }}</td>
+              <td>{{ rev.valor_dolar | moneda }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <table class="table table-bordered table-condensed" id="resultado">
+    <thead>
+      <tr class="info">
+        <th colspan="7" class="text-center">
+          Resultado económico
+          <span class="pull-right">Revisión {{ data["revision"]["version"] }} | Fecha {{ data["revision"]["fecha"]|date:"dd/MM/yyyy" }}</span>
+        </th>
+      </tr>
+      <tr class="success">
+        <th>Conceptos</th>
+        <th>Acumulado</th>
+        <th>Faltante estimado</th>
+        <th>Faltante presupuestado</th>
+        <th>Total estimado</th>
+        <th>Total vigente</th>
+        <th>Total comercial</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="warning">
+        <th>Venta</th>
+        <th *ngFor="let h of headers">
+          {{ data["venta"][h]["subtotal"] | moneda }}
+        </th>
+      </tr>
+      <tr>
+        <td>Venta contractual</td>
+        <td *ngFor="let h of headers">
+          {{ data["venta"][h]["venta_contractual"] | moneda }}
+        </td>
+      </tr>
+      <tr>
+        <td>Órdenes de cambio</td>
+        <td *ngFor="let h of headers">
+          {{ data["venta"][h]["ordenes_cambio"] | moneda }}
+        </td>
+      </tr>
+      <tr>
+        <td>Reajustes de precios</td>
+        <td *ngFor="let h of headers">
+          {{ data["venta"][h]["reajustes_precios"] | moneda }}
+        </td>
+      </tr>
+      <tr>
+        <td>Reclamos reconocidos</td>
+        <td *ngFor="let h of headers">
+          {{ data["venta"][h]["reclamos_reconocidos"] | moneda }}
+        </td>
+      </tr>
+      <tr class="warning">
+        <th>Costos</th>
+        <th *ngFor="let h of headers">
+          {{ data["costos"][h]["total_costos"] | moneda }}
+        </th>
+      </tr>
+      <tr *ngFor="let costo_str of get_items_costos()">
+        <td>{{ costo_str }}</td>
+        <td *ngFor="let h of headers">
+          {{ data["costos"][h][costo_str] | moneda }}
+        </td>
+      </tr>
+      <tr class="warning">
+        <th>Costos previstos</th>
+        <th *ngFor="let h of headers">
+          {{ data["costos"][h]["subtotal"] | moneda }}
+        </th>
+      </tr>
+      <tr>
+        <td>Contingencia</td><td></td><td></td><td></td>
+        <td>{{ data["estructura_costos"]["estimado"]["contingencia"] | moneda }}</td>
+        <td>{{ data["estructura_costos"]["presupuesto"]["contingencia"] | moneda }}</td>
+        <td>{{ data["estructura_costos"]["comercial"]["contingencia"] | moneda }}</td>
+      </tr>
+      <tr>
+        <td>Estructura asignada</td><td></td><td></td><td></td>
+        <td>{{ data["estructura_costos"]["estimado"]["estructura"] | moneda }}</td>
+        <td>{{ data["estructura_costos"]["presupuesto"]["estructura"] | moneda }}</td>
+        <td>{{ data["estructura_costos"]["comercial"]["estructura"] | moneda }}</td>
+      </tr>
+      <tr>
+        <td>Avales, garantías y seguros contractuales</td><td></td><td></td><td></td>
+        <td>{{ data["estructura_costos"]["estimado"]["avales_gtia_seguros"] | moneda }}</td>
+        <td>{{ data["estructura_costos"]["presupuesto"]["avales_gtia_seguros"] | moneda }}</td>
+        <td>{{ data["estructura_costos"]["comercial"]["avales_gtia_seguros"] | moneda }}</td>
+      </tr>
+      <tr class="warning">
+        <th>Costo industrial</th>
+        <th>{{ data["costos"]['acumulado']["subtotal"] | moneda }}</th>
+        <th>{{ data["costos"]['faltante_estimado']["subtotal"] | moneda }}</th>
+        <th>{{ data["costos"]['faltante_presupuesto']["subtotal"] | moneda }}</th>
+        <th>{{ data["estructura_costos"]["estimado"]["subtotal"] | moneda }}</th>
+        <th>{{ data["estructura_costos"]["presupuesto"]["subtotal"] | moneda }}</th>
+        <th>{{ data["estructura_costos"]["comercial"]["subtotal"] | moneda }}</th>
+      </tr>
+      <tr>
+        <td rowspan="2">Impuestos y contribuciones</td>
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones"] | moneda }}</td>
+        <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones"] | moneda }}</td>
+        <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones"] | moneda }}</td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["presupuesto"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["comercial"]["impuestos_y_contribuciones_perc"] | porciento }}</td>
+      </tr>
+      <tr>
+        <td rowspan="2">Costo financiero e imprevistos</td>
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos"] | moneda }}</td>
+        <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos"] | moneda }}</td>
+        <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos"] | moneda }}</td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["presupuesto"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["comercial"]["costo_financiero_e_imprevistos_perc"] | porciento }}</td>
+      </tr>
+      <tr>
+        <td rowspan="2">Ganancia después de impuestos</td>
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos"] | moneda }}</td>
+        <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos"] | moneda }}</td>
+        <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos"] | moneda }}</td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["presupuesto"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["comercial"]["ganancias_despues_impuestos_perc"] | porciento }}</td>
+      </tr>
+      <tr class="danger">
+        <td rowspan="2">Margen Bruto</td>
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["margen_bruto"] | moneda }}</td>
+        <td>{{ data["markup"]["presupuesto"]["margen_bruto"] | moneda }}</td>
+        <td>{{ data["markup"]["comercial"]["margen_bruto"] | moneda }}</td>
+      </tr>
+      <tr class="danger">
+        <td></td><td></td><td></td>
+        <td>{{ data["markup"]["estimado"]["margen_bruto_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["presupuesto"]["margen_bruto_perc"] | porciento }}</td>
+        <td>{{ data["markup"]["comercial"]["margen_bruto_perc"] | porciento }}</td>
+      </tr>
+
+    </tbody>
+  </table>
+  <div class="row" *ngIf="graph_data">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            Consolidado
+          </div>
+          <div class="panel-body">
+            <nvd3 [options]="g_consol_options" [data]="graph_consol_data" id="nvd3-graph-consolidado"></nvd3>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-6">
       <div class="panel panel-primary">
         <div class="panel-heading">
-          Consolidado
+          Avance de obra REAL vs PROYECTADO
         </div>
         <div class="panel-body">
-          <nvd3 [options]="g_consol_options" [data]="graph_consol_data" id="nvd3-graph-consolidado"></nvd3>
+          <nvd3 [options]="g_avance_options" [data]="graph_avance_data" id="nvd3-graph-avance"></nvd3>
         </div>
       </div>
-  </div>
-  <div class="col-md-5">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        Avance de obra REAL vs PROYECTADO
+    </div>
+    <div class="col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Certificación REAL vs PROYECTADA
+        </div>
+        <div class="panel-body">
+          <nvd3 [options]="g_cert_options" [data]="graph_data" id="nvd3-graph-cert"></nvd3>
+        </div>
       </div>
-      <div class="panel-body">
-        <nvd3 [options]="g_avance_options" [data]="graph_avance_data" id="nvd3-graph-avance"></nvd3>
+    </div>
+    <div class="col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          Costos REALES vs PROYECTADOS
+        </div>
+        <div class="panel-body">
+          <nvd3 [options]="g_costo_options" [data]="graph_costo_data" id="nvd3-graph-costo"></nvd3>
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-md-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        Certificación REAL vs PROYECTADA
-      </div>
-      <div class="panel-body">
-        <nvd3 [options]="g_cert_options" [data]="graph_data" id="nvd3-graph-cert"></nvd3>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        Costos REALES vs PROYECTADOS
-      </div>
-      <div class="panel-body">
-        <nvd3 [options]="g_costo_options" [data]="graph_costo_data" id="nvd3-graph-costo"></nvd3>
-      </div>
-    </div>
-  </div>
-
 </div>

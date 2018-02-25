@@ -1,10 +1,28 @@
-import { TableroService } from './../../services/tablero.service';
-import { NotificationService } from './../../services/core/notifications.service';
-import { ICentroCosto, IPeriodo } from './../../models/Interfaces';
-import { CoreService } from './../../services/core/core.service';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Modal } from 'ngx-modialog/plugins/bootstrap';
+import {
+  TableroService
+} from './../../services/tablero.service';
+import {
+  NotificationService
+} from './../../services/core/notifications.service';
+import {
+  ICentroCosto,
+  IPeriodo,
+  ITableroControlEmitido
+} from './../../models/Interfaces';
+import {
+  CoreService
+} from './../../services/core/core.service';
+import {
+  Component,
+  OnInit,
+  ViewEncapsulation
+} from '@angular/core';
 
 import * as moment from 'moment';
+
+import { saveSvgAsPng, svgAsPngUri } from 'save-svg-as-png';
+
 declare let d3: any;
 
 let periodoGlobal: IPeriodo;
@@ -16,16 +34,27 @@ let periodoGlobal: IPeriodo;
   encapsulation: ViewEncapsulation.None
 })
 export class TableroControlOsComponent implements OnInit {
+
+  showing_data = false;
+  is_freeze = false;
+  pdf: string = null;
+  emitido_el: string = null;
+
   periodos: IPeriodo[] = [];
   periodo: IPeriodo;
   centro_costos: ICentroCosto[] = [];
   centro_costo: ICentroCosto;
 
   data: any = null;
+  info_obra: any = null;
+  revisiones_historico: any = null;
+
+  tablero: ITableroControlEmitido;
 
   // feo pero funciona. Estos haeders sirven para iterar en cada subconjunto
   headers = ['acumulado', 'faltante_estimado', 'faltante_presupuesto',
-    'estimado', 'presupuesto', 'comercial'];
+    'estimado', 'presupuesto', 'comercial'
+  ];
 
 
   g_cert_options = null;
@@ -40,14 +69,17 @@ export class TableroControlOsComponent implements OnInit {
   g_consol_options = null;
   graph_consol_data = null;
 
+  images_count = 0;
+
   constructor(
     private _coreServ: CoreService,
     private _tableroServ: TableroService,
-    private _notifications: NotificationService
-  ) { }
+    private _notifications: NotificationService,
+    private _modal: Modal
+  ) {}
 
   certCallBack(chart) {
-    setTimeout(function() {
+    setTimeout(function () {
       // drawing the line
       const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').add(1, 'months').startOf('month');
       const limit = fecha.toDate().getTime();
@@ -57,8 +89,12 @@ export class TableroControlOsComponent implements OnInit {
       }
 
       const max_value = d3.max([
-        d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
-        d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
+        d3.max(chart.container.__data__[0].values, function (d) {
+          return d.y;
+        }),
+        d3.max(chart.container.__data__[1].values, function (d) {
+          return d.y;
+        })
       ]);
       let custLine = d3.select('#nvd3-graph-cert')
         .select('.nv-multibar')
@@ -69,15 +105,22 @@ export class TableroControlOsComponent implements OnInit {
         .enter()
         .append('line')
         .attr({
-          x1: function (d) { return chart.xAxis.scale()(d); },
-          y1: function (d) { return chart.yAxis.scale()(0); },
-          x2: function (d) { return chart.xAxis.scale()(d); },
-          y2: function (d) { return chart.yAxis.scale()(max_value); }
+          x1: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y1: function (d) {
+            return chart.yAxis.scale()(0);
+          },
+          x2: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y2: function (d) {
+            return chart.yAxis.scale()(max_value);
+          }
         })
         .style('stroke', '#FF0000')
         .style('stroke-dasharray', '5,5')
-        .style('stroke-width', '2px')
-        ;
+        .style('stroke-width', '2px');
 
       // resize the chart with vertical lines
       // but only the third line will be scaled properly...
@@ -86,17 +129,25 @@ export class TableroControlOsComponent implements OnInit {
         custLine.selectAll('line')
           .transition()
           .attr({
-            x1: function (d) { return chart.xAxis.scale()(d); },
-            y1: function (d) { return chart.yAxis.scale()(0); },
-            x2: function (d) { return chart.xAxis.scale()(d); },
-            y2: function (d) { return chart.yAxis.scale()(max_value); }
+            x1: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y1: function (d) {
+              return chart.yAxis.scale()(0);
+            },
+            x2: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y2: function (d) {
+              return chart.yAxis.scale()(max_value);
+            }
           });
       });
     }, 500);
   }
 
   avanceCallBack(chart) {
-    setTimeout(function() {
+    setTimeout(function () {
       // drawing the line
       const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').startOf('month');
       let limit = fecha.toDate().getTime();
@@ -111,15 +162,22 @@ export class TableroControlOsComponent implements OnInit {
         .enter()
         .append('line')
         .attr({
-          x1: function (d) { return chart.xAxis.scale()(d); },
-          y1: function (d) { return chart.yAxis.scale()(0); },
-          x2: function (d) { return chart.xAxis.scale()(d); },
-          y2: function (d) { return chart.yAxis.scale()(100); }
+          x1: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y1: function (d) {
+            return chart.yAxis.scale()(0);
+          },
+          x2: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y2: function (d) {
+            return chart.yAxis.scale()(100);
+          }
         })
         .style('stroke', '#FF0000')
         .style('stroke-dasharray', '5,5')
-        .style('stroke-width', '2px')
-        ;
+        .style('stroke-width', '2px');
 
       chart.xScale(d3.time.scale());
       chart.update();
@@ -131,17 +189,25 @@ export class TableroControlOsComponent implements OnInit {
         custLine.selectAll('line')
           .transition()
           .attr({
-            x1: function (d) { return chart.xAxis.scale()(d); },
-            y1: function (d) { return chart.yAxis.scale()(0); },
-            x2: function (d) { return chart.xAxis.scale()(d); },
-            y2: function (d) { return chart.yAxis.scale()(100); }
+            x1: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y1: function (d) {
+              return chart.yAxis.scale()(0);
+            },
+            x2: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y2: function (d) {
+              return chart.yAxis.scale()(100);
+            }
           });
       });
     }, 500);
   }
 
   costosCallBack(chart) {
-    setTimeout(function() {
+    setTimeout(function () {
       // drawing the line
       const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').add(1, 'months').startOf('month');
       const limit = fecha.toDate().getTime();
@@ -155,8 +221,12 @@ export class TableroControlOsComponent implements OnInit {
       }
 
       const max_value = d3.max([
-        d3.max(chart.container.__data__[0].values, function (d) { return d.y; }),
-        d3.max(chart.container.__data__[1].values, function (d) { return d.y; })
+        d3.max(chart.container.__data__[0].values, function (d) {
+          return d.y;
+        }),
+        d3.max(chart.container.__data__[1].values, function (d) {
+          return d.y;
+        })
       ]);
 
       custLine.selectAll('line')
@@ -164,15 +234,22 @@ export class TableroControlOsComponent implements OnInit {
         .enter()
         .append('line')
         .attr({
-          x1: function (d) { return chart.xAxis.scale()(d); },
-          y1: function (d) { return chart.yAxis.scale()(0); },
-          x2: function (d) { return chart.xAxis.scale()(d); },
-          y2: function (d) { return chart.yAxis.scale()(max_value); }
+          x1: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y1: function (d) {
+            return chart.yAxis.scale()(0);
+          },
+          x2: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y2: function (d) {
+            return chart.yAxis.scale()(max_value);
+          }
         })
         .style('stroke', '#FF0000')
         .style('stroke-dasharray', '5,5')
-        .style('stroke-width', '2px')
-        ;
+        .style('stroke-width', '2px');
 
       // resize the chart with vertical lines
       // but only the third line will be scaled properly...
@@ -181,17 +258,25 @@ export class TableroControlOsComponent implements OnInit {
         custLine.selectAll('line')
           .transition()
           .attr({
-            x1: function (d) { return chart.xAxis.scale()(d); },
-            y1: function (d) { return chart.yAxis.scale()(0); },
-            x2: function (d) { return chart.xAxis.scale()(d); },
-            y2: function (d) { return chart.yAxis.scale()(max_value); }
+            x1: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y1: function (d) {
+              return chart.yAxis.scale()(0);
+            },
+            x2: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y2: function (d) {
+              return chart.yAxis.scale()(max_value);
+            }
           });
       });
     }, 500);
   }
 
   consolidadoCallBack(chart) {
-    setTimeout(function() {
+    setTimeout(function () {
       // drawing the line
       const fecha = moment(periodoGlobal.fecha_fin, 'DD/MM/YYYY').startOf('month');
       const limit = fecha.toDate().getTime();
@@ -210,8 +295,12 @@ export class TableroControlOsComponent implements OnInit {
 
       // hacer linea
       const max_value = d3.max([
-        d3.max(dataset[0].values, function (d) { return d.y; }),
-        d3.max(dataset[1].values, function (d) { return d.y; })
+        d3.max(dataset[0].values, function (d) {
+          return d.y;
+        }),
+        d3.max(dataset[1].values, function (d) {
+          return d.y;
+        })
       ]);
 
       custLine.selectAll('line')
@@ -219,15 +308,22 @@ export class TableroControlOsComponent implements OnInit {
         .enter()
         .append('line')
         .attr({
-          x1: function (d) { return chart.xAxis.scale()(d); },
-          y1: function (d) { return chart.yAxis.scale()(0); },
-          x2: function (d) { return chart.xAxis.scale()(d); },
-          y2: function (d) { return chart.yAxis.scale()(max_value); }
+          x1: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y1: function (d) {
+            return chart.yAxis.scale()(0);
+          },
+          x2: function (d) {
+            return chart.xAxis.scale()(d);
+          },
+          y2: function (d) {
+            return chart.yAxis.scale()(max_value);
+          }
         })
         .style('stroke', '#FF0000')
         .style('stroke-dasharray', '5,5')
-        .style('stroke-width', '2px')
-        ;
+        .style('stroke-width', '2px');
 
       // resize the chart with vertical lines
       // but only the third line will be scaled properly...
@@ -236,10 +332,18 @@ export class TableroControlOsComponent implements OnInit {
         custLine.selectAll('line')
           .transition()
           .attr({
-            x1: function (d) { return chart.xAxis.scale()(d); },
-            y1: function (d) { return chart.yAxis.scale()(0); },
-            x2: function (d) { return chart.xAxis.scale()(d); },
-            y2: function (d) { return chart.yAxis.scale()(max_value); }
+            x1: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y1: function (d) {
+              return chart.yAxis.scale()(0);
+            },
+            x2: function (d) {
+              return chart.xAxis.scale()(d);
+            },
+            y2: function (d) {
+              return chart.yAxis.scale()(max_value);
+            }
           });
       });
 
@@ -264,8 +368,12 @@ export class TableroControlOsComponent implements OnInit {
           bottom: 60,
           left: 120
         },
-        x: function (d) { return d.x; },
-        y: function (d) { return d.y; },
+        x: function (d) {
+          return d.x;
+        },
+        y: function (d) {
+          return d.y;
+        },
         stacked: false,
         showLegend: true,
         duration: 500,
@@ -299,8 +407,12 @@ export class TableroControlOsComponent implements OnInit {
           bottom: 60,
           left: 80
         },
-        x: function (d) { return d.x; },
-        y: function (d) { return d.y; },
+        x: function (d) {
+          return d.x;
+        },
+        y: function (d) {
+          return d.y;
+        },
         showLegend: true,
         duration: 500,
         reduceXticks: false,
@@ -333,8 +445,12 @@ export class TableroControlOsComponent implements OnInit {
           bottom: 60,
           left: 120
         },
-        x: function (d) { return d.x; },
-        y: function (d) { return d.y; },
+        x: function (d) {
+          return d.x;
+        },
+        y: function (d) {
+          return d.y;
+        },
         stacked: false,
         showLegend: true,
         duration: 500,
@@ -367,8 +483,12 @@ export class TableroControlOsComponent implements OnInit {
           bottom: 60,
           left: 120
         },
-        x: function (d) { return d.x; },
-        y: function (d) { return d.y; },
+        x: function (d) {
+          return d.x;
+        },
+        y: function (d) {
+          return d.y;
+        },
         reduceXticks: false,
         xAxis: {
           axisLabel: 'Periodo',
@@ -398,18 +518,48 @@ export class TableroControlOsComponent implements OnInit {
     this.graph_consol_data = null;
   }
 
+  cerrarTablero() {
+    this.showing_data = false;
+    this.setNullGraph();
+    this.data = null;
+    this.is_freeze = false;
+    this.pdf = null;
+    this.emitido_el = null;
+  }
+
   showTablero() {
     this.setNullGraph();
 
+    this.tablero = new Object as ITableroControlEmitido;
+
     if (this.centro_costo && this.periodo) {
+      this.showing_data = true;
       periodoGlobal = this.periodo;
+      this.tablero.obra = this.centro_costo;
+      this.tablero.periodo = this.periodo;
       this._tableroServ.get_data_table(this.centro_costo, this.periodo).subscribe(
         data => {
           this.data = data;
+          try {
+            if (data['is_freeze']) {
+              this.is_freeze = true;
+              this.pdf = data['pdf'];
+              this.emitido_el = data['emitido'];
+              this.info_obra = data['info_obra'];
+              this.revisiones_historico = data['revisiones_historico'];
+            } else {
+              this.info_obra = this.centro_costo.info_obra;
+              this.revisiones_historico = this.data['revisiones_historico'];
+            }
+          } catch (e) {
+            this.info_obra = this.centro_costo.info_obra;
+            this.revisiones_historico = this.data['revisiones_historico'];
+          }
           this.get_data_graphs();
         },
         error => {
           this.data = null;
+          this.showing_data = false;
           this.handleError(error);
         }
       );
@@ -466,5 +616,101 @@ export class TableroControlOsComponent implements OnInit {
     } catch (ex) {
       this._notifications.error(error._body || error);
     }
+  }
+
+  printTablero(comentarios?: string) {
+    this._notifications.info('Emitiendo el tablero, por favor, espere...');
+    this.tablero.comentario = comentarios;
+    setTimeout(() => {
+      const ts = moment();
+      while (this.images_count < 4 ) {
+        const paso = moment().diff(ts, 'seconds');
+        if (paso > 5) {
+          this._notifications.error('Error al emitir el reporte. Intente nuevamente.');
+          return;
+        }
+       }
+      this._tableroServ.emitir_tablero(this.tablero).subscribe(
+        r => {
+          this.showTablero();
+          this._notifications.success('Tablero emitido correctamente.');
+        },
+        e => {
+          this.handleError(e);
+        }
+      );
+    }, 500);
+  }
+
+  printTableroPrompt() {
+    this.images_count = 0;
+    const dialogRef = this._modal.prompt()
+      .showClose(true)
+      .title('Confirmación de emisión de tablero')
+      .message(`
+        <h4>Emisión de tablero</h4>
+        <strong>¡Atención! Esta acción no puede deshacerse.</strong>
+        <p>Al emitir el tablero, el mismo pasa a estar en sólo lectura, ignorando cualquier cambio
+        que se haga sobre las proyecciones y demás datos intervinietes para
+        ${this.centro_costo.obra}, periodo ${this.periodo.descripcion}.</p><br>
+        <p>A continuación puede añadir un comentario sobre el mismo que desee incluir en el tablero (opcional):</p>
+      `)
+      .cancelBtn('Cancelar')
+      .okBtn('Emitir')
+      .open();
+    dialogRef.then(
+      dialog => {
+        dialog.result.then(
+          result => {
+            this.printTablero(result);
+          },
+          () => {}
+        );
+      },
+    );
+
+    this.tablero.obra_id = this.centro_costo.id;
+    this.tablero.periodo_id = this.periodo.pk;
+    this.tablero.tablero_data = JSON.stringify(this.data);
+    this.tablero.consolidado_data = JSON.stringify(this.graph_consol_data);
+    this.tablero.certificacion_data = JSON.stringify(this.graph_data);
+    this.tablero.costos_data = JSON.stringify(this.graph_costo_data);
+    this.tablero.avance_data = JSON.stringify(this.graph_avance_data);
+    this.tablero.info_obra = JSON.stringify(this.info_obra);
+    this.tablero.revisiones_historico = JSON.stringify(this.revisiones_historico);
+    this.tablero.resultados_data = '';
+
+    // Get the d3js SVG element
+    let tmp  = document.getElementById('nvd3-graph-avance');
+    let svg = tmp.getElementsByTagName('svg')[0];
+    svgAsPngUri(svg, {scale: 1.2}, uri => {
+      this.tablero.avance_img = uri;
+      this.images_count++;
+    });
+
+    tmp  = document.getElementById('nvd3-graph-consolidado');
+    svg = tmp.getElementsByTagName('svg')[0];
+    svgAsPngUri(svg, {scale: 1.2}, uri => {
+      this.tablero.consolidado_img = uri;
+      this.images_count++;
+    });
+
+    tmp  = document.getElementById('nvd3-graph-cert');
+    svg = tmp.getElementsByTagName('svg')[0];
+    svgAsPngUri(svg, {scale: 1.2}, uri => {
+      this.tablero.certificacion_img = uri;
+      this.images_count++;
+    });
+
+    tmp  = document.getElementById('nvd3-graph-costo');
+    svg = tmp.getElementsByTagName('svg')[0];
+    svgAsPngUri(svg, {scale: 1.2}, uri => {
+      this.tablero.costos_img = uri;
+      this.images_count++;
+    });
+
+    const table = document.getElementById('resultado');
+    this.tablero.tablero_html = table.outerHTML;
+
   }
 }

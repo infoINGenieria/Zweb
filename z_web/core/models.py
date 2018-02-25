@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 
 from parametros.models import FamiliaEquipo, Funcion
+from zweb_utils.models import BaseModel
 
 
 class Equipos(models.Model):
@@ -155,6 +156,37 @@ class Obras(models.Model):
         except UserExtension.DoesNotExist:
             pass
         return obra_qs
+
+
+class InfoObra(BaseModel):
+    """
+    Información extra sobre una obra o proyecto en particular.
+    """
+    obra = models.OneToOneField(
+        Obras, verbose_name='info de obra', null=True, related_name='info_obra')
+    cliente = models.CharField('cliente', max_length=255, null=True, blank=True)
+
+    gerente_proyecto = models.CharField('gerente de proyecto', max_length=255, null=True, blank=True)
+    jefe_obra = models.CharField('jefe de obra', max_length=255, null=True, blank=True)
+    planificador = models.CharField('planificador', max_length=255, null=True, blank=True)
+    control_gestion = models.CharField('control de gestión', max_length=255, null=True, blank=True)
+
+    inicio_comercial = models.DateField('inicio según etapa comercial', null=True)
+    inicio_contractual = models.DateField('inicio contractual', null=True)
+    inicio_real = models.DateField('inicio real', null=True)
+    plazo_comercial = models.PositiveSmallIntegerField('plazo comercial', null=True, help_text="meses")
+    plazo_contractual = models.PositiveSmallIntegerField('plazo contractual', null=True, help_text="meses")
+    plazo_con_ampliaciones = models.PositiveSmallIntegerField('plazo con ampliaciones', null=True, help_text="meses")
+    fin_previsto_comercial = models.DateField('fin previsto comercial', null=True)
+    fin_contractual = models.DateField('fin contractual', null=True)
+    fin_contractual_con_ampliaciones = models.DateField('fin contractual con ampliaciones', null=True)
+
+    class Meta:
+        verbose_name = 'info de obra'
+        verbose_name_plural = 'info de obras'
+
+    def __str__(self):
+        return "Info de {}".format(self.obra)
 
 
 class CCT(models.Model):
