@@ -167,7 +167,7 @@ export class PresupuestoComponent implements OnInit {
     if (!this.revision.valor_dolar) {
       return 0;
     }
-    const calc = this._tonum(item.pesos) + this._tonum(item.dolares) * this.revision.valor_dolar;
+    const calc = + (this._tonum(item.pesos) + this._tonum(item.dolares) * this.revision.valor_dolar).toFixed(2);
     return calc;
   }
 
@@ -355,7 +355,6 @@ export class PresupuestoComponent implements OnInit {
       this.revision.version = presupuesto.vigente;
       this.revision.presupuesto = this.presupuesto;
       // this.revision.fecha = moment(this.revision.fecha).format('DD/MM/YYYY');
-      console.log(this.revision);
       this.presupuestos_service.save_revision(this.revision).subscribe(revision => {
         this.revision = revision;
         this.notify_service.success('Presupuesto guardado correctamente.');

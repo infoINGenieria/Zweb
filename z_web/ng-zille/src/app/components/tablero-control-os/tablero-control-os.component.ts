@@ -533,7 +533,6 @@ export class TableroControlOsComponent implements OnInit {
     this.tablero = new Object as ITableroControlEmitido;
 
     if (this.centro_costo && this.periodo) {
-      this.showing_data = true;
       periodoGlobal = this.periodo;
       this.tablero.obra = this.centro_costo;
       this.tablero.periodo = this.periodo;
@@ -556,6 +555,7 @@ export class TableroControlOsComponent implements OnInit {
             this.revisiones_historico = this.data['revisiones_historico'];
           }
           this.get_data_graphs();
+          setTimeout(() => this.showing_data = true, 500);
         },
         error => {
           this.data = null;
