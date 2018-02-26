@@ -2,7 +2,6 @@ import { Periodo } from './../../models/Periodo';
 import { NotificationService } from './../../services/core/notifications.service';
 import { Certificacion } from './../../models/Certificacion';
 import { MyCurrencyFormatterDirective } from './../../directives/currency-formatter.directive';
-import { MyCurrencyPipe } from './../../pipes/my-currency.pipe';
 import {
   IProyeccionCertificacion, ICentroCosto, IPeriodo,
   IItemProyeccionCertificacion } from './../../models/Interfaces';
