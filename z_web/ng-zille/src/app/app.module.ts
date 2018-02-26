@@ -34,18 +34,17 @@ import { IndexComponent } from './components/index/index.component';
 import { TableroControlOsComponent } from './components/tablero-control-os/tablero-control-os.component';
 import { ProyeccionesComponent } from './components/proyecciones/proyecciones.component';
 import { CertificacionesComponent } from './components/proyecciones/certificaciones.component';
+import { CostoComponent } from './components/proyecciones/costo.component';
 
 // d3 and nvd3 should be included somewhere
 import 'd3';
 import 'nvd3';
+import 'save-svg-as-png';
 
 // pipe
 import { MonedaPipe } from './pipes/moneda.pipe';
 import { PorcientoPipe } from './pipes/porciento.pipe';
-import { MyCurrencyPipe } from './pipes/my-currency.pipe';
 import { MyCurrencyFormatterDirective } from './directives/currency-formatter.directive';
-import { CostoComponent } from './components/proyecciones/costo.component';
-
 
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -91,7 +90,6 @@ registerLocaleData(localeEs, 'es-AR');
     TableroService,
     AvanceObraService,
     ProyeccionesService,
-    MyCurrencyPipe,
   ],
   bootstrap: [AppComponent]
 })
