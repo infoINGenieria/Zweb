@@ -132,7 +132,9 @@ class MarkUpColumnEstimado(MarkUpColumn):
                 self.revision.sellado_pesos + (
                     (self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta / 100)
                 )
-            ) / (1 + (self.revision.impuestos_ganancias / 100))
+            )
+        if calc >= 0:
+            calc =  calc / (1 + (self.revision.impuestos_ganancias / 100))
         return self._2D(calc)
 
 

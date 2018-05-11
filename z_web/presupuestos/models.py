@@ -196,7 +196,8 @@ class Revision(BaseModelWithHistory):
 
     @property
     def impuesto_ganancias_pesos(self):
-        return self.ganancias * (self.impuestos_ganancias or 0) / 100
+        impuesto = self.ganancias * (self.impuestos_ganancias or 0) / 100
+        return impuesto if impuesto >= 0 else 0
 
     @property
     def costo_financiero_pesos(self):
@@ -233,7 +234,8 @@ class Revision(BaseModelWithHistory):
             ganancia -= (self.impuestos_cheque_pesos or 0)
             ganancia -= (self.costo_financiero_pesos or 0)
             ganancia -= (self.costo_industrial or 0)
-            ganancia = ganancia / (1 + (self.impuestos_ganancias / 100))
+            if ganancia >= 0:
+                ganancia = ganancia / (1 + (self.impuestos_ganancias / 100))
             return ganancia
         except TypeError:
             return 0
