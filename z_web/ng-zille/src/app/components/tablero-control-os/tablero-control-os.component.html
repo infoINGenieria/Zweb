@@ -210,9 +210,11 @@
         </td>
       </tr>
       <tr class="warning">
-        <th>Costos</th>
-        <th *ngFor="let h of headers">
-          {{ data["costos"][h]["total_costos"] | moneda }}
+        <th>Costo TOTAL</th>
+        <th *ngFor="let h of headers" [ngClass]="headers_solo_totales.indexOf(h) < 0 ? 'diag' : ''">
+          <span *ngIf="headers_solo_totales.indexOf(h) > -1">
+            {{ data["costos"][h]["total_costos"] | moneda }}
+          </span>
         </th>
       </tr>
       <tr *ngFor="let costo_str of get_items_costos()">
@@ -247,9 +249,9 @@
       </tr>
       <tr class="warning">
         <th>Costo industrial</th>
-        <th>{{ data["costos"]['acumulado']["subtotal"] | moneda }}</th>
-        <th>{{ data["costos"]['faltante_estimado']["subtotal"] | moneda }}</th>
-        <th>{{ data["costos"]['faltante_presupuesto']["subtotal"] | moneda }}</th>
+        <th class="diag"></th>
+        <th class="diag"></th>
+        <th class="diag"></th>
         <th>{{ data["estructura_costos"]["estimado"]["subtotal"] | moneda }}</th>
         <th>{{ data["estructura_costos"]["presupuesto"]["subtotal"] | moneda }}</th>
         <th>{{ data["estructura_costos"]["comercial"]["subtotal"] | moneda }}</th>

@@ -56,6 +56,9 @@ export class TableroControlOsComponent implements OnInit {
     'estimado', 'presupuesto', 'comercial'
   ];
 
+  headers_solo_totales = [
+    'estimado', 'presupuesto', 'comercial'
+  ];
 
   g_cert_options = null;
   graph_data = null;
@@ -384,7 +387,6 @@ export class TableroControlOsComponent implements OnInit {
           tickFormat: function (d) {
             return d3.time.format('%Y-%m')(new Date(d));
           },
-          ticks: 10,
         },
         yAxis: {
           axisLabel: 'Pesos ($)',
@@ -404,7 +406,7 @@ export class TableroControlOsComponent implements OnInit {
         margin: {
           top: 60,
           right: 30,
-          bottom: 60,
+          bottom: 90,
           left: 80
         },
         x: function (d) {
@@ -421,7 +423,7 @@ export class TableroControlOsComponent implements OnInit {
           tickFormat: function (d) {
             return d3.time.format('%Y-%m')(new Date(d));
           },
-          ticks: 10,
+          rotateLabels: -45
         },
         yAxis: {
           axisLabel: 'Avance de obra (%)',
@@ -480,7 +482,7 @@ export class TableroControlOsComponent implements OnInit {
         margin: {
           top: 80,
           right: 30,
-          bottom: 60,
+          bottom: 90,
           left: 120
         },
         x: function (d) {
@@ -490,13 +492,14 @@ export class TableroControlOsComponent implements OnInit {
           return d.y;
         },
         reduceXticks: false,
+        // staggerLabels: true,
         xAxis: {
           axisLabel: 'Periodo',
           tickFormat: function (d) {
             return d3.time.format('%Y-%m')(new Date(d));
           },
-          ticks: 10,
-          // rotateLabels: -45
+          // ticks: 10,
+          rotateLabels: -45
         },
         yAxis: {
           axisLabel: 'Pesos ($)',
