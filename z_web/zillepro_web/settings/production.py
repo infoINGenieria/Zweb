@@ -22,11 +22,14 @@ LOGGING = {
         'handlers': ['sentry'],
     },
     'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+        'logfile': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': normpath(join(SITE_ROOT, '../../logs/django-debug.log')),
-        },
+            'maxBytes' : 1024*1024*100, # 100MB
+            'backupCount' : 5,
+            'formatter': 'simple'
+        }
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -40,8 +43,8 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
+            'handlers': ['logfile'],
+            'level': 'INFO',
             'propagate': True,
         },
         'django_mail': {
