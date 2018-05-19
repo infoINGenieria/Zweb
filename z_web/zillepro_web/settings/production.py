@@ -29,7 +29,7 @@ LOGGING = {
             'maxBytes' : 1024*1024*100, # 100MB
             'backupCount' : 5,
             'formatter': 'simple'
-        }
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
