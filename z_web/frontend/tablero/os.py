@@ -265,7 +265,7 @@ def generar_tabla_tablero(obra, periodo):
     # Faltante estimado son las proyecciones de costos
     proyeccion_costo_ultimo_ajuste = ProyeccionCosto.objects.filter(
         centro_costo=obra, periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
-            '-periodo__fecha_fin').first()
+            '-periodo__fecha_fin', '-created_at').first()
 
     costos_proyectados = dict(proyeccion_costo_ultimo_ajuste.items.filter(
         periodo__fecha_fin__gt=periodo.fecha_fin).values(

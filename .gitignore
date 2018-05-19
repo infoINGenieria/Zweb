@@ -68,3 +68,5 @@ z_web/zillepro_web/settings/private.py
 fabfile.py
 
 .vscode/
+
+node_modules/

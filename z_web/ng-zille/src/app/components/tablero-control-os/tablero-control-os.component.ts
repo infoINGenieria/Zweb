@@ -369,7 +369,7 @@ export class TableroControlOsComponent implements OnInit {
           top: 60,
           right: 30,
           bottom: 60,
-          left: 120
+          left: 125
         },
         x: function (d) {
           return d.x;
@@ -391,9 +391,9 @@ export class TableroControlOsComponent implements OnInit {
         yAxis: {
           axisLabel: 'Pesos ($)',
           tickFormat: function (d) {
-            return '$ ' + d3.format(',.2f')(d);
+            return '$ ' + d3.format(',.1f')(d);
           },
-          axisLabelDistance: 50
+          axisLabelDistance: 60
         },
         callback: this.certCallBack
       }
@@ -407,7 +407,7 @@ export class TableroControlOsComponent implements OnInit {
           top: 60,
           right: 30,
           bottom: 90,
-          left: 80
+          left: 90
         },
         x: function (d) {
           return d.x;
@@ -428,9 +428,9 @@ export class TableroControlOsComponent implements OnInit {
         yAxis: {
           axisLabel: 'Avance de obra (%)',
           tickFormat: function (d) {
-            return d3.format('.2f')(d) + ' %';
+            return d3.format('.1f')(d) + ' %';
           },
-          axisLabelDistance: 20
+          axisLabelDistance: 25
         },
         forceY: [0],
         callback: this.avanceCallBack
@@ -445,7 +445,7 @@ export class TableroControlOsComponent implements OnInit {
           top: 60,
           right: 30,
           bottom: 60,
-          left: 120
+          left: 125
         },
         x: function (d) {
           return d.x;
@@ -467,9 +467,9 @@ export class TableroControlOsComponent implements OnInit {
         yAxis: {
           axisLabel: 'Pesos ($)',
           tickFormat: function (d) {
-            return '$ ' + d3.format(',.2f')(d);
+            return '$ ' + d3.format(',.1f')(d);
           },
-          axisLabelDistance: 50
+          axisLabelDistance: 60
         },
         callback: this.costosCallBack
       }
@@ -483,7 +483,7 @@ export class TableroControlOsComponent implements OnInit {
           top: 80,
           right: 30,
           bottom: 90,
-          left: 120
+          left: 125
         },
         x: function (d) {
           return d.x;
@@ -504,9 +504,9 @@ export class TableroControlOsComponent implements OnInit {
         yAxis: {
           axisLabel: 'Pesos ($)',
           tickFormat: function (d) {
-            return '$ ' + d3.format(',.2f')(d);
+            return '$ ' + d3.format(',.1f')(d);
           },
-          axisLabelDistance: 55
+          axisLabelDistance: 60
         },
         forceY: [0],
         callback: this.consolidadoCallBack
