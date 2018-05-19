@@ -28,7 +28,6 @@ LOGGING = {
             'filename': normpath(join(SITE_ROOT, '../../logs/django-debug.log')),
             'maxBytes' : 1024*1024*100, # 100MB
             'backupCount' : 5,
-            'formatter': 'simple'
         },
         'mail_admins': {
             'level': 'ERROR',
