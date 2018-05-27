@@ -454,16 +454,17 @@ def get_costos_data_2_graph(obra, periodo):
 
 def get_certificacion_graph(obra, periodo):
 
-    # bucle por los periodos de la proyección
-    periodo_range = ProyeccionCertificacion.objects.filter(
-        centro_costo=obra).aggregate(
-            ini_fecha=Min('items__periodo__fecha_fin'),
-            fin_fecha=Max('items__periodo__fecha_fin'))
-
     data = get_certificacion_data_2_graph(obra, periodo)
     cert_base = data['certificacion_base']
     cert_real = data['certificacion_real']
     cert_revision = data['certificacion_proyeccion']
+
+    # usando todos los id de los periodos, buscar el rango de fechas del reporte
+    periodos_id = list(cert_base.keys()) + list(cert_real.keys()) + list(cert_revision.keys())
+
+    periodo_range = Periodo.objects.filter(pk__in=set(periodos_id)).aggregate(
+        ini_fecha=Min('fecha_fin'),
+        fin_fecha=Max('fecha_fin'))
 
     data_real = []
     data_proy = []
@@ -510,17 +511,18 @@ def get_certificacion_graph(obra, periodo):
 
 def get_costos_graph(obra, periodo):
 
-    # bucle por los periodos de la proyección
-    periodo_range = ProyeccionCosto.objects.filter(
-        centro_costo=obra).aggregate(
-            ini_fecha=Min('items__periodo__fecha_fin'),
-            fin_fecha=Max('items__periodo__fecha_fin'))
-
     data = get_costos_data_2_graph(obra, periodo)
 
     costo_base = data['costo_base']
     costo_real = data['costo_real']
     costo_revision = data['costo_proyeccion']
+
+    # usando todos los id de los periodos, buscar el rango de fechas del reporte
+    periodos_id = list(costo_base.keys()) + list(costo_real.keys()) + list(costo_revision.keys())
+
+    periodo_range = Periodo.objects.filter(pk__in=set(periodos_id)).aggregate(
+        ini_fecha=Min('fecha_fin'),
+        fin_fecha=Max('fecha_fin'))
 
     data_real = []
     data_proy = []
@@ -581,16 +583,16 @@ def get_avances_graph(obra, periodo):
         periodo__fecha_fin__lte=periodo.fecha_fin).order_by(
             '-periodo__fecha_fin', 'es_base').first()
 
-    # bucle por los periodos de la proyección
-
-    periodo_range = ProyeccionAvanceObra.objects.filter(
-        centro_costo=obra).aggregate(
-            ini_fecha=Min('items__periodo__fecha_fin'),
-            fin_fecha=Max('items__periodo__fecha_fin'))
-
     avance_obra_base = dict(line_base.items.values_list('periodo', 'avance'))
     avance_obra_real = dict([(avance.periodo_id, avance.avance) for avance in avance_obra])
     avance_obra_revision = dict(revision.items.values_list('periodo', 'avance'))
+
+    # usando todos los id de los periodos, buscar el rango de fechas del reporte
+    periodos_id = list(avance_obra_base.keys()) + list(avance_obra_real.keys()) + list(avance_obra_revision.keys())
+
+    periodo_range = Periodo.objects.filter(pk__in=set(periodos_id)).aggregate(
+        ini_fecha=Min('fecha_fin'),
+        fin_fecha=Max('fecha_fin'))
 
     data_real = []
     data_proy = []
@@ -604,7 +606,6 @@ def get_avances_graph(obra, periodo):
     for per in Periodo.objects.filter(
             fecha_fin__gte=periodo_range["ini_fecha"],
             fecha_fin__lte=periodo_range["fin_fecha"]).order_by('fecha_fin'):
-
 
         if is_first:
             fecha_inicio = datetime_to_epoch(per.fecha_inicio)
@@ -669,11 +670,13 @@ def get_consolidado_graph(obra, periodo):
     costo_real = data_costos['costo_real']
     costo_revision = data_costos['costo_proyeccion']
 
-    # bucle por los periodos de la proyección
-    periodo_range = ProyeccionAvanceObra.objects.filter(
-        centro_costo=obra).aggregate(
-            ini_fecha=Min('items__periodo__fecha_fin'),
-            fin_fecha=Max('items__periodo__fecha_fin'))
+    # usando todos los id de los periodos, buscar el rango de fechas del reporte
+    periodos_id = list(cert_base.keys()) + list(cert_real.keys()) + list(cert_revision.keys())
+    periodos_id.extend(list(costo_base.keys()) + list(costo_real.keys()) + list(costo_revision.keys()))
+
+    periodo_range = Periodo.objects.filter(pk__in=set(periodos_id)).aggregate(
+        ini_fecha=Min('fecha_fin'),
+        fin_fecha=Max('fecha_fin'))
 
     data_real_ventas = []
     data_proy_ventas = []
