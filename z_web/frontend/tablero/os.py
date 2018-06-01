@@ -100,11 +100,13 @@ class MarkUpColumnEstimado(MarkUpColumn):
 
     @property
     def impuestos_y_contribuciones(self):
-        return self._2D(
+        calc = self._2D(
             self.revision.sellado_pesos + (
                 (self.revision.ingresos_brutos + self.revision.impuestos_cheque) * self.subtotal_venta / 100
-            ) + (self.ganancias_despues_impuestos * self.revision.impuestos_ganancias / 100)
-        )
+            ))
+        if self.ganancias_despues_impuestos >= 0:
+            calc += self.ganancias_despues_impuestos * self.revision.impuestos_ganancias / 100
+        return calc
 
     @property
     def costo_financiero_e_imprevistos(self):
