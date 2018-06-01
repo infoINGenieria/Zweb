@@ -1,5 +1,5 @@
 <h3><a class="btn btn-default" [routerLink]="['']"><i class="fa fa-chevron-left"></i> </a>
-  Tablero de control</h3>
+  Tablero de control <small *ngIf="showing_data"> {{ centro_costo.obra }}</small></h3>
 <div *ngIf="!showing_data">
   <form class="form-inline">
     <div class="form-group">

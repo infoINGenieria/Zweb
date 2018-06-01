@@ -296,6 +296,7 @@ export class TableroControlOsComponent implements OnInit {
       chart.xScale(d3.time.scale());
       chart.update();
       // hacer linea
+      console.log(dataset);
       const max_value = d3.max([
         d3.max(dataset[0].values, (d) => d.y),
         d3.max(dataset[1].values, (d) => d.y),
@@ -304,7 +305,7 @@ export class TableroControlOsComponent implements OnInit {
         d3.max(dataset[4].values, (d) => d.y),
         d3.max(dataset[5].values, (d) => d.y)
       ]);
-
+      console.log('Max:', max_value);
       custLine.selectAll('line')
         .data(xgrid)
         .enter()
