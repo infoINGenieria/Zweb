@@ -11,7 +11,7 @@ class UnidadNegocio(BaseModel):
     codigo = models.CharField(verbose_name="código", max_length=12, unique=True)
     nombre = models.CharField(verbose_name="nombre", max_length=255)
     activa = models.BooleanField(verbose_name='activa', default=True)
-    observaciones = models.TextField()
+    observaciones = models.TextField(blank=True)
 
     class Meta:
         verbose_name = "unidad de negocio"

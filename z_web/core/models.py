@@ -135,11 +135,8 @@ class Obras(models.Model):
     @classmethod
     def get_centro_costos(cls, user):
         obra_qs = Obras.objects.filter(es_cc=True)
-        try:
-            if user.extension.unidad_negocio:
-                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
-        except UserExtension.DoesNotExist:
-            pass
+        if user.extension.unidades_negocio.exists():
+            return obra_qs.filter(unidad_negocio__in=user.extension.unidades_negocio.all())
         return obra_qs
 
     @classmethod
@@ -150,13 +147,9 @@ class Obras(models.Model):
     @classmethod
     def get_obras_by_un(cls, user):
         obra_qs = Obras.objects.all()
-        try:
-            if user.extension.unidad_negocio:
-                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
-        except UserExtension.DoesNotExist:
-            pass
+        if user.extension.unidades_negocio.exists():
+            return obra_qs.filter(unidad_negocio__in=user.extension.unidades_negocio.all())
         return obra_qs
-
 
 class InfoObra(BaseModel):
     """
@@ -272,8 +265,10 @@ class UserExtension(models.Model):
     Modelo para almacenar información relativa al usuario
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='extension')
-    unidad_negocio = models.ForeignKey(
-        'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
+    unidades_negocio = models.ManyToManyField(
+        'organizacion.UnidadNegocio',
+        verbose_name='unidades de negocio',
+        related_name='usuarios_de_la_unidad')
 
     class Meta:
         verbose_name = 'información adicional'
@@ -283,10 +278,9 @@ class UserExtension(models.Model):
         return "información de {}".format(self.user)
 
     @classmethod
-    def get_unidad_negocio(cls, user):
-        try:
-            if user.extension.unidad_negocio:
-                return user.extension.unidad_negocio
-        except UserExtension.DoesNotExist:
-            pass
-        return None
+    def get_unidades_negocio(cls, user):
+        return user.extension.unidades_negocio.all()
+
+    @classmethod
+    def esta_en_la_unidad(cls, user, codigo):
+        return user.extension.unidades_negocio.filter(codigo=codigo).exists()

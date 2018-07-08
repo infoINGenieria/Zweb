@@ -127,15 +127,14 @@ class CostosList(BaseCostosMixin, TableFilterListView):
         return fs
 
     def get_queryset(self):
-        un = UserExtension.get_unidad_negocio(self.request.user)
-        if un:
-            if un.codigo == "OS":  # OS no tiene costos por equipos
-                return Costo.objects.filter(
-                    centro_costo__in=Obras.get_centro_costos(self.request.user))
-            elif un.codigo == "MS":
-                return Costo.objects.filter(
-                    models.Q(centro_costo__in=Obras.get_centro_costos(self.request.user)) |
-                    models.Q(centro_costo__isnull=True))
+        uns = UserExtension.get_unidades_negocio(self.request.user)
+        if uns.filter(codigo='OS').exclude(codigo='MS').exists():  # OS no tiene costos por equipos
+            return Costo.objects.filter(
+                centro_costo__in=Obras.get_centro_costos(self.request.user))
+        elif uns.filter(codigo='MS').exclude(codigo='OS').exists():
+            return Costo.objects.filter(
+                models.Q(centro_costo__in=Obras.get_centro_costos(self.request.user)) |
+                models.Q(centro_costo__isnull=True))
         # otro caso
         return Costo.objects.all()
 
