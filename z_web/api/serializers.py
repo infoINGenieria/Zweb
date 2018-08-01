@@ -4,12 +4,12 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
-from core.models import Obras, InfoObra
+from core.models import Obras, InfoObra, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from registro.models import CertificacionItem, Certificacion, TableroControlOS
-from parametros.models import Periodo
+from parametros.models import Periodo, FamiliaEquipo
 from proyecciones.models import (
     ProyeccionAvanceObra, ItemProyeccionAvanceObra,
     ProyeccionCertificacion, ItemProyeccionCertificacion,
@@ -545,3 +545,44 @@ class TableroControlOSSerializer(serializers.ModelSerializer):
         tablero.generate_pdf(self.context["request"])
         tablero.save()
         return tablero
+
+
+################
+##   TALLER   ##
+################
+
+class FamiliaEquipoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FamiliaEquipo
+        fields = ('pk', 'nombre', )
+
+
+class EquipoSerializer(serializers.ModelSerializer):
+    familia_equipo = FamiliaEquipoSerializer(read_only=True)
+    anio = serializers.IntegerField(source='año')
+    familia_equipo_id = serializers.IntegerField(source='familia_equipo.pk')
+    fecha_baja = serializers.DateField(read_only=True)
+
+    class Meta:
+        model = Equipos
+        fields = (
+            'id', 'n_interno', 'equipo', 'marca', 'modelo',
+            'anio', 'dominio', 'nro_serie', 'familia_equipo',
+            'familia_equipo_id', 'es_alquilado', 'fecha_baja'
+        )
+
+    def create(self, validated_data):
+        familia_equipo = validated_data.pop('familia_equipo')
+        equipo = Equipos(**validated_data)
+        equipo.familia_equipo_id = familia_equipo["pk"]
+        equipo.save()
+        return equipo
+
+    def update(self, instance, validated_data):
+        familia_equipo = validated_data.pop('familia_equipo')
+        for attr in validated_data.keys():
+            setattr(instance, attr, validated_data.get(attr, getattr(instance, attr)))
+        instance.familia_equipo_id = familia_equipo.get('pk', instance.familia_equipo_id)
+        instance.save()
+        return instance

@@ -113,6 +113,13 @@ def logout(request):
 def generate_menu_user(user):
     menu = []
 
+    if UserExtension.esta_en_la_unidad(user, 'taller'):
+        menu.append({
+            'name': "Gestión de Taller", 'icon': 'car',
+            'url': '/~/taller/', 'section': "Taller",
+            'btn_class': 'primary', 'link': True
+        })
+
     if UserExtension.esta_en_la_unidad(user, 'MS'):
         un = UnidadNegocio.objects.filter(codigo='MS').first()
         if user.has_perm('costos.can_view_panel_control'):

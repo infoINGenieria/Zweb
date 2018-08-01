@@ -1,15 +1,15 @@
 import { IDatePickerConfig } from 'ng2-date-picker';
-import { CoreService } from './../../services/core/core.service';
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
-import { NotificationService } from './../../services/core/notifications.service';
-import { fadeInAnimation } from './../../_animations/fade-in.animation';
-import { itemAnim } from './../../_animations/itemAnim';
-import { slideInOutAnimation } from './../../_animations/slide-in-out.animation';
+import { CoreService } from '../../services/core/core.service';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
+import { NotificationService } from '../../services/core/notifications.service';
+import { fadeInAnimation } from '../../_animations/fade-in.animation';
+import { itemAnim } from '../../_animations/itemAnim';
+import { slideInOutAnimation } from '../../_animations/slide-in-out.animation';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { PresupuestosService } from './../../services/presupuestos/presupuestos.service';
-import { IPresupuesto, ICentroCosto } from './../../models/Interfaces';
+import { PresupuestosService } from '../../services/presupuestos/presupuestos.service';
+import { IPresupuesto, ICentroCosto } from '../../models/Interfaces';
 
 @Component({
   selector: 'app-presupuestos',

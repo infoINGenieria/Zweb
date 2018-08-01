@@ -1,20 +1,20 @@
-import { Periodo } from './../../models/Periodo';
-import { PresupuestosService } from './../../services/presupuestos/presupuestos.service';
+import { Periodo } from '../../models/Periodo';
+import { PresupuestosService } from '../../services/presupuestos/presupuestos.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
 
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
-import { MyCurrencyFormatterDirective } from './../../directives/currency-formatter.directive';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
+import { MyCurrencyFormatterDirective } from '../../directives/currency-formatter.directive';
 
-import { fadeInAnimation } from '../../_animations/index';
-import { NotificationService } from './../../services/core/notifications.service';
+import { fadeInAnimation } from '../../_animations';
+import { NotificationService } from '../../services/core/notifications.service';
 import { CoreService } from '../../services/core/core.service';
 import { ProyeccionesService } from '../../services/proyecciones.service';
-import { RegistroService } from './../../services/registro/registro.service';
+import { RegistroService } from '../../services/registro/registro.service';
 
 import {
   IProyeccionCosto, ICentroCosto, IPeriodo, ICostoTipo,
-  IItemProyeccionCosto } from './../../models/Interfaces';
+  IItemProyeccionCosto } from '../../models/Interfaces';
 
 import * as moment from 'moment';
 

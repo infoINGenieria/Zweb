@@ -3,6 +3,7 @@ import json
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Max, Min
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.decorators import list_route, detail_route
@@ -17,14 +18,14 @@ from api.serializers import (
     CertificacionSerializer, CertificacionItemSerializer, PeriodoSerializer,
     AvanceObraSerializer, ProyeccionAvanceObraSerializer,
     ProyeccionCertificacionSerializer, ProyeccionCostoSerializer,
-    TableroControlOSSerializer)
+    TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
-    ProyeccionCostoFilter)
-from core.models import Obras, UserExtension
+    ProyeccionCostoFilter, EquiposFilter)
+from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
-from parametros.models import Periodo
+from parametros.models import Periodo, FamiliaEquipo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from proyecciones.models import (
@@ -279,3 +280,27 @@ class TableroControlOSEmitidosView(ModelViewSet, AuthView):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+
+class EquiposViewSet(ModelViewSet, AuthView):
+    serializer_class = EquipoSerializer
+    filter_class = EquiposFilter
+
+    def get_queryset(self):
+        return Equipos.objects.exclude(id=1)
+
+    @detail_route(methods=['post'], url_path='set-baja')
+    def set_baja(self, request, pk):
+        equipo = self.get_object()
+        equipo.fecha_baja = timezone.now().date()
+        equipo.save()
+        return Response({'status': 'ok', 'equipo': EquipoSerializer(equipo).data})
+
+
+class FamiliaEquipoViewSet(ModelViewSet, AuthView):
+    serializer_class = FamiliaEquipoSerializer
+
+    def get_queryset(self):
+        return FamiliaEquipo.objects.all()
+
+

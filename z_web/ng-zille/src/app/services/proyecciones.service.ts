@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api/base-api.service';
 import { Injectable } from '@angular/core';
 import { Response, URLSearchParams } from '@angular/http';
@@ -9,7 +9,7 @@ import {
   IProyeccionAvanceObra, IItemProyeccionAvanceObra,
   IItemProyeccionCertificacion, IProyeccionCertificacion,
   IItemProyeccionCosto, IProyeccionCosto
-} from './../models/Interfaces';
+} from '../models/Interfaces';
 
 @Injectable()
 export class ProyeccionesService {

@@ -1,10 +1,10 @@
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
-import { fadeInAnimation } from './../../_animations/fade-in.animation';
-import { itemAnim } from './../../_animations/itemAnim';
-import { NotificationService } from './../../services/core/notifications.service';
-import { CoreService } from './../../services/core/core.service';
-import { ICertificacion, IPeriodo, ICentroCosto, ICertificacionItem } from './../../models/Interfaces';
-import { RegistroService } from './../../services/registro/registro.service';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
+import { fadeInAnimation } from '../../_animations/fade-in.animation';
+import { itemAnim } from '../../_animations/itemAnim';
+import { NotificationService } from '../../services/core/notifications.service';
+import { CoreService } from '../../services/core/core.service';
+import { ICertificacion, IPeriodo, ICentroCosto, ICertificacionItem } from '../../models/Interfaces';
+import { RegistroService } from '../../services/registro/registro.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 

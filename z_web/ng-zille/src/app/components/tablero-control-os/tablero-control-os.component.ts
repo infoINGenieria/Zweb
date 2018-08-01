@@ -1,18 +1,18 @@
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import {
   TableroService
-} from './../../services/tablero.service';
+} from '../../services/tablero.service';
 import {
   NotificationService
-} from './../../services/core/notifications.service';
+} from '../../services/core/notifications.service';
 import {
   ICentroCosto,
   IPeriodo,
   ITableroControlEmitido
-} from './../../models/Interfaces';
+} from '../../models/Interfaces';
 import {
   CoreService
-} from './../../services/core/core.service';
+} from '../../services/core/core.service';
 import {
   Component,
   OnInit,

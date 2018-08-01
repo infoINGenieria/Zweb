@@ -1,8 +1,8 @@
-import { Certificacion } from './../../models/Certificacion';
+import { Certificacion } from '../../models/Certificacion';
 import { Observable } from 'rxjs/Observable';
-import { ICertificacion } from './../../models/Interfaces';
+import { ICertificacion } from '../../models/Interfaces';
 import { Response, URLSearchParams } from '@angular/http';
-import { BaseApiService } from './../base-api/base-api.service';
+import { BaseApiService } from '../base-api/base-api.service';
 import { Injectable } from '@angular/core';
 
 @Injectable()

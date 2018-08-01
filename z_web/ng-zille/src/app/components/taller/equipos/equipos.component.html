@@ -1,0 +1,115 @@
+<h1>
+  <a class="btn btn-default" [routerLink]="['/taller']">
+    <i class="fa fa-chevron-left"></i>
+  </a>
+  Equipos</h1>
+<div>
+  <form method="get" class="horizontal-form" #f_filter="ngForm">
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>N° Interno: </label>
+          <input type="text" class="form-control input-sm" ngModel name='ninterno'>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Marca: </label>
+          <input type="text" class="form-control input-sm" ngModel name='marca'>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Modelo: </label>
+          <input type="text" class="form-control input-sm" ngModel name='modelo'>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Tipo: </label>
+          <input type="text" class="form-control input-sm" ngModel name='tipo'>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Dominio: </label>
+          <input type="text" class="form-control input-sm" ngModel name='dominio'>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Año: </label>
+          <input type="number" step="1" class="form-control input-sm" ngModel name='anio'>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Estado: </label>
+          <select class="form-control input-sm" ngModel name='estado'>
+              <option value=''>Todos</option>
+              <option value='1'>Activos</option>
+              <option value='0'>Bajas</option>
+          </select>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <button class="btn btn-sm btn-info" (click)="filterList(f_filter)">Filtrar</button>
+          <button class="btn btn-sm btn-default" (click)="cleanFilter(f_filter)">Limpiar filtro</button>
+          <a class="btn btn-sm btn-success pull-right" [routerLink]="['/taller', 'equipos', 'new']">Añadir equipo</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <table class="table table-hover" *ngIf="equipos.length>0" [@fadeInAnimation]>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>N° interno</th>
+        <th>Estado</th>
+        <th>Tipo</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Año</th>
+        <th>Dominio</th>
+        <th>N° serie</th>
+        <th>Familia</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let eq of equipos" [@fadeInAnimation]>
+        <td>
+          <a href="/admin/core/equipos/{{eq.id}}/" target="_blank">{{ eq.id }}</a>
+        </td>
+        <td>{{ eq.n_interno }}</td>
+        <td>
+            <span *ngIf="can_dar_baja(eq)" class="label label-primary">Activo</span>
+            <span *ngIf="!can_dar_baja(eq)" class="label label-danger">Baja ({{ eq.fecha_baja }})</span>
+        </td>
+        <td>{{ eq.equipo }}</td>
+        <td>{{ eq.marca }}</td>
+        <td>{{ eq.modelo }}</td>
+        <td>{{ eq.anio }}</td>
+        <td>{{ eq.dominio }}</td>
+        <td>{{ eq.nro_serie }}</td>
+        <td>{{ eq.familia_equipo?.nombre }}</td>
+        <td>
+          <a *ngIf="can_dar_baja(eq)" class="btn btn-danger btn-sm" (click)="set_equipo_baja_modal(eq)">Dar la baja</a>
+          <a class="btn btn-warning btn-sm" [routerLink]="['/taller', 'equipos', eq.id]">Editar</a>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  <ul class="pager">
+      <li><a [routerLink]="" (click)="onBtPrevious()" [ngClass]="canPrevious ? '': 'disabled'">&larr; Anterior</a></li>
+      <li>Página {{ page.pageNumber}} de {{ page.totalPages }}</li>
+      <li><a [routerLink]="" (click)="onBtNext()" [ngClass]="canNext ? '' : 'disabled'">Siguiente &rarr;</a></li>
+  </ul>
+  <p *ngIf="equipos.length==0 && loaded" class="alert alert-warning ">No hay equipos para visualizar.</p>

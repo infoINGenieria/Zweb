@@ -1,7 +1,7 @@
 // import { IMyDpOptions, IMyDateModel, IMyDate } from 'mydatepicker';
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
-import { itemAnim } from './../../_animations/itemAnim';
-import { fadeInAnimation } from './../../_animations/fade-in.animation';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
+import { itemAnim } from '../../_animations/itemAnim';
+import { fadeInAnimation } from '../../_animations/fade-in.animation';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router} from '@angular/router';
@@ -9,12 +9,12 @@ import 'rxjs/add/operator/map';
 import { DatePickerComponent, IDatePickerConfig, ECalendarValue } from 'ng2-date-picker';
 import * as moment from 'moment';
 
-import { ICentroCosto, IRevision, ICostoTipo, IPresupuesto, IItemPresupuesto } from './../../models/Interfaces';
-import { ItemPresupuesto } from './../../models/ItemPresupuesto';
+import { ICentroCosto, IRevision, ICostoTipo, IPresupuesto, IItemPresupuesto } from '../../models/Interfaces';
+import { ItemPresupuesto } from '../../models/ItemPresupuesto';
 
-import { CoreService } from './../../services/core/core.service';
-import { PresupuestosService } from './../../services/presupuestos/presupuestos.service';
-import { NotificationService } from './../../services/core/notifications.service';
+import { CoreService } from '../../services/core/core.service';
+import { PresupuestosService } from '../../services/presupuestos/presupuestos.service';
+import { NotificationService } from '../../services/core/notifications.service';
 
 import { MyCurrencyFormatterDirective } from '../../directives/currency-formatter.directive';
 

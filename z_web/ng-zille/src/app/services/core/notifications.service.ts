@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
-import {Subject, Observable, Subscription} from 'rxjs/Rx';
+import {Subject, Observable, Subscription} from 'rxjs';
 
 @Injectable()
 export class NotificationService {

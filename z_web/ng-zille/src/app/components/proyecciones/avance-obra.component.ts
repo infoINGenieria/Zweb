@@ -1,16 +1,16 @@
-import { Periodo } from './../../models/Periodo';
-import { ProyeccionesService } from './../../services/proyecciones.service';
+import { Periodo } from '../../models/Periodo';
+import { ProyeccionesService } from '../../services/proyecciones.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
 
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 
-import { fadeInAnimation } from '../../_animations/index';
+import { fadeInAnimation } from '../../_animations';
 
 import { CoreService } from '../../services/core/core.service';
 import { NotificationService } from '../../services/core/notifications.service';
 
-import { ICentroCosto, IProyeccionAvanceObra, IItemProyeccionAvanceObra, IPeriodo } from './../../models/Interfaces';
+import { ICentroCosto, IProyeccionAvanceObra, IItemProyeccionAvanceObra, IPeriodo } from '../../models/Interfaces';
 import 'rxjs/add/operator/map';
 
 @Component({

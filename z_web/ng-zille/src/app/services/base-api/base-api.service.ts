@@ -4,7 +4,7 @@ import {Http, Headers, RequestOptions, Response, URLSearchParams } from '@angula
 import 'rxjs/add/operator/map';
 import { environment } from '../../../environments/environment';
 
-import { MenuEntry } from './../../models/Interfaces';
+import { MenuEntry } from '../../models/Interfaces';
 
 @Injectable()
 export class BaseApiService {

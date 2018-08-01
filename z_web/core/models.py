@@ -33,6 +33,9 @@ class Equipos(models.Model):
     vto_otros3 = models.DateField(verbose_name='fecha vto3', db_column='VTO_OTROS3', blank=True, null=True)
     familia_equipo = models.ForeignKey(FamiliaEquipo, db_column='FAMILIA_EQUIPO_ID', blank=True, null=True)
 
+    es_alquilado = models.BooleanField(verbose_name='es equipo alquilado', default=False)
+    fecha_baja = models.DateField(verbose_name='fecha de baja', null=True)
+
     class Meta:
         verbose_name = "equipo"
         verbose_name_plural = "equipos"

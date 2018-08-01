@@ -246,3 +246,23 @@ export interface ITableroControlEmitido {
     avance_img: string;
     resultado_img: string;
 }
+
+export interface IFamiliaEquipo {
+    pk?: number;
+    nombre: string;
+}
+
+export interface IEquipo {
+    id?: number;
+    n_interno: string;
+    equipo: string;
+    marca: string;
+    modelo: string;
+    anio: string;
+    dominio: string;
+    nro_serie: string;
+    familia_equipo: IFamiliaEquipo;
+    familia_equipo_id: number;
+    es_alquilado: boolean;
+    fecha_baja?: Date;
+}

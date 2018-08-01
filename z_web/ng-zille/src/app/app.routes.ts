@@ -1,3 +1,7 @@
+import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
+import { EquiposComponent } from './components/taller/equipos/equipos.component';
+import { ParametrosGralComponent } from './components/taller/parametros-gral/parametros-gral.component';
+import { TallerComponent } from './components/taller/taller.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 
@@ -30,6 +34,10 @@ const APP_ROUTES: Routes = [
   { path: 'certificaciones/:pk', component: CertificacionRealComponent },
 
   { path: 'tablero-control/os', component: TableroControlOsComponent },
+
+  { path: 'taller', component: TallerComponent },
+  { path: 'taller/equipos', component: EquiposComponent },
+  { path: 'taller/equipos/:pk', component: EquipoDetailComponent },
 
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];

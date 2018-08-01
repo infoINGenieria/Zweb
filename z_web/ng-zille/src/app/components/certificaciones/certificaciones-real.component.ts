@@ -1,11 +1,11 @@
 import { NgForm } from '@angular/forms';
-import { CoreService } from './../../services/core/core.service';
-import { NotificationService } from './../../services/core/notifications.service';
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
-import { ICertificacion, ICentroCosto, IPeriodo } from './../../models/Interfaces';
-import { RegistroService } from './../../services/registro/registro.service';
+import { CoreService } from '../../services/core/core.service';
+import { NotificationService } from '../../services/core/notifications.service';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
+import { ICertificacion, ICentroCosto, IPeriodo } from '../../models/Interfaces';
+import { RegistroService } from '../../services/registro/registro.service';
 import { Component, OnInit } from '@angular/core';
-import { fadeInAnimation } from './../../_animations/fade-in.animation';
+import { fadeInAnimation } from '../../_animations/fade-in.animation';
 
 @Component({
   selector: 'app-certificaciones-real',

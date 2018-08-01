@@ -9,8 +9,8 @@ from core.models import (
 
 @admin.register(Equipos)
 class Equipos(admin.ModelAdmin):
-    list_display = ('n_interno', 'familia_equipo', 'equipo', 'marca', 'modelo', 'año', 'dominio', )
-    list_filter = ('marca', 'año', 'familia_equipo', )
+    list_display = ('n_interno', 'familia_equipo', 'equipo', 'marca', 'modelo', 'año', 'dominio', 'es_alquilado', 'fecha_baja')
+    list_filter = ('marca', 'año', 'familia_equipo', 'es_alquilado', )
     search_fields = ('n_interno', 'equipo', 'año', 'dominio', 'modelo')
     ordering = ('n_interno', )
     list_display_links = ('n_interno', 'equipo', )
@@ -19,7 +19,9 @@ class Equipos(admin.ModelAdmin):
             'fields': (('familia_equipo', 'equipo'),
                        ('n_interno', 'nro_serie'),
                        ('marca', 'modelo',),
-                       ('dominio',  'año'), )
+                       ('dominio',  'año'),
+                       ('es_alquilado',  'fecha_baja'),
+                       )
         }),
         ("Vencimientos", {
             'fields': (('vto_vtv', 'vto_seguro', 'vto_ruta'),

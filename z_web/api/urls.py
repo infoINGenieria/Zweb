@@ -12,7 +12,8 @@ from api.views import (
     PeriodoViewSet, TableroControTablalView, TCCertficacionGraphView,
     TCCostoGraphView, TCAvanceGraphView, TCConsolidadoGraphView,
     AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet,
-    ProyeccionCostoViewSet, TableroControlOSEmitidosView
+    ProyeccionCostoViewSet, TableroControlOSEmitidosView, EquiposViewSet,
+    FamiliaEquipoViewSet
 )
 
 router = routers.DefaultRouter()
@@ -50,7 +51,12 @@ router.register(
 router.register(
     r'proyecciones/costo', ProyeccionCostoViewSet, base_name='proyeccion_costo'
 )
-
+router.register(
+    r'equipos', EquiposViewSet, base_name='equipos'
+)
+router.register(
+    r'familia_equipos', FamiliaEquipoViewSet, base_name='familia_equipos'
+)
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^my_menu/', DynamicMenuView.as_view(), name="my_menu"),

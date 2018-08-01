@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NvD3Module } from 'ng2-nvd3';
 
-import { BootstrapModalModule } from 'ngx-modialog/plugins/bootstrap';
+import { BootstrapModalModule } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { ModalModule } from 'ngx-modialog';
 // import { CurrencyMaskModule } from 'ng2-currency-mask';
 import { ToastyModule } from 'ng2-toasty';
@@ -22,6 +22,8 @@ import { NotificationService } from './services/core/notifications.service';
 import { PresupuestosService } from './services/presupuestos/presupuestos.service';
 import { AvanceObraService } from './services/avanceobra.service';
 import { ProyeccionesService} from './services/proyecciones.service';
+import { TallerService } from './services/taller.service';
+
 // Own
 import { AppComponent } from './app.component';
 import { PresupuestoComponent } from './components/presupuesto/presupuesto.component';
@@ -48,6 +50,11 @@ import { MyCurrencyFormatterDirective } from './directives/currency-formatter.di
 
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { TallerComponent } from './components/taller/taller.component';
+import { ParametrosGralComponent } from './components/taller/parametros-gral/parametros-gral.component';
+import { EquiposComponent } from './components/taller/equipos/equipos.component';
+import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
+
 registerLocaleData(localeEs, 'es-AR');
 
 @NgModule({
@@ -66,6 +73,10 @@ registerLocaleData(localeEs, 'es-AR');
     PorcientoPipe,
     AvanceObraComponent,
     CostoComponent,
+    TallerComponent,
+    ParametrosGralComponent,
+    EquiposComponent,
+    EquipoDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -90,6 +101,7 @@ registerLocaleData(localeEs, 'es-AR');
     TableroService,
     AvanceObraService,
     ProyeccionesService,
+    TallerService,
   ],
   bootstrap: [AppComponent]
 })

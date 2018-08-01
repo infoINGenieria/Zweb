@@ -1,4 +1,4 @@
-import { fadeInAnimation } from './../../_animations/index';
+import { fadeInAnimation } from '../../_animations';
 import { Component, OnInit } from '@angular/core';
 import { MenuEntry } from '../../models/Interfaces';
 import { BaseApiService } from '../../services/base-api/base-api.service';

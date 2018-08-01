@@ -1,5 +1,5 @@
-import { ICentroCosto, IPeriodo, ITableroControlEmitido } from './../models/Interfaces';
-import { Observable } from 'rxjs/Rx';
+import { ICentroCosto, IPeriodo, ITableroControlEmitido } from '../models/Interfaces';
+import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api/base-api.service';
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';

@@ -1,16 +1,16 @@
-import { Periodo } from './../../models/Periodo';
-import { NotificationService } from './../../services/core/notifications.service';
-import { Certificacion } from './../../models/Certificacion';
-import { MyCurrencyFormatterDirective } from './../../directives/currency-formatter.directive';
+import { Periodo } from '../../models/Periodo';
+import { NotificationService } from '../../services/core/notifications.service';
+import { Certificacion } from '../../models/Certificacion';
+import { MyCurrencyFormatterDirective } from '../../directives/currency-formatter.directive';
 import {
   IProyeccionCertificacion, ICentroCosto, IPeriodo,
-  IItemProyeccionCertificacion } from './../../models/Interfaces';
-import { RegistroService } from './../../services/registro/registro.service';
+  IItemProyeccionCertificacion } from '../../models/Interfaces';
+import { RegistroService } from '../../services/registro/registro.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
 import { CoreService } from '../../services/core/core.service';
-import { fadeInAnimation } from '../../_animations/index';
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
+import { fadeInAnimation } from '../../_animations';
+import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { ProyeccionesService } from '../../services/proyecciones.service';
 
 @Component({

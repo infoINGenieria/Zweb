@@ -1,7 +1,7 @@
-import { NotificationService } from './../../services/core/notifications.service';
-import { ICentroCosto } from './../../models/Interfaces';
+import { NotificationService } from '../../services/core/notifications.service';
+import { ICentroCosto } from '../../models/Interfaces';
 import { Component, OnInit } from '@angular/core';
-import { fadeInAnimation } from './../../_animations/fade-in.animation';
+import { fadeInAnimation } from '../../_animations/fade-in.animation';
 import { CoreService } from '../../services/core/core.service';
 
 @Component({

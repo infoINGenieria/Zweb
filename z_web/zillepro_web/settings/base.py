@@ -67,6 +67,7 @@ INSTALLED_APPS = (
     'reportes',
     'api',
     'proyecciones',
+    'equipos',
 )
 
 REST_FRAMEWORK = {
@@ -280,7 +281,8 @@ SUIT_CONFIG = {
     'HEADER_DATE_FORMAT': 'l, d F Y',
     'SEARCH_URL': 'admin:core_operarios_changelist',
     'MENU': (
-        'core', 'organizacion', 'costos', 'documento', 'parametros', 'registro',
+        'core', 'organizacion', 'costos', 'documento', 'parametros',
+        'registro', 'equipos',
         {'app': 'auth', 'label': 'Usuarios', 'icon': 'icon-user'},
         {'label': 'Volver a la aplicación', 'url': 'index', 'icon': 'icon-th'},
     )
