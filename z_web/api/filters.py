@@ -1,7 +1,7 @@
 import django_filters
 from django.db import models
 
-from equipos.models import ParametrosGenerales
+from equipos.models import ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo
 from core.models import Equipos
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
@@ -82,3 +82,20 @@ class ParametrosGeneralesFilter(django_filters.FilterSet):
     class Meta:
         model = ParametrosGenerales
         fields = ('valido_desde', )
+
+
+class AsistenciaEquipoFilter(django_filters.FilterSet):
+    desde = django_filters.DateFilter(name="dia", lookup_expr='gte')
+    hasta = django_filters.DateFilter(name="dia", lookup_expr='lte')
+
+    class Meta:
+        model = AsistenciaEquipo
+        fields = ('desde', 'hasta', )
+
+
+class RegistroAsistenciaEquipoFilter(django_filters.FilterSet):
+
+    class Meta:
+        model = RegistroAsistenciaEquipo
+        fields = ('equipo', 'centro_costo', )
+

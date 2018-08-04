@@ -13,7 +13,8 @@ from api.views import (
     TCCostoGraphView, TCAvanceGraphView, TCConsolidadoGraphView,
     AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet,
     ProyeccionCostoViewSet, TableroControlOSEmitidosView, EquiposViewSet,
-    FamiliaEquipoViewSet, ParametrosGeneralesTallerViewSet
+    FamiliaEquipoViewSet, ParametrosGeneralesTallerViewSet, AsistenciaEquipoViewSet,
+    RegistroAsistenciaEquipoViewSet
 )
 
 router = routers.DefaultRouter()
@@ -58,8 +59,15 @@ router.register(
     r'familia_equipos', FamiliaEquipoViewSet, base_name='familia_equipos'
 )
 router.register(
-    r'taller/parametros_generales', ParametrosGeneralesTallerViewSet, base_name='parametros_geenerales'
+    r'taller/parametros_generales', ParametrosGeneralesTallerViewSet, base_name='parametros_generales'
 )
+router.register(
+    r'taller/asistencia', AsistenciaEquipoViewSet, base_name='asistencia_equipo'
+)
+router.register(
+    r'taller/registros_asistencia', RegistroAsistenciaEquipoViewSet, base_name='registro_asistencia_equipo'
+)
+
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^my_menu/', DynamicMenuView.as_view(), name="my_menu"),

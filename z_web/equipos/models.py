@@ -1,7 +1,9 @@
 from django.db import models
 
+from simple_history.models import HistoricalRecords
+
 from parametros.models import Periodo
-from core.models import Equipos
+from core.models import Equipos, Obras
 from zweb_utils.models import BaseModel
 
 
@@ -42,6 +44,8 @@ class ParametrosGenerales(BaseModel):
         'horas trabajo por año', default=1584)
     valor_dolar = models.DecimalField(
         'USD/$', decimal_places=3, max_digits=18)
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'parámetro general de taller'
@@ -213,6 +217,8 @@ class LubricantesValores(BaseParametrosCostos):
     precio_filtro_hidraulico = models.DecimalField('CU Filtro Hidráulico', max_digits=18, decimal_places=3)
     precio_filtro_lubricante = models.DecimalField('CU Filtro Lubricante', max_digits=18, decimal_places=3)
 
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'valor de lubricante'
         verbose_name_plural = 'valores de lubricantes'
@@ -256,6 +262,8 @@ class TrenRodajeValores(BaseParametrosCostos):
 
     # Orugas
     # NO HAY VALORES CAMBIANTES MAS QUE EL DOLAR
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'valor de tren de rodaje'
@@ -342,6 +350,8 @@ class PosesionValores(BaseParametrosCostos):
     #IMPUESTOS
     impuestos = models.DecimalField('impuestos', max_digits=18, decimal_places=2, help_text='$/mes')
 
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'valor de posesión'
         verbose_name_plural = 'valores de posesión'
@@ -384,6 +394,7 @@ class ReparacionesParametros(BaseParametrosCostos):
 class ReparacionesValores(BaseParametrosCostos):
 
     # NO HAY VALORES CAMBIANTES
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'valor de reparación'
@@ -410,6 +421,8 @@ class ManoObraValores(BaseParametrosCostos):
     plataforma_combustible = models.DecimalField('plataforma de combustible', max_digits=18, decimal_places=2)
     carretones = models.DecimalField('carretones', max_digits=18, decimal_places=2)
 
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'valor de mano de obra'
         verbose_name_plural = 'valores de mano de obra'
@@ -417,6 +430,8 @@ class ManoObraValores(BaseParametrosCostos):
 
 class EquipoAlquiladoValores(BaseParametrosCostos):
     alquiler = models.DecimalField('Desgastables + mano de obra + etc', decimal_places=2, max_digits=18)
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'valor de equipo alquilado'
@@ -426,6 +441,7 @@ class EquipoAlquiladoValores(BaseParametrosCostos):
 class CostoEquipoValores(BaseParametrosCostos):
     markup = models.DecimalField('Mark Up (%)', decimal_places=2, max_digits=18)
 
+    history = HistoricalRecords()
     """
     EQUIPO PROPIO
 
@@ -452,3 +468,38 @@ class CostoEquipoValores(BaseParametrosCostos):
     class Meta:
         verbose_name = 'valor de costo equipo'
         verbose_name_plural = 'valores de costo de equipo'
+
+
+class AsistenciaEquipo(BaseModel):
+    """
+    Representa la asistencia de equipos un día dado.
+    """
+    dia = models.DateField(verbose_name='día')
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = 'dia de asistencia de equipo a cc'
+        verbose_name_plural = 'dias de asistencias de equipo a cc'
+
+    def __str__(self):
+        return self.dia
+
+
+class RegistroAsistenciaEquipo(BaseModel):
+    """
+    Representa la asistencia de un equipo a una obra un día dado.
+    """
+    asistencia = models.ForeignKey(AsistenciaEquipo, verbose_name='dia de asistencia',
+                                   related_name='registros')
+    equipo = models.ForeignKey(Equipos, verbose_name='equipo')
+    centro_costo = models.ForeignKey(Obras, verbose_name='centro de costo',
+                                     limit_choices_to={'es_cc':True})
+
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = 'registro de asistencia de equipo a cc'
+        verbose_name_plural = 'registros de asistencias de equipo a cc'
+
+    def __str__(self):
+        return "{} en {}".format(self.equipo, self.centro_costo)

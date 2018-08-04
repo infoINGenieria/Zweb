@@ -1,13 +1,15 @@
 # coding: utf-8
 from django.db.utils import IntegrityError
+from django.db.transaction import atomic
 from django.core.exceptions import ValidationError
-from rest_framework import serializers, status
+
+from rest_framework import serializers, status, exceptions
 from rest_framework.response import Response
 
 from core.models import Obras, InfoObra, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
 from equipos.models import (
-    ParametrosGenerales,
+    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo
 )
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
@@ -616,4 +618,82 @@ class ParametrosGeneralesTallerSerializer(serializers.ModelSerializer):
             setattr(instance, attr, validated_data.get(attr, getattr(instance, attr)))
         instance.valido_desde_id = valido_desde.get('pk', instance.valido_desde_id)
         instance.save()
+        return instance
+
+
+class RegistroAsistenciaEquipoSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+    equipo = EquipoSerializer(read_only=True)
+    equipo_id = serializers.IntegerField(source='equipo.pk')
+    centro_costo = ObrasSerializer(read_only=True)
+    centro_costo_id = serializers.IntegerField(source='centro_costo.pk')
+    asistencia_id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = RegistroAsistenciaEquipo
+        fields = ('pk', 'asistencia_id', 'equipo', 'equipo_id', 'centro_costo', 'centro_costo_id', )
+
+    def create(self, validated_data):
+        # el alta es desde el serializer general
+        raise exceptions.PermissionDenied
+
+    def update(self, instance, validated_data):
+        equipo = validated_data.pop('equipo')
+        centro_costo = validated_data.pop('centro_costo')
+        for attr in validated_data.keys():
+            setattr(instance, attr, validated_data.get(attr, getattr(instance, attr)))
+        instance.equipo_id = equipo.get('pk', instance.equipo_id)
+        instance.centro_costo_id = centro_costo.get('pk', instance.centro_costo_id)
+        instance.save()
+        return instance
+
+
+class AsistenciaEquipoSerializer(serializers.ModelSerializer):
+    registros = RegistroAsistenciaEquipoSerializer(many=True)
+
+    class Meta:
+        model = AsistenciaEquipo
+        fields = ('pk', 'dia', 'registros')
+
+    @atomic
+    def create(self, validated_data):
+        registros = validated_data.pop('registros')
+        asistencia = AsistenciaEquipo(**validated_data)
+        try:
+            asistencia.save()
+        except IntegrityError:
+            raise serializers.ValidationError('%s existente' % self.Meta.model._meta.verbose_name)
+        for item_data in registros:
+            registro = RegistroAsistenciaEquipo()
+            registro.asistencia = asistencia
+            registro.equipo_id = item_data.get('equipo').get('pk')
+            registro.centro_costo_id = item_data.get('centro_costo').get('pk')
+            registro.save()
+        return asistencia
+
+    @atomic
+    def update(self, instance, validated_data):
+        registros = validated_data.pop('registros')
+        instance.dia = validated_data.get('dia', instance.dia)
+        instance.save()
+
+        exists_pks = []
+        for item in registros:
+            if "pk" in item:
+                pk = item.pop('pk')
+                exists_pks.append(pk)
+                item_obj, _ = RegistroAsistenciaEquipo.objects.update_or_create(
+                    pk=pk, asistencia=instance, defaults={
+                        'equipo_id': item.get('equipo').get('pk'),
+                        'centro_costo_id': item.get('centro_costo').get('pk')
+                    })
+            else:
+                item_obj = RegistroAsistenciaEquipo()
+                item_obj.asistencia = instance
+                item_obj.equipo_id = item.get('equipo').get('pk')
+                item_obj.centro_costo_id = item.get('centro_costo').get('pk')
+                item_obj.save()
+                exists_pks.append(item_obj.pk)
+        # eliminar items no enviados
+        instance.registros.exclude(pk__in=exists_pks).delete()
         return instance
