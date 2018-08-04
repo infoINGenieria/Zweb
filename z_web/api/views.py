@@ -18,11 +18,13 @@ from api.serializers import (
     CertificacionSerializer, CertificacionItemSerializer, PeriodoSerializer,
     AvanceObraSerializer, ProyeccionAvanceObraSerializer,
     ProyeccionCertificacionSerializer, ProyeccionCostoSerializer,
-    TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer)
+    TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer,
+    ParametrosGeneralesTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
-    ProyeccionCostoFilter, EquiposFilter)
+    ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter)
+from equipos.models import ParametrosGenerales
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
 from parametros.models import Periodo, FamiliaEquipo
@@ -302,5 +304,11 @@ class FamiliaEquipoViewSet(ModelViewSet, AuthView):
 
     def get_queryset(self):
         return FamiliaEquipo.objects.all()
+
+
+class ParametrosGeneralesTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ParametrosGeneralesTallerSerializer
+    queryset = ParametrosGenerales.objects.all()
+    filter_class = ParametrosGeneralesFilter
 
 

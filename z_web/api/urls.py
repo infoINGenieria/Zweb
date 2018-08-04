@@ -13,7 +13,7 @@ from api.views import (
     TCCostoGraphView, TCAvanceGraphView, TCConsolidadoGraphView,
     AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet,
     ProyeccionCostoViewSet, TableroControlOSEmitidosView, EquiposViewSet,
-    FamiliaEquipoViewSet
+    FamiliaEquipoViewSet, ParametrosGeneralesTallerViewSet
 )
 
 router = routers.DefaultRouter()
@@ -56,6 +56,9 @@ router.register(
 )
 router.register(
     r'familia_equipos', FamiliaEquipoViewSet, base_name='familia_equipos'
+)
+router.register(
+    r'taller/parametros_generales', ParametrosGeneralesTallerViewSet, base_name='parametros_geenerales'
 )
 urlpatterns = [
     url(r'^', include(router.urls)),

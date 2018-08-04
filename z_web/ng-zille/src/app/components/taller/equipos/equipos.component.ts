@@ -1,4 +1,4 @@
-import { NotificationService } from './../../../services/core/notifications.service';
+import { NotificationService } from '../../../services/core/notifications.service';
 import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { Page } from '../../../models/Page';
 import { NgForm } from '@angular/forms';

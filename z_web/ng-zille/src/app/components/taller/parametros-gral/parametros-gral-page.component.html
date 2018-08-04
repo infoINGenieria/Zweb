@@ -1,0 +1,78 @@
+<div class="col-lg-12">
+    <h1><a class="btn btn-default" [routerLink]="['/taller', 'parametros', 'general']">
+      <i class="fa fa-chevron-left"></i> </a>
+      Parámetros generales <span *ngIf="parametro_general.pk" >válidos a partir de {{ parametro_general?.valido_desde?.descripcion }}</span>
+    </h1>
+
+    <div [ngSwitch]='initialLoading'>
+      <div *ngSwitchCase="true">
+        <div class="loader">Loading...</div>
+      </div>
+      <div *ngSwitchCase="false" [@fadeInAnimation]>
+        <form class="horizontal-form" name="equipo-form" #f="ngForm">
+          <div class="row">
+            <div class="col-md-8 col-lg-6">
+              <input type="hidden" [(ngModel)]="parametro_general.pk" name="pk"/>
+              <div class="form-group">
+                  <label for="valido_desde">Periodo:</label>
+                  <select class="form-control input-sm" name="valido_desde" [(ngModel)]="parametro_general.valido_desde_id" required>
+                    <option *ngFor="let p of periodos" [value]='p.pk' >
+                      {{ p.descripcion }}
+                    </option>
+                  </select>
+                  <p class="text-help">Válido desde este periodo (inclusive)</p>
+                </div>
+              <div class="form-group">
+                <label for="consumo_equipo_viales">Consumo de equipo viales:</label>
+                <input type="text" class="form-control" name="consumo_equipo_viales" [(ngModel)]="parametro_general.consumo_equipo_viales">
+              </div>
+              <div class="form-group">
+                <label for="consumo_equipo_automotor">Consumo de equipo automotores:</label>
+                <input type="text" class="form-control" name="consumo_equipo_automotor" [(ngModel)]="parametro_general.consumo_equipo_automotor">
+              </div>
+              <div class="form-group">
+                <label for="precio_gasoil">Precio Gasoil:</label>
+                <input type="text" class="form-control" name="precio_gasoil" [(ngModel)]="parametro_general.precio_gasoil">
+              </div>
+              <div class="form-group">
+                <label for="precio_lubricante">Precio Lubricante:</label>
+                <input type="text" class="form-control" name="precio_lubricante" [(ngModel)]="parametro_general.precio_lubricante">
+              </div>
+              <div class="form-group">
+                <label for="precio_hidraulico">Precio Hidráulico:</label>
+                <input type="number" class="form-control" name="precio_hidraulico" [(ngModel)]="parametro_general.precio_hidraulico">
+              </div>
+              <div class="form-group">
+                  <label for="valor_dolar">Precio Dolar:</label>
+                  <input type="text" class="form-control" name="valor_dolar" [(ngModel)]="parametro_general.valor_dolar">
+                </div>
+              <div class="form-group">
+                <label for="horas_por_dia">Horas por día:</label>
+                <input type="text" class="form-control" name="horas_por_dia" [(ngModel)]="parametro_general.horas_por_dia">
+              </div>
+              <div class="form-group">
+                <label for="dias_por_mes">Días por mes:</label>
+                <input type="text" class="form-control" name="dias_por_mes" [(ngModel)]="parametro_general.dias_por_mes">
+              </div>
+              <div class="form-group">
+                <label for="horas_trabajo_anio">Horas de trabajo por día:</label>
+                <input type="text" class="form-control" name="horas_trabajo_anio" [(ngModel)]="parametro_general.horas_trabajo_anio">
+              </div>
+
+              <a class="btn btn-default" [routerLink]="['/taller', 'parametros', 'general']">
+                <i class="fa fa-chevron-left"></i> Volver al listado</a>
+                <button *ngIf="!parametro_general.pk" class="btn btn-success"
+                  (click)="create_parametro_general_modal()">
+                  Añadir conjunto de parámetros generales
+                </button>
+                <button *ngIf="parametro_general.pk" class="btn btn-success"
+                  (click)="save_parametro_general_modal()">
+                  Guardar parámetros generales
+                </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+

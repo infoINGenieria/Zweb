@@ -1,6 +1,7 @@
 import django_filters
 from django.db import models
 
+from equipos.models import ParametrosGenerales
 from core.models import Equipos
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
@@ -74,3 +75,10 @@ class EquiposFilter(django_filters.FilterSet):
                 },
             },
          }
+
+
+class ParametrosGeneralesFilter(django_filters.FilterSet):
+
+    class Meta:
+        model = ParametrosGenerales
+        fields = ('valido_desde', )

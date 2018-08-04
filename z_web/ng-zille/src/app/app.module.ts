@@ -1,3 +1,4 @@
+import { PaginationComponent } from './components/shared/page.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -54,6 +55,7 @@ import { TallerComponent } from './components/taller/taller.component';
 import { ParametrosGralComponent } from './components/taller/parametros-gral/parametros-gral.component';
 import { EquiposComponent } from './components/taller/equipos/equipos.component';
 import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
+import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
 
 registerLocaleData(localeEs, 'es-AR');
 
@@ -77,6 +79,8 @@ registerLocaleData(localeEs, 'es-AR');
     ParametrosGralComponent,
     EquiposComponent,
     EquipoDetailComponent,
+    PaginationComponent,
+    ParametrosGralPageComponent
   ],
   imports: [
     BrowserModule,

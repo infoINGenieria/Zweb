@@ -1,3 +1,77 @@
-<p>
-  parametros-gral works!
-</p>
+<h1>
+  <a class="btn btn-default" [routerLink]="['/taller']">
+    <i class="fa fa-chevron-left"></i>
+  </a>
+  Parametros generales de taller
+</h1>
+  <div>
+    <form method="get" class="horizontal-form" #f_filter="ngForm">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="form-group">
+            <label>Periodo:</label>
+            <select class="form-control input-sm" ngModel name='valido_desde'>
+              <option *ngFor="let p of periodos" [ngValue]="p.pk">{{ p.descripcion }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <button class="btn btn-sm btn-info" (click)="filterList(f_filter)">Filtrar</button>
+            <button class="btn btn-sm btn-default" (click)="cleanFilter(f_filter)">Limpiar filtro</button>
+            <a class="btn btn-sm btn-success pull-right"
+              [routerLink]="['/taller', 'parametros', 'general', 'new']">Añadir parametros generales</a>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <table class="table table-hover" *ngIf="parametros_generales.length>0" [@fadeInAnimation]>
+      <thead>
+        <tr>
+          <th>#ID</th>
+          <th>Valido desde</th>
+          <th>Consumo Viales</th>
+          <th>Consumo automotor</th>
+          <th>Precio GO</th>
+          <th>Previo Lubricante</th>
+          <th>Precio Hidráulico</th>
+          <th>Precio Dolar</th>
+          <th>Hs / día</th>
+          <th>Días / Mes</th>
+          <th>Hs / Año</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let param of parametros_generales" [@fadeInAnimation]>
+          <td>
+            <a href="/admin/equipos/parametrosgenerales/{{param.pk}}/" target="_blank">#{{ param.pk }}</a>
+          </td>
+          <td>{{ param.valido_desde.descripcion }}</td>
+          <td>{{ param.consumo_equipo_viales }}</td>
+          <td>{{ param.consumo_equipo_automotor }}</td>
+          <td>{{ param.precio_gasoil | moneda }}</td>
+          <td>{{ param.precio_lubricante | moneda }}</td>
+          <td>{{ param.precio_hidraulico | moneda }}</td>
+          <td>{{ param.valor_dolar | moneda }}</td>
+          <td>{{ param.horas_por_dia }}</td>
+          <td>{{ param.dias_por_mes }}</td>
+          <td>{{ param.horas_trabajo_anio }}</td>
+          <td>
+            <a class="btn btn-warning btn-sm" [routerLink]="['/taller', 'parametros', 'general', param.pk]">Editar</a>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+    <ul class="pager">
+        <li><a [routerLink]="" (click)="onBtPrevious()" [ngClass]="canPrevious ? '': 'disabled'">&larr; Anterior</a></li>
+        <li>Página {{ page.pageNumber}} de {{ page.totalPages }}</li>
+        <li><a [routerLink]="" (click)="onBtNext()" [ngClass]="canNext ? '' : 'disabled'">Siguiente &rarr;</a></li>
+    </ul>
+    <p *ngIf="parametros_generales.length==0 && loaded" class="alert alert-warning ">No hay parámetros generales para visualizar.</p>
+

@@ -1,3 +1,4 @@
+import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
 import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
 import { EquiposComponent } from './components/taller/equipos/equipos.component';
 import { ParametrosGralComponent } from './components/taller/parametros-gral/parametros-gral.component';
@@ -38,6 +39,8 @@ const APP_ROUTES: Routes = [
   { path: 'taller', component: TallerComponent },
   { path: 'taller/equipos', component: EquiposComponent },
   { path: 'taller/equipos/:pk', component: EquipoDetailComponent },
+  { path: 'taller/parametros/general', component: ParametrosGralComponent },
+  { path: 'taller/parametros/general/:pk', component: ParametrosGralPageComponent },
 
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];

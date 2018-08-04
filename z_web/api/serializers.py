@@ -6,6 +6,9 @@ from rest_framework.response import Response
 
 from core.models import Obras, InfoObra, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
+from equipos.models import (
+    ParametrosGenerales,
+)
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from registro.models import CertificacionItem, Certificacion, TableroControlOS
@@ -584,5 +587,33 @@ class EquipoSerializer(serializers.ModelSerializer):
         for attr in validated_data.keys():
             setattr(instance, attr, validated_data.get(attr, getattr(instance, attr)))
         instance.familia_equipo_id = familia_equipo.get('pk', instance.familia_equipo_id)
+        instance.save()
+        return instance
+
+
+class ParametrosGeneralesTallerSerializer(serializers.ModelSerializer):
+    valido_desde = PeriodoSerializer(read_only=True)
+    valido_desde_id = serializers.IntegerField(source='valido_desde.pk')
+
+    class Meta:
+        model = ParametrosGenerales
+        fields = (
+            'pk', 'valido_desde', 'valido_desde_id', 'consumo_equipo_viales', 'consumo_equipo_automotor',
+            'precio_gasoil', 'precio_lubricante', 'precio_hidraulico',
+            'horas_por_dia', 'dias_por_mes', 'horas_trabajo_anio', 'valor_dolar'
+        )
+
+    def create(self, validated_data):
+        periodo = validated_data.pop('valido_desde')
+        parametros = ParametrosGenerales(**validated_data)
+        parametros.valido_desde_id = periodo["pk"]
+        parametros.save()
+        return parametros
+
+    def update(self, instance, validated_data):
+        valido_desde = validated_data.pop('valido_desde')
+        for attr in validated_data.keys():
+            setattr(instance, attr, validated_data.get(attr, getattr(instance, attr)))
+        instance.valido_desde_id = valido_desde.get('pk', instance.valido_desde_id)
         instance.save()
         return instance

@@ -1,8 +1,8 @@
-import { IFamiliaEquipo } from './../../../models/Interfaces';
+import { IFamiliaEquipo } from '../../../models/Interfaces';
 import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
-import { NotificationService } from './../../../services/core/notifications.service';
-import { fadeInAnimation } from './../../../_animations/fade-in.animation';
-import { TallerService } from './../../../services/taller.service';
+import { NotificationService } from '../../../services/core/notifications.service';
+import { fadeInAnimation } from '../../../_animations/fade-in.animation';
+import { TallerService } from '../../../services/taller.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { IEquipo } from '../../../models/Interfaces';

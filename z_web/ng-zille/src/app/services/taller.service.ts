@@ -1,3 +1,4 @@
+import { IParametrosGenerales } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
 import { Injectable } from '@angular/core';
@@ -66,5 +67,36 @@ export class TallerService {
   set_baja_equipos(pk: number) {
     return this.http.post(`/api/equipos/${pk}/set-baja/`, {})
       .map((r: Response) => r.json());
+  }
+
+  get_parametros_generales_list(page?, valido_desde?) {
+    let myParams = new URLSearchParams();
+    myParams.set('page', page || 1);
+    myParams.set('valido_desde', valido_desde || '');
+    return this.http.get('/api/taller/parametros_generales/', myParams)
+    .map((r: Response) => r.json());
+  }
+
+  get_parametros_generales(pk: number): Observable<IParametrosGenerales> {
+    return this.http.get(`/api/taller/parametros_generales/${pk}/`)
+      .map((r: Response) => r.json() as IParametrosGenerales);
+  }
+
+  delete_parametros_generales(parametros_generales: IParametrosGenerales): Observable<IParametrosGenerales> {
+    return this.http.delete(`/api/taller/parametros_generales/${parametros_generales.pk}/`)
+    .map((res: Response) => res.json())
+    .catch((error: any) => Observable.throw(error.json().detail || 'Error en el servidor'));
+  }
+
+  create_parametros_generales(parametros_generales: IParametrosGenerales): Observable<IParametrosGenerales> {
+    const bodyString = JSON.stringify(parametros_generales);
+    return this.http.post(`/api/taller/parametros_generales/`, bodyString)
+      .map((r: Response) => r.json() as IParametrosGenerales);
+  }
+
+  update_parametros_generales(parametros_generales: IParametrosGenerales): Observable<IParametrosGenerales> {
+    const bodyString = JSON.stringify(parametros_generales);
+    return this.http.put(`/api/taller/parametros_generales/${parametros_generales.pk}`, bodyString)
+      .map((r: Response) => r.json() as IParametrosGenerales);
   }
 }

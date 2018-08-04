@@ -266,3 +266,18 @@ export interface IEquipo {
     es_alquilado: boolean;
     fecha_baja?: Date;
 }
+
+export interface IParametrosGenerales {
+    pk?: number;
+    valido_desde_id: number;
+    valido_desde: IPeriodo;
+    consumo_equipo_viales: number;
+    consumo_equipo_automotor: number;
+    precio_gasoil: number;
+    precio_lubricante: number;
+    precio_hidraulico: number;
+    horas_por_dia: number;
+    dias_por_mes: number;
+    horas_trabajo_anio: number;
+    valor_dolar: number;
+}
