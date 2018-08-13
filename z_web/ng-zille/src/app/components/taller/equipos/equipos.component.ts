@@ -41,7 +41,10 @@ export class EquiposComponent implements OnInit {
 
   }
 
-  refresh() {
+  refresh(newPage?) {
+    if (newPage) {
+      this.page.pageNumber = newPage;
+    }
     this.loaded = false;
     this.tallerServ.get_equipos_list(
       this.page.pageNumber,
@@ -56,10 +59,8 @@ export class EquiposComponent implements OnInit {
       equipos => {
         this.equipos = equipos['results'] as Array<IEquipo>;
         this.page.pageNumber = this.page.pageNumber;
-        this.page.size = this.equipos.length;
         this.page.totalElements = Number.parseInt(equipos.count);
-        this.page.totalPages = parseInt(
-          Number(this.page.totalElements / this.equipos.length + 0.5).toFixed(0), 0);
+        this.page.totalPages = Math.ceil(this.page.totalElements / this.page.size) || 0;
         this.loaded = true;
       }
     );
@@ -92,32 +93,6 @@ export class EquiposComponent implements OnInit {
     this.f_anio = '';
     this.f_estado = '';
     this.refresh();
-  }
-
-  onBtNext() {
-    this.page.pageNumber += 1;
-    if (this.page.pageNumber > this.page.totalPages) {
-      this.page.pageNumber = this.page.totalPages;
-    } else {
-      this.refresh();
-    }
-  }
-
-  onBtPrevious() {
-    this.page.pageNumber -= 1;
-    if (this.page.pageNumber < 1) {
-      this.page.pageNumber = 1;
-    } else {
-      this.refresh();
-    }
-  }
-
-  get canPrevious() {
-    return this.page.pageNumber > 1;
-  }
-
-  get canNext() {
-    return this.page.pageNumber < this.page.totalPages;
   }
 
   set_equipo_baja_modal(equipo: IEquipo) {

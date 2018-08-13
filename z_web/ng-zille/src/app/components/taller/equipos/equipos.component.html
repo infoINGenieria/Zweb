@@ -107,9 +107,9 @@
 
     </tbody>
   </table>
-  <ul class="pager">
-      <li><a [routerLink]="" (click)="onBtPrevious()" [ngClass]="canPrevious ? '': 'disabled'">&larr; Anterior</a></li>
-      <li>Página {{ page.pageNumber}} de {{ page.totalPages }}</li>
-      <li><a [routerLink]="" (click)="onBtNext()" [ngClass]="canNext ? '' : 'disabled'">Siguiente &rarr;</a></li>
-  </ul>
+  <app-pagination
+    (changePage)="refresh($event)"
+    [page]="page.pageNumber"
+    [perPage]="page.size"
+    [count]="page.totalElements"></app-pagination>
   <p *ngIf="equipos.length==0 && loaded" class="alert alert-warning ">No hay equipos para visualizar.</p>

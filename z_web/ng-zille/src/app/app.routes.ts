@@ -1,3 +1,4 @@
+import { AsistenciaFormComponent } from './components/taller/asistencia/asistencia-form.component';
 import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
 import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
 import { EquiposComponent } from './components/taller/equipos/equipos.component';
@@ -17,6 +18,7 @@ import { AvanceObraComponent } from './components/proyecciones/avance-obra.compo
 import {
     CertificacionRealComponent, CertificacionesRealComponent,
   } from './components/certificaciones';
+import { AsistenciasComponent } from './components/taller/asistencia/asistencias.component';
 
 const APP_ROUTES: Routes = [
   { path: '', component: IndexComponent },
@@ -41,7 +43,9 @@ const APP_ROUTES: Routes = [
   { path: 'taller/equipos/:pk', component: EquipoDetailComponent },
   { path: 'taller/parametros/general', component: ParametrosGralComponent },
   { path: 'taller/parametros/general/:pk', component: ParametrosGralPageComponent },
-
+  { path: 'taller/asistencia', component: AsistenciasComponent },
+  { path: 'taller/asistencia/:pk/:clone', component: AsistenciaFormComponent },
+  { path: 'taller/asistencia/:pk', component: AsistenciaFormComponent },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 

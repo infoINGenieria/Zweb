@@ -56,6 +56,12 @@ class ProyeccionCostoFilter(django_filters.FilterSet):
 
 class EquiposFilter(django_filters.FilterSet):
     estado = django_filters.CharFilter(method='estado_filter')
+    excluir_costos_taller = django_filters.BooleanFilter(method='excluir_costos_taller_filter')
+
+    def excluir_costos_taller_filter(self, queryset, name, value):
+        if value:
+            return queryset.exclude(excluir_costos_taller=True)
+        return queryset
 
     def estado_filter(self, queryset, name, value):
         if value == '1':
@@ -66,7 +72,10 @@ class EquiposFilter(django_filters.FilterSet):
 
     class Meta:
         model = Equipos
-        fields = ('n_interno', 'equipo', 'marca', 'modelo', 'año', 'dominio', 'familia_equipo', 'estado')
+        fields = (
+            'n_interno', 'equipo', 'marca', 'modelo', 'año', 'dominio',
+            'familia_equipo', 'estado', 'excluir_costos_taller'
+        )
         filter_overrides = {
             models.CharField: {
                 'filter_class': django_filters.CharFilter,

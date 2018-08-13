@@ -3,6 +3,11 @@
       Taller</h1>
 
       <div class="row">
+            <div class="col-xs-6 col-sm-4 col-md-3">
+                    <a [routerLink]="['/taller/', 'asistencia']" class="btn btn-block btn-warning">
+                        Asistencia
+                    </a>
+                  </div>
           <div class="col-xs-6 col-sm-4 col-md-3">
             <a [routerLink]="['/taller/', 'equipos']" class="btn btn-block btn-success">
                 Equipos
@@ -10,7 +15,7 @@
           </div>
           <div class="col-xs-6 col-sm-4 col-md-3">
                 <a [routerLink]="['/taller/', 'parametros', 'general']" class="btn btn-block btn-primary">
-                    Patámetros generales
+                    Parámetros generales
                 </a>
               </div>
       </div>

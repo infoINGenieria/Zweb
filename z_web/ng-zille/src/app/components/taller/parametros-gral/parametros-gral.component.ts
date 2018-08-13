@@ -16,12 +16,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./parametros-gral.component.css'],
   animations: [fadeInAnimation]
 })
-export class ParametrosGralComponent extends PaginationComponent implements OnInit {
+export class ParametrosGralComponent implements OnInit {
 
   parametros_generales: Array<IParametrosGenerales> = [];
   periodos: IPeriodo[] = [];
 
   loaded = false;
+
+  page = new Page();
 
   // filter
   f_valido_desde = '';
@@ -32,7 +34,6 @@ export class ParametrosGralComponent extends PaginationComponent implements OnIn
     private notify_service: NotificationService,
     private modal: Modal
   ) {
-    super();
   }
 
   ngOnInit() {
@@ -43,7 +44,10 @@ export class ParametrosGralComponent extends PaginationComponent implements OnIn
     this.refresh();
   }
 
-  refresh() {
+  refresh(newPage?) {
+    if (newPage) {
+      this.page.pageNumber = newPage;
+    }
     this.loaded = false;
     this.tallerServ.get_parametros_generales_list(
       this.page.pageNumber,
@@ -75,33 +79,6 @@ export class ParametrosGralComponent extends PaginationComponent implements OnIn
     this.page.pageNumber = 1;
     this.f_valido_desde = '';
     this.refresh();
-  }
-
-
-  onBtNext() {
-    this.page.pageNumber += 1;
-    if (this.page.pageNumber > this.page.totalPages) {
-      this.page.pageNumber = this.page.totalPages;
-    } else {
-      this.refresh();
-    }
-  }
-
-  onBtPrevious() {
-    this.page.pageNumber -= 1;
-    if (this.page.pageNumber < 1) {
-      this.page.pageNumber = 1;
-    } else {
-      this.refresh();
-    }
-  }
-
-  get canPrevious() {
-    return this.page.pageNumber > 1;
-  }
-
-  get canNext() {
-    return this.page.pageNumber < this.page.totalPages;
   }
 
   handleError(error: any) {

@@ -281,3 +281,18 @@ export interface IParametrosGenerales {
     horas_trabajo_anio: number;
     valor_dolar: number;
 }
+
+export interface IRegistroAsistencia {
+    pk?: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    asistencia_id?: number;
+}
+
+export interface IAsistencia {
+    pk?: number;
+    dia: string;
+    registros: Array<IRegistroAsistencia>;
+}

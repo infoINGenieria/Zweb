@@ -1,4 +1,4 @@
-import { IParametrosGenerales } from '../models/Interfaces';
+import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
 import { Injectable } from '@angular/core';
@@ -36,6 +36,11 @@ export class TallerService {
     .map((r: Response) => r.json());
   }
 
+  get_equipos_activos_list() {
+    return this.http.get('/api/equipos/activos-taller/')
+    .map((r: Response) => r.json());
+  }
+
   get_equipo(pk: number): Observable<IEquipo> {
     return this.http.get(`/api/equipos/${pk}/`)
       .map((r: Response) => r.json() as IEquipo);
@@ -69,6 +74,8 @@ export class TallerService {
       .map((r: Response) => r.json());
   }
 
+  // PARAMETROS GENERALES
+
   get_parametros_generales_list(page?, valido_desde?) {
     let myParams = new URLSearchParams();
     myParams.set('page', page || 1);
@@ -99,4 +106,39 @@ export class TallerService {
     return this.http.put(`/api/taller/parametros_generales/${parametros_generales.pk}`, bodyString)
       .map((r: Response) => r.json() as IParametrosGenerales);
   }
+
+
+  // ASISTENCIA
+
+    get_asistencias_list(page?, desde?, hasta?) {
+      let myParams = new URLSearchParams();
+      myParams.set('page', page || 1);
+      myParams.set('desde', desde || '');
+      myParams.set('hasta', hasta || '');
+      return this.http.get('/api/taller/asistencia/', myParams)
+      .map((r: Response) => r.json());
+    }
+
+    get_asistencia(pk: number): Observable<IAsistencia> {
+      return this.http.get(`/api/taller/asistencia/${pk}/`)
+        .map((r: Response) => r.json() as IAsistencia);
+    }
+
+    delete_asistencia(asistencia: IAsistencia): Observable<IAsistencia> {
+      return this.http.delete(`/api/taller/asistencia/${asistencia.pk}/`)
+      .map((res: Response) => res.json())
+      .catch((error: any) => Observable.throw(error.json().detail || 'Error en el servidor'));
+    }
+
+    create_asistencia(asistencia: IAsistencia): Observable<IAsistencia> {
+      const bodyString = JSON.stringify(asistencia);
+      return this.http.post(`/api/taller/asistencia/`, bodyString)
+        .map((r: Response) => r.json() as IAsistencia);
+    }
+
+    update_asistencia(asistencia: IAsistencia): Observable<IAsistencia> {
+      const bodyString = JSON.stringify(asistencia);
+      return this.http.put(`/api/taller/asistencia/${asistencia.pk}`, bodyString)
+        .map((r: Response) => r.json() as IAsistencia);
+    }
 }

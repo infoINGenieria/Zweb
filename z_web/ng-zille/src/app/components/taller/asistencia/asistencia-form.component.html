@@ -1,0 +1,66 @@
+<div class="col-lg-12">
+  <h1>
+    <a class="btn btn-default" [routerLink]="['/taller', 'asistencia']">
+      <i class="fa fa-chevron-left"></i>
+    </a>
+    Asistencia de equipos
+  </h1>
+
+  <div [ngSwitch]='initialLoading'>
+    <div *ngSwitchCase="true">
+      <div class="loader">Loading...</div>
+    </div>
+    <div *ngSwitchCase="false" [@fadeInAnimation]>
+      <form class="horizontal-form" name="equipo-form" #f="ngForm">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group" [ngClass]="{ 'has-error': !f.form.controls.fecha?.valid }">
+              <label>Fecha:</label>
+              <dp-date-picker #dayPicker name="fecha" [(ngModel)]="asistencia.dia" required class="form-control"
+                [config]="datePickerConfig" theme="dp-material">
+              </dp-date-picker>
+              <p *ngIf="!f.form.controls.fecha?.valid" class="text-danger">Seleccione una fecha</p>
+            </div>
+          </div>
+          <div class="col-md-12 mb10">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Interno</th>
+                    <th *ngFor="let cc of centros_costos" [title]="cc.obra">
+                        {{ cc.codigo | slice:0:12 }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let reg of asistencia.registros; let i = index; trackBy:trackByIndex">
+                    <td>{{ reg.equipo.n_interno }}</td>
+                    <td *ngFor="let cc of centros_costos" >
+                      <input type="radio"
+                        name="eq_{{ reg.equipo_id }}"
+                        [value]="cc.id"
+                        [(ngModel)]="asistencia.registros[i].centro_costo_id" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <a class="btn btn-default" [routerLink]="['/taller', 'asistencia']">
+          <i class="fa fa-chevron-left"></i> Volver al listado</a>
+
+        <button  class="btn btn-success" *ngIf="!is_cloning"  (click)="guardar_asistencia_modal()" [disabled]="!is_valid || !f.form.controls.fecha?.valid">
+          Guardar asistenca
+        </button>
+        <button  class="btn btn-success" *ngIf="is_cloning" (click)="clonar_asistencia_modal()" [disabled]="!is_valid || !f.form.controls.fecha?.valid">
+            Clonar asistenca
+          </button>
+        <span class="text-danger" *ngIf="!has_all_selected">Por favor, asigne todos los equipos a los correspodientes CC.</span>
+
+      </form>
+    </div>
+  </div>
+</div>

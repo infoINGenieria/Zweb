@@ -56,6 +56,8 @@ import { ParametrosGralComponent } from './components/taller/parametros-gral/par
 import { EquiposComponent } from './components/taller/equipos/equipos.component';
 import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
 import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
+import { AsistenciasComponent } from './components/taller/asistencia/asistencias.component';
+import { AsistenciaFormComponent } from './components/taller/asistencia/asistencia-form.component';
 
 registerLocaleData(localeEs, 'es-AR');
 
@@ -80,7 +82,9 @@ registerLocaleData(localeEs, 'es-AR');
     EquiposComponent,
     EquipoDetailComponent,
     PaginationComponent,
-    ParametrosGralPageComponent
+    ParametrosGralPageComponent,
+    AsistenciasComponent,
+    AsistenciaFormComponent
   ],
   imports: [
     BrowserModule,

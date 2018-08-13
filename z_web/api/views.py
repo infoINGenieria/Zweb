@@ -2,7 +2,7 @@
 import json
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.db.models import Sum, Max, Min
+from django.db.models import Sum, Max, Min, Q
 from django.utils import timezone
 
 from rest_framework import status
@@ -221,6 +221,14 @@ class CentroCostoViewSet(ModelViewSet, AuthView):
     def get_queryset(self):
         return self.get_centros_costos()
 
+    @list_route(methods=['get'], url_path='activos')
+    def activos(self, request):
+        qs = self.get_queryset().exclude(fecha_fin__isnull=False)
+        return Response({
+            'count': qs.count(),
+            'centros_costos': ObrasSerializer(qs, many=True).data
+        })
+
 
 class CertificacionRealViewSet(ModelViewSet, AuthView):
     serializer_class = CertificacionSerializer
@@ -300,6 +308,16 @@ class EquiposViewSet(ModelViewSet, AuthView):
         equipo.save()
         return Response({'status': 'ok', 'equipo': EquipoSerializer(equipo).data})
 
+    @list_route(methods=['get'], url_path='activos-taller')
+    def activos(self, request):
+        qs = Equipos.objects.exclude(
+            (Q(fecha_baja__isnull=False) | Q(excluir_costos_taller=True)) | Q(pk=1)
+        )
+        return Response({
+            'count': qs.count(),
+            'equipos': EquipoSerializer(qs, many=True).data
+        })
+
 
 class FamiliaEquipoViewSet(ModelViewSet, AuthView):
     serializer_class = FamiliaEquipoSerializer
@@ -319,7 +337,7 @@ class AsistenciaEquipoViewSet(ModelViewSet, AuthView):
     filter_class = AsistenciaEquipoFilter
 
     def get_queryset(self):
-        return AsistenciaEquipo.objects.all()
+        return AsistenciaEquipo.objects.all().order_by('-dia')
 
 class RegistroAsistenciaEquipoViewSet(ModelViewSet, AuthView):
     serializer_class = RegistroAsistenciaEquipoSerializer

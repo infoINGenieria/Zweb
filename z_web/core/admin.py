@@ -21,6 +21,7 @@ class Equipos(admin.ModelAdmin):
                        ('marca', 'modelo',),
                        ('dominio',  'año'),
                        ('es_alquilado',  'fecha_baja'),
+                       ('excluir_costos_taller', ),
                        )
         }),
         ("Vencimientos", {

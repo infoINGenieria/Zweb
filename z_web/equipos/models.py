@@ -474,7 +474,7 @@ class AsistenciaEquipo(BaseModel):
     """
     Representa la asistencia de equipos un día dado.
     """
-    dia = models.DateField(verbose_name='día')
+    dia = models.DateField(verbose_name='día', unique=True)
     history = HistoricalRecords()
 
     class Meta:
@@ -500,6 +500,7 @@ class RegistroAsistenciaEquipo(BaseModel):
     class Meta:
         verbose_name = 'registro de asistencia de equipo a cc'
         verbose_name_plural = 'registros de asistencias de equipo a cc'
+        unique_together = ('asistencia', 'equipo', 'centro_costo')
 
     def __str__(self):
         return "{} en {}".format(self.equipo, self.centro_costo)

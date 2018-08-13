@@ -33,8 +33,12 @@ class Equipos(models.Model):
     vto_otros3 = models.DateField(verbose_name='fecha vto3', db_column='VTO_OTROS3', blank=True, null=True)
     familia_equipo = models.ForeignKey(FamiliaEquipo, db_column='FAMILIA_EQUIPO_ID', blank=True, null=True)
 
-    es_alquilado = models.BooleanField(verbose_name='es equipo alquilado', default=False)
-    fecha_baja = models.DateField(verbose_name='fecha de baja', null=True)
+    es_alquilado = models.BooleanField(verbose_name='es equipo alquilado', default=False, blank=True)
+    fecha_baja = models.DateField(verbose_name='fecha de baja', null=True, blank=True)
+
+    excluir_costos_taller = models.BooleanField(
+        verbose_name='excluir de costos de taller', default=False,
+        help_text='Seleccionar si se desea excluir el equipo del cálculo de costos de Taller')
 
     class Meta:
         verbose_name = "equipo"
@@ -139,6 +143,9 @@ class Obras(models.Model):
     def get_centro_costos(cls, user):
         obra_qs = Obras.objects.filter(es_cc=True)
         if user.extension.unidades_negocio.exists():
+            # En el caso de taller, ven todos los centros de costos
+            if user.extension.unidades_negocio.filter(codigo="TALLER").exists():
+                return obra_qs
             return obra_qs.filter(unidad_negocio__in=user.extension.unidades_negocio.all())
         return obra_qs
 
