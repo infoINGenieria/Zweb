@@ -1,4 +1,3 @@
-import { IAsistencia } from './../../../models/Interfaces';
 import { fadeInAnimation } from '../../../_animations/fade-in.animation';
 import { NgForm } from '@angular/forms';
 import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';

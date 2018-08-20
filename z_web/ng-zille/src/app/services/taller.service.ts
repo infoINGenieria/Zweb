@@ -32,6 +32,7 @@ export class TallerService {
     myParams.set('dominio', dominio || '');
     myParams.set('año', anio || '');
     myParams.set('estado', estado || '');
+    myParams.set('excluir_costos_taller', estado || '');
     return this.http.get('/api/equipos/', myParams)
     .map((r: Response) => r.json());
   }

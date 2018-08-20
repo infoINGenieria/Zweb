@@ -265,6 +265,7 @@ export interface IEquipo {
     familia_equipo_id: number;
     es_alquilado: boolean;
     fecha_baja?: Date;
+    excluir_costos_taller: boolean;
 }
 
 export interface IParametrosGenerales {

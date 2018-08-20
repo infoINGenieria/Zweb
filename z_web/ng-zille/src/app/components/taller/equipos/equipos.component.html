@@ -53,6 +53,17 @@
 
         </div>
       </div>
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Excluido de costos: </label>
+          <select class="form-control input-sm" ngModel name='excluir_costos_taller'>
+              <option value=''>Todos</option>
+              <option value='1'>Excluidos</option>
+              <option value='0'>Incluidos</option>
+          </select>
+
+        </div>
+      </div>
     </div>
 
     <div class="row">
@@ -79,6 +90,7 @@
         <th>Dominio</th>
         <th>N° serie</th>
         <th>Familia</th>
+        <th>Costos</th>
         <th></th>
       </tr>
     </thead>
@@ -99,6 +111,10 @@
         <td>{{ eq.dominio }}</td>
         <td>{{ eq.nro_serie }}</td>
         <td>{{ eq.familia_equipo?.nombre }}</td>
+        <td>
+          <span *ngIf="eq.excluir_costos_taller" class="label label-danger">NO</span>
+          <span *ngIf="!eq.excluir_costos_taller" class="label label-success">SI</span>
+        </td>
         <td>
           <a *ngIf="can_dar_baja(eq)" class="btn btn-danger btn-sm" (click)="set_equipo_baja_modal(eq)">Dar la baja</a>
           <a class="btn btn-warning btn-sm" [routerLink]="['/taller', 'equipos', eq.id]">Editar</a>
