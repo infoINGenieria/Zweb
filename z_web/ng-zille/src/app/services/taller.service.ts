@@ -1,3 +1,4 @@
+import { IPeriodo } from './../models/Interfaces';
 import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
@@ -141,5 +142,10 @@ export class TallerService {
       const bodyString = JSON.stringify(asistencia);
       return this.http.put(`/api/taller/asistencia/${asistencia.pk}`, bodyString)
         .map((r: Response) => r.json() as IAsistencia);
+    }
+
+    get_reporte_asistencias_by_equipo(periodo: IPeriodo) {
+      return this.http.get(`/api/taller/asistencia/reportes/equipos/${periodo.pk}/`)
+      .map((r: Response) => r.json());
     }
 }

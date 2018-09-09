@@ -1,4 +1,5 @@
 # coding: utf-8
+from decimal import Decimal as D
 from django.db.utils import IntegrityError
 from django.db.transaction import atomic
 from django.core.exceptions import ValidationError
@@ -698,3 +699,18 @@ class AsistenciaEquipoSerializer(serializers.ModelSerializer):
         # eliminar items no enviados
         instance.registros.exclude(pk__in=exists_pks).delete()
         return instance
+
+
+class ReportAsistenciaItemCCSerializer(serializers.Serializer):
+    equipo = EquipoSerializer(read_only=True)
+    equipo_id = serializers.IntegerField()
+    centro_costo = ObrasSerializer(read_only=True)
+    centro_costo_id = serializers.IntegerField()
+    dias = serializers.IntegerField()
+    horas = serializers.IntegerField()
+    costo_hs = serializers.DecimalField(max_digits=18, decimal_places=2, default=0)
+    costo_diario = serializers.DecimalField(max_digits=18, decimal_places=2, default=0)
+    costo_total = serializers.SerializerMethodField()
+
+    def get_costo_total(self, obj):
+        return "%.2f" % (obj["costo_diario"] * obj["dias"])

@@ -1,3 +1,4 @@
+import { AsistenciaByEquipoComponent } from './components/taller/reports/asistencia-by-equipo.component';
 import { AsistenciaFormComponent } from './components/taller/asistencia/asistencia-form.component';
 import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
 import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
@@ -46,6 +47,8 @@ const APP_ROUTES: Routes = [
   { path: 'taller/asistencia', component: AsistenciasComponent },
   { path: 'taller/asistencia/:pk/:clone', component: AsistenciaFormComponent },
   { path: 'taller/asistencia/:pk', component: AsistenciaFormComponent },
+  { path: 'taller/reportes/asistencia', component: AsistenciaByEquipoComponent },
+
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];
 

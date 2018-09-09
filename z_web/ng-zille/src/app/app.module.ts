@@ -58,6 +58,7 @@ import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail
 import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
 import { AsistenciasComponent } from './components/taller/asistencia/asistencias.component';
 import { AsistenciaFormComponent } from './components/taller/asistencia/asistencia-form.component';
+import { AsistenciaByEquipoComponent } from './components/taller/reports/asistencia-by-equipo.component';
 
 registerLocaleData(localeEs, 'es-AR');
 
@@ -84,7 +85,8 @@ registerLocaleData(localeEs, 'es-AR');
     PaginationComponent,
     ParametrosGralPageComponent,
     AsistenciasComponent,
-    AsistenciaFormComponent
+    AsistenciaFormComponent,
+    AsistenciaByEquipoComponent
   ],
   imports: [
     BrowserModule,

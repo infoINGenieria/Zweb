@@ -1,4 +1,3 @@
-import { Headers } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { NotificationService } from '../../../services/core/notifications.service';
@@ -15,7 +14,7 @@ import * as moment from 'moment';
 @Component({
   selector: 'app-asistencia-form',
   templateUrl: './asistencia-form.component.html',
-  styleUrls: ['./asistencia-form.component.css'],
+  styleUrls: ['./asistencia-form.component.scss'],
   animations: [fadeInAnimation]
 })
 export class AsistenciaFormComponent implements OnInit {

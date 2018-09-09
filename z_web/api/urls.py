@@ -14,7 +14,7 @@ from api.views import (
     AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet,
     ProyeccionCostoViewSet, TableroControlOSEmitidosView, EquiposViewSet,
     FamiliaEquipoViewSet, ParametrosGeneralesTallerViewSet, AsistenciaEquipoViewSet,
-    RegistroAsistenciaEquipoViewSet
+    RegistroAsistenciaEquipoViewSet, ReportAsistenciaByEquipoView
 )
 
 router = routers.DefaultRouter()
@@ -81,5 +81,6 @@ urlpatterns = [
         TCAvanceGraphView.as_view(), name="tablero_control_curva_avance"),
     url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/consolidado/$',
         TCConsolidadoGraphView.as_view(), name="tablero_control_consolidado"),
-
+    url(r'^taller/asistencia/reportes/equipos/(?P<pk>[^/.]+)/',
+        ReportAsistenciaByEquipoView.as_view(), name="taller_reporte_asistencia_equipo")
 ]

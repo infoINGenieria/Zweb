@@ -1,11 +1,4 @@
 <div class="col-lg-12">
-  <h1>
-    <a class="btn btn-default" [routerLink]="['/taller', 'asistencia']">
-      <i class="fa fa-chevron-left"></i>
-    </a>
-    Asistencia de equipos
-  </h1>
-
   <div [ngSwitch]='initialLoading'>
     <div *ngSwitchCase="true">
       <div class="loader">Loading...</div>
@@ -13,18 +6,28 @@
     <div *ngSwitchCase="false" [@fadeInAnimation]>
       <form class="horizontal-form" name="equipo-form" #f="ngForm">
         <div class="row">
-          <div class="col-md-4">
-            <div class="form-group" [ngClass]="{ 'has-error': !f.form.controls.fecha?.valid }">
+          <div class="col-sm-6">
+            <h3>
+              <a class="btn btn-default" [routerLink]="['/taller', 'asistencia']">
+                <i class="fa fa-chevron-left"></i>
+              </a>
+              Asistencia de equipos
+            </h3>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group mt10" [ngClass]="{ 'has-error': !f.form.controls.fecha?.valid }">
               <label>Fecha:</label>
-              <dp-date-picker #dayPicker name="fecha" [(ngModel)]="asistencia.dia" required class="form-control"
-                [config]="datePickerConfig" theme="dp-material">
-              </dp-date-picker>
+                <dp-date-picker #dayPicker name="fecha" [(ngModel)]="asistencia.dia" required class="form-control"
+                  [config]="datePickerConfig" theme="dp-material">
+                </dp-date-picker>
               <p *ngIf="!f.form.controls.fecha?.valid" class="text-danger">Seleccione una fecha</p>
             </div>
           </div>
+        </div>
+        <div class="row">
           <div class="col-md-12 mb10">
-            <div class="table-responsive">
-              <table class="table">
+            <div class="table-responsive fixed-table-container" id="fixed-table">
+              <table class="table table-bordered">
                 <thead>
                   <tr>
                     <th>Interno</th>
@@ -49,13 +52,17 @@
           </div>
         </div>
 
-        <a class="btn btn-default" [routerLink]="['/taller', 'asistencia']">
+        <a class="btn btn-default btn-sm" [routerLink]="['/taller', 'asistencia']">
           <i class="fa fa-chevron-left"></i> Volver al listado</a>
 
-        <button  class="btn btn-success" *ngIf="!is_cloning"  (click)="guardar_asistencia_modal()" [disabled]="!is_valid || !f.form.controls.fecha?.valid">
+        <button  class="btn btn-success btn-sm" *ngIf="!is_cloning"
+          (click)="guardar_asistencia_modal()"
+          [disabled]="!is_valid || !f.form.controls.fecha?.valid">
           Guardar asistenca
         </button>
-        <button  class="btn btn-success" *ngIf="is_cloning" (click)="clonar_asistencia_modal()" [disabled]="!is_valid || !f.form.controls.fecha?.valid">
+        <button  class="btn btn-success btn-sm" *ngIf="is_cloning"
+          (click)="clonar_asistencia_modal()"
+          [disabled]="!is_valid || !f.form.controls.fecha?.valid">
             Clonar asistenca
           </button>
         <span class="text-danger" *ngIf="!has_all_selected">Por favor, asigne todos los equipos a los correspodientes CC.</span>

@@ -40,6 +40,11 @@ class Equipos(models.Model):
         verbose_name='excluir de costos de taller', default=False,
         help_text='Seleccionar si se desea excluir el equipo del cálculo de costos de Taller')
 
+    implica_mo_logistica = models.BooleanField(
+        verbose_name='implica mano de obra logística', default=False,
+        help_text='Seleccionar si este equipo prorratea mano de obra de carretones'
+    )
+
     class Meta:
         verbose_name = "equipo"
         verbose_name_plural = "equipos"

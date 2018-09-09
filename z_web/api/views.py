@@ -20,13 +20,14 @@ from api.serializers import (
     ProyeccionCertificacionSerializer, ProyeccionCostoSerializer,
     TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer,
     ParametrosGeneralesTallerSerializer, AsistenciaEquipoSerializer,
-    RegistroAsistenciaEquipoSerializer)
+    RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
     ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter,
     AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter)
 from equipos.models import ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo
+from equipos.calculo_costos import get_stats_of_asistencia_by_equipo
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
 from parametros.models import Periodo, FamiliaEquipo
@@ -339,9 +340,19 @@ class AsistenciaEquipoViewSet(ModelViewSet, AuthView):
     def get_queryset(self):
         return AsistenciaEquipo.objects.all().order_by('-dia')
 
+
 class RegistroAsistenciaEquipoViewSet(ModelViewSet, AuthView):
     serializer_class = RegistroAsistenciaEquipoSerializer
     filter_class = RegistroAsistenciaEquipoFilter
 
     def get_queryset(self):
         return RegistroAsistenciaEquipo.objects.all()
+
+
+class ReportAsistenciaByEquipoView(AuthView):
+
+    def get(self, request, *args, **kwargs):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('pk'))
+        data = get_stats_of_asistencia_by_equipo(periodo)
+        serializer = ReportAsistenciaItemCCSerializer(data, many=True)
+        return Response(serializer.data)

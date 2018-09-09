@@ -1,3 +1,4 @@
+# coding: utf-8
 from decimal import Decimal as D
 
 from django.db import models
@@ -90,159 +91,97 @@ class LubricantesParametros(BaseParametrosCostos):
     """
     hp = models.DecimalField('HP', max_digits=18, decimal_places=2, null=True)
 
-    # lubricantes
-    consumo_medio = models.DecimalField(
-        'consumo medio (l/h)', max_digits=18,
-        decimal_places=3, null=True)
-    cambios_lubricante_en_2000 = models.DecimalField(
-        'cambios de lubricante en 2000h', max_digits=5,
-        decimal_places=2, null=True)
-    volumen_lubricante_por_cambio = models.DecimalField(
-        'volumen (L) de lubricante por cambio',
-        max_digits=5, decimal_places=2, null=True)
-
-    # hidraulico
-    volumen_hidraulico_por_cambio = models.DecimalField(
-        'volumen (L) hidráulico por cambio',
-        max_digits=5, decimal_places=2, null=True
-    )
-
     class Meta:
         verbose_name = 'parámetro de lubricante'
         verbose_name_plural = 'parámetros de lubricantes'
 
-    @property
-    def cambios_lubricante_por_anio(self):
-        param = self.parametros_gral
-        if param:
-            return self.cambios_lubricante_en_2000 / 2000 * param.horas_trabajo_anio
 
-    @property
-    def cambios_hidraulico_por_anio(self):
-        lubr = self.cambios_lubricante_por_anio
-        if lubr:
-            return lubr / 2
+class LubricanteItem(BaseModel):
+    descripcion = models.CharField('descripción del ítem', max_length=255)
+    es_filtro = models.BooleanField(
+        'El item es un filtro?', default=True,
+        help_text='Seleccionar para filtros, no seleccionar para lubricantes o fluidos hidráulicos')
+    observaciones = models.TextField('observaciones', blank=True, null=True)
 
-    # FILTROS
-    @property
-    def cambio_filtro_aire(self):
-        """
-        Igual a los cambios de lubricante
-        """
-        return self.cambios_lubricante_por_anio
+    class Meta:
+        verbose_name = 'ítem de lubricantes / hidráulicos / filtros'
+        verbose_name_plural = 'ítemes de lubricantes / hidráulicos / filtros'
 
-    @property
-    def cambio_filtro_combustible(self):
-        """
-        Igual a los cambios de lubricante
-        """
-        return self.cambios_lubricante_por_anio
+    def __str__(self):
+        return self.descripcion
 
-    @property
-    def cambio_filtro_hidraulico(self):
-        """
-        Igual a los cambios de hidraulico
-        """
-        return self.cambios_hidraulico_por_anio
 
-    @property
-    def cambio_filtro_lubricante(self):
-        """
-        Igual a los cambios de lubricante
-        """
-        return self.cambios_lubricante_por_anio
+class LubricantesParametrosItem(BaseModel):
+    parametro = models.ForeignKey(LubricantesParametros, related_name='items_lubricante')
+    item = models.ForeignKey(LubricanteItem, related_name='parametros')
+    cambios_por_anio = models.DecimalField(
+        'cambios por año', max_digits=5,
+        decimal_places=2, default=0)
+    volumen_por_cambio = models.DecimalField(
+        'volumen (L) por cambio',
+        max_digits=5, decimal_places=2, default=1)
 
+    class Meta:
+        verbose_name = 'ítem de parámetros de lubricantes / hidráulicos /filtros'
+        verbose_name_plural = 'ítemes de parámetros de lubricantes / hidráulicos / filtros'
 
 
 class LubricantesValores(ValoresMixin, BaseParametrosCostos):
     """
     Valores de los filtros por equipo, vigente desde un periodo dado.
     """
-    precio_filtro_aire = models.DecimalField('CU Filtro Aire', max_digits=18, decimal_places=3)
-    precio_filtro_combustible = models.DecimalField('CU Filtro Combustible', max_digits=18, decimal_places=3)
-    precio_filtro_hidraulico = models.DecimalField('CU Filtro Hidráulico', max_digits=18, decimal_places=3)
-    precio_filtro_lubricante = models.DecimalField('CU Filtro Lubricante', max_digits=18, decimal_places=3)
 
     history = HistoricalRecords()
 
     model_parametros = LubricantesParametros
 
     class Meta:
-        verbose_name = 'valor de lubricante'
-        verbose_name_plural = 'valores de lubricantes'
-
-    @property
-    def costo_lubricante_pesos_hora(self):
-        param = self.parametros_gral
-        if param and self.mis_parametros:
-            costo = (self.mis_parametros.consumo_medio * param.precio_lubricante) + (
-                self.mis_parametros.cambios_lubricante_por_anio *
-                self.mis_parametros.volumen_lubricante_por_cambio *
-                param.precio_lubricante / param.horas_trabajo_anio
-            )
-            return costo
-        return 0
-
-    @property
-    def costo_hidraulico_pesos_hora(self):
-        param = self.parametros_gral
-        if param and self.mis_parametros:
-            costo = (
-                self.mis_parametros.volumen_hidraulico_por_cambio *
-                self.mis_parametros.cambios_hidraulico_por_anio *
-                param.precio_hidraulico / param.horas_trabajo_anio)
-            return costo
-        return 0
-
-    @property
-    def costo_filtro_aire_pesos_anio(self):
-        if not self.mis_parametros:
-            return 0
-        return self.precio_filtro_aire * self.mis_parametros.cambio_filtro_aire
-
-    @property
-    def costo_filtro_combustible_pesos_anio(self):
-        if not self.mis_parametros:
-            return 0
-        return self.precio_filtro_combustible * self.mis_parametros.cambio_filtro_combustible
-
-    @property
-    def costo_filtro_hidraulico_pesos_anio(self):
-        if not self.mis_parametros:
-            return 0
-        return self.precio_filtro_hidraulico * self.mis_parametros.cambio_filtro_hidraulico
-
-    @property
-    def costo_filtro_lubricante_pesos_anio(self):
-        if not self.mis_parametros:
-            return 0
-        return self.precio_filtro_lubricante * self.mis_parametros.cambio_filtro_lubricante
-
-    @property
-    def costo_filtro_pesos_hora(self):
-        param = self.parametros_gral
-        if param:
-            costo = self.costo_filtro_aire_pesos_anio
-            costo += self.costo_filtro_combustible_pesos_anio
-            costo += self.costo_filtro_hidraulico_pesos_anio
-            costo += self.costo_filtro_lubricante_pesos_anio
-            costo = costo / param.horas_trabajo_anio
-            return costo
-        return 0
+        verbose_name = 'valor de lubricantes / hidráulicos / filtros'
+        verbose_name_plural = 'valores de lubricantes / hidráulicos / filtros'
 
     @property
     def costo_total_pesos_hora(self):
-        return (
-            self.costo_lubricante_pesos_hora +
-            self.costo_hidraulico_pesos_hora +
-            self.costo_filtro_pesos_hora)
+        param = self.parametros_gral
+        if param:
+            return self.costo_total_pesos_mes / param.dias_por_mes / param.horas_por_dia
+        return 0
 
     @property
     def costo_total_pesos_mes(self):
-        param = self.parametros_gral
-        if param:
-            return self.costo_total_pesos_hora * param.horas_trabajo_anio / 12
-        return 0
+        item_valores = self.valores.aggregate(total=models.Sum('costo_por_mes')).get('total')
+        return item_valores
+
+
+class LubricantesValoresItem(ValoresMixin, BaseModel):
+    valor = models.ForeignKey(LubricantesValores, related_name='valores')
+    item = models.ForeignKey(LubricanteItem, related_name='itemes')
+    valor_unitario = models.DecimalField(
+        'valor unitario', max_digits=18, decimal_places=2, default=0,
+        help_text='Precio por unidad o litro.')
+
+    costo_por_mes = models.DecimalField(
+        'costo ($/m)', max_digits=18, decimal_places=2, blank=True,
+        help_text='No completar, se calculará automáticamente.'
+    )
+    class Meta:
+        verbose_name = 'ítem de valores de lubricantes / hidráulicos /filtros'
+        verbose_name_plural = 'ítemes de valores de lubricantes / hidráulicos / filtros'
+
+    def calcular(self):
+        parametro = self.valor.mis_parametros
+        if not parametro:
+            return 0
+        item = parametro.items_lubricante.filter(item=self.item).first()
+        if not item:
+            return 0
+        costo = self.valor_unitario * item.cambios_por_anio
+        if not item.item.es_filtro:
+            costo *= item.volumen_por_cambio
+        return costo / 12
+
+    def save(self, *args, **kwargs):
+        self.costo_por_mes = self.calcular()
+        super(LubricantesValoresItem, self).save(*args, **kwargs)
 
 
 class TrenRodajeParametros(BaseParametrosCostos):
@@ -524,8 +463,16 @@ class CostoEquipoValores(ValoresMixin, BaseParametrosCostos):
     def costo_equipo_propio(self):
         if self.equipo.es_alquilado:
             return 0
+        # costo de mano de obra logistico (Carretones)
+        mo_log = 0
+        if self.equipo.implica_mo_logistica:
+            mo_valor = self.get_dato_vigente(ManoObraValores)
+            if mo_valor:
+                count = Equipos.objects.filter(implica_mo_logistica=True).count()
+                mo_log = mo_valor.carretones / count
+
         self.costo_equipo_calculado = (
-            self.costo_mensual_del_activo + self.costo_mensual_del_activo_con_mo
+            self.costo_mensual_del_activo + self.costo_mensual_del_activo_con_mo + mo_log
             ) * self.markup / 100
         self.save()
         return self.costo_equipo_calculado
@@ -555,6 +502,14 @@ class CostoEquipoValores(ValoresMixin, BaseParametrosCostos):
             self.costo_equipo_calculado = 0
         self.save()
         return self.costo_equipo_calculado
+
+    @classmethod
+    def vigente(cls, periodo, equipo):
+        return CostoEquipoValores.objects.filter(
+            equipo=equipo,
+            valido_desde__fecha_inicio__lte=periodo.fecha_inicio
+        ).order_by('-valido_desde__fecha_inicio').first()
+
 
     class Meta:
         verbose_name = 'valor de costo equipo'
@@ -593,7 +548,7 @@ class AsistenciaEquipo(BaseModel):
         verbose_name_plural = 'dias de asistencias de equipo a cc'
 
     def __str__(self):
-        return self.dia
+        return self.dia.strftime("%d/%m/%Y")
 
 
 class RegistroAsistenciaEquipo(BaseModel):

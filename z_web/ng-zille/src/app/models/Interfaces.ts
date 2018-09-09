@@ -297,3 +297,17 @@ export interface IAsistencia {
     dia: string;
     registros: Array<IRegistroAsistencia>;
 }
+
+
+/* Reporte de asistencias  */
+export interface ReporteAsistenciaItemByEquipo {
+    equipo_id: number;
+    equipo: IEquipo;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    dias: number;
+    horas: number;
+    costo_hs: number;
+    costo_diario: number;
+    costo_total: number;
+}
