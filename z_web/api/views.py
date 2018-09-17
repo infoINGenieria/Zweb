@@ -20,13 +20,16 @@ from api.serializers import (
     ProyeccionCertificacionSerializer, ProyeccionCostoSerializer,
     TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer,
     ParametrosGeneralesTallerSerializer, AsistenciaEquipoSerializer,
-    RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer)
+    RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer,
+    TableroControlTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
     ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter,
     AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter)
-from equipos.models import ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo
+from equipos.models import (
+    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
+    CostoEquipoValores, TotalFlota)
 from equipos.calculo_costos import get_stats_of_asistencia_by_equipo
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
@@ -356,3 +359,33 @@ class ReportAsistenciaByEquipoView(AuthView):
         data = get_stats_of_asistencia_by_equipo(periodo)
         serializer = ReportAsistenciaItemCCSerializer(data, many=True)
         return Response(serializer.data)
+
+
+class TableroControlTallerView(ReadOnlyModelViewSet, AuthView):
+    serializer_class = TableroControlTallerSerializer
+
+    def get_queryset(self):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
+        equipos = Equipos.objects.actives_in_cost(periodo.fecha_fin)
+        valores = []
+        for equipo in equipos:
+            valores.append(CostoEquipoValores.objects.vigente(equipo=equipo, periodo=periodo))
+        return valores
+
+    def get_object(self):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
+        equipo = get_object_or_404(Equipos, pk=self.kwargs.get('pk'))
+        try:
+            return CostoEquipoValores.objects.vigente(equipo=equipo, periodo=periodo)
+        except CostoEquipoValores.DoesNotExist:
+            raise Http404
+
+    @list_route(methods=['get'], url_path='flota')
+    def flota(self, request, periodo_pk):
+        periodo = get_object_or_404(Periodo, pk=periodo_pk)
+        flota, _ = TotalFlota.objects.get_or_create(valido_desde=periodo)
+        flota.calcular_total_flota()
+        return Response({
+            'monto': "%.2f" % flota.monto,
+            'cantidad': flota.cantidad
+        })

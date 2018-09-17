@@ -23,7 +23,12 @@ class LubricantesValoresItemInline(admin.StackedInline):
 
 @admin.register(ParametrosGenerales)
 class ParametrosGeneralesAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('valido_desde', 'valor_dolar', )
+    search_fields = ('valido_desde', )
+
+    def get_changeform_initial_data(self, request):
+        last = ParametrosGenerales.objects.latest('valido_desde__fecha_fin')
+        return last.__dict__
 
 
 @admin.register(LubricanteItem)
@@ -37,6 +42,7 @@ class LubricanteItemAdmin(admin.ModelAdmin):
 
 @admin.register(LubricantesParametros)
 class LubricantesParametrosAdmin(admin.ModelAdmin):
+    search_fields = ['equipo__n_interno']
     inlines = [LubricantesParametrosItemInline]
     list_display = ('equipo', 'valido_desde', 'hp', 'cantidad_lubri', 'cantidad_filtros')
 
@@ -51,51 +57,60 @@ class LubricantesParametrosAdmin(admin.ModelAdmin):
 
 @admin.register(LubricantesValores)
 class LubricantesValoresAdmin(admin.ModelAdmin):
+    search_fields = ['equipo__n_interno']
     inlines = [LubricantesValoresItemInline]
     list_display = ('equipo', 'valido_desde', 'costo_total_pesos_mes')
 
 
 @admin.register(TrenRodajeParametros)
 class TrenRodajeParametrosAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde')
 
 
 @admin.register(TrenRodajeValores)
 class TrenRodajeValoresAdmin(admin.ModelAdmin):
-    pass
-
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde', 'costo_total_pesos_mes')
 
 
 @admin.register(PosesionParametros)
 class PosesionParametrosAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde')
 
 
 @admin.register(PosesionValores)
 class PosesionValoresAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde', 'costo_total_pesos_mes')
 
 
 @admin.register(ReparacionesParametros)
 class ReparacionesParametrosAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde')
 
 
 @admin.register(ReparacionesValores)
 class ReparacionesValoresAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde', 'costo_total_pesos_mes')
 
 
 @admin.register(ManoObraValores)
 class ManoObraValoresAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['valido_desde']
+    list_display = ('valido_desde', )
 
 
 @admin.register(EquipoAlquiladoValores)
 class EquipoAlquiladoValoresAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde',)
 
 
 @admin.register(CostoEquipoValores)
 class CostoEquipoValoresAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['equipo__n_interno']
+    list_display = ('equipo', 'valido_desde', )

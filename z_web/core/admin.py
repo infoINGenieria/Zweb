@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from core.models import (
     Equipos, EstServicio, FrancoLicencia, Obras,
     Operarios, Usuario, CCT, UserExtension, InfoObra)
+from core.actions import set_baja_equipo, set_baja_obra
 
 
 @admin.register(Equipos)
@@ -14,6 +15,7 @@ class Equipos(admin.ModelAdmin):
     search_fields = ('n_interno', 'equipo', 'año', 'dominio', 'modelo')
     ordering = ('n_interno', )
     list_display_links = ('n_interno', 'equipo', )
+    actions = [set_baja_equipo]
     fieldsets = (
         (None, {
             'fields': (('familia_equipo', 'equipo'),
@@ -52,6 +54,7 @@ class ObrasAdmin(admin.ModelAdmin):
     search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', )
     ordering = ('fecha_fin', 'codigo', '-es_cc',)
     inlines = [InfoObraInline, ]
+    actions = [set_baja_obra]
     fieldsets = (
         (None, {
             'fields': (('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),

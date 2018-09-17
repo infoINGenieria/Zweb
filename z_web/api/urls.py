@@ -14,7 +14,8 @@ from api.views import (
     AvanceObraViewSet, ProyeccionAvanceObraViewSet, ProyeccionCertificacionViewSet,
     ProyeccionCostoViewSet, TableroControlOSEmitidosView, EquiposViewSet,
     FamiliaEquipoViewSet, ParametrosGeneralesTallerViewSet, AsistenciaEquipoViewSet,
-    RegistroAsistenciaEquipoViewSet, ReportAsistenciaByEquipoView
+    RegistroAsistenciaEquipoViewSet, ReportAsistenciaByEquipoView,
+    TableroControlTallerView
 )
 
 router = routers.DefaultRouter()
@@ -67,6 +68,9 @@ router.register(
 router.register(
     r'taller/registros_asistencia', RegistroAsistenciaEquipoViewSet, base_name='registro_asistencia_equipo'
 )
+router.register(
+    r'taller/tablero/(?P<periodo_pk>\d+)', TableroControlTallerView, base_name='taller_tablero_control'
+)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
@@ -82,5 +86,6 @@ urlpatterns = [
     url(r'^tablero/(?P<un>[^/.]+)/(?P<obra_pk>\d+)/(?P<periodo_pk>\d+)/consolidado/$',
         TCConsolidadoGraphView.as_view(), name="tablero_control_consolidado"),
     url(r'^taller/asistencia/reportes/equipos/(?P<pk>[^/.]+)/',
-        ReportAsistenciaByEquipoView.as_view(), name="taller_reporte_asistencia_equipo")
+        ReportAsistenciaByEquipoView.as_view(), name="taller_reporte_asistencia_equipo"),
 ]
+

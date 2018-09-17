@@ -6,6 +6,8 @@ from django.conf import settings
 from parametros.models import FamiliaEquipo, Funcion
 from zweb_utils.models import BaseModel
 
+from .managers import EquipoManager
+
 
 class Equipos(models.Model):
     """
@@ -44,6 +46,8 @@ class Equipos(models.Model):
         verbose_name='implica mano de obra logística', default=False,
         help_text='Seleccionar si este equipo prorratea mano de obra de carretones'
     )
+
+    objects = EquipoManager()
 
     class Meta:
         verbose_name = "equipo"

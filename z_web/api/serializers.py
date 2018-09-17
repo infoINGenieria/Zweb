@@ -2,7 +2,7 @@
 from decimal import Decimal as D
 from django.db.utils import IntegrityError
 from django.db.transaction import atomic
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from rest_framework import serializers, status, exceptions
 from rest_framework.response import Response
@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from core.models import Obras, InfoObra, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
 from equipos.models import (
-    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo
+    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
+    LubricantesValores, TrenRodajeValores, PosesionValores,
+    ReparacionesValores, CostoEquipoValores
 )
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
@@ -714,3 +716,73 @@ class ReportAsistenciaItemCCSerializer(serializers.Serializer):
 
     def get_costo_total(self, obj):
         return "%.2f" % (obj["costo_diario"] * obj["dias"])
+
+
+class TableroControlTallerSerializer(serializers.ModelSerializer):
+    equipo = EquipoSerializer(read_only=True)
+    equipo_id = serializers.IntegerField(source='equipo.pk')
+    periodo_id = serializers.IntegerField(source='valido_desde.pk')
+    costo_mensual_lubricante = serializers.SerializerMethodField()
+    costo_mensual_tren_rodaje = serializers.SerializerMethodField()
+    costo_mensual_posesion = serializers.SerializerMethodField()
+    costo_mensual_reparacion = serializers.SerializerMethodField()
+
+    # costo_mensual_del_activo = serializers.SerializerMethodField()
+    # costo_mensual_del_activo_con_mo = serializers.SerializerMethodField()
+    costo_mensual_mo_logistico = serializers.DecimalField(max_digits=18, decimal_places=2)
+    # costo_mensual = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CostoEquipoValores
+        fields = (
+            'equipo', 'equipo_id', 'periodo_id', 'markup',
+            'costo_mensual_del_activo_calculado',
+            'costo_mensual_del_activo_con_mo_calculado',
+            'costo_equipo_calculado',
+            'costo_mensual_lubricante',
+            'costo_mensual_tren_rodaje',
+            'costo_mensual_posesion',
+            'costo_mensual_reparacion',
+            'costo_mensual_mo_logistico'
+        )
+
+    # def get_costo_mensual_del_activo(self, obj):
+    #     if obj.equipo.es_alquilado:
+    #         return 0
+    #     return "%.2f" % obj.costo_mensual_del_activo
+
+    # def get_costo_mensual_del_activo_con_mo(self, obj):
+    #     if obj.equipo.es_alquilado:
+    #         return 0
+    #     return "%.2f" % obj.costo_mensual_del_activo_con_mo
+
+    # def get_costo_mensual(self, obj):
+    #     return "%.2f" % obj.costo_mensual_zille
+
+    def get_costo_mensual_lubricante(self, obj):
+        try:
+            val = LubricantesValores.objects.vigente(obj.equipo, obj.valido_desde)
+            return "%.2f" % val.costo_total_pesos_mes
+        except (ObjectDoesNotExist, AttributeError):
+            return 0
+
+    def get_costo_mensual_tren_rodaje(self, obj):
+        try:
+            val = TrenRodajeValores.objects.vigente(obj.equipo, obj.valido_desde)
+            return "%.2f" % val.costo_total_pesos_mes
+        except (ObjectDoesNotExist, AttributeError):
+            return 0
+
+    def get_costo_mensual_posesion(self, obj):
+        try:
+            val = PosesionValores.objects.vigente(obj.equipo, obj.valido_desde)
+            return "%.2f" % val.costo_total_pesos_mes
+        except (ObjectDoesNotExist, AttributeError):
+            return 0
+
+    def get_costo_mensual_reparacion(self, obj):
+        try:
+            val = ReparacionesValores.objects.vigente(obj.equipo, obj.valido_desde)
+            return "%.2f" % val.costo_total_pesos_mes
+        except (ObjectDoesNotExist, AttributeError):
+            return 0
