@@ -548,7 +548,7 @@ class TotalFlota(BaseModel):
         """
         monto_aux = 0
         cantidad_aux = 0
-        for equipo in Equipos.objects.actives_as_of(self.valido_desde.fecha_inicio):
+        for equipo in Equipos.objects.actives_in_cost(self.valido_desde.fecha_inicio):
             valor = CostoEquipoValores.objects.vigente(
                 equipo=equipo, periodo=self.valido_desde)
             if valor:

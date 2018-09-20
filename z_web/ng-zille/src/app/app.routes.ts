@@ -20,6 +20,7 @@ import {
     CertificacionRealComponent, CertificacionesRealComponent,
   } from './components/certificaciones';
 import { AsistenciasComponent } from './components/taller/asistencia/asistencias.component';
+import { TableroTallerComponent } from './components/taller/tablero/tablero-taller.component';
 
 const APP_ROUTES: Routes = [
   { path: '', component: IndexComponent },
@@ -48,6 +49,7 @@ const APP_ROUTES: Routes = [
   { path: 'taller/asistencia/:pk/:clone', component: AsistenciaFormComponent },
   { path: 'taller/asistencia/:pk', component: AsistenciaFormComponent },
   { path: 'taller/reportes/asistencia', component: AsistenciaByEquipoComponent },
+  { path: 'tablero-control/taller', component: TableroTallerComponent },
 
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];

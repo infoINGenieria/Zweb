@@ -42,7 +42,7 @@ def get_stats_of_asistencia_by_equipo(periodo):
 
     for eq in equipos:
         records = filter(lambda a: a["registros__equipo"] == eq.pk, registros)
-        valor = CostoEquipoValores.vigente(periodo, eq)
+        valor = CostoEquipoValores.objects.vigente(eq, periodo)
         if valor:
             costo_hs = valor.costo_equipo_calculado / parametros.dias_por_mes / parametros.horas_por_dia
         else:

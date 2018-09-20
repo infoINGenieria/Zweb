@@ -36,8 +36,20 @@ export class ParametrosGralPageComponent implements OnInit {
     this.route.params.subscribe(val => {
       this.parametro_general_id = val['pk'];
       if (this.parametro_general_id === 'new') {
-        this.parametro_general = new Object() as IParametrosGenerales;
-        this.initialLoading = false;
+        this.tallerServ.get_parametros_generales_latest().subscribe(
+          res => {
+            this.parametro_general = res as IParametrosGenerales;
+            this.parametro_general.pk = null;
+            this.parametro_general.valido_desde = null;
+            this.parametro_general.valido_desde_id = null;
+            this.initialLoading = false;
+          },
+          err => {
+            console.log(err);
+            this.parametro_general = new Object() as IParametrosGenerales;
+            this.initialLoading = false;
+          }
+        )
       } else {
         this.refresh_parametro();
       }

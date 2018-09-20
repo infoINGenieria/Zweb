@@ -23,7 +23,7 @@ export class TallerService {
       this.f_anio,
       this.f_estado
       */
-  get_equipos_list(page?, ninterno?, marca?, modelo?, tipo?, dominio?, anio?, estado?) {
+  get_equipos_list(page?, ninterno?, marca?, modelo?, tipo?, dominio?, anio?, estado?, excluir_costos_taller?) {
     let myParams = new URLSearchParams();
     myParams.set('page', page || 1);
     myParams.set('n_interno', ninterno || '');
@@ -33,7 +33,7 @@ export class TallerService {
     myParams.set('dominio', dominio || '');
     myParams.set('año', anio || '');
     myParams.set('estado', estado || '');
-    myParams.set('excluir_costos_taller', estado || '');
+    myParams.set('excluir_costos_taller', excluir_costos_taller || '');
     return this.http.get('/api/equipos/', myParams)
     .map((r: Response) => r.json());
   }
@@ -88,6 +88,11 @@ export class TallerService {
 
   get_parametros_generales(pk: number): Observable<IParametrosGenerales> {
     return this.http.get(`/api/taller/parametros_generales/${pk}/`)
+      .map((r: Response) => r.json() as IParametrosGenerales);
+  }
+
+  get_parametros_generales_latest(): Observable<IParametrosGenerales> {
+    return this.http.get(`/api/taller/parametros_generales/latest/`)
       .map((r: Response) => r.json() as IParametrosGenerales);
   }
 
@@ -148,4 +153,22 @@ export class TallerService {
       return this.http.get(`/api/taller/asistencia/reportes/equipos/${periodo.pk}/`)
       .map((r: Response) => r.json());
     }
-}
+
+
+    // COSTOS
+    get_tablero_costo_taller(periodo: IPeriodo) {
+      return this.http.get(`/api/taller/tablero/${periodo.pk}/`)
+        .map( (r: Response) => r.json());
+    }
+
+    get_tablero_costo_taller_detail(periodo: IPeriodo, equipo: IEquipo) {
+      return this.http.get(`/api/taller/tablero/${periodo.pk}/${equipo.id}`)
+        .map( (r: Response) => r.json());
+    }
+
+    get_tablero_costo_taller_total_flota(periodo: IPeriodo) {
+      return this.http.get(`/api/taller/tablero/${periodo.pk}/flota/?recalcular=True`)
+        .map( (r: Response) => r.json());
+    }
+  }
+

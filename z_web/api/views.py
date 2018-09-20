@@ -303,7 +303,7 @@ class EquiposViewSet(ModelViewSet, AuthView):
     filter_class = EquiposFilter
 
     def get_queryset(self):
-        return Equipos.objects.exclude(id=1)
+        return Equipos.objects.exclude(id=1).order_by('fecha_baja')
 
     @detail_route(methods=['post'], url_path='set-baja')
     def set_baja(self, request, pk):
@@ -316,7 +316,7 @@ class EquiposViewSet(ModelViewSet, AuthView):
     def activos(self, request):
         qs = Equipos.objects.exclude(
             (Q(fecha_baja__isnull=False) | Q(excluir_costos_taller=True)) | Q(pk=1)
-        )
+        ).order_by('fecha_baja')
         return Response({
             'count': qs.count(),
             'equipos': EquipoSerializer(qs, many=True).data
@@ -334,6 +334,12 @@ class ParametrosGeneralesTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ParametrosGeneralesTallerSerializer
     queryset = ParametrosGenerales.objects.all()
     filter_class = ParametrosGeneralesFilter
+
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        return Response(ParametrosGeneralesTallerSerializer(
+            self.queryset.latest('valido_desde__fecha_inicio')).data
+        )
 
 
 class AsistenciaEquipoViewSet(ModelViewSet, AuthView):
@@ -363,10 +369,11 @@ class ReportAsistenciaByEquipoView(AuthView):
 
 class TableroControlTallerView(ReadOnlyModelViewSet, AuthView):
     serializer_class = TableroControlTallerSerializer
+    pagination_class = None
 
     def get_queryset(self):
         periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
-        equipos = Equipos.objects.actives_in_cost(periodo.fecha_fin)
+        equipos = Equipos.objects.actives_in_cost(periodo.fecha_inicio)
         valores = []
         for equipo in equipos:
             valores.append(CostoEquipoValores.objects.vigente(equipo=equipo, periodo=periodo))
@@ -382,9 +389,11 @@ class TableroControlTallerView(ReadOnlyModelViewSet, AuthView):
 
     @list_route(methods=['get'], url_path='flota')
     def flota(self, request, periodo_pk):
+        recalc = bool(request.GET.get('recalcular', False))
         periodo = get_object_or_404(Periodo, pk=periodo_pk)
         flota, _ = TotalFlota.objects.get_or_create(valido_desde=periodo)
-        flota.calcular_total_flota()
+        if recalc:
+            flota.calcular_total_flota()
         return Response({
             'monto': "%.2f" % flota.monto,
             'cantidad': flota.cantidad

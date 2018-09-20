@@ -311,3 +311,23 @@ export interface ReporteAsistenciaItemByEquipo {
     costo_diario: number;
     costo_total: number;
 }
+
+export interface IEquipoCostoTaller {
+    equipo: IEquipo;
+    equipo_id: number;
+    periodo_id: number;
+    markup: number;
+    costo_mensual_del_activo_calculado: number;
+    costo_mensual_del_activo_con_mo_calculado: number;
+    costo_equipo_calculado: number;
+    costo_mensual_lubricante: number;
+    costo_mensual_tren_rodaje: number;
+    costo_mensual_posesion: number;
+    costo_mensual_reparacion: number;
+    costo_mensual_mo_logistico: number;
+}
+
+export interface ITotalFlota {
+    monto: number;
+    cantidad: number;
+}

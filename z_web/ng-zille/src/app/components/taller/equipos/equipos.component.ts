@@ -26,7 +26,7 @@ export class EquiposComponent implements OnInit {
   f_dominio = '';
   f_anio = '';
   f_estado = '';  // alta o baja
-
+  f_excluir_costos_taller = '';
 
   page = new Page();
 
@@ -54,7 +54,8 @@ export class EquiposComponent implements OnInit {
       this.f_tipo,
       this.f_dominio,
       this.f_anio,
-      this.f_estado
+      this.f_estado,
+      this.f_excluir_costos_taller
     ).subscribe(
       equipos => {
         this.equipos = equipos['results'] as Array<IEquipo>;
@@ -69,7 +70,7 @@ export class EquiposComponent implements OnInit {
   filterList(form: NgForm) {
     console.log(form);
     this.page.pageNumber = 1;
-    const { ninterno, marca, modelo, tipo, dominio, anio, estado } = form.value;
+    const { ninterno, marca, modelo, tipo, dominio, anio, estado, excluir_costos_taller } = form.value;
 
     this.f_ninterno = ninterno;
     this.f_marca = marca;
@@ -78,6 +79,7 @@ export class EquiposComponent implements OnInit {
     this.f_dominio = dominio;
     this.f_anio = anio;
     this.f_estado = estado;
+    this.f_excluir_costos_taller = excluir_costos_taller;
     this.loaded = false;
     this.refresh();
   }
@@ -92,6 +94,7 @@ export class EquiposComponent implements OnInit {
     this.f_dominio = '';
     this.f_anio = '';
     this.f_estado = '';
+    this.f_excluir_costos_taller = '';
     this.refresh();
   }
 

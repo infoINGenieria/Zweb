@@ -56,11 +56,13 @@ class ProyeccionCostoFilter(django_filters.FilterSet):
 
 class EquiposFilter(django_filters.FilterSet):
     estado = django_filters.CharFilter(method='estado_filter')
-    excluir_costos_taller = django_filters.BooleanFilter(method='excluir_costos_taller_filter')
+    excluir_costos_taller = django_filters.CharFilter(method='excluir_costos_taller_filter')
 
     def excluir_costos_taller_filter(self, queryset, name, value):
-        if value:
-            return queryset.exclude(excluir_costos_taller=True)
+        if value == '1':
+            return queryset.filter(excluir_costos_taller=True)
+        elif value == '0':
+            return queryset.filter(excluir_costos_taller=False)
         return queryset
 
     def estado_filter(self, queryset, name, value):
