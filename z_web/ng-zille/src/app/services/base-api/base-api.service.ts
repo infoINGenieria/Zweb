@@ -1,7 +1,8 @@
-import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 import {Http, Headers, RequestOptions, Response, URLSearchParams } from '@angular/http';
-import 'rxjs/add/operator/map';
+
 import { environment } from '../../../environments/environment';
 
 import { MenuEntry } from '../../models/Interfaces';
@@ -47,7 +48,8 @@ export class BaseApiService {
   /*   Common methods API */
 
   get_my_menu(): Observable<MenuEntry[]> {
-    return this.get(`${environment.apiUrl}/api/my_menu/`)
-      .map((r: Response) => r.json());
+    return this.get(`${environment.apiUrl}/api/my_menu/`).pipe(
+      map((r: Response) => r.json())
+    );
   }
 }

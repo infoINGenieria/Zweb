@@ -1,5 +1,5 @@
+import { ModalService } from './../../../services/core/modal.service';
 import { IParametrosGenerales, IPeriodo } from './../../../models/Interfaces';
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { NotificationService } from './../../../services/core/notifications.service';
 import { TallerService } from './../../../services/taller.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +25,7 @@ export class ParametrosGralPageComponent implements OnInit {
     private tallerServ: TallerService,
     private coreServ: CoreService,
     private notify_service: NotificationService,
-    private modal: Modal
+    public modal: ModalService
   ) { }
 
   ngOnInit() {
@@ -66,21 +66,11 @@ export class ParametrosGralPageComponent implements OnInit {
   }
 
   create_parametro_general_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Añadir parámetros generales')
-    .message(`Está a punto de añadir un nuevo conjunto de parámetros generales ¿Continuar?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, añadir!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.create_parametro_general(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      'Está a punto de añadir un nuevo conjunto de parámetros generales ¿Continuar?',
+      'Añadir parámetros generales',
+      () => this.create_parametro_general()
+    ).open();
   }
 
   create_parametro_general() {
@@ -95,21 +85,11 @@ export class ParametrosGralPageComponent implements OnInit {
   }
 
   save_parametro_general_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Guardar parámetros generales')
-    .message(`¿Guardar los datos del conjunto de parámetros generales?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, guardar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.save_parametro_general(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      '¿Guardar los datos del conjunto de parámetros generales?',
+      'Guardar parámetros generales',
+      () => this.save_parametro_general()
+    ).open();
   }
 
   save_parametro_general() {

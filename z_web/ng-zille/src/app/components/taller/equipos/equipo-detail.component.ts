@@ -1,5 +1,5 @@
+import { ModalService } from './../../../services/core/modal.service';
 import { IFamiliaEquipo } from '../../../models/Interfaces';
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { NotificationService } from '../../../services/core/notifications.service';
 import { fadeInAnimation } from '../../../_animations/fade-in.animation';
 import { TallerService } from '../../../services/taller.service';
@@ -20,7 +20,7 @@ export class EquipoDetailComponent implements OnInit {
     private router: Router,
     private tallerServ: TallerService,
     private notify_service: NotificationService,
-    private modal: Modal
+    private modal: ModalService
   ) { }
 
   equipo: IEquipo = null;
@@ -55,21 +55,11 @@ export class EquipoDetailComponent implements OnInit {
   }
 
   create_equipo_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Añadir equipo')
-    .message(`Está a punto de añadir un nuevo equipo ¿Continuar?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, añadir!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.create_equipo(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `Está a punto de añadir un nuevo equipo ¿Continuar?`,
+      'Añadir equipo',
+      () => this.create_equipo()
+    ).open();
   }
 
   create_equipo() {
@@ -84,21 +74,11 @@ export class EquipoDetailComponent implements OnInit {
   }
 
   save_equipo_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Guardar equipo')
-    .message(`¿Guardar los datos del equipo?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, guardar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.save_equipo(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Guardar los datos del equipo?`,
+      'Guardar equipo',
+      () => this.save_equipo()
+    ).open();
   }
 
   save_equipo() {
@@ -112,21 +92,11 @@ export class EquipoDetailComponent implements OnInit {
   }
 
   set_equipo_baja_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Dar de baja al equipo')
-    .message(`¿Desea dar la baja del equipo?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, continuar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.dar_la_baja(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      '¿Desea dar la baja del equipo?',
+      'Dar de baja al equipo',
+      () => this.dar_la_baja()
+    ).open();
   }
 
   dar_la_baja() {

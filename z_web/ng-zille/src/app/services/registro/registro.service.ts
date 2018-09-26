@@ -1,5 +1,6 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { Certificacion } from '../../models/Certificacion';
-import { Observable } from 'rxjs/Observable';
 import { ICertificacion } from '../../models/Interfaces';
 import { Response, URLSearchParams } from '@angular/http';
 import { BaseApiService } from '../base-api/base-api.service';
@@ -29,7 +30,7 @@ export class RegistroService {
   delete_certificacion(certificacion: ICertificacion): Observable<ICertificacion> {
     return this.http.delete(`/api/certificaciones/${certificacion.pk}/`)
     .map((res: Response) => res.json())
-    .catch((error: any) => Observable.throw(error.json().detail || 'Server error'));
+    .catch((error: any) => observableThrowError(error.json().detail || 'Server error'));
   }
 
   create_certificacion(certificacion: ICertificacion): Observable<ICertificacion> {

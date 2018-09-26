@@ -1,11 +1,11 @@
 import { NgForm } from '@angular/forms';
 import { CoreService } from '../../services/core/core.service';
 import { NotificationService } from '../../services/core/notifications.service';
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { ICertificacion, ICentroCosto, IPeriodo } from '../../models/Interfaces';
 import { RegistroService } from '../../services/registro/registro.service';
 import { Component, OnInit } from '@angular/core';
 import { fadeInAnimation } from '../../_animations/fade-in.animation';
+import { ModalService } from '../../services/core/modal.service';
 
 @Component({
   selector: 'app-certificaciones-real',
@@ -19,11 +19,13 @@ export class CertificacionesRealComponent implements OnInit {
   periodos: IPeriodo[] = [];
   loaded = false;
 
+  selectedCertificacion: ICertificacion;
+
   constructor(
     private registroServ: RegistroService,
     private core_serv: CoreService,
     private _notifications: NotificationService,
-    private _modal: Modal
+    public modal: ModalService
   ) { }
 
   refresh() {
@@ -61,28 +63,21 @@ export class CertificacionesRealComponent implements OnInit {
   }
 
   delete(cert: ICertificacion) {
-    const dialogRef = this._modal.confirm()
-    .showClose(true)
-    .title('Confirmación de eliminación')
-    .message(`¿Está seguro que desea <b>eliminar</b> esta certificación del sistema?<br><b>Esta acción no puede deshacerse.</b>`)
-    .cancelBtn('Cancelar')
-    .okBtn('Eliminar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => {
-            this.registroServ.delete_certificacion(cert).subscribe(
-              r => {
-                this.refresh();
-                this._notifications.success('Certificación eliminada correctamente.');
-              },
-              error => this.handleError(error));
-          },
-          () => {}
-        );
+    this.selectedCertificacion = cert;
+    this.modal.setUp(
+      '¿Está seguro que desea <b>eliminar</b> esta certificación del sistema?',
+      'Confirmación de eliminación',
+      () => this.delete_certificacion()
+    ).open();
+  }
+
+  delete_certificacion() {
+    this.registroServ.delete_certificacion(this.selectedCertificacion).subscribe(
+      r => {
+        this.refresh();
+        this._notifications.success('Certificación eliminada correctamente.');
       },
-    );
+      error => this.handleError(error));
   }
 
 }

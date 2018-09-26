@@ -1,6 +1,6 @@
+import { ModalService } from './../../../services/core/modal.service';
 import { fadeInAnimation } from '../../../_animations/fade-in.animation';
 import { NgForm } from '@angular/forms';
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { NotificationService } from '../../../services/core/notifications.service';
 import { TallerService } from '../../../services/taller.service';
 import { Page } from '../../../models/Page';
@@ -39,7 +39,7 @@ export class AsistenciasComponent implements OnInit {
     private coreServ: CoreService,
     private tallerServ: TallerService,
     private notify_service: NotificationService,
-    private modal: Modal
+    private modal: ModalService
   ) { }
 
   ngOnInit() {
@@ -119,20 +119,10 @@ export class AsistenciasComponent implements OnInit {
   }
 
   guardar_asistencia_modal(asistencia: IAsistencia) {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title(`¡¡Eliminar asistencia!!`)
-    .message(`¿Desea eliminar la asistencia del día ${asistencia.dia}?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Eliminar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.eliminar_asistencia(asistencia),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Desea eliminar la asistencia del día ${asistencia.dia}?`,
+      `¡¡Eliminar asistencia!!`,
+      () => this.eliminar_asistencia(asistencia)
+    ).open();
   }
 }

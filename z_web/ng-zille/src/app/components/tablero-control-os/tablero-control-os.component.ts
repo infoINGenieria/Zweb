@@ -1,4 +1,4 @@
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
+import { ModalService } from './../../services/core/modal.service';
 import {
   TableroService
 } from '../../services/tablero.service';
@@ -50,6 +50,7 @@ export class TableroControlOsComponent implements OnInit {
   revisiones_historico: any = null;
 
   tablero: ITableroControlEmitido;
+  comentarios_freeze = '';
 
   // feo pero funciona. Estos haeders sirven para iterar en cada subconjunto
   headers = ['acumulado', 'faltante_estimado', 'faltante_presupuesto',
@@ -78,7 +79,7 @@ export class TableroControlOsComponent implements OnInit {
     private _coreServ: CoreService,
     private _tableroServ: TableroService,
     private _notifications: NotificationService,
-    private _modal: Modal
+    private _modal: ModalService
   ) {}
 
   certCallBack(chart) {
@@ -621,9 +622,9 @@ export class TableroControlOsComponent implements OnInit {
     }
   }
 
-  printTablero(comentarios?: string) {
+  printTablero() {
     this._notifications.info('Emitiendo el tablero, por favor, espere...');
-    this.tablero.comentario = comentarios;
+    this.tablero.comentario = this.comentarios_freeze;
     setTimeout(() => {
       const ts = moment();
       while (this.images_count < 4 ) {
@@ -646,31 +647,9 @@ export class TableroControlOsComponent implements OnInit {
   }
 
   printTableroPrompt() {
+    this.comentarios_freeze = '';
     this.images_count = 0;
-    const dialogRef = this._modal.prompt()
-      .showClose(true)
-      .title('Confirmación de emisión de tablero')
-      .message(`
-        <h4>Emisión de tablero</h4>
-        <strong>¡Atención! Esta acción no puede deshacerse.</strong>
-        <p>Al emitir el tablero, el mismo pasa a estar en sólo lectura, ignorando cualquier cambio
-        que se haga sobre las proyecciones y demás datos intervinietes para
-        ${this.centro_costo.obra}, periodo ${this.periodo.descripcion}.</p><br>
-        <p>A continuación puede añadir un comentario sobre el mismo que desee incluir en el tablero (opcional):</p>
-      `)
-      .cancelBtn('Cancelar')
-      .okBtn('Emitir')
-      .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => {
-            this.printTablero(result);
-          },
-          () => {}
-        );
-      },
-    );
+    this._modal.ngxSmartModalService.get('freezeTablero').open();
 
     this.tablero.obra_id = this.centro_costo.id;
     this.tablero.periodo_id = this.periodo.pk;

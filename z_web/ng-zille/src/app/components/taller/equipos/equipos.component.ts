@@ -1,5 +1,5 @@
+import { ModalService } from './../../../services/core/modal.service';
 import { NotificationService } from '../../../services/core/notifications.service';
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { Page } from '../../../models/Page';
 import { NgForm } from '@angular/forms';
 import { fadeInAnimation } from '../../../_animations/fade-in.animation';
@@ -33,7 +33,7 @@ export class EquiposComponent implements OnInit {
   constructor(
     private tallerServ: TallerService,
     private notify_service: NotificationService,
-    private modal: Modal
+    private modal: ModalService
   ) { }
 
   ngOnInit() {
@@ -99,21 +99,12 @@ export class EquiposComponent implements OnInit {
   }
 
   set_equipo_baja_modal(equipo: IEquipo) {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Dar de baja al equipo')
-    .message(`¿Desea dar la baja del equipo ${equipo.n_interno}?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, continuar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.dar_la_baja(equipo.id),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Desea dar la baja del equipo ${equipo.n_interno}?`,
+      'Dar de baja al equipo',
+      () => {
+        this.dar_la_baja(equipo.id);
+      }).open();
   }
 
   dar_la_baja(pk) {

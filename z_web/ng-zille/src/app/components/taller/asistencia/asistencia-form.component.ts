@@ -1,5 +1,5 @@
+import { ModalService } from './../../../services/core/modal.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { NotificationService } from '../../../services/core/notifications.service';
 import { TallerService } from '../../../services/taller.service';
 import { IDatePickerConfig, ECalendarValue } from 'ng2-date-picker';
@@ -33,7 +33,7 @@ export class AsistenciaFormComponent implements OnInit {
     private tallerServ: TallerService,
     private coreServ: CoreService,
     private notify_service: NotificationService,
-    private modal: Modal,
+    private modal: ModalService,
     private route: ActivatedRoute,
     private router: Router,
   ) { }
@@ -149,40 +149,21 @@ export class AsistenciaFormComponent implements OnInit {
   }
 
   guardar_asistencia_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title(`Asistencia de ${this.asistencia.dia}`)
-    .message(`¿Desea guardar la asistencia?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Guardar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.guardar_asistencia(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Desea guardar la asistencia?`,
+      `Asistencia de ${this.asistencia.dia}`,
+      () => this.guardar_asistencia()
+    ).open();
   }
 
   clonar_asistencia_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title(`Asistencia de ${this.asistencia.dia}`)
-    .message(`Está creando una nueva asistencia a partir de la seleccionada. ¿Desea continuar?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, guardar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.clonar_asistencia(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `Está creando una nueva asistencia a partir de la seleccionada. ¿Desea continuar?`,
+      `Asistencia de ${this.asistencia.dia}`,
+      () => this.clonar_asistencia()
+    ).open();
   }
+
   refresh() {
     this.tallerServ.get_asistencia(this.asistencia_pk).subscribe(
       asistencia => {

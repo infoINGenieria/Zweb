@@ -1,4 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~ngx-smart-modal/ngx-smart-modal";
+
+.nsm-dialog {
+    margin: 10% auto;
+    min-height: inherit;
+}
+.nsm-content {
+    padding: 0rem !important;
+    margin: 0rem !important;
+}
+
 .clickable {
     cursor: pointer;
 }

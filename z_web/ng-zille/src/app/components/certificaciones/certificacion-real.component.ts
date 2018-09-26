@@ -1,4 +1,3 @@
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { fadeInAnimation } from '../../_animations/fade-in.animation';
 import { itemAnim } from '../../_animations/itemAnim';
 import { NotificationService } from '../../services/core/notifications.service';
@@ -7,6 +6,7 @@ import { ICertificacion, IPeriodo, ICentroCosto, ICertificacionItem } from '../.
 import { RegistroService } from '../../services/registro/registro.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
+import { ModalService } from '../../services/core/modal.service';
 
 @Component({
   selector: 'app-certificacion-real',
@@ -22,6 +22,8 @@ export class CertificacionRealComponent implements OnInit {
   centro_costos: ICentroCosto[] = [];
   periodos: IPeriodo[] = [];
 
+  selecteItem: ICertificacionItem = null;
+
   CONCEPTOS: any = [
     {'key': 'basica', 'text': 'Certificación Básica'},
     {'key': 'cambios', 'text': 'Órdenes de cambio'},
@@ -35,7 +37,7 @@ export class CertificacionRealComponent implements OnInit {
     private registroServ: RegistroService,
     private core_service: CoreService,
     private _notifications: NotificationService,
-    private modal: Modal
+    public modal: ModalService
   ) {
     // create empty objects
     this.certificacion = new Object as ICertificacion;
@@ -114,24 +116,17 @@ export class CertificacionRealComponent implements OnInit {
   }
 
   removeItem(item: ICertificacionItem) {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Confirmación de eliminación')
-    .message(`¿Está seguro que desea remover este ítem del listado?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Eliminar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => {
-            const index = this.certificacion.items.indexOf(item);
-            this.certificacion.items.splice(index, 1);
-          },
-          () => {}
-        );
-      },
-    );
+    this.selecteItem = item;
+    this.modal.setUp(
+      '¿Esta seguro que desea remover este ítem del listado?',
+      'Confirmación de eliminación',
+      () => this.removeItemExecute()
+    ).open();
+  }
+
+  removeItemExecute() {
+    const index = this.certificacion.items.indexOf(this.selecteItem);
+    this.certificacion.items.splice(index, 1);
   }
 
   get total_items() {
@@ -157,21 +152,11 @@ export class CertificacionRealComponent implements OnInit {
 
 
   create_certificacion_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Crear certificacion')
-    .message(`Está a punto de crear una nueva certificacion ¿Continuar?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, crear!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.create_certificacion(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      'Está a punto de crear una nueva certificación ¿Continuar?',
+      'Guardar certificación',
+      () => this.create_certificacion()
+    ).open();
   }
 
   create_certificacion() {
@@ -183,21 +168,11 @@ export class CertificacionRealComponent implements OnInit {
   }
 
   save_certificacion_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Guardar certificación')
-    .message(`¿Guardar la certificación actual?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, guardar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.save_certificacion(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      '¿Guardar la certificación actual?',
+      'Guardar certificación',
+      () => this.save_certificacion()
+    ).open();
   }
 
   save_certificacion() {

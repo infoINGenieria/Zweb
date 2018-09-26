@@ -354,3 +354,17 @@
     </div>
   </div>
 </div>
+
+<ngx-smart-modal #freezeTablero identifier="freezeTablero" customClass="medium-modal">
+    <h2>Emisión de tablero</h2>
+      <strong>¡Atención! Esta acción no puede deshacerse.</strong>
+      <p>Al emitir el tablero, el mismo pasa a estar en sólo lectura, ignorando cualquier cambio
+        que se haga sobre las proyecciones y demás datos intervinietes para
+        {{ centro_costo.obra }}, periodo {{ periodo.descripcion}}.</p>
+        <br>
+        <p>A continuación puede añadir un comentario sobre el mismo que desee incluir en el tablero (opcional):</p>
+        <input type="textarea" name="comentarios_freeze" [(ngModel)]="comentarios_freeze" />
+
+    <button class="button -dark" (click)="freezeTablero.close()">Cancelar</button>
+    <button class="button success" (click)="printTablero()">Emitir</button>
+  </ngx-smart-modal>

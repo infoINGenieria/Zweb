@@ -1,9 +1,7 @@
 import { CoreService } from '../../../services/core/core.service';
 import { IPeriodo } from '../../../models/Interfaces';
 import { NgForm } from '@angular/forms';
-import { PaginationComponent } from '../../shared/page.component';
 import { Page } from '../../../models/Page';
-import { Modal } from 'ngx-modialog/plugins/bootstrap/src/ngx-modialog-bootstrap.ng-flat';
 import { NotificationService } from '../../../services/core/notifications.service';
 import { IParametrosGenerales } from '../../../models/Interfaces';
 import { fadeInAnimation } from '../../../_animations/fade-in.animation';
@@ -31,8 +29,7 @@ export class ParametrosGralComponent implements OnInit {
   constructor(
     private tallerServ: TallerService,
     private coreServ: CoreService,
-    private notify_service: NotificationService,
-    private modal: Modal
+    private notify_service: NotificationService
   ) {
   }
 

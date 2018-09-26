@@ -1,3 +1,5 @@
+import { ValoresListComponent } from './components/taller/valores/valores-list.component';
+import { VALORES_ROUTES } from './components/taller/valores/valores.routes';
 import { AsistenciaByEquipoComponent } from './components/taller/reports/asistencia-by-equipo.component';
 import { AsistenciaFormComponent } from './components/taller/asistencia/asistencia-form.component';
 import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
@@ -49,6 +51,12 @@ const APP_ROUTES: Routes = [
   { path: 'taller/asistencia/:pk/:clone', component: AsistenciaFormComponent },
   { path: 'taller/asistencia/:pk', component: AsistenciaFormComponent },
   { path: 'taller/reportes/asistencia', component: AsistenciaByEquipoComponent },
+  {
+    path: 'taller/valores',
+    component: ValoresListComponent,
+    children: [...VALORES_ROUTES]
+  },
+
   { path: 'tablero-control/taller', component: TableroTallerComponent },
 
   { path: '**', pathMatch: 'full', redirectTo: '' }
