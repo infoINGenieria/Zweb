@@ -4,7 +4,8 @@ from django.db.models import Q
 
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo, LubricantesValores,
-    TrenRodajeValores, PosesionValores)
+    TrenRodajeValores, PosesionValores, ReparacionesValores,
+    EquipoAlquiladoValores, ManoObraValores)
 from core.models import Equipos
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
@@ -141,3 +142,19 @@ class TrenRodajeValoresTallerFilter(ValoresEquipoTallerFilter):
 class PosesionValoresTallerFilter(ValoresEquipoTallerFilter):
     class Meta(ValoresEquipoTallerFilter.Meta):
         model = PosesionValores
+
+
+class ReparacionesValoresTallerFilter(ValoresEquipoTallerFilter):
+    class Meta(ValoresEquipoTallerFilter.Meta):
+        model = ReparacionesValores
+
+
+class EquipoAlquiladoValoresTallerFilter(ValoresEquipoTallerFilter):
+    class Meta(ValoresEquipoTallerFilter.Meta):
+        model = EquipoAlquiladoValores
+
+
+class ManoObraValoresTallerFilter(django_filters.FilterSet):
+    class Meta:
+        model = ManoObraValores
+        fields = ('valido_desde', )

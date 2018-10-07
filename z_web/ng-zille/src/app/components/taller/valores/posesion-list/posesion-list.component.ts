@@ -10,7 +10,11 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-posesion-list',
   templateUrl: './posesion-list.component.html',
-  styleUrls: ['./posesion-list.component.css'],
+  styles: [
+    `:host {
+      padding: 10px;
+    }`
+  ],
   animations: [fadeInAnimation]
 })
 export class PosesionListComponent implements OnInit {

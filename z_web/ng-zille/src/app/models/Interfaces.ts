@@ -413,3 +413,39 @@ export interface IPosesionValores {
     costo_total_pesos_hora: number;
     costo_total_pesos_mes: number;
 }
+
+
+export interface IReparacionesParametros {
+    pk: number;
+    factor_basico: number;
+    multiplicador: number;
+}
+
+export interface IReparacionesValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    parametros: IReparacionesParametros;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}
+
+export interface IManoObraValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    taller: number;
+    plataforma_combustible: number;
+    carretones: number;
+}
+
+export interface IEquipoAlquiladoValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    alquiler: number;
+}

@@ -10,7 +10,11 @@ import { NavigationExtras, Router } from '@angular/router';
 @Component({
   selector: 'app-lubricantes-list',
   templateUrl: './lubricantes-list.component.html',
-  styleUrls: ['./lubricantes-list.component.scss'],
+  styles: [
+    `:host {
+      padding: 10px;
+    }`
+  ],
   animations: [fadeInAnimation]
 })
 export class LubricantesListComponent implements OnInit {

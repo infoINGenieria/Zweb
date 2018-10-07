@@ -1,6 +1,6 @@
 
 import {throwError as observableThrowError,  Observable } from 'rxjs';
-import { IPeriodo, ILubricantesValores, ITrenRodajeValores, IPosesionValores } from './../models/Interfaces';
+import { IPeriodo, ILubricantesValores, ITrenRodajeValores, IPosesionValores, IReparacionesValores, IReparacionesParametros, IManoObraValores, IEquipoAlquiladoValores } from './../models/Interfaces';
 import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
@@ -180,6 +180,7 @@ export class TallerService {
     }
 
     // VALORES
+    // lubricantes
     get_lubricantes_valores(page?, valido_desde?, equipo?) {
       let myParams = new URLSearchParams();
       myParams.set('page', page || 1);
@@ -195,7 +196,7 @@ export class TallerService {
       return this.http.put(`/api/taller/valores/lubricantes/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
-
+    // tren de rodaje
     get_tren_rodaje_valores(page?, valido_desde?, equipo?) {
       let myParams = new URLSearchParams();
       myParams.set('page', page || 1);
@@ -211,7 +212,7 @@ export class TallerService {
       return this.http.put(`/api/taller/valores/tren_rodaje/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
-
+    // posesion
     get_posesion_valores(page?, valido_desde?, equipo?) {
       let myParams = new URLSearchParams();
       myParams.set('page', page || 1);
@@ -225,6 +226,56 @@ export class TallerService {
     put_posesion_valor(item: IPosesionValores) {
       const bodyString = JSON.stringify(item);
       return this.http.put(`/api/taller/valores/posesion/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    // reparaciones
+    get_reparaciones_valores(page?, valido_desde?, equipo?) {
+      let myParams = new URLSearchParams();
+      myParams.set('page', page || 1);
+      myParams.set('valido_desde', valido_desde || '');
+      myParams.set('equipo', equipo || '');
+      return this.http.get('/api/taller/valores/reparaciones/', myParams).pipe(map((r: Response) => r.json()));
+    }
+    get_reparaciones_valor(item: IReparacionesValores) {
+      return this.http.get(`/api/taller/valores/reparaciones/${item.pk}/`).pipe(map((r: Response) => r.json()));
+    }
+    put_reparaciones_valor(item: IReparacionesValores) {
+      const bodyString = JSON.stringify(item);
+      return this.http.put(`/api/taller/valores/reparaciones/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    // mano_obra
+    get_mano_obra_valores(page?, valido_desde?) {
+      let myParams = new URLSearchParams();
+      myParams.set('page', page || 1);
+      myParams.set('valido_desde', valido_desde || '');
+      return this.http.get('/api/taller/valores/mano_obra/', myParams).pipe(map((r: Response) => r.json()));
+    }
+    get_mano_obra_valor(item: IManoObraValores) {
+      return this.http.get(`/api/taller/valores/mano_obra/${item.pk}/`).pipe(map((r: Response) => r.json()));
+    }
+    put_mano_obra_valor(item: IManoObraValores) {
+      const bodyString = JSON.stringify(item);
+      return this.http.put(`/api/taller/valores/mano_obra/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    // alquilados
+    get_alquilados_valores(page?, valido_desde?, equipo?) {
+      let myParams = new URLSearchParams();
+      myParams.set('page', page || 1);
+      myParams.set('valido_desde', valido_desde || '');
+      myParams.set('equipo', equipo || '');
+      return this.http.get('/api/taller/valores/alquilados/', myParams).pipe(map((r: Response) => r.json()));
+    }
+    get_alquilados_valor(item: IEquipoAlquiladoValores) {
+      return this.http.get(`/api/taller/valores/alquilados/${item.pk}/`).pipe(map((r: Response) => r.json()));
+    }
+    put_alquilados_valor(item: IEquipoAlquiladoValores) {
+      const bodyString = JSON.stringify(item);
+      return this.http.put(`/api/taller/valores/alquilados/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
   }

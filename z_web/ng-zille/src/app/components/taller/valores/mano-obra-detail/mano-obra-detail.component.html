@@ -1,3 +1,68 @@
-<p>
-  mano-obra-detail works!
-</p>
+<div class="panel panel-warning panel-fixed">
+  <div class="panel-heading">
+    Valor de mano de obra
+
+  </div>
+  <div class="panel-body" *ngIf="item">
+
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th>Periodo:</th>
+          <td>{{ item.valido_desde.descripcion }}</td>
+        </tr>
+        <tr>
+          <td>
+            En el admin:
+          </td>
+          <td>
+            <a href="/admin/equipos/manoobravalores/{{item.pk}}/" target="_blank">[Editar valores] </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div>
+      <h4>Valores
+        <a class="btn btn-danger btn-sm" *ngIf="!editing" (click)="to_edit()">Editar</a>
+        <a class="btn btn-default btn-sm" *ngIf="editing" (click)="reset()">Cancelar</a>
+        <a class="btn btn-success btn-sm" *ngIf="editing" (click)="guardarValorModal()">Guardar</a>
+      </h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th style="min-width:125px">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Taller</td>
+            <td>
+              <span *ngIf="!editing">{{ item.taller | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="taller" [(ngModel)]="item.taller"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>Plataforma Combustible</td>
+            <td>
+              <span *ngIf="!editing">{{ item.plataforma_combustible | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="plataforma_combustible" [(ngModel)]="item.plataforma_combustible"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>Carretones</td>
+            <td>
+              <span *ngIf="!editing">{{ item.carretones | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="carretones" [(ngModel)]="item.carretones"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

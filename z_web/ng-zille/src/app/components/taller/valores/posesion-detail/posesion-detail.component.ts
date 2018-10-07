@@ -6,8 +6,7 @@ import { ModalService } from '../../../../services/core/modal.service';
 
 @Component({
   selector: 'app-posesion-detail',
-  templateUrl: './posesion-detail.component.html',
-  styleUrls: ['./posesion-detail.component.css']
+  templateUrl: './posesion-detail.component.html'
 })
 export class PosesionDetailComponent implements OnInit {
 

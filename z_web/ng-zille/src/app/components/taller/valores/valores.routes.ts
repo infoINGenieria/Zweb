@@ -19,8 +19,8 @@ export const VALORES_ROUTES: Routes = [
     { path: 'tren_rodaje/:pk', component: TrenRodajeDetailComponent, outlet: 'details' },
     { path: 'posesion', component: PosesionListComponent, outlet: 'tabs' },
     { path: 'posesion/:pk', component: PosesionDetailComponent, outlet: 'details' },
-    { path: 'reparacion', component: ReparacionesListComponent, outlet: 'tabs' },
-    { path: 'reparacion/:pk', component: ReparacionesDetailComponent, outlet: 'details' },
+    { path: 'reparaciones', component: ReparacionesListComponent, outlet: 'tabs' },
+    { path: 'reparaciones/:pk', component: ReparacionesDetailComponent, outlet: 'details' },
     { path: 'mano_obra', component: ManoObraListComponent, outlet: 'tabs' },
     { path: 'mano_obra/:pk', component: ManoObraDetailComponent, outlet: 'details' },
     { path: '**', pathMatch: 'full', redirectTo: '' }

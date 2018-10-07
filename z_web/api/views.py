@@ -22,18 +22,22 @@ from api.serializers import (
     ParametrosGeneralesTallerSerializer, AsistenciaEquipoSerializer,
     RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer,
     TableroControlTallerSerializer, ValoresLubricantesTallerSerializer,
-    ValoresTrenRodajeTallerSerializer, ValoresPosesionTallerSerializer)
+    ValoresTrenRodajeTallerSerializer, ValoresPosesionTallerSerializer,
+    ValoresReparacionesTallerSerializer, ValoresManoObraTallerSerializer,
+    ValoresEquipoAlquiladoTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
     ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter,
     AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter,
     ValoresEquipoTallerFilter, TrenRodajeValoresTallerFilter,
-    PosesionValoresTallerFilter)
+    PosesionValoresTallerFilter, ReparacionesValoresTallerFilter,
+    EquipoAlquiladoValoresTallerFilter, ManoObraValoresTallerFilter)
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
     CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores,
-    PosesionValores)
+    PosesionValores, ReparacionesValores, EquipoAlquiladoValores,
+    ManoObraValores)
 from equipos.calculo_costos import get_stats_of_asistencia_by_equipo
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
@@ -409,12 +413,6 @@ class LubricantesValoresTallerViewSet(ModelViewSet, AuthView):
     queryset = LubricantesValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = ValoresEquipoTallerFilter
 
-    # @list_route(methods=['get'], url_path='latest')
-    # def latest(self, request):
-    #     return Response(ParametrosGeneralesTallerSerializer(
-    #         self.queryset.latest('valido_desde__fecha_inicio')).data
-    #     )
-
 
 class TrenRodajeTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ValoresTrenRodajeTallerSerializer
@@ -426,3 +424,21 @@ class PosesionTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ValoresPosesionTallerSerializer
     queryset = PosesionValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = PosesionValoresTallerFilter
+
+
+class ReparacionesTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresReparacionesTallerSerializer
+    queryset = ReparacionesValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = ReparacionesValoresTallerFilter
+
+
+class EquipoAlquiladoTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresEquipoAlquiladoTallerSerializer
+    queryset = EquipoAlquiladoValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = EquipoAlquiladoValoresTallerFilter
+
+
+class ManoObraTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresManoObraTallerSerializer
+    queryset = ManoObraValores.objects.order_by('-valido_desde__fecha_inicio')
+    filter_class = ManoObraValoresTallerFilter

@@ -1,3 +1,59 @@
-<p>
-  reparaciones-detail works!
-</p>
+<div class="panel panel-warning panel-fixed">
+    <div class="panel-heading">
+      Valor de reserva para reparaciones
+
+    </div>
+    <div class="panel-body" *ngIf="item">
+
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th>Equipo:</th>
+            <td><b>{{ item.equipo.n_interno }}</b> {{ item.equipo.equipo }} ({{ item.equipo.dominio}})</td>
+          </tr>
+          <tr>
+            <th>Periodo:</th>
+            <td>{{ item.valido_desde.descripcion }}</td>
+          </tr>
+          <tr>
+            <th>Costo x Hs ($):</th>
+            <td>{{ item.costo_total_pesos_hora | moneda }}</td>
+          </tr>
+          <tr>
+            <th>Costo Mensual (S):</th>
+            <td>{{ item.costo_total_pesos_mes | moneda }}</td>
+          </tr>
+          <tr>
+            <td>
+              En el admin:
+            </td>
+            <td>
+              <a href="/admin/equipos/reparacionesvalores/{{item.pk}}/" target="_blank">[Editar valores] </a>
+              <a href="/admin/equipos/reparacionesparametros/{{item.parametros.pk}}/" target="_blank"> [Editar parámetros]
+              </a>
+            </td>
+          </tr>
+      </table>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Parámetros</th>
+            <th style="min-width:125px">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Factor básico</td>
+            <td>{{ item.parametros.factor_basico }}</td>
+          </tr>
+          <tr>
+            <td>Multiplicador</td>
+            <td>{{ item.parametros.multiplicador }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+

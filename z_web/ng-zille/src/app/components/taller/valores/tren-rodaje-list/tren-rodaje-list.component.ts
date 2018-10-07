@@ -10,7 +10,11 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-tren-rodaje-list',
   templateUrl: './tren-rodaje-list.component.html',
-  styleUrls: ['./tren-rodaje-list.component.css'],
+  styles: [
+    `:host {
+      padding: 10px;
+    }`
+  ],
   animations: [fadeInAnimation]
 })
 export class TrenRodajeListComponent implements OnInit {
