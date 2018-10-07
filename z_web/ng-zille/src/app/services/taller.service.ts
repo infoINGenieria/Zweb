@@ -1,6 +1,6 @@
 
 import {throwError as observableThrowError,  Observable } from 'rxjs';
-import { IPeriodo, ILubricantesValores } from './../models/Interfaces';
+import { IPeriodo, ILubricantesValores, ITrenRodajeValores } from './../models/Interfaces';
 import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
@@ -193,6 +193,22 @@ export class TallerService {
     put_lubricante_valor(item: ILubricantesValores) {
       const bodyString = JSON.stringify(item);
       return this.http.put(`/api/taller/valores/lubricantes/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    get_tren_rodaje_valores(page?, valido_desde?, equipo?) {
+      let myParams = new URLSearchParams();
+      myParams.set('page', page || 1);
+      myParams.set('valido_desde', valido_desde || '');
+      myParams.set('equipo', equipo || '');
+      return this.http.get('/api/taller/valores/tren_rodaje/', myParams).pipe(map((r: Response) => r.json()));
+    }
+    get_tren_rodaje_valor(item: ITrenRodajeValores) {
+      return this.http.get(`/api/taller/valores/tren_rodaje/${item.pk}/`).pipe(map((r: Response) => r.json()));
+    }
+    put_tren_rodaje_valor(item: ITrenRodajeValores) {
+      const bodyString = JSON.stringify(item);
+      return this.http.put(`/api/taller/valores/tren_rodaje/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
   }

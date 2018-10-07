@@ -21,16 +21,17 @@ from api.serializers import (
     TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer,
     ParametrosGeneralesTallerSerializer, AsistenciaEquipoSerializer,
     RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer,
-    TableroControlTallerSerializer, ValoresLubricantesTallerSerializer)
+    TableroControlTallerSerializer, ValoresLubricantesTallerSerializer,
+    ValoresTrenRodajeTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
     ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter,
     AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter,
-    ValoresEquipoTallerFilter)
+    ValoresEquipoTallerFilter, TrenRodajeValoresTallerFilter)
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
-    CostoEquipoValores, TotalFlota, LubricantesValores)
+    CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores)
 from equipos.calculo_costos import get_stats_of_asistencia_by_equipo
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
@@ -412,3 +413,8 @@ class LubricantesValoresTallerViewSet(ModelViewSet, AuthView):
     #         self.queryset.latest('valido_desde__fecha_inicio')).data
     #     )
 
+
+class TrenRodajeTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresTrenRodajeTallerSerializer
+    queryset = TrenRodajeValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = TrenRodajeValoresTallerFilter

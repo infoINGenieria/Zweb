@@ -1,8 +1,1 @@
 
-.panel-fixed {
-    position: fixed;
-    max-height: 85vh;
-    clear: both;
-    overflow: hidden;
-    overflow-y: scroll;
-}

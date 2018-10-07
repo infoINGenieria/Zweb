@@ -357,7 +357,31 @@ export interface ILubricantesValores {
     valido_desde_id: number;
     equipo: IEquipo;
     equipo_id: number;
+    parametros_pk: number;
     items: Array<ILubricantesValoresItem>;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}
+
+export interface ITrenRodajeParametros {
+    pk: number;
+    vida_util_neumatico: number;
+    cantidad_neumaticos: number;
+    medidas: string;
+    factor_basico: number;
+    impacto: number;
+    abracion: number;
+    z: number;
+}
+
+export interface ITrenRodajeValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    precio_neumatico: number;
+    parametros: ITrenRodajeParametros;
     costo_total_pesos_hora: number;
     costo_total_pesos_mes: number;
 }

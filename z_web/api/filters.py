@@ -3,7 +3,8 @@ from django.db import models
 from django.db.models import Q
 
 from equipos.models import (
-    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo, LubricantesValores)
+    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo, LubricantesValores,
+    TrenRodajeValores)
 from core.models import Equipos
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
@@ -130,3 +131,8 @@ class ValoresEquipoTallerFilter(django_filters.FilterSet):
     class Meta:
         model = LubricantesValores
         fields = ('equipo', 'valido_desde', )
+
+
+class TrenRodajeValoresTallerFilter(ValoresEquipoTallerFilter):
+    class Meta(ValoresEquipoTallerFilter.Meta):
+        model = TrenRodajeValores

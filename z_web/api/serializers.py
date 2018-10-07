@@ -14,7 +14,7 @@ from equipos.models import (
     LubricantesValores, TrenRodajeValores, PosesionValores,
     ReparacionesValores, CostoEquipoValores, LubricanteItem,
     LubricantesParametrosItem, LubricantesValoresItem,
-    LubricantesParametros
+    LubricantesParametros, TrenRodajeParametros
 )
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
@@ -836,17 +836,17 @@ class ValoresLubricantesTallerSerializer(serializers.ModelSerializer):
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk')
     equipo = EquipoSerializer(read_only=True)
     equipo_id = serializers.IntegerField(source='equipo.pk')
+    parametros_pk = serializers.IntegerField(source='mis_parametros.pk', read_only=True)
 
     items = LubricantesValoresItemSerializer(many=True, source='valores')
 
     class Meta:
         model = LubricantesValores
-        fields = ('pk', 'valido_desde', 'valido_desde_id', 'equipo', 'equipo_id',
+        fields = ('pk', 'valido_desde', 'valido_desde_id', 'equipo', 'equipo_id', 'parametros_pk',
                   'items', 'costo_total_pesos_hora', 'costo_total_pesos_mes')
 
     @atomic
     def create(self, validated_data):
-        import ipdb; ipdb.set_trace()
         items = validated_data.pop('valores')
         valor = LubricantesValores(**validated_data)
         try:
@@ -883,3 +883,30 @@ class ValoresLubricantesTallerSerializer(serializers.ModelSerializer):
         # eliminar items no enviados
         instance.valores.exclude(pk__in=exists_pks).delete()
         return instance
+
+
+class TrenRodajeParametrosSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+
+    class Meta:
+        model = TrenRodajeParametros
+        fields = (
+            'pk', 'vida_util_neumatico', 'cantidad_neumaticos', 'medidas',
+            'factor_basico', 'impacto', 'abracion', 'z'
+        )
+
+
+class ValoresTrenRodajeTallerSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+    valido_desde = PeriodoSerializer(read_only=True)
+    valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
+    equipo = EquipoSerializer(read_only=True)
+    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+
+    parametros = TrenRodajeParametrosSerializer(source='mis_parametros', read_only=True)
+
+    class Meta:
+        model = TrenRodajeValores
+        fields = ('pk', 'valido_desde', 'valido_desde_id', 'equipo', 'equipo_id',
+                  'precio_neumatico', 'parametros', 'costo_total_pesos_hora',
+                  'costo_total_pesos_mes')
