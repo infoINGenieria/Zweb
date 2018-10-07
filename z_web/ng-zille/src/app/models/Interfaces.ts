@@ -385,3 +385,31 @@ export interface ITrenRodajeValores {
     costo_total_pesos_hora: number;
     costo_total_pesos_mes: number;
 }
+
+export interface IPosesionParametros {
+    pk: number;
+    posesion_hs: number;
+    precio_del_activo: number;
+    residual: number;
+    residual_en_USD: number;
+    posesion_en_anios: number;
+}
+
+export interface IPosesionValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    seguros: number;
+    ruta: number;
+    vtv: number;
+    certificacion: number;
+    habilitaciones: number;
+    rsv: number;
+    vhf: number;
+    impuestos: number;
+    parametros: IPosesionParametros;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}

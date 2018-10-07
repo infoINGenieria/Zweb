@@ -8,6 +8,11 @@
     </h3>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" [ngClass]="tabName == 'mano_obra' ? 'active': ''">
+          <a (click)="changeTab('mano_obra')"
+            aria-controls="mano_obra" role="tab" data-toggle="tab">Mano de obra
+          </a>
+        </li>
       <li role="presentation" [ngClass]="tabName == 'lubricantes' ? 'active': ''">
         <a (click)="changeTab('lubricantes')"
           aria-controls="lubricantes" role="tab" data-toggle="tab">Lubricante y fluido hidráulico
@@ -26,11 +31,6 @@
       <li role="presentation" [ngClass]="tabName == 'reparacion' ? 'active': ''">
         <a (click)="changeTab('reparacion')"
           aria-controls="reparacion" role="tab" data-toggle="tab">Reserva para reparaciones
-        </a>
-      </li>
-      <li role="presentation" [ngClass]="tabName == 'mano_obra' ? 'active': ''">
-        <a (click)="changeTab('mano_obra')"
-          aria-controls="mano_obra" role="tab" data-toggle="tab">Mano de obra
         </a>
       </li>
     </ul>

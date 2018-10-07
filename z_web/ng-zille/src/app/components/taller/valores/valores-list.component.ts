@@ -14,7 +14,7 @@ export class ValoresListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.changeTab('lubricantes');
+    this.changeTab('mano_obra');
 
   }
 

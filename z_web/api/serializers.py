@@ -14,7 +14,8 @@ from equipos.models import (
     LubricantesValores, TrenRodajeValores, PosesionValores,
     ReparacionesValores, CostoEquipoValores, LubricanteItem,
     LubricantesParametrosItem, LubricantesValoresItem,
-    LubricantesParametros, TrenRodajeParametros
+    LubricantesParametros, TrenRodajeParametros,
+    PosesionParametros, PosesionValores
 )
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
@@ -910,3 +911,32 @@ class ValoresTrenRodajeTallerSerializer(serializers.ModelSerializer):
         fields = ('pk', 'valido_desde', 'valido_desde_id', 'equipo', 'equipo_id',
                   'precio_neumatico', 'parametros', 'costo_total_pesos_hora',
                   'costo_total_pesos_mes')
+
+
+class PosesionParametrosSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+
+    class Meta:
+        model = PosesionParametros
+        fields = (
+            'pk', 'posesion_hs', 'precio_del_activo', 'residual',
+            'residual_en_USD', 'posesion_en_anios',
+        )
+
+
+class ValoresPosesionTallerSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+    valido_desde = PeriodoSerializer(read_only=True)
+    valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
+    equipo = EquipoSerializer(read_only=True)
+    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+
+    parametros = PosesionParametrosSerializer(source='mis_parametros', read_only=True)
+
+    class Meta:
+        model = PosesionValores
+        fields = (
+            'pk', 'valido_desde', 'valido_desde_id', 'equipo', 'equipo_id',
+            'seguros', 'ruta', 'vtv', 'certificacion', 'habilitaciones', 'rsv', 'vhf', 'impuestos',
+            'parametros', 'costo_total_pesos_hora', 'costo_total_pesos_mes'
+        )

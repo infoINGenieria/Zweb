@@ -22,16 +22,18 @@ from api.serializers import (
     ParametrosGeneralesTallerSerializer, AsistenciaEquipoSerializer,
     RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer,
     TableroControlTallerSerializer, ValoresLubricantesTallerSerializer,
-    ValoresTrenRodajeTallerSerializer)
+    ValoresTrenRodajeTallerSerializer, ValoresPosesionTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
     ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter,
     AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter,
-    ValoresEquipoTallerFilter, TrenRodajeValoresTallerFilter)
+    ValoresEquipoTallerFilter, TrenRodajeValoresTallerFilter,
+    PosesionValoresTallerFilter)
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
-    CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores)
+    CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores,
+    PosesionValores)
 from equipos.calculo_costos import get_stats_of_asistencia_by_equipo
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
@@ -418,3 +420,9 @@ class TrenRodajeTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ValoresTrenRodajeTallerSerializer
     queryset = TrenRodajeValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = TrenRodajeValoresTallerFilter
+
+
+class PosesionTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresPosesionTallerSerializer
+    queryset = PosesionValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = PosesionValoresTallerFilter

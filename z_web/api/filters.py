@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo, LubricantesValores,
-    TrenRodajeValores)
+    TrenRodajeValores, PosesionValores)
 from core.models import Equipos
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
@@ -136,3 +136,8 @@ class ValoresEquipoTallerFilter(django_filters.FilterSet):
 class TrenRodajeValoresTallerFilter(ValoresEquipoTallerFilter):
     class Meta(ValoresEquipoTallerFilter.Meta):
         model = TrenRodajeValores
+
+
+class PosesionValoresTallerFilter(ValoresEquipoTallerFilter):
+    class Meta(ValoresEquipoTallerFilter.Meta):
+        model = PosesionValores
