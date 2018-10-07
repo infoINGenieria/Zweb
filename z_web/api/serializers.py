@@ -12,7 +12,9 @@ from costos.models import CostoTipo, AvanceObra, Costo
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
     LubricantesValores, TrenRodajeValores, PosesionValores,
-    ReparacionesValores, CostoEquipoValores
+    ReparacionesValores, CostoEquipoValores, LubricanteItem,
+    LubricantesParametrosItem, LubricantesValoresItem,
+    LubricantesParametros
 )
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
@@ -786,3 +788,98 @@ class TableroControlTallerSerializer(serializers.ModelSerializer):
             return "%.2f" % val.costo_total_pesos_mes
         except (ObjectDoesNotExist, AttributeError):
             return 0
+
+
+class LubricanteItemSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+    class Meta:
+        model = LubricanteItem
+        fields = ('pk', 'descripcion', 'es_filtro', 'observaciones')
+
+
+class LubricantesParametrosItemSerializer(serializers.ModelSerializer):
+    item = LubricanteItemSerializer()
+
+    class Meta:
+        model = LubricantesParametrosItem
+        fields = ('item', 'cambios_por_anio', 'volumen_por_cambio')
+
+
+class LubricantesParametrosItemThinSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LubricantesParametrosItem
+        fields = ('cambios_por_anio', 'volumen_por_cambio')
+
+
+class LubricantesParametrosSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+    items = LubricantesParametrosItemSerializer(many=True, source='items_lubricante')
+    class Meta:
+        model = LubricantesParametros
+        fields = ('pk', 'valido_desde', 'equipo', 'hp', 'items')
+
+
+class LubricantesValoresItemSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+    item = LubricanteItemSerializer()
+    parametros = LubricantesParametrosItemThinSerializer(source='parametro_item', read_only=True)
+
+    class Meta:
+        model = LubricantesValoresItem
+        fields = ('pk', 'item', 'parametros', 'valor_unitario', 'costo_por_mes')
+
+
+class ValoresLubricantesTallerSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
+    valido_desde = PeriodoSerializer(read_only=True)
+    valido_desde_id = serializers.IntegerField(source='valido_desde.pk')
+    equipo = EquipoSerializer(read_only=True)
+    equipo_id = serializers.IntegerField(source='equipo.pk')
+
+    items = LubricantesValoresItemSerializer(many=True, source='valores')
+
+    class Meta:
+        model = LubricantesValores
+        fields = ('pk', 'valido_desde', 'valido_desde_id', 'equipo', 'equipo_id',
+                  'items', 'costo_total_pesos_hora', 'costo_total_pesos_mes')
+
+    @atomic
+    def create(self, validated_data):
+        import ipdb; ipdb.set_trace()
+        items = validated_data.pop('valores')
+        valor = LubricantesValores(**validated_data)
+        try:
+            valor.save()
+        except IntegrityError:
+            raise serializers.ValidationError('%s existente' % self.Meta.model._meta.verbose_name)
+        for item_data in items:
+            registro = LubricantesValoresItem()
+            registro.item_id = item_data.get('item').get('pk')
+            registro.valor_unitario = item_data.get('valor_unitario')
+            registro.valor = valor
+            registro.save()
+        return asistencia
+
+    @atomic
+    def update(self, instance, validated_data):
+        items = validated_data.pop('valores')
+        instance.equipo_id = validated_data.get('equipo', instance.equipo_id).get('pk', instance.equipo_id)
+        instance.valido_desde_id = validated_data.get('valido_desde', instance.valido_desde_id).get('pk', instance.valido_desde_id)
+        instance.save()
+
+        exists_pks = []
+        for item_data in items:
+            item_id = item_data.get('item').get('pk')
+            val_item, created = LubricantesValoresItem.objects.update_or_create(
+                valor=instance,
+                item_id=item_id,
+                defaults={
+                    'valor_unitario': item_data.get('valor_unitario')
+                }
+            )
+            exists_pks.append(val_item.pk)
+
+        # eliminar items no enviados
+        instance.valores.exclude(pk__in=exists_pks).delete()
+        return instance

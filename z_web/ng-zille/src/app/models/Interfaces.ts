@@ -331,3 +331,33 @@ export interface ITotalFlota {
     monto: number;
     cantidad: number;
 }
+
+export interface ILubricanteItem {
+    pk: number;
+    descripcion: string;
+    es_filtro: boolean;
+    observaciones: string;
+}
+
+export interface ILubricanteParametroItem {
+    cambios_por_anio: number;
+    volumen_por_cambio: number;
+}
+
+export interface ILubricantesValoresItem {
+    item: ILubricanteItem;
+    parametros: ILubricanteParametroItem;
+    valor_unitario: number;
+    costo_por_mes: number;
+}
+
+export interface ILubricantesValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    items: Array<ILubricantesValoresItem>;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}

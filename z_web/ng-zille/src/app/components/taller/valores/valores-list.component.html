@@ -1,38 +1,42 @@
-<h3>
-  <a class="btn btn-default" [routerLink]="['/taller']">
-    <i class="fa fa-chevron-left"></i>
-  </a>
-  Gestión de valores
-</h3>
-<div>
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" [ngClass]="tabName == 'lubricantes' ? 'active': ''">
-      <a (click)="changeTab('lubricantes')"
-        aria-controls="lubricantes" role="tab" data-toggle="tab">Lubricante y fluido hidráulico
+<div class="row">
+  <div class="col-xs-7">
+    <h3>
+      <a class="btn btn-default" [routerLink]="['/taller']">
+        <i class="fa fa-chevron-left"></i>
       </a>
-    </li>
-    <li role="presentation" [ngClass]="tabName == 'tren_rodaje' ? 'active': ''">
-      <a (click)="changeTab('tren_rodaje')"
-        aria-controls="tren_rodaje" role="tab" data-toggle="tab">Tren de rodaje
-      </a>
-    </li>
-    <li role="presentation" [ngClass]="tabName == 'posesion' ? 'active': ''">
-      <a (click)="changeTab('posesion')"
-        aria-controls="posesion" role="tab" data-toggle="tab">Posesión
-      </a>
-    </li>
-    <li role="presentation" [ngClass]="tabName == 'reparacion' ? 'active': ''">
-      <a (click)="changeTab('reparacion')"
-        aria-controls="reparacion" role="tab" data-toggle="tab">Reserva para reparaciones
-      </a>
-    </li>
-    <li role="presentation" [ngClass]="tabName == 'mano_obra' ? 'active': ''">
-      <a (click)="changeTab('mano_obra')"
-        aria-controls="mano_obra" role="tab" data-toggle="tab">Mano de obra
-      </a>
-    </li>
-  </ul>
-
-  <router-outlet  name="tabs"></router-outlet>
+      Gestión de valores
+    </h3>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" [ngClass]="tabName == 'lubricantes' ? 'active': ''">
+        <a (click)="changeTab('lubricantes')"
+          aria-controls="lubricantes" role="tab" data-toggle="tab">Lubricante y fluido hidráulico
+        </a>
+      </li>
+      <li role="presentation" [ngClass]="tabName == 'tren_rodaje' ? 'active': ''">
+        <a (click)="changeTab('tren_rodaje')"
+          aria-controls="tren_rodaje" role="tab" data-toggle="tab">Tren de rodaje
+        </a>
+      </li>
+      <li role="presentation" [ngClass]="tabName == 'posesion' ? 'active': ''">
+        <a (click)="changeTab('posesion')"
+          aria-controls="posesion" role="tab" data-toggle="tab">Posesión
+        </a>
+      </li>
+      <li role="presentation" [ngClass]="tabName == 'reparacion' ? 'active': ''">
+        <a (click)="changeTab('reparacion')"
+          aria-controls="reparacion" role="tab" data-toggle="tab">Reserva para reparaciones
+        </a>
+      </li>
+      <li role="presentation" [ngClass]="tabName == 'mano_obra' ? 'active': ''">
+        <a (click)="changeTab('mano_obra')"
+          aria-controls="mano_obra" role="tab" data-toggle="tab">Mano de obra
+        </a>
+      </li>
+    </ul>
+    <router-outlet  name="tabs"></router-outlet>
+  </div>
+  <div class="col-xs-5">
+    <router-outlet  name="details"></router-outlet>
+  </div>
 </div>

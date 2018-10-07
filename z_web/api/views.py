@@ -21,15 +21,16 @@ from api.serializers import (
     TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer,
     ParametrosGeneralesTallerSerializer, AsistenciaEquipoSerializer,
     RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer,
-    TableroControlTallerSerializer)
+    TableroControlTallerSerializer, ValoresLubricantesTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
     ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter,
-    AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter)
+    AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter,
+    ValoresEquipoTallerFilter)
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
-    CostoEquipoValores, TotalFlota)
+    CostoEquipoValores, TotalFlota, LubricantesValores)
 from equipos.calculo_costos import get_stats_of_asistencia_by_equipo
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
@@ -398,3 +399,16 @@ class TableroControlTallerView(ReadOnlyModelViewSet, AuthView):
             'monto': "%.2f" % flota.monto,
             'cantidad': flota.cantidad
         })
+
+
+class LubricantesValoresTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresLubricantesTallerSerializer
+    queryset = LubricantesValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = ValoresEquipoTallerFilter
+
+    # @list_route(methods=['get'], url_path='latest')
+    # def latest(self, request):
+    #     return Response(ParametrosGeneralesTallerSerializer(
+    #         self.queryset.latest('valido_desde__fecha_inicio')).data
+    #     )
+

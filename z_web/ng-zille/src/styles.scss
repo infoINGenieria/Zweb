@@ -22,3 +22,19 @@
 table input[type="tel"], table .number {
     text-align: right;
 }
+
+.table-clickeable {
+    tr {
+        cursor: pointer;
+    }
+    tr.selected {
+        background: #c4ddef;
+    }
+    tr.selected:hover {
+        background: #d5dbe0;
+    }
+}
+
+.fixed{
+    position:  fixed;
+  }

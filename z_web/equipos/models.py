@@ -159,7 +159,7 @@ class LubricantesValores(ValoresMixin, BaseParametrosCostos):
 
     @property
     def costo_total_pesos_mes(self):
-        item_valores = self.valores.aggregate(total=models.Sum('costo_por_mes')).get('total')
+        item_valores = self.valores.aggregate(total=models.Sum('costo_por_mes')).get('total') or D(0)
         return item_valores
 
 
@@ -178,11 +178,16 @@ class LubricantesValoresItem(ValoresMixin, BaseModel):
         verbose_name = 'ítem de valores de lubricantes / hidráulicos /filtros'
         verbose_name_plural = 'ítemes de valores de lubricantes / hidráulicos / filtros'
 
-    def calcular(self):
+    @property
+    def parametro_item(self):
         parametro = self.valor.mis_parametros
         if not parametro:
-            return D(0)
+            return
         item = parametro.items_lubricante.filter(item=self.item).first()
+        return item
+
+    def calcular(self):
+        item = self.parametro_item
         if not item:
             return D(0)
         costo = self.valor_unitario * item.cambios_por_anio

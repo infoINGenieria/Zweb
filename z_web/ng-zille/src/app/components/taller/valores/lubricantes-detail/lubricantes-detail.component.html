@@ -1,3 +1,70 @@
-<p>
-  lubricantes-detail works!
-</p>
+<div class="panel panel-warning panel-fixed" >
+  <div class="panel-heading">
+      Valor de lubricante
+
+  </div>
+  <div class="panel-body" *ngIf="item">
+
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th>Equipo:</th>
+            <td><b>{{ item.equipo.n_interno }}</b> {{ item.equipo.equipo }} ({{ item.equipo.dominio}})</td>
+          </tr>
+          <tr>
+            <th>Periodo:</th>
+            <td>{{ item.valido_desde.descripcion }}</td>
+          </tr>
+          <tr>
+            <th>Costo x Hs ($):</th>
+            <td>{{ item.costo_total_pesos_hora | moneda }}</td>
+          </tr>
+          <tr>
+            <th>Costo Mensual (S):</th>
+            <td>{{ item.costo_total_pesos_mes | moneda }}</td>
+          </tr>
+          <tr>
+            <td>
+              En el admin:
+            </td>
+            <td>
+              <a href="/admin/equipos/lubricantesvalores/{{item.pk}}/" target="_blank">[Editar valores] </a>
+              <a href="/admin/equipos/lubricantesparametros/{{item.pk}}/" target="_blank"> [Editar parámetros] </a>
+            </td>
+          </tr>
+      </table>
+      <h4>Items
+        <a class="btn btn-danger btn-sm" *ngIf="!editing" (click)="to_edit()">Editar</a>
+        <a class="btn btn-default btn-sm" *ngIf="editing" (click)="reset()">Cancelar</a>
+        <a class="btn btn-success btn-sm" *ngIf="editing" (click)="guardarValorModal()">Guardar</a>
+      </h4>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Cambios x año</th>
+            <th>Volumen por cambio</th>
+            <th style="min-width:125px">Valor</th>
+            <th>Costo mensual</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let it of item.items; let i = index; trackBy:trackByIndex">
+            <td>{{ it.item.descripcion }}</td>
+            <td>{{ it.parametros.cambios_por_anio }}</td>
+            <td>{{ it.parametros.volumen_por_cambio }}</td>
+            <td>
+              <span *ngIf="!editing">
+                {{ it.valor_unitario | moneda }}
+              </span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="valor_{{ i }}"
+                [(ngModel)]="item.items[i].valor_unitario" step="0.01" appMyCurrencyFormatter/>
+            </td>
+            <td>{{ get_costo_mesual_calculado(it) | moneda }}</td>
+          </tr>
+
+        </tbody>
+      </table>
+
+  </div>
+</div>

@@ -29,6 +29,7 @@
     "ng2-currency-mask": "^5.3.1",
     "ng2-date-picker": "^2.7.0",
     "ng2-nvd3": "^2.0.0",
+    "ng2-sticky": "^0.5.0",
     "ngx-smart-modal": "^7.0.3",
     "ngx-toasta": "^0.1.0",
     "npm": "^6.4.1",

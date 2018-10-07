@@ -1,6 +1,6 @@
 
 import {throwError as observableThrowError,  Observable } from 'rxjs';
-import { IPeriodo } from './../models/Interfaces';
+import { IPeriodo, ILubricantesValores } from './../models/Interfaces';
 import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
@@ -11,6 +11,8 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class TallerService {
+
+  public tempStorage: any;
 
   constructor(private http: BaseApiService) { }
 
@@ -175,6 +177,23 @@ export class TallerService {
     get_tablero_costo_taller_total_flota(periodo: IPeriodo) {
       return this.http.get(`/api/taller/tablero/${periodo.pk}/flota/?recalcular=True`)
         .pipe(map( (r: Response) => r.json()));
+    }
+
+    // VALORES
+    get_lubricantes_valores(page?, valido_desde?, equipo?) {
+      let myParams = new URLSearchParams();
+      myParams.set('page', page || 1);
+      myParams.set('valido_desde', valido_desde || '');
+      myParams.set('equipo', equipo || '');
+      return this.http.get('/api/taller/valores/lubricantes/', myParams).pipe(map((r: Response) => r.json()));
+    }
+    get_lubricante_valor(item: ILubricantesValores) {
+      return this.http.get(`/api/taller/valores/lubricantes/${item.pk}/`).pipe(map((r: Response) => r.json()));
+    }
+    put_lubricante_valor(item: ILubricantesValores) {
+      const bodyString = JSON.stringify(item);
+      return this.http.put(`/api/taller/valores/lubricantes/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
     }
   }
 

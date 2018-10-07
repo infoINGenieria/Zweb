@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NvD3Module } from 'ng2-nvd3';
+import { Ng2StickyModule } from 'ng2-sticky';
 
 import { NgxSmartModalModule } from 'ngx-smart-modal';
 // import { CurrencyMaskModule } from 'ng2-currency-mask';
@@ -46,7 +47,10 @@ import 'save-svg-as-png';
 // pipe
 import { MonedaPipe } from './pipes/moneda.pipe';
 import { PorcientoPipe } from './pipes/porciento.pipe';
+
+// directives
 import { MyCurrencyFormatterDirective } from './directives/currency-formatter.directive';
+import { StickyBelowViewDirective } from './directives/sticky-below-view.directive';
 
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -88,6 +92,7 @@ registerLocaleData(localeEs, 'es-AR');
     CertificacionesComponent,
     MonedaPipe,
     MyCurrencyFormatterDirective,
+    StickyBelowViewDirective,
     PorcientoPipe,
     AvanceObraComponent,
     CostoComponent,
@@ -112,7 +117,8 @@ registerLocaleData(localeEs, 'es-AR');
     ReparacionesListComponent,
     ReparacionesDetailComponent,
     ManoObraDetailComponent,
-    ManoObraListComponent
+    ManoObraListComponent,
+    StickyBelowViewDirective
   ],
   imports: [
     BrowserModule,
@@ -123,7 +129,8 @@ registerLocaleData(localeEs, 'es-AR');
     DpDatePickerModule,
     APP_ROUTING,
     BrowserAnimationsModule,
-    NvD3Module
+    NvD3Module,
+    Ng2StickyModule
     // CurrencyMaskModule
   ],
   providers: [

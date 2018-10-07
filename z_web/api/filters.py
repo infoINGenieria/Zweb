@@ -1,7 +1,9 @@
 import django_filters
 from django.db import models
+from django.db.models import Q
 
-from equipos.models import ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo
+from equipos.models import (
+    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo, LubricantesValores)
 from core.models import Equipos
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
@@ -110,3 +112,21 @@ class RegistroAsistenciaEquipoFilter(django_filters.FilterSet):
         model = RegistroAsistenciaEquipo
         fields = ('equipo', 'centro_costo', )
 
+
+class ValoresEquipoTallerFilter(django_filters.FilterSet):
+    equipo = django_filters.CharFilter(method='buscar_en_equipo')
+
+    def buscar_en_equipo(self, queryset, name, value):
+        if value:
+            return queryset.filter(
+                Q(equipo__n_interno__icontains=value) |
+                Q(equipo__equipo__icontains=value) |
+                Q(equipo__marca__icontains=value) |
+                Q(equipo__modelo__icontains=value) |
+                Q(equipo__dominio__icontains=value)
+            ).distinct()
+        return queryset
+
+    class Meta:
+        model = LubricantesValores
+        fields = ('equipo', 'valido_desde', )
