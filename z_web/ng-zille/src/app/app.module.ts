@@ -76,6 +76,8 @@ import { ReparacionesListComponent } from './components/taller/valores/reparacio
 import { ReparacionesDetailComponent } from './components/taller/valores/reparaciones-detail/reparaciones-detail.component';
 import { ManoObraDetailComponent } from './components/taller/valores/mano-obra-detail/mano-obra-detail.component';
 import { ManoObraListComponent } from './components/taller/valores/mano-obra-list/mano-obra-list.component';
+import { AlquiladosListComponent } from './components/taller/valores/alquilados-list/alquilados-list.component';
+import { AlquiladosDetailComponent } from './components/taller/valores/alquilados-detail/alquilados-detail.component';
 
 registerLocaleData(localeEs, 'es-AR');
 
@@ -118,7 +120,9 @@ registerLocaleData(localeEs, 'es-AR');
     ReparacionesDetailComponent,
     ManoObraDetailComponent,
     ManoObraListComponent,
-    StickyBelowViewDirective
+    StickyBelowViewDirective,
+    AlquiladosListComponent,
+    AlquiladosDetailComponent
   ],
   imports: [
     BrowserModule,

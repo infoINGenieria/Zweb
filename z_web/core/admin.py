@@ -49,15 +49,15 @@ class InfoObraInline(admin.StackedInline):
 
 @admin.register(Obras)
 class ObrasAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'obra', 'cuit', 'lugar', 'responsable', 'is_active', 'es_cc', 'prorratea_costos')
+    list_display = ('codigo', 'obra', 'deposito', 'cuit', 'lugar', 'responsable', 'is_active', 'es_cc', 'prorratea_costos')
     list_filter = ('responsable', 'descuenta_francos', 'descuenta_licencias', "es_cc", 'prorratea_costos')
-    search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', )
+    search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', 'deposito')
     ordering = ('fecha_fin', 'codigo', '-es_cc',)
     inlines = [InfoObraInline, ]
     actions = [set_baja_obra]
     fieldsets = (
         (None, {
-            'fields': (('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),
+            'fields': (('codigo', 'obra', 'deposito', 'fecha_inicio', 'fecha_fin'),
                        ('cuit', 'lugar', 'plazo', 'unidad_negocio'),
                        ('contrato', 'comitente', 'responsable',))
         }),

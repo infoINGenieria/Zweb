@@ -49,6 +49,13 @@ export interface ICentroCosto {
     info_obra?: IInfoObra;
 }
 
+export interface ICentroCostoByDeposito {
+    id: number;
+    obra: string;
+    codigo: string;
+    deposito: number;
+}
+
 export interface IRevision {
     pk?: number;
     presupuesto: IPresupuesto;

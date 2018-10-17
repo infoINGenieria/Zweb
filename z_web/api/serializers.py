@@ -60,7 +60,7 @@ class ObrasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Obras
-        fields = ('id', 'codigo', 'obra', 'lugar', 'plazo', 'responsable',
+        fields = ('id', 'codigo', 'obra', 'deposito', 'lugar', 'plazo', 'responsable',
                   'unidad_negocio', 'info_obra')
 
 
@@ -521,7 +521,6 @@ class ProyeccionCostoSerializer(serializers.ModelSerializer):
         # eliminar items no enviados
         instance.items.exclude(pk__in=exists_pks).delete()
         return instance
-
 
 
 class TableroControlOSSerializer(serializers.ModelSerializer):

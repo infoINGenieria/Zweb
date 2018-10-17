@@ -1,10 +1,11 @@
+import { ICentroCostoByDeposito } from './../../../models/Interfaces';
 import { ModalService } from './../../../services/core/modal.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../services/core/notifications.service';
 import { TallerService } from '../../../services/taller.service';
 import { IDatePickerConfig, ECalendarValue } from 'ng2-date-picker';
 import { fadeInAnimation } from '../../../_animations/fade-in.animation';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { IAsistencia, IEquipo, IRegistroAsistencia, ICentroCosto } from '../../../models/Interfaces';
 import { CoreService } from '../../../services/core/core.service';
 import { RegistroAsistencia } from '../../../models/RegistroAsistencia';
@@ -21,13 +22,15 @@ export class AsistenciaFormComponent implements OnInit {
 
   asistencia: IAsistencia = null;
   equipos: IEquipo[] = [];
-  centros_costos: ICentroCosto[] = [];
-
+  excluidos: IEquipo[] = [];
+  centros_costos: ICentroCostoByDeposito[] = [];
+  centros_costos_all: ICentroCosto[] = [];
   asistencia_pk: any;
 
   initialLoading = true;
 
   is_cloning = false;
+
 
   constructor(
     private tallerServ: TallerService,
@@ -36,6 +39,7 @@ export class AsistenciaFormComponent implements OnInit {
     private modal: ModalService,
     private route: ActivatedRoute,
     private router: Router,
+    private ngZone: NgZone
   ) { }
 
   datePickerConfig: IDatePickerConfig = {
@@ -57,7 +61,7 @@ export class AsistenciaFormComponent implements OnInit {
             this.is_cloning = true;
           }
           if (this.asistencia_pk === 'new') {
-            this.newAsistenciaAndfillRegistros()
+            this.newAsistenciaAndfillRegistros();
             this.initialLoading = false;
           } else {
             this.refresh();
@@ -68,16 +72,21 @@ export class AsistenciaFormComponent implements OnInit {
     );
 
     // centros de costos
-    this.coreServ.get_centro_costos_list().subscribe(
-      cc => this.centros_costos = cc as ICentroCosto[],
+    this.coreServ.get_centro_costos_by_deposito().subscribe(
+      cc => this.centros_costos = cc as ICentroCostoByDeposito[],
       error => this.handleError(error)
     );
+    this.coreServ.get_centro_costos_list().subscribe(
+      cc => this.centros_costos_all = cc as ICentroCosto[],
+      error => this.handleError(error)
+    );
+
   }
 
   newAsistenciaAndfillRegistros() {
     // traer ultimo registro
     this.asistencia = new Object() as IAsistencia;
-    this.asistencia.registros = [];
+    this.asistencia.registros = new Array<IRegistroAsistencia>();
     this.asistencia.dia =  moment().format('DD/MM/YYYY');
     for (const eq of this.equipos) {
       const registro = new RegistroAsistencia();
@@ -86,6 +95,57 @@ export class AsistenciaFormComponent implements OnInit {
       this.asistencia.registros.push(registro);
     }
   }
+
+  refresh() {
+    this.tallerServ.get_asistencia(this.asistencia_pk).subscribe(
+      asistencia => {
+        this.asistencia = asistencia;
+        this.excluidos = this.equipos.filter(eq => !this.asistencia.registros.find(reg => reg.equipo_id === eq.id));
+        this.initialLoading = false;
+    });
+  }
+
+  set_cc_by_deposito(val, i) {
+    const id = this.get_id_by_deposito(val);
+    if (id) {
+      this.asistencia.registros[i].centro_costo_id = id;
+    }
+  }
+
+  get_id_by_deposito(deposito) {
+    const item = this.get_cc_by_deposito(deposito);
+    if (item) {
+      return item.id;
+    }
+    return null;
+  }
+
+  get_deposito_by_id(id: number) {
+    const item = this.centros_costos.find(a => a.id == id);
+    if (item) {
+      return item.deposito;
+    }
+    return null;
+  }
+
+
+  get_cc_by_deposito(deposito: number) {
+    return this.centros_costos.find(a => a.deposito == deposito);
+  }
+  /*
+  cc_selected(deposito: number, indx: number) {
+    const cc = this.get_cc_by_deposito(deposito);
+    if (cc) {
+      this.registros[indx].centro_costo_id = cc.id;
+      return cc.codigo;
+    }
+    if (deposito) {
+      this.registros[indx].centro_costo_id = null;
+      return 'No encontrado';
+    }
+    return '';
+  }
+  */
 
   trackByIndex(index: number, item: RegistroAsistencia) {
     return index;
@@ -99,7 +159,8 @@ export class AsistenciaFormComponent implements OnInit {
   }
 
   get has_all_selected(): boolean {
-    const valid = this.asistencia.registros.filter(reg => !reg.centro_costo_id ).length === 0;
+    let valid = true;
+    valid = this.asistencia.registros.filter(reg => !reg.centro_costo_id ).length === 0;
     return valid;
   }
 
@@ -141,6 +202,7 @@ export class AsistenciaFormComponent implements OnInit {
   }
 
   clonar_asistencia() {
+
     this.asistencia.pk = null;
     this.tallerServ.create_asistencia(this.asistencia).subscribe(
       asist => this.handler_success_guardado(asist, true),
@@ -149,6 +211,7 @@ export class AsistenciaFormComponent implements OnInit {
   }
 
   guardar_asistencia_modal() {
+    console.log(this.asistencia);
     this.modal.setUp(
       `¿Desea guardar la asistencia?`,
       `Asistencia de ${this.asistencia.dia}`,
@@ -164,16 +227,32 @@ export class AsistenciaFormComponent implements OnInit {
     ).open();
   }
 
-  refresh() {
-    this.tallerServ.get_asistencia(this.asistencia_pk).subscribe(
-      asistencia => {
-        this.asistencia = asistencia;
-        this.initialLoading = false;
-    });
-  }
-
   handleError(error: any) {
     this.notify_service.error(error._body || error);
+  }
+
+  incluirEquipo(equipo: IEquipo) {
+    this.asistencia.registros.push(new RegistroAsistencia({
+      equipo: equipo,
+      equipo_id: equipo.id,
+      centro_costo: null,
+      centro_costo_id: null
+    }));
+    this.excluidos.splice(this.excluidos.indexOf(equipo), 1);
+  }
+
+  excluirEquipo(req: IRegistroAsistencia) {
+    this.excluidos.unshift(req.equipo);
+    this.asistencia.registros.splice(this.asistencia.registros.indexOf(req), 1);
+  }
+
+  keytab(event) {
+    const element = event.srcElement.nextElementSibling; // get the sibling element
+    if (element == null) { // check if its null
+        return;
+    } else {
+        element.focus();   // focus if not null
+    }
   }
 
 }

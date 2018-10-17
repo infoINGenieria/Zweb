@@ -241,6 +241,17 @@ class CentroCostoViewSet(ModelViewSet, AuthView):
             'centros_costos': ObrasSerializer(qs, many=True).data
         })
 
+    @list_route(methods=['get'], url_path='by-deposito')
+    def by_deposito(self, request):
+        qs = self.get_queryset().exclude(deposito__isnull=True)
+        centro_costos = [{
+            'id': cc.id,
+            'obra': cc.obra,
+            'codigo': cc.codigo,
+            'deposito': cc.deposito
+        } for cc in qs]
+        return Response(centro_costos)
+
 
 class CertificacionRealViewSet(ModelViewSet, AuthView):
     serializer_class = CertificacionSerializer

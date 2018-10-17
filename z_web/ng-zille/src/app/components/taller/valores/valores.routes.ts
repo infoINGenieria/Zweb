@@ -1,3 +1,4 @@
+import { AlquiladosDetailComponent } from './alquilados-detail/alquilados-detail.component';
 import { ManoObraDetailComponent } from './mano-obra-detail/mano-obra-detail.component';
 import { ReparacionesDetailComponent } from './reparaciones-detail/reparaciones-detail.component';
 import { TrenRodajeDetailComponent } from './tren-rodaje-detail/tren-rodaje-detail.component';
@@ -9,6 +10,7 @@ import { Routes } from '@angular/router';
 import { PosesionListComponent } from './posesion-list/posesion-list.component';
 import { ReparacionesListComponent } from './reparaciones-list/reparaciones-list.component';
 import { PosesionDetailComponent } from './posesion-detail/posesion-detail.component';
+import { AlquiladosListComponent } from './alquilados-list/alquilados-list.component';
 
 
 export const VALORES_ROUTES: Routes = [
@@ -23,5 +25,7 @@ export const VALORES_ROUTES: Routes = [
     { path: 'reparaciones/:pk', component: ReparacionesDetailComponent, outlet: 'details' },
     { path: 'mano_obra', component: ManoObraListComponent, outlet: 'tabs' },
     { path: 'mano_obra/:pk', component: ManoObraDetailComponent, outlet: 'details' },
+    { path: 'alquilados', component: AlquiladosListComponent, outlet: 'tabs' },
+    { path: 'alquilados/:pk', component: AlquiladosDetailComponent, outlet: 'details' },
     { path: '**', pathMatch: 'full', redirectTo: '' }
   ];

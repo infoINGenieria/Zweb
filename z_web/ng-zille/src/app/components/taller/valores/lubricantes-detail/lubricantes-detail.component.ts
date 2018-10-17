@@ -8,6 +8,10 @@ import { TallerService } from '../../../../services/taller.service';
 @Component({
   selector: 'app-lubricantes-detail',
   templateUrl: './lubricantes-detail.component.html',
+  styles: [
+    `
+    `
+  ]
 })
 export class LubricantesDetailComponent implements OnInit {
 

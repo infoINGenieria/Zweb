@@ -136,6 +136,8 @@ class Obras(models.Model):
     unidad_negocio = models.ForeignKey(
         'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
 
+    deposito = models.IntegerField('N° Depósito', null=True, unique=True)
+
     class Meta:
         verbose_name = "obra"
         verbose_name_plural = "obras"
