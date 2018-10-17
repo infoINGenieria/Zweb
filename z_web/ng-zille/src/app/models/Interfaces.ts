@@ -455,4 +455,5 @@ export interface IEquipoAlquiladoValores {
     equipo: IEquipo;
     equipo_id: number;
     alquiler: number;
+    comentarios: string;
 }

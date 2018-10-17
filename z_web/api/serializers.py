@@ -995,5 +995,5 @@ class ValoresEquipoAlquiladoTallerSerializer(serializers.ModelSerializer):
         model = EquipoAlquiladoValores
         fields = (
             'pk', 'valido_desde', 'valido_desde_id', 'equipo', 'equipo_id',
-            'alquiler'
+            'alquiler', 'comentarios',
         )

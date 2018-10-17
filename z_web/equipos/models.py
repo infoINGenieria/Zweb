@@ -408,6 +408,7 @@ class ManoObraValores(BaseModel):
 
 class EquipoAlquiladoValores(BaseParametrosCostos):
     alquiler = models.DecimalField('Desgastables + mano de obra + etc', decimal_places=2, max_digits=18)
+    comentarios = models.TextField('comentarios', null=True, blank=True)
 
     history = HistoricalRecords()
     objects = ValoresManager()
