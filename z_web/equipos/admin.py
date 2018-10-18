@@ -112,5 +112,6 @@ class EquipoAlquiladoValoresAdmin(admin.ModelAdmin):
 
 @admin.register(CostoEquipoValores)
 class CostoEquipoValoresAdmin(admin.ModelAdmin):
+    list_filter = ('valido_desde', )
     search_fields = ['equipo__n_interno']
-    list_display = ('equipo', 'valido_desde', )
+    list_display = ('equipo', 'valido_desde', 'markup',)

@@ -34,10 +34,15 @@
         </a>
       </li>
       <li role="presentation" [ngClass]="tabName == 'alquilados' ? 'active': ''">
-          <a (click)="changeTab('alquilados')"
-            aria-controls="alquilados" role="tab" data-toggle="tab">E. alquilados
-          </a>
-        </li>
+        <a (click)="changeTab('alquilados')"
+          aria-controls="alquilados" role="tab" data-toggle="tab">E. alquilados
+        </a>
+      </li>
+      <li role="presentation" [ngClass]="tabName == 'markup' ? 'active': ''">
+        <a (click)="changeTab('markup')"
+          aria-controls="markup" role="tab" data-toggle="tab">Markup
+        </a>
+      </li>
     </ul>
     <router-outlet  name="tabs"></router-outlet>
   </div>

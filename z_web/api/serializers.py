@@ -722,19 +722,38 @@ class ReportAsistenciaItemCCSerializer(serializers.Serializer):
         return "%.2f" % (obj["costo_diario"] * obj["dias"])
 
 
-class TableroControlTallerSerializer(serializers.ModelSerializer):
+class CostoEquipoValoresTallerSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False, read_only=False)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk')
+    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    valido_desde = PeriodoSerializer(read_only=True)
+    valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
+    costo_mensual_mo_logistico = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = CostoEquipoValores
+        fields = (
+            'pk', 'equipo', 'equipo_id', 'valido_desde', 'valido_desde_id', 'markup',
+            'costo_mensual_del_activo_calculado',
+            'costo_mensual_del_activo_con_mo_calculado',
+            'costo_equipo_calculado',
+            'costo_mensual_mo_logistico'
+        )
+        read_only_fields = (
+            'pk', 'equipo', 'equipo_id', 'valido_desde', 'valido_desde_id',
+            'costo_mensual_del_activo_calculado',
+            'costo_mensual_del_activo_con_mo_calculado',
+            'costo_equipo_calculado',
+            'costo_mensual_mo_logistico'
+        )
+
+
+class TableroControlTallerSerializer(CostoEquipoValoresTallerSerializer):
     periodo_id = serializers.IntegerField(source='valido_desde.pk')
     costo_mensual_lubricante = serializers.SerializerMethodField()
     costo_mensual_tren_rodaje = serializers.SerializerMethodField()
     costo_mensual_posesion = serializers.SerializerMethodField()
     costo_mensual_reparacion = serializers.SerializerMethodField()
-
-    # costo_mensual_del_activo = serializers.SerializerMethodField()
-    # costo_mensual_del_activo_con_mo = serializers.SerializerMethodField()
-    costo_mensual_mo_logistico = serializers.DecimalField(max_digits=18, decimal_places=2)
-    # costo_mensual = serializers.SerializerMethodField()
 
     class Meta:
         model = CostoEquipoValores

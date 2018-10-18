@@ -24,7 +24,7 @@ from api.serializers import (
     TableroControlTallerSerializer, ValoresLubricantesTallerSerializer,
     ValoresTrenRodajeTallerSerializer, ValoresPosesionTallerSerializer,
     ValoresReparacionesTallerSerializer, ValoresManoObraTallerSerializer,
-    ValoresEquipoAlquiladoTallerSerializer)
+    ValoresEquipoAlquiladoTallerSerializer, CostoEquipoValoresTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
@@ -32,7 +32,8 @@ from api.filters import (
     AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter,
     ValoresEquipoTallerFilter, TrenRodajeValoresTallerFilter,
     PosesionValoresTallerFilter, ReparacionesValoresTallerFilter,
-    EquipoAlquiladoValoresTallerFilter, ManoObraValoresTallerFilter)
+    EquipoAlquiladoValoresTallerFilter, ManoObraValoresTallerFilter,
+    CostoEquipoValoresTallerFilter)
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
     CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores,
@@ -384,6 +385,12 @@ class ReportAsistenciaByEquipoView(AuthView):
         data = get_stats_of_asistencia_by_equipo(periodo)
         serializer = ReportAsistenciaItemCCSerializer(data, many=True)
         return Response(serializer.data)
+
+
+class CostoEquipoValoresTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = CostoEquipoValoresTallerSerializer
+    queryset = CostoEquipoValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = CostoEquipoValoresTallerFilter
 
 
 class TableroControlTallerView(ReadOnlyModelViewSet, AuthView):

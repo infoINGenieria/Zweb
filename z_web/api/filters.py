@@ -5,7 +5,7 @@ from django.db.models import Q
 from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo, LubricantesValores,
     TrenRodajeValores, PosesionValores, ReparacionesValores,
-    EquipoAlquiladoValores, ManoObraValores)
+    EquipoAlquiladoValores, ManoObraValores, CostoEquipoValores)
 from core.models import Equipos
 from presupuestos.models import Presupuesto
 from registro.models import Certificacion
@@ -152,6 +152,11 @@ class ReparacionesValoresTallerFilter(ValoresEquipoTallerFilter):
 class EquipoAlquiladoValoresTallerFilter(ValoresEquipoTallerFilter):
     class Meta(ValoresEquipoTallerFilter.Meta):
         model = EquipoAlquiladoValores
+
+
+class CostoEquipoValoresTallerFilter(ValoresEquipoTallerFilter):
+    class Meta(ValoresEquipoTallerFilter.Meta):
+        model = CostoEquipoValores
 
 
 class ManoObraValoresTallerFilter(django_filters.FilterSet):

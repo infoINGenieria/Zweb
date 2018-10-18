@@ -17,7 +17,7 @@ from api.views import (
     RegistroAsistenciaEquipoViewSet, ReportAsistenciaByEquipoView,
     TableroControlTallerView, LubricantesValoresTallerViewSet, TrenRodajeTallerViewSet,
     PosesionTallerViewSet, ReparacionesTallerViewSet, EquipoAlquiladoTallerViewSet,
-    ManoObraTallerViewSet
+    ManoObraTallerViewSet, CostoEquipoValoresTallerViewSet
 )
 
 router = routers.DefaultRouter()
@@ -81,6 +81,9 @@ router.register(
 )
 router.register(
     r'taller/valores/alquilados', EquipoAlquiladoTallerViewSet, base_name='valores_alquilados'
+)
+router.register(
+    r'taller/valores/markup', CostoEquipoValoresTallerViewSet, base_name='markup'
 )
 router.register(
     r'taller/asistencia', AsistenciaEquipoViewSet, base_name='asistencia_equipo'

@@ -78,6 +78,8 @@ import { ManoObraDetailComponent } from './components/taller/valores/mano-obra-d
 import { ManoObraListComponent } from './components/taller/valores/mano-obra-list/mano-obra-list.component';
 import { AlquiladosListComponent } from './components/taller/valores/alquilados-list/alquilados-list.component';
 import { AlquiladosDetailComponent } from './components/taller/valores/alquilados-detail/alquilados-detail.component';
+import { MarkupDetailComponent } from './components/taller/valores/markup-detail/markup-detail.component';
+import { MarkupListComponent } from './components/taller/valores/markup-list/markup-list.component';
 
 registerLocaleData(localeEs, 'es-AR');
 
@@ -122,7 +124,9 @@ registerLocaleData(localeEs, 'es-AR');
     ManoObraListComponent,
     StickyBelowViewDirective,
     AlquiladosListComponent,
-    AlquiladosDetailComponent
+    AlquiladosDetailComponent,
+    MarkupDetailComponent,
+    MarkupListComponent
   ],
   imports: [
     BrowserModule,

@@ -11,6 +11,8 @@ import { PosesionListComponent } from './posesion-list/posesion-list.component';
 import { ReparacionesListComponent } from './reparaciones-list/reparaciones-list.component';
 import { PosesionDetailComponent } from './posesion-detail/posesion-detail.component';
 import { AlquiladosListComponent } from './alquilados-list/alquilados-list.component';
+import { MarkupListComponent } from './markup-list/markup-list.component';
+import { MarkupDetailComponent } from './markup-detail/markup-detail.component';
 
 
 export const VALORES_ROUTES: Routes = [
@@ -27,5 +29,7 @@ export const VALORES_ROUTES: Routes = [
     { path: 'mano_obra/:pk', component: ManoObraDetailComponent, outlet: 'details' },
     { path: 'alquilados', component: AlquiladosListComponent, outlet: 'tabs' },
     { path: 'alquilados/:pk', component: AlquiladosDetailComponent, outlet: 'details' },
+    { path: 'markup', component: MarkupListComponent, outlet: 'tabs' },
+    { path: 'markup/:pk', component: MarkupDetailComponent, outlet: 'details' },
     { path: '**', pathMatch: 'full', redirectTo: '' }
   ];

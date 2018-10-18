@@ -1,6 +1,6 @@
 
 import {throwError as observableThrowError,  Observable } from 'rxjs';
-import { IPeriodo, ILubricantesValores, ITrenRodajeValores, IPosesionValores, IReparacionesValores, IReparacionesParametros, IManoObraValores, IEquipoAlquiladoValores } from './../models/Interfaces';
+import { IPeriodo, ILubricantesValores, ITrenRodajeValores, IPosesionValores, IReparacionesValores, IReparacionesParametros, IManoObraValores, IEquipoAlquiladoValores, IEquipoMarkupValores } from './../models/Interfaces';
 import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
@@ -276,6 +276,23 @@ export class TallerService {
     put_alquilados_valor(item: IEquipoAlquiladoValores) {
       const bodyString = JSON.stringify(item);
       return this.http.put(`/api/taller/valores/alquilados/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    // markup
+    get_markup_valores(page?, valido_desde?, equipo?) {
+      let myParams = new URLSearchParams();
+      myParams.set('page', page || 1);
+      myParams.set('valido_desde', valido_desde || '');
+      myParams.set('equipo', equipo || '');
+      return this.http.get('/api/taller/valores/markup/', myParams).pipe(map((r: Response) => r.json()));
+    }
+    get_markup_valor(item: IEquipoMarkupValores) {
+      return this.http.get(`/api/taller/valores/markup/${item.pk}/`).pipe(map((r: Response) => r.json()));
+    }
+    put_markup_valor(item: IEquipoMarkupValores) {
+      const bodyString = JSON.stringify(item);
+      return this.http.put(`/api/taller/valores/markup/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
   }

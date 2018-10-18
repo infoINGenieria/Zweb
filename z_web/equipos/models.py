@@ -471,7 +471,7 @@ class CostoEquipoValores(ValoresMixin, BaseParametrosCostos):
         costo_mensual_del_activo = costos_lubri_hidraulicos + costos_tren_rodaje + costos_posesion + costos_reparaciones  # sin mano de obra
         # almaceno siempre después de calcular
         self.costo_mensual_del_activo_calculado = costo_mensual_del_activo
-        self.save()
+        self.save(recalcular=False)
         return costo_mensual_del_activo
 
 
@@ -501,7 +501,7 @@ class CostoEquipoValores(ValoresMixin, BaseParametrosCostos):
             self.costo_mensual_del_activo_con_mo +
             self.costo_mensual_mo_logistico
             ) * self.markup / 100
-        self.save()
+        self.save(recalcular=False)
         return self.costo_equipo_calculado
 
     @property
@@ -514,7 +514,7 @@ class CostoEquipoValores(ValoresMixin, BaseParametrosCostos):
             self.costo_mensual_del_activo_con_mo_calculado = (self.costo_mensual_del_activo * taller) / total_flota.monto
         else:
             self.costo_mensual_del_activo_con_mo_calculado = 0
-        self.save()
+        self.save(recalcular=False)
         return self.costo_mensual_del_activo_con_mo_calculado
 
     @property
@@ -526,7 +526,7 @@ class CostoEquipoValores(ValoresMixin, BaseParametrosCostos):
             self.costo_equipo_calculado = equipo_alquilado.alquiler
         else:
             self.costo_equipo_calculado = 0
-        self.save()
+        self.save(recalcular=False)
         return self.costo_equipo_calculado
 
     @property
@@ -537,6 +537,13 @@ class CostoEquipoValores(ValoresMixin, BaseParametrosCostos):
 
     def calcular(self):
         return self.costo_mensual_zille
+
+    def save(self, *args, **kwargs):
+        recalcular = kwargs.pop('recalcular', True)
+        super(CostoEquipoValores, self).save(*args, **kwargs)
+        if recalcular:
+            # al acceder al property, se recalcula todo y vuelve a guardar
+            self.costo_mensual_zille
 
     class Meta:
         verbose_name = 'valor de costo equipo'
