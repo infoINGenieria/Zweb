@@ -19,14 +19,11 @@ export class EquiposComponent implements OnInit {
   loaded = false;
 
   // filter
-  f_ninterno = '';
-  f_marca = '';
-  f_modelo = '';
-  f_tipo = '';
-  f_dominio = '';
-  f_anio = '';
+  f_equipo = '';
   f_estado = '';  // alta o baja
   f_excluir_costos_taller = '';
+  f_alquilado = '';
+  f_implica_mo_logistica = '';
 
   page = new Page();
 
@@ -48,14 +45,11 @@ export class EquiposComponent implements OnInit {
     this.loaded = false;
     this.tallerServ.get_equipos_list(
       this.page.pageNumber,
-      this.f_ninterno,
-      this.f_marca,
-      this.f_modelo,
-      this.f_tipo,
-      this.f_dominio,
-      this.f_anio,
+      this.f_equipo,
       this.f_estado,
-      this.f_excluir_costos_taller
+      this.f_excluir_costos_taller,
+      this.f_alquilado,
+      this.f_implica_mo_logistica
     ).subscribe(
       equipos => {
         this.equipos = equipos['results'] as Array<IEquipo>;
@@ -70,16 +64,13 @@ export class EquiposComponent implements OnInit {
   filterList(form: NgForm) {
     console.log(form);
     this.page.pageNumber = 1;
-    const { ninterno, marca, modelo, tipo, dominio, anio, estado, excluir_costos_taller } = form.value;
+    const { equipo, estado, excluir_costos_taller, alquilado, implica_mo_logistica } = form.value;
 
-    this.f_ninterno = ninterno;
-    this.f_marca = marca;
-    this.f_modelo = modelo;
-    this.f_tipo = tipo;
-    this.f_dominio = dominio;
-    this.f_anio = anio;
+    this.f_equipo = equipo;
     this.f_estado = estado;
     this.f_excluir_costos_taller = excluir_costos_taller;
+    this.f_alquilado = alquilado;
+    this.f_implica_mo_logistica = implica_mo_logistica;
     this.loaded = false;
     this.refresh();
   }
@@ -87,14 +78,11 @@ export class EquiposComponent implements OnInit {
   cleanFilter(form: NgForm) {
     form.reset();
     this.page.pageNumber = 1;
-    this.f_ninterno = '';
-    this.f_marca = '';
-    this.f_modelo = '';
-    this.f_tipo = '';
-    this.f_dominio = '';
-    this.f_anio = '';
+    this.f_equipo = '';
     this.f_estado = '';
     this.f_excluir_costos_taller = '';
+    this.f_alquilado = '';
+    this.f_implica_mo_logistica = '';
     this.refresh();
   }
 

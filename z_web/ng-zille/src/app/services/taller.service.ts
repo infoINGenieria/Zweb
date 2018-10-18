@@ -17,26 +17,15 @@ export class TallerService {
   constructor(private http: BaseApiService) { }
 
   // Equipos
-  /*
-  this.f_ninterno,
-      this.f_marca,
-      this.f_modelo,
-      this.f_tipo,
-      this.f_dominio,
-      this.f_anio,
-      this.f_estado
-      */
-  get_equipos_list(page?, ninterno?, marca?, modelo?, tipo?, dominio?, anio?, estado?, excluir_costos_taller?) {
+  get_equipos_list(page?, equipo?, estado?, excluir_costos_taller?,
+                   alquilado?, implica_mo_logistica?) {
     let myParams = new URLSearchParams();
     myParams.set('page', page || 1);
-    myParams.set('n_interno', ninterno || '');
-    myParams.set('marca', marca || '');
-    myParams.set('modelo', modelo || '');
-    myParams.set('equipo', tipo || '');
-    myParams.set('dominio', dominio || '');
-    myParams.set('año', anio || '');
+    myParams.set('equipo', equipo || '');
     myParams.set('estado', estado || '');
     myParams.set('excluir_costos_taller', excluir_costos_taller || '');
+    myParams.set('alquilado', alquilado || '');
+    myParams.set('implica_mo_logistica', implica_mo_logistica || '');
     return this.http.get('/api/equipos/', myParams)
     .pipe(
       map((r: Response) => r.json())

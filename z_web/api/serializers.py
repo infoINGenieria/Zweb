@@ -582,7 +582,7 @@ class EquipoSerializer(serializers.ModelSerializer):
             'id', 'n_interno', 'equipo', 'marca', 'modelo',
             'anio', 'dominio', 'nro_serie', 'familia_equipo',
             'familia_equipo_id', 'es_alquilado', 'fecha_baja',
-            'excluir_costos_taller'
+            'excluir_costos_taller', 'implica_mo_logistica'
         )
 
     def create(self, validated_data):

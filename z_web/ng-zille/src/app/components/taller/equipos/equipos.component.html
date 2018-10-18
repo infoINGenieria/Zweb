@@ -8,41 +8,11 @@
     <div class="row">
       <div class="col-sm-3">
         <div class="form-group">
-          <label>N° Interno: </label>
-          <input type="text" class="form-control input-sm" ngModel name='ninterno'>
+          <label>Equipo: </label>
+          <input type="text" class="form-control input-sm" ngModel name='equipo' placeholder="Buscar por interno, patente, marca...">
         </div>
       </div>
-      <div class="col-sm-3">
-        <div class="form-group">
-          <label>Marca: </label>
-          <input type="text" class="form-control input-sm" ngModel name='marca'>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-group">
-          <label>Modelo: </label>
-          <input type="text" class="form-control input-sm" ngModel name='modelo'>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-group">
-          <label>Tipo: </label>
-          <input type="text" class="form-control input-sm" ngModel name='tipo'>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-group">
-          <label>Dominio: </label>
-          <input type="text" class="form-control input-sm" ngModel name='dominio'>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="form-group">
-          <label>Año: </label>
-          <input type="number" step="1" class="form-control input-sm" ngModel name='anio'>
-        </div>
-      </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         <div class="form-group">
           <label>Estado: </label>
           <select class="form-control input-sm" ngModel name='estado'>
@@ -50,16 +20,38 @@
               <option value='1'>Activos</option>
               <option value='0'>Bajas</option>
           </select>
-
         </div>
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         <div class="form-group">
           <label>Excluido de costos: </label>
           <select class="form-control input-sm" ngModel name='excluir_costos_taller'>
               <option value=''>Todos</option>
               <option value='1'>Excluidos</option>
               <option value='0'>Incluidos</option>
+          </select>
+
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <label>Propio / Alquilado: </label>
+          <select class="form-control input-sm" ngModel name='alquilado'>
+              <option value=''>Todos</option>
+              <option value='1'>Alquilado</option>
+              <option value='0'>Propio</option>
+          </select>
+
+
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <label>Carretones: </label>
+          <select class="form-control input-sm" ngModel name='implica_mo_logistica'>
+              <option value=''>Todos</option>
+              <option value='1'>Si</option>
+              <option value='0'>No</option>
           </select>
 
         </div>

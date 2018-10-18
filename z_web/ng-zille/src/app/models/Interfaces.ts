@@ -273,6 +273,7 @@ export interface IEquipo {
     es_alquilado: boolean;
     fecha_baja?: Date;
     excluir_costos_taller: boolean;
+    implica_mo_logistica: boolean;
 }
 
 export interface IParametrosGenerales {

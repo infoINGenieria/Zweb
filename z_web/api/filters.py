@@ -59,8 +59,11 @@ class ProyeccionCostoFilter(django_filters.FilterSet):
 
 
 class EquiposFilter(django_filters.FilterSet):
+    equipo = django_filters.CharFilter(method='buscar_en_equipo')
     estado = django_filters.CharFilter(method='estado_filter')
     excluir_costos_taller = django_filters.CharFilter(method='excluir_costos_taller_filter')
+    alquilado = django_filters.CharFilter(method='alquilado_filter')
+    implica_mo_logistica = django_filters.CharFilter(method='implica_mo_logistica_filter')
 
     def excluir_costos_taller_filter(self, queryset, name, value):
         if value == '1':
@@ -76,11 +79,35 @@ class EquiposFilter(django_filters.FilterSet):
             return queryset.filter(fecha_baja__isnull=False)
         return queryset
 
+    def alquilado_filter(self, queryset, name, value):
+        if value == '1':
+            return queryset.filter(es_alquilado=True)
+        elif value == '0':
+            return queryset.filter(es_alquilado=False)
+        return queryset
+
+    def implica_mo_logistica_filter(self, queryset, name, value):
+        if value == '1':
+            return queryset.filter(implica_mo_logistica=True)
+        elif value == '0':
+            return queryset.filter(implica_mo_logistica=False)
+        return queryset
+
+    def buscar_en_equipo(self, queryset, name, value):
+        if value:
+            return queryset.filter(
+                Q(n_interno__icontains=value) |
+                Q(equipo__icontains=value) |
+                Q(marca__icontains=value) |
+                Q(modelo__icontains=value) |
+                Q(dominio__icontains=value)
+            ).distinct()
+        return queryset
+
     class Meta:
         model = Equipos
         fields = (
-            'n_interno', 'equipo', 'marca', 'modelo', 'año', 'dominio',
-            'familia_equipo', 'estado', 'excluir_costos_taller'
+            'equipo', 'estado', 'excluir_costos_taller', 'alquilado', 'implica_mo_logistica'
         )
         filter_overrides = {
             models.CharField: {
