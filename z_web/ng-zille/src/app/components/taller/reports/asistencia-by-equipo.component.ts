@@ -1,5 +1,6 @@
+import { TallerComponent } from './../taller.component';
 import { fadeInAnimation } from './../../../_animations/fade-in.animation';
-import { IPeriodo, ReporteAsistenciaItemByEquipo, IEquipo } from './../../../models/Interfaces';
+import { IPeriodo, ReporteAsistenciaItemByEquipo, IEquipo, ICentroCosto } from './../../../models/Interfaces';
 import { TallerService } from './../../../services/taller.service';
 import { Component, OnInit } from '@angular/core';
 import { CoreService } from '../../../services/core/core.service';
@@ -16,8 +17,9 @@ export class AsistenciaByEquipoComponent implements OnInit {
   asistencias: ReporteAsistenciaItemByEquipo[] = [];
   periodos: IPeriodo[] = [];
   periodo: IPeriodo;
+  centro_costos: ICentroCosto[] = [];
+  centro_costo: ICentroCosto;
   equipo_id: number;
-  centro_costo_id: number;
   filtered = false;
 
   constructor(
@@ -29,6 +31,10 @@ export class AsistenciaByEquipoComponent implements OnInit {
   ngOnInit() {
     this.coreServ.get_periodos_list().subscribe(
       periodos => this.periodos = periodos
+    );
+
+    this.coreServ.get_centro_costos_list().subscribe(
+      ccs => this.centro_costos = ccs
     );
   }
 
@@ -59,8 +65,8 @@ export class AsistenciaByEquipoComponent implements OnInit {
     if (this.equipo_id) {
       _asistencias = _asistencias.filter(a => a.equipo_id === this.equipo_id);
     }
-    if (this.centro_costo_id) {
-      _asistencias = _asistencias.filter(a => a.centro_costo_id === this.centro_costo_id);
+    if (this.centro_costo) {
+      _asistencias = _asistencias.filter(a => a.centro_costo_id === this.centro_costo.id);
     }
     return _asistencias;
   }
@@ -69,14 +75,6 @@ export class AsistenciaByEquipoComponent implements OnInit {
     if (this.equipo_id) {
       const asist = this.asistencias.find(a => a.equipo_id === this.equipo_id);
       return `${asist.equipo.equipo} (${asist.equipo.n_interno})`;
-    }
-    return 'Sin filtro';
-  }
-
-  get get_centro_costo() {
-    if (this.centro_costo_id) {
-      const asist = this.asistencias.find(a => a.centro_costo_id === this.centro_costo_id);
-      return `${asist.centro_costo.codigo}`;
     }
     return 'Sin filtro';
   }
@@ -90,11 +88,11 @@ export class AsistenciaByEquipoComponent implements OnInit {
   }
 
   resetCC() {
-    this.centro_costo_id = null;
+    this.centro_costo = null;
   }
 
   setCC(cc: number) {
-    this.centro_costo_id = cc;
+    this.centro_costo = this.centro_costos.find(a => a.id === cc);
   }
 
   /* Totales */
@@ -128,5 +126,16 @@ export class AsistenciaByEquipoComponent implements OnInit {
       item => total += Number.parseFloat('' + item.costo_total)
     );
     return total;
+  }
+
+  download_report() {
+    window.open(this.tallerServ.download_reporte_asistencias_summary(this.periodo), '_blank');
+  }
+
+  download_report_by_cc() {
+    if (this.centro_costo) {
+      const url = this.tallerServ.download_reporte_asistencias_by_cc(this.periodo, this.centro_costo);
+      window.open(url, '_blank');
+    }
   }
 }

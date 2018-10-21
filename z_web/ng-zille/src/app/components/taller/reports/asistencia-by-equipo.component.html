@@ -12,21 +12,27 @@
             <option *ngFor="let p of periodos" [ngValue]="p">{{ p.descripcion }}</option>
           </select>
         </div>
+        <div class="col-sm-5">
+          <label> Por Centro Costo:</label>
+          <select name="cc_sel" [(ngModel)]="centro_costo" class="form-control">
+            <option *ngFor="let cc of centro_costos" [ngValue]="cc">{{ cc.obra }}</option>
+          </select>
+          <button class="btn btn-info" (click)="resetCC()" *ngIf="centro_costo"><i class="fa fa-trash"></i></button>
+        </div>
         <div class="col-sm-4">
-          <label> Filtrado por equipo:</label>
+          <label> Por equipo:</label>
           <input disabled="true" class="form-control" value="{{ get_equipo }}" />
           <button class="btn btn-info" (click)="resetEquipo()" *ngIf="equipo_id"><i class="fa fa-trash"></i></button>
         </div>
-        <div class="col-sm-4">
-          <label> Filtrado por CC:</label>
-          <input disabled="true" class="form-control" value="{{ get_centro_costo }}" />
-          <button class="btn btn-info" (click)="resetCC()" *ngIf="centro_costo_id"><i class="fa fa-trash"></i></button>
-        </div>
         </div>
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-12">
           <div class="form-group">
             <button class="btn mt10 btn-info" (click)="ver_reporte()"><i class="fa fa-file"></i> Ver reporte</button>
+            <button class="btn mt10 btn-success" (click)="download_report()" *ngIf="periodo">
+              <i class="fa fa-file"></i> Descargar XLSX Resumen</button>
+            <button class="btn mt10 btn-warning" (click)="download_report_by_cc()" *ngIf="periodo && centro_costo && filtered">
+              <i class="fa fa-file"></i> Descargar XLSX de CC</button>
           </div>
         </div>
       </div>

@@ -30,7 +30,8 @@ class ExportExcelMixin:
                 'bold': True,
                 'font_size': 14,
                 'align': 'center',
-                'valign': 'vcenter'
+                'valign': 'vcenter',
+                'border': 1
             }),
             'header': self.workbook.add_format({
                 'bg_color': '#59677e',
@@ -39,7 +40,16 @@ class ExportExcelMixin:
                 'valign': 'vcenter',
                 'border': 1,
                 'bold': True,
-                'font_size': 12,
+                'font_size': 10,
+            }),
+            'header_dest': self.workbook.add_format({
+                'bg_color': '#f47c3c',
+                'color': 'white',
+                'align': 'left',
+                'valign': 'vcenter',
+                'border': 1,
+                'bold': True,
+                'font_size': 10,
             }),
             'header_num': self.workbook.add_format({
                 'bg_color': '#59677e',
@@ -48,20 +58,88 @@ class ExportExcelMixin:
                 'valign': 'vcenter',
                 'border': 1,
                 'bold': True,
-                'font_size': 12,
+                'font_size': 10,
                 'num_format': '$ #,##0.00'
+            }),
+            'header_perc': self.workbook.add_format({
+                'bg_color': '#59677e',
+                'color': 'white',
+                'align': 'right',
+                'valign': 'vcenter',
+                'border': 1,
+                'bold': True,
+                'font_size': 10,
+                'num_format': '0.0%'
+            }),
+            'header_date': self.workbook.add_format({
+                'bg_color': '#59677e',
+                'color': 'white',
+                'align': 'center',
+                'valign': 'vcenter',
+                'border': 1,
+                'bold': True,
+                'font_size': 10,
+                'num_format': 'dd/mm/yy'
             }),
             'normal': self.workbook.add_format({
                 'color': 'black',
                 'align': 'right',
                 'valign': 'vcenter',
                 'border': 1,
+                'font_size': 9,
+            }),
+            'normal_left': self.workbook.add_format({
+                'color': 'black',
+                'align': 'left',
+                'valign': 'vcenter',
+                'border': 1,
+                'font_size': 9,
+            }),
+            'normal_money': self.workbook.add_format({
+                'color': 'black',
+                'align': 'right',
+                'valign': 'vcenter',
+                'border': 1,
+                'font_size': 9,
                 'num_format': '$ #,##0.00'
+            }),
+            'normal_date': self.workbook.add_format({
+                'color': 'black',
+                'align': 'right',
+                'valign': 'vcenter',
+                'border': 1,
+                'font_size': 9,
+                'num_format': 'dd/mm/yy'
+            }),
+            'normal_time': self.workbook.add_format({
+                'color': 'black',
+                'align': 'right',
+                'valign': 'vcenter',
+                'border': 1,
+                'font_size': 9,
+                'num_format': 'hh:ss',
+            }),
+            'normal_time_dest': self.workbook.add_format({
+                'color': 'black',
+                'align': 'right',
+                'valign': 'vcenter',
+                'border': 1,
+                'font_size': 9,
+                'num_format': 'hh:ss',
+                'bg_color': '#faa11c',
+            }),
+            'normal_perc': self.workbook.add_format({
+                'color': 'black',
+                'align': 'right',
+                'valign': 'vcenter',
+                'border': 1,
+                'font_size': 9,
+                'num_format': '0.0%'
             }),
             'total': self.workbook.add_format({
                 'color': 'red',
                 'bg_color': 'yellow',
-                'align': 'left',
+                'align': 'rigth',
                 'valign': 'vcenter',
                 'border': 2,
                 'num_format': '$ #,##0.00'
@@ -97,7 +175,7 @@ class ExportPanelControl(ExportExcelMixin):
                     worksheet_s.write_formula(row, i, '=-{0}{1}+{0}{2}+{0}{3}'.format(self.get_c(i + 1), 5, 6, 7),
                                               self.style_dict["header_num"], line[i])
                 else:
-                    worksheet_s.write(row, i, line[i], self.style_dict["header"] if row in [3, 7] or i == 0 else self.style_dict["normal"])
+                    worksheet_s.write(row, i, line[i], self.style_dict["header"] if row in [3, 7] or i == 0 else self.style_dict["normal_money"])
                 if row == 3:
                     worksheet_s.set_column(row, i, 30)
                 else:
@@ -150,7 +228,7 @@ class ExportPanelControl(ExportExcelMixin):
                                             self.style_dict["header_num"], line[i])
                 else:
                     ws_costos.write(row, i, line[i],
-                                    self.style_dict["header"] if row in [3, fila_formula] or i == 0 else self.style_dict["normal"])
+                                    self.style_dict["header"] if row in [3, fila_formula] or i == 0 else self.style_dict["normal_money"])
                 if row == 3:
                     ws_costos.set_column(row, i, 30)
                 else:
@@ -231,7 +309,7 @@ class ExportPanelControl(ExportExcelMixin):
             # datos
             i = row + 1
             for costo in ['costos', 'certificaciones', 'certif_internas']:
-                worksheet_s.write(i, column_num, datos[costo], self.style_dict["normal"])
+                worksheet_s.write(i, column_num, datos[costo], self.style_dict["normal_money"])
                 i += 1
             # formula
             worksheet_s.write(i, column_num, '=-{0}{1}+{0}{2}+{0}{3}'.format(self.get_c(column_num + 1), 5, 6, 7),
@@ -300,7 +378,7 @@ class ExportPanelControl(ExportExcelMixin):
             # datos
             i = row + 1
             for costo in tipo_costo.keys():
-                ws_costos.write(i, column_num, datos[costo], self.style_dict["normal"])
+                ws_costos.write(i, column_num, datos[costo], self.style_dict["normal_money"])
                 i += 1
             # formula
             ws_costos.write(i, column_num, '=sum({0}{1}:{0}{2})'.format(self.get_c(column_num + 1), 5, fila_formula),

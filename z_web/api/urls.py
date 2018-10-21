@@ -17,7 +17,8 @@ from api.views import (
     RegistroAsistenciaEquipoViewSet, ReportAsistenciaByEquipoView,
     TableroControlTallerView, LubricantesValoresTallerViewSet, TrenRodajeTallerViewSet,
     PosesionTallerViewSet, ReparacionesTallerViewSet, EquipoAlquiladoTallerViewSet,
-    ManoObraTallerViewSet, CostoEquipoValoresTallerViewSet
+    ManoObraTallerViewSet, CostoEquipoValoresTallerViewSet, ReportAsistenciaByCCDownloadView,
+    ReportAsistenciaSummaryDownloadView
 )
 
 router = routers.DefaultRouter()
@@ -110,5 +111,10 @@ urlpatterns = [
         TCConsolidadoGraphView.as_view(), name="tablero_control_consolidado"),
     url(r'^taller/asistencia/reportes/equipos/(?P<pk>[^/.]+)/',
         ReportAsistenciaByEquipoView.as_view(), name="taller_reporte_asistencia_equipo"),
+    url(r'^taller/asistencia/reportes/cc/(?P<pk>[^/.]+)/(?P<cc_id>[^/.]+)/',
+        ReportAsistenciaByCCDownloadView.as_view(), name="taller_reporte_asistencia_cc"),
+    url(r'^taller/asistencia/reportes/summary/(?P<pk>[^/.]+)/',
+        ReportAsistenciaSummaryDownloadView.as_view(), name="taller_reporte_asistencia_summary"),
+
 ]
 

@@ -39,7 +39,8 @@ from equipos.models import (
     CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores,
     PosesionValores, ReparacionesValores, EquipoAlquiladoValores,
     ManoObraValores)
-from equipos.calculo_costos import get_stats_of_asistencia_by_equipo
+from equipos.calculo_costos import get_stats_of_asistencia_by_cc
+from equipos.excel import ExportReportTaller
 from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
 from parametros.models import Periodo, FamiliaEquipo
@@ -382,9 +383,32 @@ class ReportAsistenciaByEquipoView(AuthView):
 
     def get(self, request, *args, **kwargs):
         periodo = get_object_or_404(Periodo, pk=self.kwargs.get('pk'))
-        data = get_stats_of_asistencia_by_equipo(periodo)
+        data, raw = get_stats_of_asistencia_by_cc(periodo)
         serializer = ReportAsistenciaItemCCSerializer(data, many=True)
         return Response(serializer.data)
+
+
+class ReportAsistenciaByCCDownloadView(AuthView):
+
+    def get(self, request, *args, **kwargs):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('pk'))
+        centro_costo = get_object_or_404(Obras, pk=self.kwargs.get('cc_id'))
+        xlsx_content = ExportReportTaller().report_asistencia_equipo_by_cc(periodo, centro_costo)
+        response = HttpResponse(xlsx_content,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = u'attachment; filename="Informe de equipos (%s).xlsx"' % centro_costo
+        return response
+
+
+class ReportAsistenciaSummaryDownloadView(AuthView):
+
+    def get(self, request, *args, **kwargs):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('pk'))
+        xlsx_content = ExportReportTaller().report_asistencia_equipo_summary(periodo)
+        response = HttpResponse(xlsx_content,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = u'attachment; filename="Informe de equipos Resumen (%s).xlsx"' % periodo.descripcion
+        return response
 
 
 class CostoEquipoValoresTallerViewSet(ModelViewSet, AuthView):

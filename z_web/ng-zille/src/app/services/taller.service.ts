@@ -1,11 +1,13 @@
 
 import {throwError as observableThrowError,  Observable } from 'rxjs';
-import { IPeriodo, ILubricantesValores, ITrenRodajeValores, IPosesionValores, IReparacionesValores, IReparacionesParametros, IManoObraValores, IEquipoAlquiladoValores, IEquipoMarkupValores } from './../models/Interfaces';
+import { IPeriodo, ILubricantesValores, ITrenRodajeValores, IPosesionValores,
+   IReparacionesValores, IReparacionesParametros, IManoObraValores, IEquipoAlquiladoValores,
+   IEquipoMarkupValores, ICentroCosto } from './../models/Interfaces';
 import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
 import { Injectable } from '@angular/core';
-import { Response, URLSearchParams } from '@angular/http';
+import { Response, URLSearchParams, ResponseContentType, RequestOptions } from '@angular/http';
 import { map } from 'rxjs/operators';
 
 
@@ -151,6 +153,15 @@ export class TallerService {
       .pipe(map((r: Response) => r.json()));
     }
 
+    download_reporte_asistencias_by_cc(periodo: IPeriodo, centro_costo: ICentroCosto): string {
+      // solo devolver la URL, y abrirlo con window.open(service, "_blank");
+      return `/api/taller/asistencia/reportes/cc/${periodo.pk}/${centro_costo.id}/`;
+    }
+
+    download_reporte_asistencias_summary(periodo: IPeriodo): string {
+      // solo devolver la URL, y abrirlo con window.open(service, "_blank");
+      return  `/api/taller/asistencia/reportes/summary/${periodo.pk}/`;
+    }
 
     // COSTOS
     get_tablero_costo_taller(periodo: IPeriodo) {

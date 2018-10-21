@@ -7,15 +7,21 @@ from equipos.models import AsistenciaEquipo, CostoEquipoValores, ParametrosGener
 from core.models import Obras, Equipos
 
 
-def get_stats_of_asistencia(periodo):
+def get_stats_of_asistencia(periodo, centro_costo_id=None):
     """
     Calcula el informe de asistencia, indicando cantidad de dias de
-    los equipos en las centro de costos.
+    los equipos en los centro de costos.
+    Si se indica centro_costo_id será filtro por centro de contro.
     :param periodo: Periodo del informe
     :return: Un queryset con el equipo, el CC y la cantidad de días.
     """
-    asistencias = AsistenciaEquipo.objects.filter(
-        dia__gte=periodo.fecha_inicio, dia__lte=periodo.fecha_fin)
+    if centro_costo_id:
+        asistencias = AsistenciaEquipo.objects.filter(
+            registros__centro_costo_id=centro_costo_id,
+            dia__gte=periodo.fecha_inicio, dia__lte=periodo.fecha_fin)
+    else:
+        asistencias = AsistenciaEquipo.objects.filter(
+            dia__gte=periodo.fecha_inicio, dia__lte=periodo.fecha_fin)
     registros = asistencias.values(
         'registros__equipo',
         'registros__centro_costo'
@@ -26,12 +32,12 @@ def get_stats_of_asistencia(periodo):
             'registros__centro_costo',
             'dias'
         ).order_by()
-    return registros
+    return registros, asistencias
 
 
-def get_stats_of_asistencia_by_equipo(periodo):
+def get_stats_of_asistencia_by_cc(periodo, centro_costo_id=None):
 
-    registros = get_stats_of_asistencia(periodo)
+    registros, asistencias = get_stats_of_asistencia(periodo, centro_costo_id)
     parametros = ParametrosGenerales.vigente(periodo)
 
     equipos = Equipos.objects.filter(
@@ -60,4 +66,21 @@ def get_stats_of_asistencia_by_equipo(periodo):
             } for x in records
         ])
 
-    return processed
+    return processed, asistencias
+
+
+def get_stats_of_asistencia_summary(periodo):
+    registros, asistencias = get_stats_of_asistencia_by_cc(periodo)
+
+    report = {}
+    for row in registros:
+        data = report.get(row["centro_costo_id"], {})
+        total_equipo = row["dias"] * row["costo_diario"]
+        data["centro_costo"] = row["centro_costo"]
+        data["un"] = row["centro_costo"].unidad_negocio.codigo if row["centro_costo"].unidad_negocio else ''
+        if row["equipo"].es_alquilado:
+            data["consumo_alquilados"] = data.get('consumo_alquilados', 0) + total_equipo
+        else:  # propio
+            data["consumo_propios"] = data.get('consumos_propios', 0) + total_equipo
+        report[row["centro_costo_id"]] = data
+    return report, asistencias
