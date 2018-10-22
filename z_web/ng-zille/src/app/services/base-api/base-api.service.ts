@@ -32,7 +32,7 @@ export class BaseApiService {
 
     let _options = new RequestOptions({headers: _headers});
     if (params) {
-      _options.merge({'params': params});
+      _options.params = params;
     }
     if (options) {
       _options.merge(options);
