@@ -1,0 +1,20 @@
+[
+{
+    "model": "equipos.parametrosgenerales",
+    "fields": {
+        "created_at": "2018-10-23T03:40:45Z",
+        "modified_at": "2018-10-23T03:40:45Z",
+        "valido_desde": 40,
+        "consumo_equipo_viales": "0.120",
+        "consumo_equipo_automotor": "0.070",
+        "precio_gasoil": "21.160",
+        "precio_lubricante": "250.000",
+        "precio_hidraulico": "194.000",
+        "horas_por_dia": 6,
+        "dias_por_mes": 21,
+        "horas_trabajo_anio": 1584,
+        "valor_dolar": "31.400"
+    },
+    "pk": 1
+}
+]
