@@ -625,6 +625,7 @@ export class TableroControlOsComponent implements OnInit {
   printTablero() {
     this._notifications.info('Emitiendo el tablero, por favor, espere...');
     this.tablero.comentario = this.comentarios_freeze;
+    this._modal.ngxSmartModalService.get('freezeTablero').close();
     setTimeout(() => {
       const ts = moment();
       while (this.images_count < 4 ) {

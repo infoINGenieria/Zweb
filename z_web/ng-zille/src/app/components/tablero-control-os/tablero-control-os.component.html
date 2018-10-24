@@ -355,16 +355,22 @@
   </div>
 </div>
 
-<ngx-smart-modal #freezeTablero identifier="freezeTablero" customClass="medium-modal">
-    <h2>Emisión de tablero</h2>
-      <strong>¡Atención! Esta acción no puede deshacerse.</strong>
-      <p>Al emitir el tablero, el mismo pasa a estar en sólo lectura, ignorando cualquier cambio
-        que se haga sobre las proyecciones y demás datos intervinietes para
-        {{ centro_costo.obra }}, periodo {{ periodo.descripcion}}.</p>
-        <br>
-        <p>A continuación puede añadir un comentario sobre el mismo que desee incluir en el tablero (opcional):</p>
-        <input type="textarea" name="comentarios_freeze" [(ngModel)]="comentarios_freeze" />
+<ngx-smart-modal #freezeTablero identifier="freezeTablero" customClass="modal-content no-padding">
+  <div class="modal-header">
+    <h3 class="modal-title">Emisión de tablero</h3>
+  </div>
+  <div class="modal-body">
+    <strong>¡Atención! Esta acción no puede deshacerse.</strong>
+    <p>Al emitir el tablero, el mismo pasa a estar en sólo lectura, ignorando cualquier cambio
+      que se haga sobre las proyecciones y demás datos intervinietes para
+      {{ centro_costo.obra }}, periodo {{ periodo.descripcion}}.</p>
+      <br>
+      <p>A continuación puede añadir un comentario sobre el mismo que desee incluir en el tablero (opcional):</p>
+      <textarea name="comentarios_freeze" [(ngModel)]="comentarios_freeze" style="width:100%" rows="4"></textarea>
 
-    <button class="button -dark" (click)="freezeTablero.close()">Cancelar</button>
-    <button class="button success" (click)="printTablero()">Emitir</button>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" (click)="printTablero()">Emitir</button>
+    <button class="btn btn-secondary" (click)="freezeTablero.close()">Cancelar</button>
+  </div>
   </ngx-smart-modal>

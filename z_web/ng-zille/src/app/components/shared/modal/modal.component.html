@@ -8,8 +8,7 @@ customClass="modal-content no-padding">
           <span aria-hidden="true">&times;</span>
         </button-->
     </div>
-    <div class="modal-body">
-        {{ myModal.getData().message }}
+    <div class="modal-body" [innerHTML]="myModal.getData().message">
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-primary" *ngIf="myModal.hasData() && myModal.getData().okCallback"
