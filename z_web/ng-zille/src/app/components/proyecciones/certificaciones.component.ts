@@ -1,16 +1,14 @@
-import { Periodo } from './../../models/Periodo';
-import { NotificationService } from './../../services/core/notifications.service';
-import { Certificacion } from './../../models/Certificacion';
-import { MyCurrencyFormatterDirective } from './../../directives/currency-formatter.directive';
+import { ModalService } from './../../services/core/modal.service';
+import { Periodo } from '../../models/Periodo';
+import { NotificationService } from '../../services/core/notifications.service';
 import {
   IProyeccionCertificacion, ICentroCosto, IPeriodo,
-  IItemProyeccionCertificacion } from './../../models/Interfaces';
-import { RegistroService } from './../../services/registro/registro.service';
+  IItemProyeccionCertificacion } from '../../models/Interfaces';
+import { RegistroService } from '../../services/registro/registro.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
 import { CoreService } from '../../services/core/core.service';
-import { fadeInAnimation } from '../../_animations/index';
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
+import { fadeInAnimation } from '../../_animations';
 import { ProyeccionesService } from '../../services/proyecciones.service';
 
 @Component({
@@ -27,7 +25,7 @@ export class CertificacionesComponent implements OnInit {
     private core_service: CoreService,
     private proyecciones_service: ProyeccionesService,
     private _notifications: NotificationService,
-    private modal: Modal,
+    private modal: ModalService,
     private router: Router,
   ) { }
 
@@ -200,21 +198,11 @@ export class CertificacionesComponent implements OnInit {
     if (this.revision_actual.es_base) {
       const msg = `Está a punto de guardar los cambios en la línea BASE ` +
                   `${this.revision_actual.base_numero}</b>. ¿Continuar?`;
-      const dialogRef = this.modal.confirm()
-      .showClose(true)
-      .title('Guardar línea base')
-      .message(msg)
-      .cancelBtn('Cancelar')
-      .okBtn('Si, continuar!')
-      .open();
-      dialogRef.then(
-        dialog => {
-          dialog.result.then(
-            result => this.guardarActual(),
-            () => {}
-          );
-        },
-      );
+      this.modal.setUp(
+        msg,
+        'Guardar linea base',
+        () => this.guardarActual()
+      ).open();
     } else {
       this.guardarActual();
     }
@@ -255,21 +243,11 @@ export class CertificacionesComponent implements OnInit {
     const periodo = this.find_periodo(this.revision_actual.periodo_id);
     const msg = `Está a punto de crear una nueva revisión de la proyección ` +
                 `para el periodo de <b>${periodo.descripcion}</b>. ¿Continuar?`;
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Guardar como nueva revisión')
-    .message(msg)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, crear!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.crearRevision(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      msg,
+      'Guardar como nueva revisión',
+      () => this.crearRevision()
+    ).open();
   }
 
   crearRevision() {
@@ -296,26 +274,15 @@ export class CertificacionesComponent implements OnInit {
   }
 
   eliminarItemProyeccion(obj: IItemProyeccionCertificacion) {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Quitar ítem')
-    .message(
+    this.modal.setUp(
       '¿Está seguro que desea <b>quitar</b> este ítem de la proyección ' +
-      'de certificacion del sistema?<br><b>Esta acción se confirmará al guardar.</b>')
-    .cancelBtn('Cancelar')
-    .okBtn('Quitar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => {
-            const idx = this.revision_actual.items.indexOf(obj);
-            this.revision_actual.items.splice(idx, 1);
-          },
-          () => {}
-        );
-      },
-    );
+      'de certificacion del sistema?<br><b>Esta acción se confirmará al guardar.</b>',
+      'Quitar ítem',
+      () => {
+        const idx = this.revision_actual.items.indexOf(obj);
+        this.revision_actual.items.splice(idx, 1);
+      }
+    ).open();
   }
 
   establecerComoBaseModal() {
@@ -326,21 +293,11 @@ export class CertificacionesComponent implements OnInit {
       this._notifications.error('Esta revisión ya es BASE.');
       return;
     }
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Establecer nueva línea BASE')
-    .message(`¿Está seguro que desea establecer una <b>nueva línea BASE</b> a partir de esta revisión?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, establecer!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.establecerComoBase(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Está seguro que desea establecer una <b>nueva línea BASE</b> a partir de esta revisión?`,
+      'Establecer nueva línea BASE',
+      () => this.establecerComoBase()
+    ).open();
   }
 
   establecerComoBase() {
@@ -371,30 +328,19 @@ export class CertificacionesComponent implements OnInit {
       this._notifications.error('No puede quitarse una revisión BASE.');
       return;
     }
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Confirmación de eliminación')
-    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión del sistema?` +
-             `<br><b>Esta acción no puede deshacerse.</b>`)
-    .cancelBtn('Cancelar')
-    .okBtn('Eliminar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => {
-            this.isDisabled = true;
-            this.proyecciones_service.delete_proyeccion_certificacion(this.revision_actual).subscribe(
-              r => {
-                this.refresh();
-                this._notifications.success('Revisión eliminada correctamente.');
-              },
-              error => this.handleError(error));
+    this.modal.setUp(
+      `¿Está seguro que desea <b>eliminar</b> esta revisión del sistema?` +
+      `<br><b>Esta acción no puede deshacerse.</b>`,
+      'Confirmación de eliminación',
+      () => {
+        this.isDisabled = true;
+        this.proyecciones_service.delete_proyeccion_certificacion(this.revision_actual).subscribe(
+          r => {
+            this.refresh();
+            this._notifications.success('Revisión eliminada correctamente.');
           },
-          () => {}
-        );
-      },
-    );
+          error => this.handleError(error));
+      }).open();
   }
 
   _tonum(val): number {

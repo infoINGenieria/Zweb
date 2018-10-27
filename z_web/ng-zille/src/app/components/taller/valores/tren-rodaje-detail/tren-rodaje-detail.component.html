@@ -1,0 +1,92 @@
+<div class="panel panel-warning panel-fixed">
+  <div class="panel-heading">
+    Valor de tren de rodaje
+
+  </div>
+  <div class="panel-body" *ngIf="item">
+
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th>Equipo:</th>
+          <td><b>{{ item.equipo.n_interno }}</b> {{ item.equipo.equipo }} ({{ item.equipo.dominio}})</td>
+        </tr>
+        <tr>
+          <th>Periodo:</th>
+          <td>{{ item.valido_desde.descripcion }}</td>
+        </tr>
+        <tr>
+          <th>Costo x Hs ($):</th>
+          <td>{{ item.costo_total_pesos_hora | moneda }}</td>
+        </tr>
+        <tr>
+          <th>Costo Mensual (S):</th>
+          <td>{{ item.costo_total_pesos_mes | moneda }}</td>
+        </tr>
+        <tr>
+          <td>
+            En el admin:
+          </td>
+          <td>
+            <a href="/admin/equipos/trenrodajevalores/{{item.pk}}/" target="_blank">[Editar valores] </a>
+            <a href="/admin/equipos/trenrodajeparametros/{{item.parametros.pk}}/" target="_blank"> [Editar parámetros]
+            </a>
+          </td>
+        </tr>
+    </table>
+
+    <div class="well well-sm">
+      <h4>Valores
+        <a class="btn btn-danger btn-sm" *ngIf="!editing" (click)="to_edit()">Editar</a>
+        <a class="btn btn-default btn-sm" *ngIf="editing" (click)="reset()">Cancelar</a>
+        <a class="btn btn-success btn-sm" *ngIf="editing" (click)="guardarValorModal()">Guardar</a>
+      </h4>
+      <span *ngIf="!editing">
+        {{ item.precio_neumatico | moneda }}
+      </span>
+      <input type="tel" *ngIf="editing" class="form-control input-sm" name="precio_neumatico" [(ngModel)]="item.precio_neumatico"
+        step="0.01" appMyCurrencyFormatter />
+    </div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Parámetros</th>
+          <th style="min-width:125px">Valor</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="item.parametros.vida_util_neumatico">
+        <tr>
+          <td>Vida útil neumático</td>
+          <td>{{ item.parametros.vida_util_neumatico }}</td>
+        </tr>
+        <tr>
+          <td>Cantidad de neumáticos</td>
+          <td>{{ item.parametros.cantidad_neumaticos }}</td>
+        </tr>
+        <tr>
+          <td>Medidas</td>
+          <td>{{ item.parametros.medidas }}</td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="item.parametros.factor_basico">
+        <tr>
+          <td>Factor básico</td>
+          <td>{{ item.parametros.factor_basico }}</td>
+        </tr>
+        <tr>
+          <td>Impacto</td>
+          <td>{{ item.parametros.impacto }}</td>
+        </tr>
+        <tr>
+          <td>Abración</td>
+          <td>{{ item.parametros.abracion }}</td>
+        </tr>
+        <tr>
+          <td>Z</td>
+          <td>{{ item.parametros.z }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

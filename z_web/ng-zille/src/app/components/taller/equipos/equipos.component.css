@@ -1,0 +1,6 @@
+.table {
+    font-size: 90%;
+}
+.table td:last-child {
+    min-width: 170px;
+}

@@ -1,0 +1,2410 @@
+[
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:05Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 5,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "114476.55",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "114476.55"
+    },
+    "pk": 1
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 6,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "107446.20",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "107446.20"
+    },
+    "pk": 2
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 7,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "119313.16",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "119313.16"
+    },
+    "pk": 3
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 8,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "119313.16",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "119313.16"
+    },
+    "pk": 4
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 9,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "77903.19",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "77903.19"
+    },
+    "pk": 5
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 11,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "68869.65",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "68869.65"
+    },
+    "pk": 6
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 19,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "81603.58",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "81603.58"
+    },
+    "pk": 7
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 20,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "88254.81",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "88254.81"
+    },
+    "pk": 8
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 21,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "91552.35",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "91552.35"
+    },
+    "pk": 9
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 22,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "91552.35",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "91552.35"
+    },
+    "pk": 10
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 25,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "73767.80",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "73767.80"
+    },
+    "pk": 11
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 26,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "73767.76",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "73767.76"
+    },
+    "pk": 12
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:06Z",
+        "equipo": 30,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "53434.54",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "53434.54"
+    },
+    "pk": 13
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:06Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 31,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "74212.02",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "74212.02"
+    },
+    "pk": 14
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 32,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "79783.67",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "79783.67"
+    },
+    "pk": 15
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 33,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "79927.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "79927.42"
+    },
+    "pk": 16
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 36,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "73060.18",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "73060.18"
+    },
+    "pk": 17
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 38,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "80711.28",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "80711.28"
+    },
+    "pk": 18
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 39,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "81063.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "81063.72"
+    },
+    "pk": 19
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 40,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "81886.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "81886.49"
+    },
+    "pk": 20
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 41,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "82099.01",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "82099.01"
+    },
+    "pk": 21
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 45,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "79507.12",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "79507.12"
+    },
+    "pk": 22
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 48,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "80809.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "80809.71"
+    },
+    "pk": 23
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 49,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "80809.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "80809.71"
+    },
+    "pk": 24
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 50,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "80809.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "80809.71"
+    },
+    "pk": 25
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 54,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "59171.30",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "59171.30"
+    },
+    "pk": 26
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:07Z",
+        "equipo": 56,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66196.63",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66196.63"
+    },
+    "pk": 27
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:07Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 57,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66275.15",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66275.15"
+    },
+    "pk": 28
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 58,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66275.15",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66275.15"
+    },
+    "pk": 29
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 59,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66626.02",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66626.02"
+    },
+    "pk": 30
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 60,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66626.02",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66626.02"
+    },
+    "pk": 31
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 61,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66626.02",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66626.02"
+    },
+    "pk": 32
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 62,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66626.02",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66626.02"
+    },
+    "pk": 33
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 65,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "111304.73",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "111304.73"
+    },
+    "pk": 34
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 69,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "57775.07",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "57775.07"
+    },
+    "pk": 35
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 75,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "68264.88",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "68264.88"
+    },
+    "pk": 36
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 82,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "54592.48",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "54592.48"
+    },
+    "pk": 37
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 83,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "54592.48",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "54592.48"
+    },
+    "pk": 38
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:08Z",
+        "equipo": 84,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "55066.29",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "55066.29"
+    },
+    "pk": 39
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:08Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 85,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 40
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 86,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 41
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 87,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 42
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 88,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 43
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 90,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 44
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 91,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 45
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 92,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 46
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 95,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 47
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 96,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 48
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 99,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "85887.27",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "85887.27"
+    },
+    "pk": 49
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 100,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78430.29",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78430.29"
+    },
+    "pk": 50
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 101,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78430.29",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78430.29"
+    },
+    "pk": 51
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:09Z",
+        "equipo": 102,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78528.04",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78528.04"
+    },
+    "pk": 52
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:09Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 108,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "67172.69",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "67172.69"
+    },
+    "pk": 53
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 109,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "68369.95",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "68369.95"
+    },
+    "pk": 54
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 110,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "68428.29",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "68428.29"
+    },
+    "pk": 55
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 111,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "68750.51",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "68750.51"
+    },
+    "pk": 56
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 113,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "87797.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "87797.72"
+    },
+    "pk": 57
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 114,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "94544.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "94544.72"
+    },
+    "pk": 58
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 115,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "94544.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "94544.72"
+    },
+    "pk": 59
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 116,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "94619.48",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "94619.48"
+    },
+    "pk": 60
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 117,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "109745.30",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "109745.30"
+    },
+    "pk": 61
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 118,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "109745.30",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "109745.30"
+    },
+    "pk": 62
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 119,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "77706.84",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "77706.84"
+    },
+    "pk": 63
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 120,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "54903.75",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "54903.75"
+    },
+    "pk": 64
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 169,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 65
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:10Z",
+        "modified_at": "2018-10-23T03:50:10Z",
+        "equipo": 181,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "58874.56",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "58874.56"
+    },
+    "pk": 66
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 201,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "83838.19",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "83838.19"
+    },
+    "pk": 67
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 202,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "91900.32",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "91900.32"
+    },
+    "pk": 68
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 218,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "68010.22",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "68010.22"
+    },
+    "pk": 69
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 219,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "62776.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "62776.71"
+    },
+    "pk": 70
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 220,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 71
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 221,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 72
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 222,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60831.55",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60831.55"
+    },
+    "pk": 73
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 223,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 74
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 224,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 75
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 225,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 76
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 226,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 77
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 227,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78950.58",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78950.58"
+    },
+    "pk": 78
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:11Z",
+        "equipo": 228,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 79
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:11Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 229,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78950.58",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78950.58"
+    },
+    "pk": 80
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 230,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 81
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 231,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 82
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 232,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78950.58",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78950.58"
+    },
+    "pk": 83
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 234,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "83103.73",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "83103.73"
+    },
+    "pk": 84
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 235,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "89555.08",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "89555.08"
+    },
+    "pk": 85
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 236,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78950.58",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78950.58"
+    },
+    "pk": 86
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 237,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "78950.58",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "78950.58"
+    },
+    "pk": 87
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 238,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 88
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 239,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 89
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 240,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 90
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 241,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 91
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:12Z",
+        "equipo": 247,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 92
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:12Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 248,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 93
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 249,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 94
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 250,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 95
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 251,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 96
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 252,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 97
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 253,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66730.15",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66730.15"
+    },
+    "pk": 98
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 255,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "91900.32",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "91900.32"
+    },
+    "pk": 99
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 256,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "86620.99",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "86620.99"
+    },
+    "pk": 100
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 257,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "81031.26",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "81031.26"
+    },
+    "pk": 101
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 258,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "100129.82",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "100129.82"
+    },
+    "pk": 102
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 272,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 103
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 275,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 104
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 276,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 105
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:13Z",
+        "equipo": 281,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 106
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:13Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 283,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "81031.26",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "81031.26"
+    },
+    "pk": 107
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 284,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 108
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 285,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 109
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 289,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 110
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 293,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 111
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 294,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "66730.15",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "66730.15"
+    },
+    "pk": 112
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 295,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "58874.56",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "58874.56"
+    },
+    "pk": 113
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 297,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 114
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 298,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 115
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 299,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 116
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 300,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 117
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 301,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 118
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 302,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 119
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:14Z",
+        "equipo": 303,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 120
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:14Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 307,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 121
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 308,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "29771.48",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "29771.48"
+    },
+    "pk": 122
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 310,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 123
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 311,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 124
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 312,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 125
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 313,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 126
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 314,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "43667.49",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "43667.49"
+    },
+    "pk": 127
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 315,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 128
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 316,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 129
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 317,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 130
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 318,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 131
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 321,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "81031.26",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "81031.26"
+    },
+    "pk": 132
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 322,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 133
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:15Z",
+        "equipo": 323,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "0.00",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "0.00"
+    },
+    "pk": 134
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:15Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 324,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 135
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 327,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "58874.56",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "58874.56"
+    },
+    "pk": 136
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 328,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "58272.14",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "58272.14"
+    },
+    "pk": 137
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 329,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "54573.26",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "54573.26"
+    },
+    "pk": 138
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 337,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "54573.26",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "54573.26"
+    },
+    "pk": 139
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 380,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "30335.45",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "30335.45"
+    },
+    "pk": 140
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 381,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "32686.23",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "32686.23"
+    },
+    "pk": 141
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 382,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "86011.12",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "86011.12"
+    },
+    "pk": 142
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 383,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "62018.78",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "62018.78"
+    },
+    "pk": 143
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 384,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "62018.78",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "62018.78"
+    },
+    "pk": 144
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 385,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60478.98",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60478.98"
+    },
+    "pk": 145
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 386,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60478.98",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60478.98"
+    },
+    "pk": 146
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:16Z",
+        "equipo": 387,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60478.98",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60478.98"
+    },
+    "pk": 147
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:16Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 388,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60478.98",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60478.98"
+    },
+    "pk": 148
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 389,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60478.98",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60478.98"
+    },
+    "pk": 149
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 390,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "52710.78",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "52710.78"
+    },
+    "pk": 150
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 391,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60211.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60211.72"
+    },
+    "pk": 151
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 392,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60211.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60211.72"
+    },
+    "pk": 152
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 393,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60211.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60211.72"
+    },
+    "pk": 153
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 394,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60211.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60211.72"
+    },
+    "pk": 154
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 395,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "60211.72",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "60211.72"
+    },
+    "pk": 155
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 396,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 156
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 397,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 157
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 398,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 158
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 399,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 159
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 400,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 160
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:17Z",
+        "equipo": 401,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 161
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:17Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 402,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 162
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 403,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 163
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 404,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 164
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 405,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22817.42",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22817.42"
+    },
+    "pk": 165
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 406,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 166
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 407,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22876.71",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22876.71"
+    },
+    "pk": 167
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 408,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "54573.26",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "54573.26"
+    },
+    "pk": 168
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 409,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 169
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 410,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "22911.21",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "22911.21"
+    },
+    "pk": 170
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 411,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "91900.32",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "91900.32"
+    },
+    "pk": 171
+},
+{
+    "model": "equipos.costoequipovalores",
+    "fields": {
+        "created_at": "2018-10-23T03:50:18Z",
+        "modified_at": "2018-10-23T03:50:18Z",
+        "equipo": 412,
+        "valido_desde": 40,
+        "markup": "100.00",
+        "costo_mensual_del_activo_calculado": "68010.22",
+        "costo_mensual_del_activo_con_mo_calculado": "0.00",
+        "costo_equipo_calculado": "68010.22"
+    },
+    "pk": 172
+}
+]

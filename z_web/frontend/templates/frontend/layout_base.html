@@ -84,7 +84,7 @@
                 $("#id_Signout").click(function(e){
                     e.preventDefault();
                     showConfirm('Cerrar sesión', 'Va a cerrar la sesión. ¿Continuar?', function(){
-                        window.location = '{% url 'logout' %}';
+                        window.location = "{% url 'logout' %}";
                     });
                 });
                 $('#modal').on('show.bs.modal', function (event) {

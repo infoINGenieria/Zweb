@@ -1,22 +1,22 @@
 // import { IMyDpOptions, IMyDateModel, IMyDate } from 'mydatepicker';
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
-import { itemAnim } from './../../_animations/itemAnim';
-import { fadeInAnimation } from './../../_animations/fade-in.animation';
+import { itemAnim } from '../../_animations/itemAnim';
+import { fadeInAnimation } from '../../_animations/fade-in.animation';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router} from '@angular/router';
-import 'rxjs/add/operator/map';
+
 import { DatePickerComponent, IDatePickerConfig, ECalendarValue } from 'ng2-date-picker';
 import * as moment from 'moment';
 
-import { ICentroCosto, IRevision, ICostoTipo, IPresupuesto, IItemPresupuesto } from './../../models/Interfaces';
-import { ItemPresupuesto } from './../../models/ItemPresupuesto';
+import { ICentroCosto, IRevision, ICostoTipo, IPresupuesto, IItemPresupuesto } from '../../models/Interfaces';
+import { ItemPresupuesto } from '../../models/ItemPresupuesto';
 
-import { CoreService } from './../../services/core/core.service';
-import { PresupuestosService } from './../../services/presupuestos/presupuestos.service';
-import { NotificationService } from './../../services/core/notifications.service';
+import { CoreService } from '../../services/core/core.service';
+import { PresupuestosService } from '../../services/presupuestos/presupuestos.service';
+import { NotificationService } from '../../services/core/notifications.service';
 
 import { MyCurrencyFormatterDirective } from '../../directives/currency-formatter.directive';
+import { ModalService } from '../../services/core/modal.service';
 
 @Component({
   selector: 'app-presupuesto',
@@ -41,13 +41,15 @@ export class PresupuestoComponent implements OnInit {
     'returnedValueType': ECalendarValue.String
   };
 
+  selectedItem: IItemPresupuesto;
+
   constructor(
       private route: ActivatedRoute,
       private router: Router,
       private presupuestos_service: PresupuestosService,
       private core_service: CoreService,
       private notify_service: NotificationService,
-      private modal: Modal
+      private modal: ModalService
     ) {
       route.params.subscribe(val => {
         const pk = val['pk'];
@@ -119,24 +121,15 @@ export class PresupuestoComponent implements OnInit {
   }
 
   removeItem(item: IItemPresupuesto) {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Confirmación de eliminación')
-    .message(`¿Está seguro que desea remover este ítem del listado?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Eliminar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => {
-            const index = this.revision.items.indexOf(item);
-            this.revision.items.splice(index, 1);
-          },
-          () => {}
-        );
-      },
-    );
+    this.selectedItem = item;
+    this.modal.setUp(
+      `¿Está seguro que desea remover este ítem del listado?`,
+      'Confirmación de eliminación',
+      () => {
+        const index = this.revision.items.indexOf(this.selectedItem);
+        this.revision.items.splice(index, 1);
+      }
+    ).open();
   }
 
   get items_directos(): Array<IItemPresupuesto> {
@@ -330,21 +323,11 @@ export class PresupuestoComponent implements OnInit {
   }
 
   create_presupuesto_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Crear presupuesto')
-    .message(`Está a punto de crear un nuevo presupuesto ¿Continuar?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, crear!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.create_presupuesto(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `Está a punto de crear un nuevo presupuesto ¿Continuar?`,
+      'Crear presupuesto',
+      () => this.create_presupuesto()
+    ).open();
   }
 
   create_presupuesto() {
@@ -364,21 +347,11 @@ export class PresupuestoComponent implements OnInit {
   }
 
   create_new_version_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Crear nueva revisión')
-    .message(`Está a punto de crear una nueva revisión del presente presupuesto ¿Continuar?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, crear!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.create_new_version(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `Está a punto de crear una nueva revisión del presente presupuesto ¿Continuar?`,
+      'Crear nueva revisión',
+      () => this.create_new_version()
+    ).open();
   }
 
   create_new_version() {
@@ -401,21 +374,11 @@ export class PresupuestoComponent implements OnInit {
   }
 
   save_revision_modal() {
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Guardar revisión')
-    .message(`¿Guardar la revisión actual?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, guardar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.save_revision(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Guardar la revisión actual?`,
+      'Guardar revisión',
+      () => this.save_revision()
+    ).open();
   }
 
   save_revision() {

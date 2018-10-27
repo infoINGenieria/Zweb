@@ -1,10 +1,11 @@
-import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 import {Http, Headers, RequestOptions, Response, URLSearchParams } from '@angular/http';
-import 'rxjs/add/operator/map';
+
 import { environment } from '../../../environments/environment';
 
-import { MenuEntry } from './../../models/Interfaces';
+import { MenuEntry } from '../../models/Interfaces';
 
 @Injectable()
 export class BaseApiService {
@@ -21,16 +22,26 @@ export class BaseApiService {
     }
   }
 
-  private getRequestOptions(params?: URLSearchParams) {
-    const headers = new Headers({'Content-Type': 'application/json', 'X-CSRFToken': this.xsrfToken});
-    if (params) {
-      return new RequestOptions({headers: headers, params: params});
+  private getRequestOptions(params?: URLSearchParams, headers?: Headers, options?: any) {
+    let _headers = new Headers();
+    if (headers) {
+      _headers = headers;
     }
-    return new RequestOptions({headers: headers});
+    _headers.append('Content-Type', 'application/json');
+    _headers.append('X-CSRFToken', this.xsrfToken);
+
+    let _options = new RequestOptions({headers: _headers});
+    if (params) {
+      _options.params = params;
+    }
+    if (options) {
+      _options.merge(options);
+    }
+    return _options;
   }
 
-  get(url, params?: URLSearchParams): Observable<Response> {
-    return this.http.get(`${environment.apiUrl}${url}`, this.getRequestOptions(params));
+  get(url, params?: URLSearchParams, headers?: Headers, options?: any): Observable<Response> {
+    return this.http.get(`${environment.apiUrl}${url}`, this.getRequestOptions(params, headers, options));
   }
 
   post(url, payload): Observable<Response> {
@@ -47,7 +58,8 @@ export class BaseApiService {
   /*   Common methods API */
 
   get_my_menu(): Observable<MenuEntry[]> {
-    return this.get(`${environment.apiUrl}/api/my_menu/`)
-      .map((r: Response) => r.json());
+    return this.get(`${environment.apiUrl}/api/my_menu/`).pipe(
+      map((r: Response) => r.json())
+    );
   }
 }

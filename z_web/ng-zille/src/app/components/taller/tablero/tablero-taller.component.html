@@ -1,0 +1,67 @@
+<h3>
+  <a class="btn btn-default" [routerLink]="['/taller']">
+    <i class="fa fa-chevron-left"></i>
+  </a>
+  Tablero de control de taller
+</h3>
+<div *ngIf="!showing_data">
+  <form class="form-inline">
+    <div class="form-group">
+      <label>Periodo:</label>
+      <select name="periodo_sel" [(ngModel)]="periodo" class="form-control">
+        <option *ngFor="let p of periodos" [ngValue]="p">{{ p.descripcion }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-success" (click)="get_tablero_taller()">
+        <i class="fa fa-area-chart"></i> Ver tablero</button>
+    </div>
+  </form>
+</div>
+
+<div id='tc-content' *ngIf="data.length > 0">
+
+  <div class="well well-sm">
+    <span>Total:</span> <strong>{{ totalFLota?.monto | moneda }}</strong>
+    <span>Cantidad:</span> <strong>{{ totalFLota?.cantidad }}</strong>
+    <button (click)="recalcularFlota()" [disabled]="refreshTotal" class="btn btn-warning btn-sm"
+        [innerHTML]="refreshTotal ? 'Calculando...' : 'Recalcular total flota'"></button>
+    <button type="button" (click)="cerrarTablero()" class="btn btn-default btn-sm">
+        <i class="fa fa-close"></i> Cerrar tablero
+      </button>
+  </div>
+
+  <table class="table table-bordered table-condensed table-hover" id="resultado">
+    <thead>
+      <tr>
+        <th>Equipo <input type="text" [(ngModel)]="filtro_equipo" class="form-control input-sm"/> </th>
+        <th>Costo Lub y fluidos hidraulic</th>
+        <th>Costo tren de rodaje</th>
+        <th>Costo de posesión</th>
+        <th>Reserva para reparaciones</th>
+        <th>COSTO MENSUAL DEL ACTIVO<small>(sin mano de obra)</small></th>
+        <th>COSTO MENSUAL DEL ACTIVO<small>(con mano de obra)</small></th>
+        <th>Costo Mano de Obra Logística</th>
+        <th>Mark Up</th>
+        <th>Costo incurrido de los alquiler</th>
+        <th>Costo de alquiler Zille</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ce of equiposCostos">
+        <td>{{ ce.equipo.n_interno }} - {{ ce.equipo.dominio }}</td>
+        <td>{{ ce.costo_mensual_lubricante |moneda }}</td>
+        <td>{{ ce.costo_mensual_tren_rodaje |moneda }}</td>
+        <td>{{ ce.costo_mensual_posesion |moneda }}</td>
+        <td>{{ ce.costo_mensual_reparacion |moneda }}</td>
+        <td>{{ ce.costo_mensual_del_activo_calculado |moneda }}</td>
+        <td>{{ ce.costo_mensual_del_activo_con_mo_calculado |moneda }}</td>
+        <td>{{ ce.costo_mensual_mo_logistico |moneda }}</td>
+        <td>{{ ce.markup |porciento }}</td>
+        <td>{{ ce.equipo.es_alquilado ? ce.costo_equipo_calculado : "NO APLICA"}}</td>
+        <th>{{ ce.costo_equipo_calculado |moneda}}</th>
+      </tr>
+    </tbody>
+  </table>
+  <p class="alert alert-warning" *ngIf="data.length == 0">Sin datos</p>
+</div>

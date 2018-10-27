@@ -6,6 +6,8 @@ from django.conf import settings
 from parametros.models import FamiliaEquipo, Funcion
 from zweb_utils.models import BaseModel
 
+from .managers import EquipoManager
+
 
 class Equipos(models.Model):
     """
@@ -32,6 +34,20 @@ class Equipos(models.Model):
     vto_otros2 = models.DateField(verbose_name='fecha vto2', db_column='VTO_OTROS2', blank=True, null=True)
     vto_otros3 = models.DateField(verbose_name='fecha vto3', db_column='VTO_OTROS3', blank=True, null=True)
     familia_equipo = models.ForeignKey(FamiliaEquipo, db_column='FAMILIA_EQUIPO_ID', blank=True, null=True)
+
+    es_alquilado = models.BooleanField(verbose_name='es equipo alquilado', default=False, blank=True)
+    fecha_baja = models.DateField(verbose_name='fecha de baja', null=True, blank=True)
+
+    excluir_costos_taller = models.BooleanField(
+        verbose_name='excluir de costos de taller', default=False,
+        help_text='Seleccionar si se desea excluir el equipo del cálculo de costos de Taller')
+
+    implica_mo_logistica = models.BooleanField(
+        verbose_name='implica mano de obra logística', default=False,
+        help_text='Seleccionar si este equipo prorratea mano de obra de carretones'
+    )
+
+    objects = EquipoManager()
 
     class Meta:
         verbose_name = "equipo"
@@ -120,6 +136,8 @@ class Obras(models.Model):
     unidad_negocio = models.ForeignKey(
         'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
 
+    deposito = models.IntegerField('N° Depósito', null=True, unique=True)
+
     class Meta:
         verbose_name = "obra"
         verbose_name_plural = "obras"
@@ -135,11 +153,11 @@ class Obras(models.Model):
     @classmethod
     def get_centro_costos(cls, user):
         obra_qs = Obras.objects.filter(es_cc=True)
-        try:
-            if user.extension.unidad_negocio:
-                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
-        except UserExtension.DoesNotExist:
-            pass
+        if user.extension.unidades_negocio.exists():
+            # En el caso de taller, ven todos los centros de costos
+            if user.extension.unidades_negocio.filter(codigo="TALLER").exists():
+                return obra_qs
+            return obra_qs.filter(unidad_negocio__in=user.extension.unidades_negocio.all())
         return obra_qs
 
     @classmethod
@@ -150,13 +168,9 @@ class Obras(models.Model):
     @classmethod
     def get_obras_by_un(cls, user):
         obra_qs = Obras.objects.all()
-        try:
-            if user.extension.unidad_negocio:
-                obra_qs = obra_qs.filter(unidad_negocio=user.extension.unidad_negocio)
-        except UserExtension.DoesNotExist:
-            pass
+        if user.extension.unidades_negocio.exists():
+            return obra_qs.filter(unidad_negocio__in=user.extension.unidades_negocio.all())
         return obra_qs
-
 
 class InfoObra(BaseModel):
     """
@@ -272,8 +286,10 @@ class UserExtension(models.Model):
     Modelo para almacenar información relativa al usuario
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='extension')
-    unidad_negocio = models.ForeignKey(
-        'organizacion.UnidadNegocio', verbose_name='unidad de negocio', null=True)
+    unidades_negocio = models.ManyToManyField(
+        'organizacion.UnidadNegocio',
+        verbose_name='unidades de negocio',
+        related_name='usuarios_de_la_unidad')
 
     class Meta:
         verbose_name = 'información adicional'
@@ -283,10 +299,9 @@ class UserExtension(models.Model):
         return "información de {}".format(self.user)
 
     @classmethod
-    def get_unidad_negocio(cls, user):
-        try:
-            if user.extension.unidad_negocio:
-                return user.extension.unidad_negocio
-        except UserExtension.DoesNotExist:
-            pass
-        return None
+    def get_unidades_negocio(cls, user):
+        return user.extension.unidades_negocio.all()
+
+    @classmethod
+    def esta_en_la_unidad(cls, user, codigo):
+        return user.extension.unidades_negocio.filter(codigo=codigo).exists()

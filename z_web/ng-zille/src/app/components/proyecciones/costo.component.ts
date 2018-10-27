@@ -1,20 +1,18 @@
-import { Periodo } from './../../models/Periodo';
-import { PresupuestosService } from './../../services/presupuestos/presupuestos.service';
+import { ModalService } from './../../services/core/modal.service';
+import { Periodo } from '../../models/Periodo';
+import { PresupuestosService } from '../../services/presupuestos/presupuestos.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute} from '@angular/router';
 
-import { Modal } from 'ngx-modialog/plugins/bootstrap';
-import { MyCurrencyFormatterDirective } from './../../directives/currency-formatter.directive';
-
-import { fadeInAnimation } from '../../_animations/index';
-import { NotificationService } from './../../services/core/notifications.service';
+import { fadeInAnimation } from '../../_animations';
+import { NotificationService } from '../../services/core/notifications.service';
 import { CoreService } from '../../services/core/core.service';
 import { ProyeccionesService } from '../../services/proyecciones.service';
-import { RegistroService } from './../../services/registro/registro.service';
+import { RegistroService } from '../../services/registro/registro.service';
 
 import {
-  IProyeccionCosto, ICentroCosto, IPeriodo, ICostoTipo,
-  IItemProyeccionCosto } from './../../models/Interfaces';
+  IProyeccionCosto, ICentroCosto, ICostoTipo,
+  IItemProyeccionCosto } from '../../models/Interfaces';
 
 import * as moment from 'moment';
 
@@ -28,12 +26,11 @@ export class CostoComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private registro_service: RegistroService,
     private core_service: CoreService,
     private proyecciones_service: ProyeccionesService,
     private presupuesto_service: PresupuestosService,
     private _notifications: NotificationService,
-    private modal: Modal,
+    private modal: ModalService,
     private router: Router,
   ) { }
 
@@ -215,21 +212,11 @@ export class CostoComponent implements OnInit {
       this._notifications.error(`No se encuentra la columna para ${periodo.descripcion}`);
       return;
     }
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Quitar columna')
-    .message(`¿Seguro que desea quitar la columna de ${periodo.descripcion}?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, quitar!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.delPeriodoOfItems(id_periodo),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Seguro que desea quitar la columna de ${periodo.descripcion}?`,
+      'Quitar columna',
+      () => this.delPeriodoOfItems(id_periodo)
+    ).open();
   }
 
   delPeriodoOfItems(id_periodo) {
@@ -302,21 +289,11 @@ export class CostoComponent implements OnInit {
     if (this.revision_actual.es_base) {
       const msg = `Está a punto de guardar los cambios en la línea BASE ` +
                   `${this.revision_actual.base_numero}</b>. ¿Continuar?`;
-      const dialogRef = this.modal.confirm()
-      .showClose(true)
-      .title('Guardar línea base')
-      .message(msg)
-      .cancelBtn('Cancelar')
-      .okBtn('Si, continuar!')
-      .open();
-      dialogRef.then(
-        dialog => {
-          dialog.result.then(
-            result => this.guardarActual(),
-            () => {}
-          );
-        },
-      );
+      const dialogRef = this.modal.setUp(
+        msg,
+        'Guardar línea base',
+        () => this.guardarActual()
+      ).open();
     } else {
       this.guardarActual();
     }
@@ -357,21 +334,11 @@ export class CostoComponent implements OnInit {
     const periodo = this.find_periodo(this.revision_actual.periodo_id);
     const msg = `Está a punto de crear una nueva revisión de la proyección ` +
                 `para el periodo de <b>${periodo.descripcion}</b>. ¿Continuar?`;
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Guardar como nueva revisión')
-    .message(msg)
-    .cancelBtn('Cancelar')
-    .okBtn('Si, crear!')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.crearRevision(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      msg,
+      'Guardar como nueva revisión',
+      () => this.crearRevision()
+    ).open();
   }
 
   crearRevision() {
@@ -411,21 +378,11 @@ export class CostoComponent implements OnInit {
       return;
     }
 
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Establecer nueva línea BASE')
-    .message(`¿Está seguro que desea establecer una <b>nueva línea BASE</b> a partir de esta revisión?`)
-    .cancelBtn('Cancelar')
-    .okBtn('Si')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => this.establecerComoBase(),
-          () => {}
-        );
-      },
-    );
+    this.modal.setUp(
+      `¿Está seguro que desea establecer una <b>nueva línea BASE</b> a partir de esta revisión?`,
+      'Establecer nueva línea BASE',
+      () => this.establecerComoBase()
+    ).open();
   }
 
   establecerComoBase() {
@@ -465,30 +422,19 @@ export class CostoComponent implements OnInit {
       this._notifications.error('Esta revisión aún no ha sido creada.');
       return;
     }
-    const dialogRef = this.modal.confirm()
-    .showClose(true)
-    .title('Confirmación de eliminación')
-    .message(`¿Está seguro que desea <b>eliminar</b> esta revisión del sistema?` +
-             `<br><b>Esta acción no puede deshacerse.</b>`)
-    .cancelBtn('Cancelar')
-    .okBtn('Eliminar')
-    .open();
-    dialogRef.then(
-      dialog => {
-        dialog.result.then(
-          result => {
-            this.isDisabled = true;
-            this.proyecciones_service.delete_proyeccion_costo(this.revision_actual).subscribe(
-              r => {
-                this.refresh();
-                this._notifications.success('Revisión eliminada correctamente.');
-              },
-              error => this.handleError(error));
+    const dialogRef = this.modal.setUp(
+      `¿Está seguro que desea <b>eliminar</b> esta revisión del sistema?` +
+      `<br><b>Esta acción no puede deshacerse.</b>`,
+      'Confirmación de eliminación',
+      () => {
+        this.isDisabled = true;
+        this.proyecciones_service.delete_proyeccion_costo(this.revision_actual).subscribe(
+          r => {
+            this.refresh();
+            this._notifications.success('Revisión eliminada correctamente.');
           },
-          () => {}
-        );
-      },
-    );
+          error => this.handleError(error));
+      }).open();
   }
 
 }

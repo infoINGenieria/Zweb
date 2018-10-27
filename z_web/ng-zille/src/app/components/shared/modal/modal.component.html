@@ -1,0 +1,23 @@
+
+<ngx-smart-modal #myModal identifier="myModal" [closable]="false"
+customClass="modal-content no-padding">
+  <div *ngIf="myModal.hasData()">
+    <div class="modal-header">
+        <h3 class="modal-title">{{ myModal.getData().title }}</h3>
+        <!--button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="myModal.close()">
+          <span aria-hidden="true">&times;</span>
+        </button-->
+    </div>
+    <div class="modal-body" [innerHTML]="myModal.getData().message">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" *ngIf="myModal.hasData() && myModal.getData().okCallback"
+        (click)="myModal.getData().okCallback()">
+          {{ myModal.getData().okText }}
+      </button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="myModal.getData().cancelCallback()">
+          {{ myModal.getData().cancelText }}
+      </button>
+    </div>
+  </div>
+</ngx-smart-modal>

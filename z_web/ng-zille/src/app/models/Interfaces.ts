@@ -49,6 +49,13 @@ export interface ICentroCosto {
     info_obra?: IInfoObra;
 }
 
+export interface ICentroCostoByDeposito {
+    id: number;
+    obra: string;
+    codigo: string;
+    deposito: number;
+}
+
 export interface IRevision {
     pk?: number;
     presupuesto: IPresupuesto;
@@ -245,4 +252,222 @@ export interface ITableroControlEmitido {
     costos_img: string;
     avance_img: string;
     resultado_img: string;
+}
+
+export interface IFamiliaEquipo {
+    pk?: number;
+    nombre: string;
+}
+
+export interface IEquipo {
+    id?: number;
+    n_interno: string;
+    equipo: string;
+    marca: string;
+    modelo: string;
+    anio: string;
+    dominio: string;
+    nro_serie: string;
+    familia_equipo: IFamiliaEquipo;
+    familia_equipo_id: number;
+    es_alquilado: boolean;
+    fecha_baja?: Date;
+    excluir_costos_taller: boolean;
+    implica_mo_logistica: boolean;
+}
+
+export interface IParametrosGenerales {
+    pk?: number;
+    valido_desde_id: number;
+    valido_desde: IPeriodo;
+    consumo_equipo_viales: number;
+    consumo_equipo_automotor: number;
+    precio_gasoil: number;
+    precio_lubricante: number;
+    precio_hidraulico: number;
+    horas_por_dia: number;
+    dias_por_mes: number;
+    horas_trabajo_anio: number;
+    valor_dolar: number;
+}
+
+export interface IRegistroAsistencia {
+    pk?: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    asistencia_id?: number;
+}
+
+export interface IAsistencia {
+    pk?: number;
+    dia: string;
+    registros: Array<IRegistroAsistencia>;
+}
+
+
+/* Reporte de asistencias  */
+export interface ReporteAsistenciaItemByEquipo {
+    equipo_id: number;
+    equipo: IEquipo;
+    centro_costo: ICentroCosto;
+    centro_costo_id: number;
+    dias: number;
+    horas: number;
+    costo_hs: number;
+    costo_diario: number;
+    costo_total: number;
+}
+
+export interface IEquipoCostoTaller {
+    equipo: IEquipo;
+    equipo_id: number;
+    periodo_id: number;
+    markup: number;
+    costo_mensual_del_activo_calculado: number;
+    costo_mensual_del_activo_con_mo_calculado: number;
+    costo_equipo_calculado: number;
+    costo_mensual_lubricante: number;
+    costo_mensual_tren_rodaje: number;
+    costo_mensual_posesion: number;
+    costo_mensual_reparacion: number;
+    costo_mensual_mo_logistico: number;
+}
+
+export interface ITotalFlota {
+    monto: number;
+    cantidad: number;
+}
+
+export interface ILubricanteItem {
+    pk: number;
+    descripcion: string;
+    es_filtro: boolean;
+    observaciones: string;
+}
+
+export interface ILubricanteParametroItem {
+    cambios_por_anio: number;
+    volumen_por_cambio: number;
+}
+
+export interface ILubricantesValoresItem {
+    item: ILubricanteItem;
+    parametros: ILubricanteParametroItem;
+    valor_unitario: number;
+    costo_por_mes: number;
+}
+
+export interface ILubricantesValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    parametros_pk: number;
+    items: Array<ILubricantesValoresItem>;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}
+
+export interface ITrenRodajeParametros {
+    pk: number;
+    vida_util_neumatico: number;
+    cantidad_neumaticos: number;
+    medidas: string;
+    factor_basico: number;
+    impacto: number;
+    abracion: number;
+    z: number;
+}
+
+export interface ITrenRodajeValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    precio_neumatico: number;
+    parametros: ITrenRodajeParametros;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}
+
+export interface IPosesionParametros {
+    pk: number;
+    posesion_hs: number;
+    precio_del_activo: number;
+    residual: number;
+    residual_en_USD: number;
+    posesion_en_anios: number;
+}
+
+export interface IPosesionValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    seguros: number;
+    ruta: number;
+    vtv: number;
+    certificacion: number;
+    habilitaciones: number;
+    rsv: number;
+    vhf: number;
+    impuestos: number;
+    parametros: IPosesionParametros;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}
+
+
+export interface IReparacionesParametros {
+    pk: number;
+    factor_basico: number;
+    multiplicador: number;
+}
+
+export interface IReparacionesValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    parametros: IReparacionesParametros;
+    costo_total_pesos_hora: number;
+    costo_total_pesos_mes: number;
+}
+
+export interface IManoObraValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    taller: number;
+    plataforma_combustible: number;
+    carretones: number;
+}
+
+export interface IEquipoAlquiladoValores {
+    pk?: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    alquiler: number;
+    comentarios: string;
+}
+
+export interface IEquipoMarkupValores {
+    pk?: number;
+    equipo: IEquipo;
+    equipo_id: number;
+    valido_desde: IPeriodo;
+    valido_desde_id: number;
+    markup: number;
+    costo_mensual_del_activo_calculado: number;
+    costo_mensual_del_activo_con_mo_calculado: number;
+    costo_equipo_calculado: number;
+    costo_mensual_mo_logistico: number;
 }

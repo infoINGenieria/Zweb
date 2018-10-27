@@ -1,0 +1,152 @@
+<div class="panel panel-warning panel-fixed">
+  <div class="panel-heading">
+    Valor de posesión
+
+  </div>
+  <div class="panel-body" *ngIf="item">
+
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th>Equipo:</th>
+          <td><b>{{ item.equipo.n_interno }}</b> {{ item.equipo.equipo }} ({{ item.equipo.dominio}})</td>
+        </tr>
+        <tr>
+          <th>Periodo:</th>
+          <td>{{ item.valido_desde.descripcion }}</td>
+        </tr>
+        <tr>
+          <th>Costo x Hs ($):</th>
+          <td>{{ item.costo_total_pesos_hora | moneda }}</td>
+        </tr>
+        <tr>
+          <th>Costo Mensual (S):</th>
+          <td>{{ item.costo_total_pesos_mes | moneda }}</td>
+        </tr>
+        <tr>
+          <td>
+            En el admin:
+          </td>
+          <td>
+            <a href="/admin/equipos/posesionvalores/{{item.pk}}/" target="_blank">[Editar valores] </a>
+            <a href="/admin/equipos/posesionparametros/{{item.parametros.pk}}/" target="_blank"> [Editar parámetros]
+            </a>
+          </td>
+        </tr>
+    </table>
+
+    <div>
+      <h4>Valores
+        <a class="btn btn-danger btn-sm" *ngIf="!editing" (click)="to_edit()">Editar</a>
+        <a class="btn btn-default btn-sm" *ngIf="editing" (click)="reset()">Cancelar</a>
+        <a class="btn btn-success btn-sm" *ngIf="editing" (click)="guardarValorModal()">Guardar</a>
+      </h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th style="min-width:125px">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Seguros</td>
+            <td>
+              <span *ngIf="!editing">{{ item.seguros | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="seguros" [(ngModel)]="item.seguros"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>RUTA</td>
+            <td>
+              <span *ngIf="!editing">{{ item.ruta | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="ruta" [(ngModel)]="item.ruta"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>VTV</td>
+            <td>
+              <span *ngIf="!editing">{{ item.vtv | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="vtv" [(ngModel)]="item.vtv"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>Certificaciones</td>
+            <td>
+              <span *ngIf="!editing">{{ item.certificacion | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="certificacion" [(ngModel)]="item.certificacion"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>Habilitaciones</td>
+            <td>
+              <span *ngIf="!editing">{{ item.habilitaciones | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="habilitaciones" [(ngModel)]="item.habilitaciones"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>RSV</td>
+            <td>
+              <span *ngIf="!editing">{{ item.rsv | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="rsv" [(ngModel)]="item.rsv"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>VHF</td>
+            <td>
+              <span *ngIf="!editing">{{ item.vhf | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="vhf" [(ngModel)]="item.vhf"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+          <tr>
+            <td>Impuestos</td>
+            <td>
+              <span *ngIf="!editing">{{ item.impuestos | moneda }}</span>
+              <input type="tel" *ngIf="editing" class="form-control input-sm" name="impuestos" [(ngModel)]="item.impuestos"
+                step="0.01" appMyCurrencyFormatter />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Parámetros</th>
+          <th style="min-width:125px">Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Posesión HS</td>
+          <td>{{ item.parametros.posesion_hs }}</td>
+        </tr>
+        <tr>
+          <td>Posesión en años de neumáticos</td>
+          <td>{{ item.parametros.posesion_en_anios?.toFixed(2) }}</td>
+        </tr>
+        <tr>
+          <td>Precio del activo</td>
+          <td>{{ item.parametros.precio_del_activo }}</td>
+        </tr>
+        <tr>
+          <td>Residual</td>
+          <td>{{ item.parametros.residual }}</td>
+        </tr>
+        <tr>
+          <td>Residual en USD</td>
+          <td>{{ item.parametros.residual_en_USD }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

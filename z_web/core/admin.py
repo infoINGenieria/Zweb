@@ -5,21 +5,27 @@ from django.contrib.auth.models import User
 from core.models import (
     Equipos, EstServicio, FrancoLicencia, Obras,
     Operarios, Usuario, CCT, UserExtension, InfoObra)
+from core.actions import set_baja_equipo, set_baja_obra
 
 
 @admin.register(Equipos)
 class Equipos(admin.ModelAdmin):
-    list_display = ('n_interno', 'familia_equipo', 'equipo', 'marca', 'modelo', 'año', 'dominio', )
-    list_filter = ('marca', 'año', 'familia_equipo', )
+    list_display = ('n_interno', 'familia_equipo', 'equipo', 'marca', 'modelo', 'año', 'dominio', 'es_alquilado', 'fecha_baja')
+    list_filter = ('marca', 'año', 'familia_equipo', 'es_alquilado', )
     search_fields = ('n_interno', 'equipo', 'año', 'dominio', 'modelo')
     ordering = ('n_interno', )
     list_display_links = ('n_interno', 'equipo', )
+    actions = [set_baja_equipo]
     fieldsets = (
         (None, {
             'fields': (('familia_equipo', 'equipo'),
                        ('n_interno', 'nro_serie'),
                        ('marca', 'modelo',),
-                       ('dominio',  'año'), )
+                       ('dominio',  'año'),
+                       ('es_alquilado',  'fecha_baja'),
+                       ('excluir_costos_taller', ),
+                       ('implica_mo_logistica', ),
+                       )
         }),
         ("Vencimientos", {
             'fields': (('vto_vtv', 'vto_seguro', 'vto_ruta'),
@@ -43,14 +49,15 @@ class InfoObraInline(admin.StackedInline):
 
 @admin.register(Obras)
 class ObrasAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'obra', 'cuit', 'lugar', 'responsable', 'is_active', 'es_cc', 'prorratea_costos')
+    list_display = ('codigo', 'obra', 'deposito', 'cuit', 'lugar', 'responsable', 'is_active', 'es_cc', 'prorratea_costos')
     list_filter = ('responsable', 'descuenta_francos', 'descuenta_licencias', "es_cc", 'prorratea_costos')
-    search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', )
+    search_fields = ('codigo', 'obra', 'comitente', 'responsable', 'cuit', 'deposito')
     ordering = ('fecha_fin', 'codigo', '-es_cc',)
     inlines = [InfoObraInline, ]
+    actions = [set_baja_obra]
     fieldsets = (
         (None, {
-            'fields': (('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),
+            'fields': (('codigo', 'obra', 'deposito', 'fecha_inicio', 'fecha_fin'),
                        ('cuit', 'lugar', 'plazo', 'unidad_negocio'),
                        ('contrato', 'comitente', 'responsable',))
         }),
@@ -74,12 +81,8 @@ class ObrasAdmin(admin.ModelAdmin):
         return qs
 
     def get_form(self, request, obj=None, **kwargs):
-        unidad_negocio = None
-        try:
-            unidad_negocio = request.user.extension.unidad_negocio
-        except UserExtension.DoesNotExist:
-            pass
-        if unidad_negocio:
+        unidades_negocio = request.user.extension.unidades_negocio.all()
+        if unidades_negocio.count() == 1:
             # si tiene, ocultamos el campo
             self.fieldsets[0][1]["fields"] = (
                 ('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),
@@ -90,12 +93,9 @@ class ObrasAdmin(admin.ModelAdmin):
         return form
 
     def save_model(self, request, obj, form, change):
-        unidad_negocio = None
-        try:
-            unidad_negocio = request.user.extension.unidad_negocio
-        except UserExtension.DoesNotExist:
-            pass
-        if unidad_negocio:
+        unidades_negocio = request.user.extension.unidades_negocio.all()
+        if unidades_negocio.count() == 1:
+            unidad_negocio = unidades_negocio.get()
             if not obj.unidad_negocio or (
                     obj.unidad_negocio and obj.unidad_negocio_id != unidad_negocio.pk):
                 obj.unidad_negocio = unidad_negocio

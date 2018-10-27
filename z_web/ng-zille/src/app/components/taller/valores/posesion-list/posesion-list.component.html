@@ -1,0 +1,54 @@
+
+  <form method="get" class="horizontal-form" #f_filter="ngForm">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="form-group">
+            <select class="form-control input-sm" ngModel name='valido_desde'>
+              <option value="">Valido desde</option>
+              <option *ngFor="let p of periodos" [ngValue]="p.pk">{{ p.descripcion }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+              <input type="text" ngModel placeholder="Buscar equipo..." name="equipo" class="form-control input-sm">
+            </div>
+          </div>
+          <div class="col-sm-5">
+              <button class="btn btn-sm btn-info" (click)="filterList(f_filter)">Filtrar</button>
+              <button class="btn btn-sm btn-default" (click)="cleanFilter(f_filter)">Limpiar filtro</button>
+              <a class="btn btn-sm btn-success" href="/admin/equipos/posesionvalores/add/"  target="_blank">Añadir individual</a>
+          </div>
+      </div>
+    </form>
+
+  <p *ngIf="!loaded" ><i class="fa fa-spinner fa-spin"></i> Cargando...</p>
+  <table class="table table-hover table-clickeable" *ngIf="valores.length>0" [@fadeInAnimation]>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Válido desde</th>
+        <th>Equipo</th>
+        <th>Costo Hora</th>
+        <th>Costo Mes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let valor of valores" [@fadeInAnimation] (click)="selectItem(valor)" [ngClass]="selectedItem?.pk === valor.pk ? 'selected': ''">
+        <td>#{{ valor.pk }}</td>
+        <td>{{ valor.valido_desde.descripcion }}</td>
+        <td><b>{{ valor.equipo.n_interno }}</b> {{ valor.equipo.equipo }} {{ valor.equipo.marca}} {{ valor.equipo.dominio }}</td>
+        <td>{{ valor.costo_total_pesos_hora | moneda }}</td>
+        <td>{{ valor.costo_total_pesos_mes | moneda }}</td>
+      </tr>
+
+    </tbody>
+  </table>
+  <app-pagination
+    (changePage)="refresh($event)"
+    [page]="page.pageNumber"
+    [perPage]="page.size"
+    [count]="page.totalElements"></app-pagination>
+  <p *ngIf="valores.length==0 && loaded" class="alert alert-warning ">No hay items para visualizar.</p>
+
+<div>

@@ -2,7 +2,8 @@
 import json
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.db.models import Sum, Max, Min
+from django.db.models import Sum, Max, Min, Q
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.decorators import list_route, detail_route
@@ -17,14 +18,32 @@ from api.serializers import (
     CertificacionSerializer, CertificacionItemSerializer, PeriodoSerializer,
     AvanceObraSerializer, ProyeccionAvanceObraSerializer,
     ProyeccionCertificacionSerializer, ProyeccionCostoSerializer,
-    TableroControlOSSerializer)
+    TableroControlOSSerializer, EquipoSerializer, FamiliaEquipoSerializer,
+    ParametrosGeneralesTallerSerializer, AsistenciaEquipoSerializer,
+    RegistroAsistenciaEquipoSerializer, ReportAsistenciaItemCCSerializer,
+    TableroControlTallerSerializer, ValoresLubricantesTallerSerializer,
+    ValoresTrenRodajeTallerSerializer, ValoresPosesionTallerSerializer,
+    ValoresReparacionesTallerSerializer, ValoresManoObraTallerSerializer,
+    ValoresEquipoAlquiladoTallerSerializer, CostoEquipoValoresTallerSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
-    ProyeccionCostoFilter)
-from core.models import Obras, UserExtension
+    ProyeccionCostoFilter, EquiposFilter, ParametrosGeneralesFilter,
+    AsistenciaEquipoFilter, RegistroAsistenciaEquipoFilter,
+    ValoresEquipoTallerFilter, TrenRodajeValoresTallerFilter,
+    PosesionValoresTallerFilter, ReparacionesValoresTallerFilter,
+    EquipoAlquiladoValoresTallerFilter, ManoObraValoresTallerFilter,
+    CostoEquipoValoresTallerFilter)
+from equipos.models import (
+    ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
+    CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores,
+    PosesionValores, ReparacionesValores, EquipoAlquiladoValores,
+    ManoObraValores)
+from equipos.calculo_costos import get_stats_of_asistencia_by_cc
+from equipos.excel import ExportReportTaller
+from core.models import Obras, UserExtension, Equipos
 from costos.models import CostoTipo, AvanceObra, Costo
-from parametros.models import Periodo
+from parametros.models import Periodo, FamiliaEquipo
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from proyecciones.models import (
@@ -216,6 +235,25 @@ class CentroCostoViewSet(ModelViewSet, AuthView):
     def get_queryset(self):
         return self.get_centros_costos()
 
+    @list_route(methods=['get'], url_path='activos')
+    def activos(self, request):
+        qs = self.get_queryset().exclude(fecha_fin__isnull=False)
+        return Response({
+            'count': qs.count(),
+            'centros_costos': ObrasSerializer(qs, many=True).data
+        })
+
+    @list_route(methods=['get'], url_path='by-deposito')
+    def by_deposito(self, request):
+        qs = self.get_queryset().exclude(deposito__isnull=True)
+        centro_costos = [{
+            'id': cc.id,
+            'obra': cc.obra,
+            'codigo': cc.codigo,
+            'deposito': cc.deposito
+        } for cc in qs]
+        return Response(centro_costos)
+
 
 class CertificacionRealViewSet(ModelViewSet, AuthView):
     serializer_class = CertificacionSerializer
@@ -279,3 +317,170 @@ class TableroControlOSEmitidosView(ModelViewSet, AuthView):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+
+class EquiposViewSet(ModelViewSet, AuthView):
+    serializer_class = EquipoSerializer
+    filter_class = EquiposFilter
+
+    def get_queryset(self):
+        return Equipos.objects.exclude(id=1).order_by('fecha_baja')
+
+    @detail_route(methods=['post'], url_path='set-baja')
+    def set_baja(self, request, pk):
+        equipo = self.get_object()
+        equipo.fecha_baja = timezone.now().date()
+        equipo.save()
+        return Response({'status': 'ok', 'equipo': EquipoSerializer(equipo).data})
+
+    @list_route(methods=['get'], url_path='activos-taller')
+    def activos(self, request):
+        qs = Equipos.objects.exclude(
+            (Q(fecha_baja__isnull=False) | Q(excluir_costos_taller=True)) | Q(pk=1)
+        ).order_by('fecha_baja')
+        return Response({
+            'count': qs.count(),
+            'equipos': EquipoSerializer(qs, many=True).data
+        })
+
+
+class FamiliaEquipoViewSet(ModelViewSet, AuthView):
+    serializer_class = FamiliaEquipoSerializer
+
+    def get_queryset(self):
+        return FamiliaEquipo.objects.all()
+
+
+class ParametrosGeneralesTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ParametrosGeneralesTallerSerializer
+    queryset = ParametrosGenerales.objects.all()
+    filter_class = ParametrosGeneralesFilter
+
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        return Response(ParametrosGeneralesTallerSerializer(
+            self.queryset.latest('valido_desde__fecha_inicio')).data
+        )
+
+
+class AsistenciaEquipoViewSet(ModelViewSet, AuthView):
+    serializer_class = AsistenciaEquipoSerializer
+    filter_class = AsistenciaEquipoFilter
+
+    def get_queryset(self):
+        return AsistenciaEquipo.objects.all().order_by('-dia')
+
+
+class RegistroAsistenciaEquipoViewSet(ModelViewSet, AuthView):
+    serializer_class = RegistroAsistenciaEquipoSerializer
+    filter_class = RegistroAsistenciaEquipoFilter
+
+    def get_queryset(self):
+        return RegistroAsistenciaEquipo.objects.all()
+
+
+class ReportAsistenciaByEquipoView(AuthView):
+
+    def get(self, request, *args, **kwargs):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('pk'))
+        data, raw = get_stats_of_asistencia_by_cc(periodo)
+        serializer = ReportAsistenciaItemCCSerializer(data, many=True)
+        return Response(serializer.data)
+
+
+class ReportAsistenciaByCCDownloadView(AuthView):
+
+    def get(self, request, *args, **kwargs):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('pk'))
+        centro_costo = get_object_or_404(Obras, pk=self.kwargs.get('cc_id'))
+        xlsx_content = ExportReportTaller().report_asistencia_equipo_by_cc(periodo, centro_costo)
+        response = HttpResponse(xlsx_content,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = u'attachment; filename="Informe de equipos (%s).xlsx"' % centro_costo
+        return response
+
+
+class ReportAsistenciaSummaryDownloadView(AuthView):
+
+    def get(self, request, *args, **kwargs):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('pk'))
+        xlsx_content = ExportReportTaller().report_asistencia_equipo_summary(periodo)
+        response = HttpResponse(xlsx_content,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = u'attachment; filename="Informe de equipos Resumen (%s).xlsx"' % periodo.descripcion
+        return response
+
+
+class CostoEquipoValoresTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = CostoEquipoValoresTallerSerializer
+    queryset = CostoEquipoValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = CostoEquipoValoresTallerFilter
+
+
+class TableroControlTallerView(ReadOnlyModelViewSet, AuthView):
+    serializer_class = TableroControlTallerSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
+        equipos = Equipos.objects.actives_in_cost(periodo.fecha_inicio)
+        valores = []
+        for equipo in equipos:
+            valores.append(CostoEquipoValores.objects.vigente(equipo=equipo, periodo=periodo))
+        return valores
+
+    def get_object(self):
+        periodo = get_object_or_404(Periodo, pk=self.kwargs.get('periodo_pk'))
+        equipo = get_object_or_404(Equipos, pk=self.kwargs.get('pk'))
+        try:
+            return CostoEquipoValores.objects.vigente(equipo=equipo, periodo=periodo)
+        except CostoEquipoValores.DoesNotExist:
+            raise Http404
+
+    @list_route(methods=['get'], url_path='flota')
+    def flota(self, request, periodo_pk):
+        recalc = bool(request.GET.get('recalcular', False))
+        periodo = get_object_or_404(Periodo, pk=periodo_pk)
+        flota, _ = TotalFlota.objects.get_or_create(valido_desde=periodo)
+        if recalc:
+            flota.calcular_total_flota()
+        return Response({
+            'monto': "%.2f" % flota.monto,
+            'cantidad': flota.cantidad
+        })
+
+
+class LubricantesValoresTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresLubricantesTallerSerializer
+    queryset = LubricantesValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = ValoresEquipoTallerFilter
+
+
+class TrenRodajeTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresTrenRodajeTallerSerializer
+    queryset = TrenRodajeValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = TrenRodajeValoresTallerFilter
+
+
+class PosesionTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresPosesionTallerSerializer
+    queryset = PosesionValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = PosesionValoresTallerFilter
+
+
+class ReparacionesTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresReparacionesTallerSerializer
+    queryset = ReparacionesValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = ReparacionesValoresTallerFilter
+
+
+class EquipoAlquiladoTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresEquipoAlquiladoTallerSerializer
+    queryset = EquipoAlquiladoValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
+    filter_class = EquipoAlquiladoValoresTallerFilter
+
+
+class ManoObraTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = ValoresManoObraTallerSerializer
+    queryset = ManoObraValores.objects.order_by('-valido_desde__fecha_inicio')
+    filter_class = ManoObraValoresTallerFilter

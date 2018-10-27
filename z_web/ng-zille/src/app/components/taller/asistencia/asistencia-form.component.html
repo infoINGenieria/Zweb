@@ -1,0 +1,117 @@
+<div class="col-lg-12">
+  <div [ngSwitch]='initialLoading'>
+    <div *ngSwitchCase="true">
+      <div class="loader">Loading...</div>
+    </div>
+    <div *ngSwitchCase="false" [@fadeInAnimation]>
+      <form class="horizontal-form" name="equipo-form" #f="ngForm">
+        <div class="row">
+          <div class="col-sm-6">
+            <h3>
+              <a class="btn btn-default" [routerLink]="['/taller', 'asistencia']">
+                <i class="fa fa-chevron-left"></i>
+              </a>
+              Asistencia de equipos
+            </h3>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group mt10" [ngClass]="{ 'has-error': !f.form.controls.fecha?.valid }">
+              <label class="pr10">Fecha: </label>
+                <dp-date-picker #dayPicker name="fecha" [(ngModel)]="asistencia.dia" required class="form-control"
+                  [config]="datePickerConfig" theme="dp-material">
+                </dp-date-picker>
+              <p *ngIf="!f.form.controls.fecha?.valid" class="text-danger">Seleccione una fecha</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mb10">
+            <div class="table-responsive fixed-table-container" id="fixed-table">
+              <table class="table table-hover table-asistencia">
+                <thead>
+                  <tr>
+                    <th>Excluir</th>
+                    <th>Interno</th>
+                    <th>Dominio</th>
+                    <th>Propio / Alquilado</th>
+                    <th>Equipo</th>
+                    <th colspan="2">N° Depósito - Centro de costos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="asistencia.registros.length == 0">
+                    <td colspan="6" class="text-danger">Sin registros</td>
+                  </tr>
+                  <tr *ngFor="let reg of asistencia.registros; let i = index; trackBy:trackByIndex">
+                    <td>
+                      <button class="btn btn-sm" (click)="excluirEquipo(reg)"><i class="fa fa-arrow-down"></i></button>
+                    </td>
+                    <td>{{ reg.equipo.n_interno }}</td>
+                    <td>{{ reg.equipo.dominio }}</td>
+                    <td>{{ reg.equipo.es_alquilado ? 'Alquilado' : 'Propio' }}</td>
+                    <td>{{ reg.equipo.equipo }}</td>
+                    <td class="data">
+                      <input type="tel" name="reg_{{ reg.pk }}"
+                        tabindex="{{ i + 1 }}"
+                        (input)="set_cc_by_deposito($event.target.value, i)"
+                        class="form-control input-sm"
+                        [value]="get_deposito_by_id(asistencia.registros[i].centro_costo_id)">
+                    </td>
+                    <td>
+                        <select name="centro_costo_{{ i}}" [(ngModel)]="asistencia.registros[i].centro_costo_id"
+                            class="form-control input-sm">
+                          <option value=''>Seleccione un centro de costo</option>
+                          <option *ngFor="let cc of centros_costos_all" [value]="cc.id">{{ cc.obra }} ({{ cc.codigo }})</option>
+                        </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="alert alert-warning alert-sm">Total: {{ asistencia.registros.length }} equipos</p>
+
+        <a class="btn btn-default btn-sm mr10" [routerLink]="['/taller', 'asistencia']">
+          <i class="fa fa-chevron-left"></i> Volver al listado</a>
+
+        <button  class="btn btn-success btn-sm" *ngIf="!is_cloning"
+          (click)="guardar_asistencia_modal()"
+          [disabled]="!is_valid || !f.form.controls.fecha?.valid">
+          Guardar asistenca
+        </button>
+        <button  class="btn btn-success btn-sm" *ngIf="is_cloning"
+          (click)="clonar_asistencia_modal()"
+          [disabled]="!is_valid || !f.form.controls.fecha?.valid">
+            Clonar asistenca
+          </button>
+        <span class="text-danger" *ngIf="!has_all_selected"> Por favor, asigne todos los equipos a los correspodientes CC.</span>
+
+      </form>
+      <div class="col-md-6">
+        <table class="table">
+          <thead>
+            <tr>
+              <th colspan="2">Equipos excluidos</th>
+            </tr>
+            <tr>
+              <th>N° interno</th>
+              <th>Dominio</th>
+              <th>Equipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="excluidos.length == 0">
+              <td colspan="3" class="text-warning">No hay equipos excluidos de la asistencia</td>
+            </tr>
+            <tr *ngFor="let exc of excluidos; let idx = index;">
+              <td><button class="btn btn-info btn-sm" (click)="incluirEquipo(exc)"><i class="fa fa-arrow-up"></i></button> {{ exc.n_interno }} </td>
+              <td>{{ exc.dominio }}</td>
+              <td>{{ exc.equipo }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

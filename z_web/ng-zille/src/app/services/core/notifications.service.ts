@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
-import {Subject, Observable, Subscription} from 'rxjs/Rx';
+import {ToastaService, ToastaConfig, ToastOptions } from 'ngx-toasta';
 
 @Injectable()
 export class NotificationService {
 
-  constructor(private toastyService: ToastyService, private toastyConfig: ToastyConfig) {
+  constructor(private toastyService: ToastaService, private toastyConfig: ToastaConfig) {
     this.toastyConfig.theme = 'bootstrap';
     this.toastyConfig.showClose = true;
     this.toastyConfig.timeout = 5000;
@@ -36,19 +35,19 @@ export class NotificationService {
   }
 
   // shortcuts
-  success(msg: string, title='Éxito') {
+  success(msg: string, title = 'Éxito') {
     this.showNotification(msg, title, 'success');
   }
 
-  error(msg: string, title='Error') {
+  error(msg: string, title = 'Error') {
     this.showNotification(msg, title, 'error');
   }
 
-  info(msg: string, title='Información') {
+  info(msg: string, title = 'Información') {
     this.showNotification(msg, title, 'info');
   }
 
-  warning(msg :string, title='Advertencia') {
+  warning(msg: string, title = 'Advertencia') {
     this.showNotification(msg, title, 'warning');
   }
 

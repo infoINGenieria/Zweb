@@ -1,0 +1,89 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~ngx-smart-modal/ngx-smart-modal";
+
+.nsm-dialog {
+    margin: 10% auto;
+    min-height: inherit;
+}
+.nsm-content {
+    padding: 0rem !important;
+    margin: 0rem !important;
+}
+
+.clickable {
+    cursor: pointer;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+table input[type="tel"], table .number {
+    text-align: right;
+}
+
+.table-clickeable {
+    tr {
+        cursor: pointer;
+    }
+    tr.selected {
+        background: #c4ddef;
+    }
+    tr.selected:hover {
+        background: #d5dbe0;
+    }
+}
+
+.fixed{
+    position:  fixed;
+  }
+
+.panel-fixed {
+    position: fixed;
+    max-height: 85vh;
+    clear: both;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+
+.m10 {
+    margin: 10px;
+}
+.mt10 {
+    margin-top: 10px;
+}
+.mr10 {
+    margin-right: 10px;
+}
+.ml10 {
+    margin-left: 10px;
+}
+.mb10 {
+    margin-bottom: 10px;
+}
+.p10 {
+    padding: 10px;
+}
+.pt10 {
+    padding-top: 10px;
+}
+.pr10 {
+    padding-right: 10px;
+}
+.pl10 {
+    padding-left: 10px;
+}
+.pb10 {
+    padding-bottom: 10px;
+}
+
+
+/*  OVERRIDE BOOTSTRAP */
+.btn {
+    margin-left: 5px;
+    &:first-child {
+        margin-left: 0px;
+    }
+}

@@ -2,7 +2,6 @@
 {% load i18n compress pipeline frontend_tags static %}
 {% block title_head %}{{ block.super }}{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" media="all" href="{% static 'styles.bundle.css' %}" />
 <base href="/~/">
 
 {% endblock %}
@@ -18,10 +17,12 @@
 
 {% block extra_js %}
     {{ block.super }}
-    <script type="text/javascript" src="{% static 'inline.bundle.js' %}"></script>
-    <script type="text/javascript" src="{% static 'polyfills.bundle.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor.bundle.js' %}"></script>
-    <script type="text/javascript" src="{% static 'main.bundle.js' %}"></script>
+    <script type="text/javascript" src="{% static 'runtime.js' %}"></script>
+    <script type="text/javascript" src="{% static 'polyfills.js' %}"></script>
+    <script type="text/javascript" src="{% static 'styles.js' %}"></script>
+    <script type="text/javascript" src="{% static 'scripts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor.js' %}"></script>
+    <script type="text/javascript" src="{% static 'main.js' %}"></script>
     <script type='text/javascript'>
         (function($){
             $(document).ready(function(){

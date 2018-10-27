@@ -1,0 +1,71 @@
+<div class="panel panel-warning panel-fixed">
+    <div class="panel-heading">
+      Valor de markup
+
+    </div>
+    <div class="panel-body" *ngIf="item">
+
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th>Equipo:</th>
+            <td><b>{{ item.equipo.n_interno }}</b> {{ item.equipo.equipo }} ({{ item.equipo.dominio}})</td>
+          </tr>
+          <tr>
+            <th>Periodo:</th>
+            <td>{{ item.valido_desde.descripcion }}</td>
+          </tr>
+          <tr>
+            <th>Costo mensual ($):</th>
+            <td>{{ item.costo_mensual_del_activo_calculado | moneda }}</td>
+          </tr>
+          <tr>
+            <th>Costo Mensual con Mano de Obra(S):</th>
+            <td>{{ item.costo_mensual_del_activo_con_mo_calculado | moneda }}</td>
+          </tr>
+          <tr>
+            <th>Costo Mensual Logístico(S):</th>
+            <td>{{ item.costo_mensual_mo_logistico | moneda }}</td>
+          </tr>
+          <tr>
+            <th>Costo Mensual total(S):</th>
+            <td>{{ item.costo_equipo_calculado | moneda }}</td>
+          </tr>
+          <tr>
+            <td>
+              En el admin:
+            </td>
+            <td>
+              <a href="/admin/equipos/costoequipovalores/{{item.pk}}/" target="_blank">[Editar valores] </a>
+            </td>
+          </tr>
+      </table>
+
+      <div>
+        <h4>Valores
+          <a class="btn btn-danger btn-sm" *ngIf="!editing" (click)="to_edit()">Editar</a>
+          <a class="btn btn-default btn-sm" *ngIf="editing" (click)="reset()">Cancelar</a>
+          <a class="btn btn-success btn-sm" *ngIf="editing" (click)="guardarValorModal()">Guardar</a>
+        </h4>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th style="min-width:125px">Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Markup</td>
+              <td>
+                <span *ngIf="!editing">{{ markup | porciento }}</span>
+                <input type="tel" *ngIf="editing" class="form-control input-sm" name="markup" [(ngModel)]="markup"
+                  step="0.01" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+

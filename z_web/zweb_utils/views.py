@@ -8,6 +8,9 @@ from django.core.urlresolvers import reverse
 from django.utils import six
 from django.utils.encoding import force_text
 
+from core.models import UserExtension
+from organizacion.models import UnidadNegocio
+
 # https://github.com/django/django/blob/master/django/contrib/auth/mixins.py
 
 
@@ -109,30 +112,35 @@ def logout(request):
 
 def generate_menu_user(user):
     menu = []
-    try:
-        ext = user.extension
-    except ObjectDoesNotExist:
-        ext = False
 
-    if not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'MS'):
+    if UserExtension.esta_en_la_unidad(user, 'taller'):
+        menu.append({
+            'name': "Gestión de Taller", 'icon': 'car',
+            'url': '/~/taller/', 'section': "Taller",
+            'btn_class': 'primary', 'link': True
+        })
+
+    if UserExtension.esta_en_la_unidad(user, 'MS'):
+        un = UnidadNegocio.objects.filter(codigo='MS').first()
         if user.has_perm('costos.can_view_panel_control'):
             menu.append({
                 'name': "Panel de control", 'icon': 'dashboard',
-                'url': reverse('frontend:ms_panel_control'), 'section': "{}".format(
-                    ext.unidad_negocio if ext else 'Movimiento de suelo'
-                ), 'btn_class': 'success'
+                'url': reverse('frontend:ms_panel_control'),
+                'section': "{}".format(un or 'Movimiento de suelo'),
+                'btn_class': 'success'
             })
         if user.has_perm("costos.can_generate_reports"):
             menu.append({
                 'name': "Reportes", 'icon': 'print',
                 'url': reverse('reportes:index'), 'section': 'Generar y visualizar reportes',
                 'btn_class': 'warning'})
-    if not ext or (ext.unidad_negocio and ext.unidad_negocio.codigo == 'OS'):
+    if UserExtension.esta_en_la_unidad(user, 'OS'):
+        un = UnidadNegocio.objects.filter(codigo='OS').first()
         menu.append({
             'name': "Tablero de control", 'icon': 'area-chart',
-            'url': '/~/tablero-control/os/', 'section': "{}".format(
-                ext.unidad_negocio if ext else 'Obras de superficie'
-            ), 'btn_class': 'warning', 'link': True
+            'url': '/~/tablero-control/os/',
+            'section': "{}".format(un or 'Obras de superficie'),
+            'btn_class': 'warning', 'link': True
         })
         menu.append({
             'name': "Proyecciones", 'icon': 'line-chart',

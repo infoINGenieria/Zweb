@@ -1,0 +1,28 @@
+# Setear equipos
+n_int = ['A', 'A 010', 'A 016', 'EA 111', 'EA 123', 'EA 130', 'EA 131', 'EA 132', 'EA 133', 'EA 139', 'EA 140', 'EA 141', 'EA 142', 'EA 144', 'EA 145', 'EA 146', 'EA 147', 'EA 148', 'EA 149', 'EA 150', 'EA 151', 'EA 152', 'EA 153', 'EA 154', 'EA 155', 'EA 156', 'EA 157', 'EA 158', 'EA 159', 'EA 160', 'EA 161', 'EA 162', 'EA 163', 'EA 164', 'EA 165', 'EA 168', 'EA 169', 'EA 170', 'EA 200', 'EA 201', 'EA 202', 'EA 203', 'EA 204', 'EA 205', 'EA 206', 'EA 207', 'EA 208', 'EA 209', 'EA 211', 'EA 212', 'EA 213', 'EA 214', 'EA 215', 'EA 216', 'EA 217', 'EA 353', 'EA 358', 'EA 359', 'EA 360', 'EA 364', 'EA 366', 'EA 369', 'EA 370', 'EA 371', 'EA 376', 'EA 378', 'EA 379', 'EA 380', 'EA 381', 'EA 382', 'EA 388', 'EA 389', 'EA 390', 'EA 391', 'EA 392', 'EA 393', 'EA 394', 'EA 395', 'EA 396', 'EA 397', 'EA 398', 'EA 399', 'EA 400', 'EA 401', 'EA 402', 'EA 403', 'EA 404', 'EA 405', 'EA 406', 'EA 407', 'EA 408', 'EA 409', 'EA 410', 'EA 411', 'EA 412', 'EA 413', 'EA 414', 'EA 415', 'EA 417', 'EA 418', 'EA 604', 'EA 605', 'EA 606', 'EA 608', 'EA 609', 'EA 610', 'EA 611', 'EA 612', 'EA 613', 'EV 111', 'EV 116', 'EV 120', 'EV 121', 'EV 122', 'EV 207', 'EV 209', 'EV 213', 'EV 214', 'EV 215', 'EV 216', 'EV 217', 'EV 218', 'EV 219', 'EV 313', 'EV 314', 'EV 318', 'EV 319', 'EV 320', 'EV 321', 'EV 322', 'EV 323', 'EV 411', 'EV 413', 'EV 414', 'EV 415', 'EV 416', 'EV 417', 'EV 418', 'EV 419', 'EV 420', 'EV 506', 'EV 509', 'EV 510', 'EV 511', 'EV 512', 'EV 513', 'EV 514', 'EV 515', 'EV 516', 'EV 605', 'EV 607', 'EV 608', 'EV 610', 'EV 611', 'EV 705', 'EV 706', 'EV 707', 'EV 708', 'EV 709', 'EV 710', 'EV 711']
+Equipos.objects.update(excluir_costos_taller=True)
+Equipos.objects.filter(n_interno__in=n_int).update(excluir_costos_taller=False)
+
+# Creat markups
+# qs = Equipos.objects.filter(excluir_costos_taller=False)
+# periodo = Periodo.objects.get(descripcion="Agosto-2018")
+# for eq in qs:
+#         CostoEquipoValores.objects.create(equipo=eq, valido_desde=periodo, markup=100)
+
+
+
+
+Migración Taller
+
+1 - run migrations
+2 - python manage.py loaddata equipos/fixtures/lubricante_items.json
+    python manage.py loaddata equipos/fixtures/parametros_generales.json
+    python manage.py loaddata equipos/fixtures/manoobravalores.json
+3 - python manage.py loaddata organizacion/fixtures/unidad_negocio.json
+4 - python manage.py import_equipos equipos/import_data/equipos.csv
+5 - python manage.py import_lubricantes equipos/import_data/lubri.csv
+6 - python manage.py import_posesion equipos/import_data/posesion.csv
+7 - python manage.py import_reparacion equipos/import_data/reparacion.csv
+8 - python manage.py import_tren equipos/import_data/tren.csv
+9 - Setear equipos
+10 - python manage.py loaddata equipos/fixtures/costoequipovalores.json

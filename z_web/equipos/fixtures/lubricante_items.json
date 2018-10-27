@@ -1,0 +1,343 @@
+[
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:43:26Z",
+        "modified_at": "2018-09-03T00:43:26Z",
+        "descripcion": "Motor (SAE 15W40)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 1
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:44:06Z",
+        "modified_at": "2018-09-03T00:44:06Z",
+        "descripcion": "Engranaje de la rotaci\u00f3n (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 2
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:44:23Z",
+        "modified_at": "2018-09-03T00:44:23Z",
+        "descripcion": "Mando de la rotaci\u00f3n (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 3
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:44:48Z",
+        "modified_at": "2018-09-03T00:44:48Z",
+        "descripcion": "Caja de transmisi\u00f3n (W80)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 4
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:44:55Z",
+        "modified_at": "2018-09-03T00:48:49Z",
+        "descripcion": "Caja de transmisi\u00f3n (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 5
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:45:24Z",
+        "modified_at": "2018-09-03T00:45:24Z",
+        "descripcion": "Caja de transmisi\u00f3n (75W90)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 6
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:45:45Z",
+        "modified_at": "2018-09-03T00:48:43Z",
+        "descripcion": "Eje Pivot (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 7
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:46:02Z",
+        "modified_at": "2018-09-03T00:46:02Z",
+        "descripcion": "CABRESTANTE (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 8
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:46:25Z",
+        "modified_at": "2018-09-03T00:46:25Z",
+        "descripcion": "Resorte Tensor - Ambos (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 9
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:49:52Z",
+        "modified_at": "2018-09-03T00:49:52Z",
+        "descripcion": "Caja de mando del Tandem (SAE 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 10
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:50:25Z",
+        "modified_at": "2018-09-03T00:50:25Z",
+        "descripcion": "Caja de Mando del Circulo (SEA 80W90)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 11
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:51:10Z",
+        "modified_at": "2018-09-03T00:51:10Z",
+        "descripcion": "Caja de coginetes de punta de ejes de ruedas (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 12
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:51:29Z",
+        "modified_at": "2018-09-03T00:55:21Z",
+        "descripcion": "Diferencial delantero (SEA 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 13
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:51:50Z",
+        "modified_at": "2018-09-03T00:51:50Z",
+        "descripcion": "Transmisi\u00f3n maquinaria ( SAE30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 14
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:52:09Z",
+        "modified_at": "2018-09-03T00:55:16Z",
+        "descripcion": "Eje delantero (SAE 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 15
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:52:26Z",
+        "modified_at": "2018-09-03T00:52:26Z",
+        "descripcion": "Eje trasero (75W90)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 16
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:52:38Z",
+        "modified_at": "2018-09-03T00:52:38Z",
+        "descripcion": "Eje trasero (85W140)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 17
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:52:47Z",
+        "modified_at": "2018-09-03T00:52:47Z",
+        "descripcion": "Eje trasero (SAE 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 18
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:52:58Z",
+        "modified_at": "2018-09-03T00:52:58Z",
+        "descripcion": "Refigerante (ELC)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 19
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:53:15Z",
+        "modified_at": "2018-09-03T00:53:15Z",
+        "descripcion": "Direcci\u00f3n hidr\u00e1ulica (ATF)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 20
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:53:33Z",
+        "modified_at": "2018-09-03T00:53:33Z",
+        "descripcion": "Mandos finales delanteros (SAE 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 21
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:53:42Z",
+        "modified_at": "2018-09-03T00:55:08Z",
+        "descripcion": "Mandos finales traseros (SAE 30)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 22
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:53:58Z",
+        "modified_at": "2018-09-03T00:53:58Z",
+        "descripcion": "Dep\u00f3sito de freno (TDO 3)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 23
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:54:46Z",
+        "modified_at": "2018-09-03T00:54:46Z",
+        "descripcion": "Dep\u00f3sito de freno (SAE 10W)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 24
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:54:21Z",
+        "modified_at": "2018-09-03T00:54:21Z",
+        "descripcion": "Hidr\u00e1ulico (SAE 10W)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 25
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:54:30Z",
+        "modified_at": "2018-09-03T00:54:30Z",
+        "descripcion": "Hidr\u00e1ulico (SAE 46)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 26
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:55:00Z",
+        "modified_at": "2018-09-03T00:55:00Z",
+        "descripcion": "Grasa (Nerea Ep2)",
+        "es_filtro": false,
+        "observaciones": ""
+    },
+    "pk": 27
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:55:45Z",
+        "modified_at": "2018-09-03T00:55:45Z",
+        "descripcion": "Aire primario / secundario / cabina / secado",
+        "es_filtro": true,
+        "observaciones": ""
+    },
+    "pk": 28
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:55:57Z",
+        "modified_at": "2018-09-03T00:55:57Z",
+        "descripcion": "Combustible primario / secundario",
+        "es_filtro": true,
+        "observaciones": ""
+    },
+    "pk": 29
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:56:12Z",
+        "modified_at": "2018-09-03T00:56:12Z",
+        "descripcion": "Hidr\u00e1ulico Tanque / linea transmisi\u00f3n",
+        "es_filtro": true,
+        "observaciones": ""
+    },
+    "pk": 30
+},
+{
+    "model": "equipos.lubricanteitem",
+    "fields": {
+        "created_at": "2018-09-03T00:56:17Z",
+        "modified_at": "2018-09-03T00:56:17Z",
+        "descripcion": "Motor",
+        "es_filtro": true,
+        "observaciones": ""
+    },
+    "pk": 31
+}
+]

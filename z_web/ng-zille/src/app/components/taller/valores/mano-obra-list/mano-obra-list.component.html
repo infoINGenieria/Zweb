@@ -1,0 +1,49 @@
+
+  <form method="get" class="horizontal-form" #f_filter="ngForm">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <select class="form-control input-sm" ngModel name='valido_desde'>
+              <option value="">Valido desde</option>
+              <option *ngFor="let p of periodos" [ngValue]="p.pk">{{ p.descripcion }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <button class="btn btn-sm btn-info" (click)="filterList(f_filter)">Filtrar</button>
+          <button class="btn btn-sm btn-default" (click)="cleanFilter(f_filter)">Limpiar filtro</button>
+          <a class="btn btn-sm btn-primary" (click)="newOne()"><i class="fa fa-plus"></i> Añadir</a>
+        </div>
+      </div>
+    </form>
+
+  <p *ngIf="!loaded" ><i class="fa fa-spinner fa-spin"></i> Cargando...</p>
+  <table class="table table-hover table-clickeable" *ngIf="valores.length>0" [@fadeInAnimation]>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Válido desde</th>
+        <th>Taller</th>
+        <th>P. Combustible</th>
+        <th>Carretones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let valor of valores" [@fadeInAnimation] (click)="selectItem(valor)" [ngClass]="selectedItem?.pk === valor.pk ? 'selected': ''">
+        <td>#{{ valor.pk }}</td>
+        <td>{{ valor.valido_desde.descripcion }}</td>
+        <td>{{ valor.taller | moneda }}</td>
+        <td>{{ valor.plataforma_combustible | moneda }}</td>
+        <td>{{ valor.carretones | moneda }}</td>
+      </tr>
+
+    </tbody>
+  </table>
+  <app-pagination
+    (changePage)="refresh($event)"
+    [page]="page.pageNumber"
+    [perPage]="page.size"
+    [count]="page.totalElements"></app-pagination>
+  <p *ngIf="valores.length==0 && loaded" class="alert alert-warning ">No hay items para visualizar.</p>
+
+<div>

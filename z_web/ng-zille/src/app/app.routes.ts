@@ -1,3 +1,12 @@
+import { ValoresListComponent } from './components/taller/valores/valores-list.component';
+import { VALORES_ROUTES } from './components/taller/valores/valores.routes';
+import { AsistenciaByEquipoComponent } from './components/taller/reports/asistencia-by-equipo.component';
+import { AsistenciaFormComponent } from './components/taller/asistencia/asistencia-form.component';
+import { ParametrosGralPageComponent } from './components/taller/parametros-gral/parametros-gral-page.component';
+import { EquipoDetailComponent } from './components/taller/equipos/equipo-detail.component';
+import { EquiposComponent } from './components/taller/equipos/equipos.component';
+import { ParametrosGralComponent } from './components/taller/parametros-gral/parametros-gral.component';
+import { TallerComponent } from './components/taller/taller.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 
@@ -12,6 +21,8 @@ import { AvanceObraComponent } from './components/proyecciones/avance-obra.compo
 import {
     CertificacionRealComponent, CertificacionesRealComponent,
   } from './components/certificaciones';
+import { AsistenciasComponent } from './components/taller/asistencia/asistencias.component';
+import { TableroTallerComponent } from './components/taller/tablero/tablero-taller.component';
 
 const APP_ROUTES: Routes = [
   { path: '', component: IndexComponent },
@@ -30,6 +41,23 @@ const APP_ROUTES: Routes = [
   { path: 'certificaciones/:pk', component: CertificacionRealComponent },
 
   { path: 'tablero-control/os', component: TableroControlOsComponent },
+
+  { path: 'taller', component: TallerComponent },
+  { path: 'taller/equipos', component: EquiposComponent },
+  { path: 'taller/equipos/:pk', component: EquipoDetailComponent },
+  { path: 'taller/parametros/general', component: ParametrosGralComponent },
+  { path: 'taller/parametros/general/:pk', component: ParametrosGralPageComponent },
+  { path: 'taller/asistencia', component: AsistenciasComponent },
+  { path: 'taller/asistencia/:pk/:clone', component: AsistenciaFormComponent },
+  { path: 'taller/asistencia/:pk', component: AsistenciaFormComponent },
+  { path: 'taller/reportes/asistencia', component: AsistenciaByEquipoComponent },
+  {
+    path: 'taller/valores',
+    component: ValoresListComponent,
+    children: [...VALORES_ROUTES]
+  },
+
+  { path: 'tablero-control/taller', component: TableroTallerComponent },
 
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];

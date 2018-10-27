@@ -1,0 +1,123 @@
+<h1>
+  <a class="btn btn-default" [routerLink]="['/taller']">
+    <i class="fa fa-chevron-left"></i>
+  </a>
+  Equipos</h1>
+<div>
+  <form method="get" class="horizontal-form" #f_filter="ngForm">
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="form-group">
+          <label>Equipo: </label>
+          <input type="text" class="form-control input-sm" ngModel name='equipo' placeholder="Buscar por interno, patente, marca...">
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <label>Estado: </label>
+          <select class="form-control input-sm" ngModel name='estado'>
+              <option value=''>Todos</option>
+              <option value='1'>Activos</option>
+              <option value='0'>Bajas</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <label>Excluido de costos: </label>
+          <select class="form-control input-sm" ngModel name='excluir_costos_taller'>
+              <option value=''>Todos</option>
+              <option value='1'>Excluidos</option>
+              <option value='0'>Incluidos</option>
+          </select>
+
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <label>Propio / Alquilado: </label>
+          <select class="form-control input-sm" ngModel name='alquilado'>
+              <option value=''>Todos</option>
+              <option value='1'>Alquilado</option>
+              <option value='0'>Propio</option>
+          </select>
+
+
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <label>Carretones: </label>
+          <select class="form-control input-sm" ngModel name='implica_mo_logistica'>
+              <option value=''>Todos</option>
+              <option value='1'>Si</option>
+              <option value='0'>No</option>
+          </select>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <button class="btn btn-sm btn-info" (click)="filterList(f_filter)">Filtrar</button>
+          <button class="btn btn-sm btn-default" (click)="cleanFilter(f_filter)">Limpiar filtro</button>
+          <a class="btn btn-sm btn-success " [routerLink]="['/taller', 'equipos', 'new']">Añadir equipo</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <table class="table table-hover" *ngIf="equipos.length>0" [@fadeInAnimation]>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>N° interno</th>
+        <th>Estado</th>
+        <th>Tipo</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Año</th>
+        <th>Dominio</th>
+        <th>N° serie</th>
+        <th>Familia</th>
+        <th>Costos</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let eq of equipos" [@fadeInAnimation]>
+        <td>
+          <a href="/admin/core/equipos/{{eq.id}}/" target="_blank">{{ eq.id }}</a>
+        </td>
+        <td>{{ eq.n_interno }}</td>
+        <td>
+            <span *ngIf="can_dar_baja(eq)" class="label label-primary">Activo</span>
+            <span *ngIf="!can_dar_baja(eq)" class="label label-danger">Baja ({{ eq.fecha_baja }})</span>
+        </td>
+        <td>{{ eq.equipo }}</td>
+        <td>{{ eq.marca }}</td>
+        <td>{{ eq.modelo }}</td>
+        <td>{{ eq.anio }}</td>
+        <td>{{ eq.dominio }}</td>
+        <td>{{ eq.nro_serie }}</td>
+        <td>{{ eq.familia_equipo?.nombre }}</td>
+        <td>
+          <span *ngIf="eq.excluir_costos_taller" class="label label-danger">NO</span>
+          <span *ngIf="!eq.excluir_costos_taller" class="label label-success">SI</span>
+        </td>
+        <td>
+          <a *ngIf="can_dar_baja(eq)" class="btn btn-danger btn-sm" (click)="set_equipo_baja_modal(eq)">Dar la baja</a>
+          <a class="btn btn-warning btn-sm" [routerLink]="['/taller', 'equipos', eq.id]">Editar</a>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  <app-pagination
+    (changePage)="refresh($event)"
+    [page]="page.pageNumber"
+    [perPage]="page.size"
+    [count]="page.totalElements"></app-pagination>
+  <p *ngIf="equipos.length==0 && loaded" class="alert alert-warning ">No hay equipos para visualizar.</p>

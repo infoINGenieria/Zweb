@@ -1,0 +1,35 @@
+h3 {
+    margin-top: 0px;
+}
+
+.table-asistencia {
+    thead {
+        tr {
+            th {
+                padding: 2px;
+                font-weight: 500;
+                word-wrap: break-word;
+                width: 40px;
+            }
+        }
+    }
+    tbody {
+        tr {
+            td {
+                padding: 4px;
+                width: 10%;
+                input {
+
+                    float: left;
+                }
+                &:first-child{
+                    width: 5%;
+                }
+                &:last-child {
+                    width: 45%;
+                }
+            }
+
+        }
+    }
+}
