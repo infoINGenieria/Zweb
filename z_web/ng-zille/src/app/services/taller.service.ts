@@ -1,22 +1,27 @@
 
-import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { IPeriodo, ILubricantesValores, ITrenRodajeValores, IPosesionValores,
    IReparacionesValores, IReparacionesParametros, IManoObraValores, IEquipoAlquiladoValores,
-   IEquipoMarkupValores, ICentroCosto } from './../models/Interfaces';
-import { IParametrosGenerales, IAsistencia } from '../models/Interfaces';
+   IEquipoMarkupValores, ICentroCosto, IParametrosGenerales, IAsistencia  } from './../models/Interfaces';
 import { IEquipo } from '../models/Interfaces';
 import { BaseApiService } from './base-api/base-api.service';
 import { Injectable } from '@angular/core';
 import { Response, URLSearchParams, ResponseContentType, RequestOptions } from '@angular/http';
 import { map } from 'rxjs/operators';
-
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class TallerService {
 
   public tempStorage: any;
+  public refreshListSubject: Subject<void> = new Subject<void>();  // Subject para notificar cuando se debe refrescar el listado
 
   constructor(private http: BaseApiService) { }
+
+  get refreshListObservable(): Observable<void> {
+    return this.refreshListSubject.asObservable();  // observador para refrescar el listado.
+    // los componentes de listas deben subscribirse refrecando el listado, y desubscribirse al salir
+  }
 
   // Equipos
   get_equipos_list(page?, equipo?, estado?, excluir_costos_taller?,
@@ -259,6 +264,12 @@ export class TallerService {
     put_mano_obra_valor(item: IManoObraValores) {
       const bodyString = JSON.stringify(item);
       return this.http.put(`/api/taller/valores/mano_obra/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    post_mano_obra_valor(item: IManoObraValores) {
+      const bodyString = JSON.stringify(item);
+      return this.http.post(`/api/taller/valores/mano_obra/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
 

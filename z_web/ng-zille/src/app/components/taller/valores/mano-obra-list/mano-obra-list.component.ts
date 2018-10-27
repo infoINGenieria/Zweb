@@ -1,11 +1,13 @@
+import { Observable } from 'rxjs/Rx';
 import { NgForm } from '@angular/forms';
 import { Page } from './../../../../models/Page';
 import { IPeriodo, IManoObraValores } from './../../../../models/Interfaces';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { TallerService } from '../../../../services/taller.service';
 import { CoreService } from '../../../../services/core/core.service';
-import { Router } from '@angular/router';
+import { Router, Event, NavigationEnd } from '@angular/router';
 import { fadeInAnimation } from '../../../../_animations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mano-obra-list',
@@ -17,7 +19,7 @@ import { fadeInAnimation } from '../../../../_animations';
   ],
   animations: [fadeInAnimation]
 })
-export class ManoObraListComponent implements OnInit {
+export class ManoObraListComponent implements OnInit, OnDestroy {
 
   periodos: Array<IPeriodo> = [];
   valido_desde: IPeriodo;
@@ -27,6 +29,8 @@ export class ManoObraListComponent implements OnInit {
   loaded = false;
 
   f_valido_desde: string;
+
+  refreshObserver: Subscription;
 
   constructor(
     public tallerServ: TallerService,
@@ -39,7 +43,14 @@ export class ManoObraListComponent implements OnInit {
     this.coreServ.get_periodos_list().subscribe(
       periodos => this.periodos = periodos
     );
+
+    this.refreshObserver = this.tallerServ.refreshListObservable.subscribe(foo => this.refresh());
   }
+
+  ngOnDestroy() {
+    this.refreshObserver.unsubscribe();
+  }
+
 
   refresh(newPage?) {
     if (newPage) {
@@ -81,6 +92,16 @@ export class ManoObraListComponent implements OnInit {
     this.tallerServ.tempStorage = this.selectedItem;
     this.router.navigate(['/taller/valores', {
       outlets: {'details': ['mano_obra', this.selectedItem.pk]}
+    }]);
+  }
+
+  newOne() {
+    this.selectedItem = null;
+    this.router.navigate(['/taller/valores', {
+      outlets: {
+        'details': null,
+        'tabs': 'mano_obra_new'
+      }
     }]);
   }
 }

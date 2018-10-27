@@ -1,0 +1,55 @@
+<h3>
+    <a class="btn btn-default" [routerLink]="['/taller', 'valores', { outlets: { tabs: ['mano_obra'] } }]">
+      <i class="fa fa-chevron-left"></i>
+    </a>
+    Creando valores de mano de obra
+</h3>
+
+<div class="row">
+  <div class="col-sm-6">
+      <form class="horizontal-form" name="form" #f="ngForm">
+        <div class="form-group" [ngClass]="{ 'has-error': !f.form.controls.valido_desde?.valid }">
+          <label>Válido desde:</label>
+          <select class="form-control input-sm" name="valido_desde" [(ngModel)]="item.valido_desde_id" required>
+            <option *ngFor="let p of periodos" [value]='p.pk'>
+              {{p. descripcion}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group" [ngClass]="taller.value >= 0 ? '' : 'has-error'">
+          <label>Taller:</label>
+          <div class="input-group input-group-sm">
+              <span class="input-group-addon">{{ taller.value | moneda }}</span>
+              <input appMyCurrencyFormatter
+              type="tel" class="form-control input-sm" step="0.01"
+              name="taller" [(ngModel)]="item.taller"
+              required #taller>
+          </div>
+        </div>
+
+        <div class="form-group" [ngClass]="plat_combustible.value >= 0 ? '' : 'has-error'">
+          <label>Plataforma de combustible:</label>
+          <div class="input-group input-group-sm">
+              <span class="input-group-addon">{{ plat_combustible.value | moneda }}</span>
+              <input appMyCurrencyFormatter
+              type="tel" class="form-control input-sm" step="0.01"
+              name="plat_combustible" [(ngModel)]="item.plataforma_combustible"
+              required #plat_combustible>
+          </div>
+        </div>
+        <div class="form-group" [ngClass]="carretones.value >= 0 ? '' : 'has-error'">
+          <label>Carretones:</label>
+          <div class="input-group input-group-sm">
+              <span class="input-group-addon">{{ carretones.value | moneda }}</span>
+              <input appMyCurrencyFormatter
+              type="tel" class="form-control input-sm" step="0.01"
+              name="carretones" [(ngModel)]="item.carretones"
+              required #carretones>
+          </div>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-success" (click)="guardarValorModal()">Crear</button>
+        </div>
+      </form>
+  </div>
+</div>

@@ -24,9 +24,10 @@
 
     <div>
       <h4>Valores
-        <a class="btn btn-danger btn-sm" *ngIf="!editing" (click)="to_edit()">Editar</a>
+        <a class="btn btn-danger btn-sm" *ngIf="!editing && !is_saving" (click)="to_edit()">Editar</a>
         <a class="btn btn-default btn-sm" *ngIf="editing" (click)="reset()">Cancelar</a>
         <a class="btn btn-success btn-sm" *ngIf="editing" (click)="guardarValorModal()">Guardar</a>
+        <i class="fa fa-spinner fa-spin" *ngIf="is_saving"></i>
       </h4>
       <table class="table">
         <thead>

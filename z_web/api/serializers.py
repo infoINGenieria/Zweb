@@ -992,7 +992,7 @@ class ValoresReparacionesTallerSerializer(serializers.ModelSerializer):
 class ValoresManoObraTallerSerializer(serializers.ModelSerializer):
     pk = serializers.IntegerField(required=False, read_only=False)
     valido_desde = PeriodoSerializer(read_only=True)
-    valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
+    valido_desde_id = serializers.IntegerField(source='valido_desde.pk')
 
     class Meta:
         model = ManoObraValores
@@ -1001,6 +1001,29 @@ class ValoresManoObraTallerSerializer(serializers.ModelSerializer):
             'taller', 'plataforma_combustible',
             'carretones'
         )
+
+    @atomic
+    def create(self, validated_data):
+        valido_desde = validated_data.pop('valido_desde')
+        valores = ManoObraValores(**validated_data)
+        valores.valido_desde_id = valido_desde["pk"]
+        try:
+            valores.save()
+        except IntegrityError:
+            raise serializers.ValidationError('Ya existe valores de mano de obra para el periodo')
+        return valores
+
+    @atomic
+    def update(self, instance, validated_data):
+        instance.valido_desde_id = validated_data.get('valido_desde', instance.valido_desde_id).get('pk', instance.valido_desde_id)
+        instance.taller = validated_data.get('taller', instance.taller)
+        instance.plataforma_combustible = validated_data.get('plataforma_combustible', instance.plataforma_combustible)
+        instance.carretones = validated_data.get('carretones', instance.carretones)
+        try:
+            instance.save()
+        except IntegrityError:
+            raise serializers.ValidationError('Ya existe valores de mano de obra para el periodo.')
+        return instance
 
 
 class ValoresEquipoAlquiladoTallerSerializer(serializers.ModelSerializer):

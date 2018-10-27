@@ -1,3 +1,4 @@
+import { ManoObraCreateComponent } from './mano-obra-create/mano-obra-create.component';
 import { AlquiladosDetailComponent } from './alquilados-detail/alquilados-detail.component';
 import { ManoObraDetailComponent } from './mano-obra-detail/mano-obra-detail.component';
 import { ReparacionesDetailComponent } from './reparaciones-detail/reparaciones-detail.component';
@@ -25,6 +26,7 @@ export const VALORES_ROUTES: Routes = [
     { path: 'posesion/:pk', component: PosesionDetailComponent, outlet: 'details' },
     { path: 'reparaciones', component: ReparacionesListComponent, outlet: 'tabs' },
     { path: 'reparaciones/:pk', component: ReparacionesDetailComponent, outlet: 'details' },
+    { path: 'mano_obra_new', component: ManoObraCreateComponent, outlet: 'tabs' },
     { path: 'mano_obra', component: ManoObraListComponent, outlet: 'tabs' },
     { path: 'mano_obra/:pk', component: ManoObraDetailComponent, outlet: 'details' },
     { path: 'alquilados', component: AlquiladosListComponent, outlet: 'tabs' },

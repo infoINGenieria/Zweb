@@ -80,6 +80,13 @@ import { AlquiladosListComponent } from './components/taller/valores/alquilados-
 import { AlquiladosDetailComponent } from './components/taller/valores/alquilados-detail/alquilados-detail.component';
 import { MarkupDetailComponent } from './components/taller/valores/markup-detail/markup-detail.component';
 import { MarkupListComponent } from './components/taller/valores/markup-list/markup-list.component';
+import { ManoObraCreateComponent } from './components/taller/valores/mano-obra-create/mano-obra-create.component';
+import { AlquiladosCreateComponent } from './components/taller/valores/alquilados-create/alquilados-create.component';
+import { LubricantesCreateComponent } from './components/taller/valores/lubricantes-create/lubricantes-create.component';
+import { MarkupCreateComponent } from './components/taller/valores/markup-create/markup-create.component';
+import { PosesionCreateComponent } from './components/taller/valores/posesion-create/posesion-create.component';
+import { ReparacionesCreateComponent } from './components/taller/valores/reparaciones-create/reparaciones-create.component';
+import { TrenRodajeCreateComponent } from './components/taller/valores/tren-rodaje-create/tren-rodaje-create.component';
 
 registerLocaleData(localeEs, 'es-AR');
 
@@ -126,7 +133,14 @@ registerLocaleData(localeEs, 'es-AR');
     AlquiladosListComponent,
     AlquiladosDetailComponent,
     MarkupDetailComponent,
-    MarkupListComponent
+    MarkupListComponent,
+    ManoObraCreateComponent,
+    AlquiladosCreateComponent,
+    LubricantesCreateComponent,
+    MarkupCreateComponent,
+    PosesionCreateComponent,
+    ReparacionesCreateComponent,
+    TrenRodajeCreateComponent
   ],
   imports: [
     BrowserModule,

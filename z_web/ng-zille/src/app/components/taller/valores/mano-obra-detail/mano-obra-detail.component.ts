@@ -1,6 +1,7 @@
+import { NotificationService } from './../../../../services/core/notifications.service';
 import { IManoObraValores } from './../../../../models/Interfaces';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TallerService } from '../../../../services/taller.service';
 import { ModalService } from '../../../../services/core/modal.service';
 
@@ -13,16 +14,20 @@ export class ManoObraDetailComponent implements OnInit {
   item: IManoObraValores;
   editing = false;
 
+  is_saving = false;
+
   constructor(
     private route: ActivatedRoute,
     public tallerServ: TallerService,
-    public modal: ModalService
+    public modal: ModalService,
+    private notification: NotificationService
   ) { }
 
   ngOnInit() {
     this.route.params.subscribe(
       param => {
-        this.item = this.tallerServ.tempStorage;
+        this.item = Object.assign({}, this.tallerServ.tempStorage);  // hago una copia
+
       }
     );
   }
@@ -40,14 +45,22 @@ export class ManoObraDetailComponent implements OnInit {
   }
 
   guardarValor() {
+    this.is_saving = true;
+    this.to_edit(false);
     this.tallerServ.put_mano_obra_valor(this.item).subscribe(
-      item => this.item = item,
+      item => {
+        this.is_saving = false;
+        this.item = item;
+        this.notification.success('Item actualizado correctamente.');
+        this.tallerServ.refreshListSubject.next();  // notificar que debe recargar
+      },
       err => {
         console.log(err);
+        this.notification.error("Occurrió un error al guardar. Intente nuevamente.")
         this.reset();
-      }
+      },
     );
-    this.to_edit(false);
+
   }
 
   reset() {
