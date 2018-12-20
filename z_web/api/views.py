@@ -337,7 +337,7 @@ class EquiposViewSet(ModelViewSet, AuthView):
     def activos(self, request):
         qs = Equipos.objects.exclude(
             (Q(fecha_baja__isnull=False) | Q(excluir_costos_taller=True)) | Q(pk=1)
-        ).order_by('fecha_baja')
+        ).order_by('n_interno')
         return Response({
             'count': qs.count(),
             'equipos': EquipoSerializer(qs, many=True).data

@@ -76,7 +76,7 @@ export class AsistenciaFormComponent implements OnInit {
       cc => this.centros_costos = cc as ICentroCostoByDeposito[],
       error => this.handleError(error)
     );
-    this.coreServ.get_centro_costos_list().subscribe(
+    this.coreServ.get_centro_costos_activos_list().subscribe(
       cc => this.centros_costos_all = cc as ICentroCosto[],
       error => this.handleError(error)
     );

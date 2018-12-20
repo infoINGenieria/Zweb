@@ -25,6 +25,14 @@ export class CoreService {
       }));
   }
 
+  get_centro_costos_activos_list() {
+    return this.http.get(`/api/centro_costos/activos/`)
+      .pipe(map((r: Response) => {
+        let r_json = r.json();
+        return r_json['centros_costos'] as ICentroCosto[];
+      }));
+  }
+
   get_centro_costos_by_deposito(): Observable<Array<ICentroCostoByDeposito>> {
     return this.http.get(`/api/centro_costos/by-deposito`)
       .pipe(map((r: Response) => {
