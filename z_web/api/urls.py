@@ -18,7 +18,7 @@ from api.views import (
     TableroControlTallerView, LubricantesValoresTallerViewSet, TrenRodajeTallerViewSet,
     PosesionTallerViewSet, ReparacionesTallerViewSet, EquipoAlquiladoTallerViewSet,
     ManoObraTallerViewSet, CostoEquipoValoresTallerViewSet, ReportAsistenciaByCCDownloadView,
-    ReportAsistenciaSummaryDownloadView
+    ReportAsistenciaSummaryDownloadView, LubricantesItemTallerViewSet
 )
 
 router = routers.DefaultRouter()
@@ -67,6 +67,9 @@ router.register(
 )
 router.register(
     r'taller/valores/lubricantes', LubricantesValoresTallerViewSet, base_name='valores_lubricantes'
+)
+router.register(
+    r'taller/valores/items-lubricantes', LubricantesItemTallerViewSet, base_name='items_lubricantes'
 )
 router.register(
     r'taller/valores/tren_rodaje', TrenRodajeTallerViewSet, base_name='valores_tren_rodaje'

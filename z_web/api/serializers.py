@@ -818,6 +818,11 @@ class LubricanteItemSerializer(serializers.ModelSerializer):
         fields = ('pk', 'descripcion', 'es_filtro', 'observaciones')
 
 
+class ValoresByItemSerializer(serializers.Serializer):
+    item_id = serializers.IntegerField()
+    nuevo_valor = serializers.DecimalField(max_digits=18, decimal_places=2)
+
+
 class LubricantesParametrosItemSerializer(serializers.ModelSerializer):
     item = LubricanteItemSerializer()
 
@@ -880,7 +885,7 @@ class ValoresLubricantesTallerSerializer(serializers.ModelSerializer):
             registro.valor_unitario = item_data.get('valor_unitario')
             registro.valor = valor
             registro.save()
-        return asistencia
+        return valor
 
     @atomic
     def update(self, instance, validated_data):
@@ -913,7 +918,7 @@ class TrenRodajeParametrosSerializer(serializers.ModelSerializer):
         model = TrenRodajeParametros
         fields = (
             'pk', 'vida_util_neumatico', 'cantidad_neumaticos', 'medidas',
-            'factor_basico', 'impacto', 'abracion', 'z'
+            'factor_basico', 'impacto', 'abracion', 'z', 'tiene_neumaticos'
         )
 
 
@@ -922,7 +927,7 @@ class ValoresTrenRodajeTallerSerializer(serializers.ModelSerializer):
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField()
 
     parametros = TrenRodajeParametrosSerializer(source='mis_parametros', read_only=True)
 
@@ -949,7 +954,7 @@ class ValoresPosesionTallerSerializer(serializers.ModelSerializer):
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField()
 
     parametros = PosesionParametrosSerializer(source='mis_parametros', read_only=True)
 

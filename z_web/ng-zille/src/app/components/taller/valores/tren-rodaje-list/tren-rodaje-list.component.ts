@@ -86,4 +86,14 @@ export class TrenRodajeListComponent implements OnInit {
       outlets: {'details': ['tren_rodaje', this.selectedItem.pk]}
     }]);
   }
+
+  newOne() {
+    this.selectedItem = null;
+    this.router.navigate(['/taller/valores', {
+      outlets: {
+        'details': null,
+        'tabs': 'tren_rodaje_new'
+      }
+    }]);
+  }
 }

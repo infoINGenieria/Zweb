@@ -380,6 +380,7 @@ export interface ITrenRodajeParametros {
     impacto: number;
     abracion: number;
     z: number;
+    tiene_neumaticos: boolean;
 }
 
 export interface ITrenRodajeValores {

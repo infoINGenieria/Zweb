@@ -1,8 +1,11 @@
 # coding: utf-8
 import json
+from decimal import Decimal as D
+
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum, Max, Min, Q
+from django.db.transaction import atomic
 from django.utils import timezone
 
 from rest_framework import status
@@ -24,7 +27,8 @@ from api.serializers import (
     TableroControlTallerSerializer, ValoresLubricantesTallerSerializer,
     ValoresTrenRodajeTallerSerializer, ValoresPosesionTallerSerializer,
     ValoresReparacionesTallerSerializer, ValoresManoObraTallerSerializer,
-    ValoresEquipoAlquiladoTallerSerializer, CostoEquipoValoresTallerSerializer)
+    ValoresEquipoAlquiladoTallerSerializer, CostoEquipoValoresTallerSerializer,
+    LubricanteItemSerializer, ValoresByItemSerializer)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
@@ -38,7 +42,7 @@ from equipos.models import (
     ParametrosGenerales, AsistenciaEquipo, RegistroAsistenciaEquipo,
     CostoEquipoValores, TotalFlota, LubricantesValores, TrenRodajeValores,
     PosesionValores, ReparacionesValores, EquipoAlquiladoValores,
-    ManoObraValores)
+    ManoObraValores, LubricanteItem, LubricantesValoresItem)
 from equipos.calculo_costos import get_stats_of_asistencia_by_cc
 from equipos.excel import ExportReportTaller
 from core.models import Obras, UserExtension, Equipos
@@ -353,7 +357,7 @@ class FamiliaEquipoViewSet(ModelViewSet, AuthView):
 
 class ParametrosGeneralesTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ParametrosGeneralesTallerSerializer
-    queryset = ParametrosGenerales.objects.all()
+    queryset = ParametrosGenerales.objects.all().order_by('-valido_desde__fecha_inicio')
     filter_class = ParametrosGeneralesFilter
 
     @list_route(methods=['get'], url_path='latest')
@@ -455,11 +459,97 @@ class LubricantesValoresTallerViewSet(ModelViewSet, AuthView):
     queryset = LubricantesValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = ValoresEquipoTallerFilter
 
+    @atomic
+    @list_route(methods=['post'], url_path='crear-nuevos')
+    def crear_nuevos(self, request):
+        periodo = get_object_or_404(Periodo, pk=request.GET.get('periodo_id'))
+        serializer = ValoresByItemSerializer(data=request.data, many=True)
+        serializer.is_valid()
+        equipos = Equipos.objects.actives_in_cost(periodo.fecha_inicio)
+        try:
+            for eq in equipos:
+                # el agrupador de parametro de lubricantes vigentes
+                lubri_param = eq.lubricantesparametros_set.order_by('-valido_desde__fecha_inicio').first()
+                if lubri_param:
+                    # tengo definicion de parametros. Busco todos los items asignados al equipo
+                    item_parametros = lubri_param.items_lubricante.values_list('item', flat=True)
+                    # creo el agrupador de valores para el equipo y periodo
+                    lubri_valor = LubricantesValores.objects.create(equipo=eq, valido_desde=periodo)
+                    # por cada item que tenga asignado este equipo, creo un LubricanteValoresItem asociado al Valor anterior
+                    for item in serializer.data:
+                        if item.get("item_id", 0) in item_parametros:
+                            new_val = LubricantesValoresItem(
+                                valor=lubri_valor,
+                                item_id=item.get('item_id'),
+                                valor_unitario=D(item.get('nuevo_valor', 0))
+                            )
+                            new_val.save()
+            return Response({'status': 'ok', 'message': 'Valores creados correctamente.'})
+        except Exception as ex:
+            return Response({'status': 'error', 'message': str(ex)})
+
+
+class LubricantesItemTallerViewSet(ModelViewSet, AuthView):
+    serializer_class = LubricanteItemSerializer
+    queryset = LubricanteItem.objects.all()
+
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        qs = self.get_queryset()
+        last_periodo = 0
+        valores = []
+        for item in qs:
+            valor = item.itemes.order_by('-valor__valido_desde__fecha_inicio').first()
+            if valor:
+                valores.append({'item_id': item.pk, 'valor': valor.valor_unitario})
+                last_periodo = max(last_periodo, valor.valor.valido_desde.pk)
+        return Response({
+            'periodo_id': last_periodo,
+            'valores': valores
+        })
+
 
 class TrenRodajeTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ValoresTrenRodajeTallerSerializer
     queryset = TrenRodajeValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = TrenRodajeValoresTallerFilter
+
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        equipos = Equipos.objects.actives_in_cost().order_by("n_interno")
+        valores = []
+        for equipo in equipos:
+            valor = TrenRodajeValores.objects.vigente_actual(equipo=equipo)
+            if valor:
+                valores.append(valor)
+        if not valores:
+            return Response([])
+        parametros =  ParametrosGenerales.vigente(valores[0].valido_desde)
+        param_serializer = ParametrosGeneralesTallerSerializer(parametros)
+        serializer = ValoresTrenRodajeTallerSerializer(valores, many=True)
+        return Response({
+            'latest': serializer.data,
+            'parametros': param_serializer.data,
+            'count': len(valores)
+        })
+
+    @atomic
+    @list_route(methods=['post'], url_path='crear-nuevos')
+    def crear_nuevos(self, request):
+        periodo = get_object_or_404(Periodo, pk=request.GET.get('periodo_id'))
+        serializer = ValoresTrenRodajeTallerSerializer(data=request.data, many=True)
+        serializer.is_valid()
+        try:
+            for item in serializer.data:
+                new_val = TrenRodajeValores(
+                    equipo_id=item.get("equipo_id"),
+                    valido_desde=periodo,
+                    precio_neumatico=item.get('precio_neumatico', None)
+                    )
+                new_val.save()
+            return Response({'status': 'ok', 'message': 'Valores creados correctamente.'})
+        except Exception as ex:
+            return Response({'status': 'error', 'message': str(ex)})
 
 
 class PosesionTallerViewSet(ModelViewSet, AuthView):
@@ -467,11 +557,79 @@ class PosesionTallerViewSet(ModelViewSet, AuthView):
     queryset = PosesionValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = PosesionValoresTallerFilter
 
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        equipos = Equipos.objects.actives_in_cost().order_by("n_interno")
+        valores = []
+        for equipo in equipos:
+            valor = PosesionValores.objects.vigente_actual(equipo=equipo)
+            if valor:
+                valores.append(valor)
+        if not valores:
+            return Response([])
+        parametros =  ParametrosGenerales.vigente(valores[0].valido_desde)
+        param_serializer = ParametrosGeneralesTallerSerializer(parametros)
+        serializer = ValoresPosesionTallerSerializer(valores, many=True)
+        return Response({
+            'latest': serializer.data,
+            'parametros': param_serializer.data,
+            'count': len(valores)
+        })
+
+    @atomic
+    @list_route(methods=['post'], url_path='crear-nuevos')
+    def crear_nuevos(self, request):
+        import ipdb ; ipdb.set_trace()
+        periodo = get_object_or_404(Periodo, pk=request.GET.get('periodo_id'))
+        serializer = ValoresPosesionTallerSerializer(data=request.data, many=True)
+        serializer.is_valid()
+        try:
+            for item in serializer.data:
+                val_dict = dict(item)
+                val_dict.pop('pk')
+                new_val = PosesionValores(**val_dict)
+                new_val.equipo_id = item.get("equipo_id")
+                new_val.valido_desde = periodo
+                new_val.save()
+            return Response({'status': 'ok', 'message': 'Valores creados correctamente.'})
+        except Exception as ex:
+            return Response({'status': 'error', 'message': str(ex)})
+
 
 class ReparacionesTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ValoresReparacionesTallerSerializer
     queryset = ReparacionesValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = ReparacionesValoresTallerFilter
+
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        equipos = Equipos.objects.actives_in_cost()
+        valores = []
+        for equipo in equipos:
+            valores.append(ReparacionesValores.objects.vigente_actual(equipo=equipo))
+        if not valores:
+            return Response([])
+        parametros =  ParametrosGenerales.vigente(valores[0].valido_desde)
+        param_serializer = ParametrosGeneralesTallerSerializer(parametros)
+        serializer = ValoresReparacionesTallerSerializer(valores, many=True)
+        return Response({
+            'latest': serializer.data,
+            'parametros': param_serializer.data,
+            'count': len(valores)
+        })
+
+    @list_route(methods=['post'], url_path='crear-nuevos')
+    def crear_nuevos(self, request):
+        periodo = get_object_or_404(Periodo, pk=request.data.get('periodo_pk'))
+        equipos = Equipos.objects.actives_in_cost(periodo.fecha_inicio)
+        try:
+            valores = []
+            for equipo in equipos:
+                valores.append(ReparacionesValores(equipo=equipo, valido_desde=periodo))
+            ReparacionesValores.objects.bulk_create(valores)
+            return Response({'status': 'ok', 'message': '{} Valores creados'.format(len(valores))})
+        except Exception as e:
+            return Response({'status': 'error', 'message': str(e)})
 
 
 class EquipoAlquiladoTallerViewSet(ModelViewSet, AuthView):

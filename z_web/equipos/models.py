@@ -216,6 +216,9 @@ class TrenRodajeParametros(BaseParametrosCostos):
         verbose_name = 'parámetro de tren de rodaje'
         verbose_name_plural = 'parámetros de tren de rodaje'
 
+    @property
+    def tiene_neumaticos(self):
+        return not all([self.factor_basico, self.impacto, self.abracion, self.z])
 
     @property
     def orugas_costo_USD_hora(self):

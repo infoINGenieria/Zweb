@@ -1,3 +1,4 @@
+import { fadeInAnimation } from './../../../_animations/fade-in.animation';
 import { ModalService } from './../../../services/core/modal.service';
 import { IParametrosGenerales, IPeriodo } from './../../../models/Interfaces';
 import { NotificationService } from './../../../services/core/notifications.service';
@@ -9,7 +10,8 @@ import { CoreService } from '../../../services/core/core.service';
 @Component({
   selector: 'app-parametros-gral-page',
   templateUrl: './parametros-gral-page.component.html',
-  styleUrls: ['./parametros-gral-page.component.css']
+  styleUrls: ['./parametros-gral-page.component.css'],
+  animations: [fadeInAnimation]
 })
 export class ParametrosGralPageComponent implements OnInit {
 

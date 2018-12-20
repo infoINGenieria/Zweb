@@ -201,6 +201,18 @@ export class TallerService {
       return this.http.put(`/api/taller/valores/lubricantes/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
+    get_items_lubricantes() {
+      return this.http.get('/api/taller/valores/items-lubricantes/').pipe(map((r: Response) => r.json()));
+    }
+    get_last_values_from_items_lubricantes() {
+      return this.http.get('/api/taller/valores/items-lubricantes/latest/').pipe(map((r: Response) => r.json()));
+    }
+    create_new_values_lubricantes(periodo: IPeriodo, values: any) {
+      const bodyString = JSON.stringify(values);
+      return this.http.post(`/api/taller/valores/lubricantes/crear-nuevos/?periodo_id=${periodo.pk}`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
     // tren de rodaje
     get_tren_rodaje_valores(page?, valido_desde?, equipo?) {
       let myParams = new URLSearchParams();
@@ -217,6 +229,15 @@ export class TallerService {
       return this.http.put(`/api/taller/valores/tren_rodaje/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
+    get_last_values_from_tren_rodaje() {
+      return this.http.get('/api/taller/valores/tren_rodaje/latest/').pipe(map((r: Response) => r.json()));
+    }
+    create_new_values_tren_rodaje(periodo: IPeriodo, values: any) {
+      const bodyString = JSON.stringify(values);
+      return this.http.post(`/api/taller/valores/tren_rodaje/crear-nuevos/?periodo_id=${periodo.pk}`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
     // posesion
     get_posesion_valores(page?, valido_desde?, equipo?) {
       let myParams = new URLSearchParams();
@@ -231,6 +252,14 @@ export class TallerService {
     put_posesion_valor(item: IPosesionValores) {
       const bodyString = JSON.stringify(item);
       return this.http.put(`/api/taller/valores/posesion/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+    get_last_values_from_posesion() {
+      return this.http.get('/api/taller/valores/posesion/latest/').pipe(map((r: Response) => r.json()));
+    }
+    create_new_values_posesion(periodo: IPeriodo, values: any) {
+      const bodyString = JSON.stringify(values);
+      return this.http.post(`/api/taller/valores/posesion/crear-nuevos/?periodo_id=${periodo.pk}`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
 
@@ -250,6 +279,16 @@ export class TallerService {
       return this.http.put(`/api/taller/valores/reparaciones/${item.pk}/`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
+    get_reparaciones_valores_vigente() {
+      return this.http.get(`/api/taller/valores/reparaciones/latest/`).pipe(map((r: Response) => r.json()));
+    }
+
+    create_new_values_reparaciones(periodo: IPeriodo) {
+      const bodyString = JSON.stringify({periodo_pk: periodo.pk});
+      return this.http.post(`/api/taller/valores/reparaciones/crear-nuevos/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
 
     // mano_obra
     get_mano_obra_valores(page?, valido_desde?) {

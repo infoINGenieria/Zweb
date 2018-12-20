@@ -86,4 +86,14 @@ export class PosesionListComponent implements OnInit {
       outlets: {'details': ['posesion', this.selectedItem.pk]}
     }]);
   }
+
+  newOne() {
+    this.selectedItem = null;
+    this.router.navigate(['/taller/valores', {
+      outlets: {
+        'details': null,
+        'tabs': 'posesion_new'
+      }
+    }]);
+  }
 }

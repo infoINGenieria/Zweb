@@ -1,8 +1,9 @@
+import { Subscription } from 'rxjs/Rx';
 import { NgForm } from '@angular/forms';
 import { Page } from './../../../../models/Page';
 import { IEquipoAlquiladoValores, IPeriodo } from './../../../../models/Interfaces';
 import { fadeInAnimation } from './../../../../_animations/fade-in.animation';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TallerService } from '../../../../services/taller.service';
 import { CoreService } from '../../../../services/core/core.service';
 import { Router } from '@angular/router';
@@ -17,7 +18,7 @@ import { Router } from '@angular/router';
   ],
   animations: [fadeInAnimation]
 })
-export class AlquiladosListComponent implements OnInit {
+export class AlquiladosListComponent implements OnInit, OnDestroy {
 
   periodos: Array<IPeriodo> = [];
   valido_desde: IPeriodo;
@@ -28,6 +29,8 @@ export class AlquiladosListComponent implements OnInit {
 
   f_valido_desde: string;
   f_equipo: string;
+
+  refreshObserver: Subscription;
 
   constructor(
     public tallerServ: TallerService,
@@ -40,6 +43,11 @@ export class AlquiladosListComponent implements OnInit {
     this.coreServ.get_periodos_list().subscribe(
       periodos => this.periodos = periodos
     );
+    this.refreshObserver = this.tallerServ.refreshListObservable.subscribe(foo => this.refresh());
+  }
+
+  ngOnDestroy() {
+    this.refreshObserver.unsubscribe();
   }
 
   refresh(newPage?) {
@@ -88,4 +96,13 @@ export class AlquiladosListComponent implements OnInit {
     }]);
   }
 
+  newOne() {
+    this.selectedItem = null;
+    this.router.navigate(['/taller/valores', {
+      outlets: {
+        'details': null,
+        'tabs': 'alquilados_new'
+      }
+    }]);
+  }
 }

@@ -1,0 +1,16 @@
+table {
+    td {
+        min-width: 65px;
+        input {
+            padding: 1px;
+        }
+        &.dinero {
+            min-width: 120px;
+            font-size: 90%;
+        }
+        &.equipo {
+            min-width: 200px;
+            font-size: 85%;
+        }
+    }
+}
