@@ -1036,7 +1036,7 @@ class ValoresEquipoAlquiladoTallerSerializer(serializers.ModelSerializer):
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField()
 
     class Meta:
         model = EquipoAlquiladoValores

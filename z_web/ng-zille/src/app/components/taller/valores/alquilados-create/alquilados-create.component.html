@@ -1,3 +1,54 @@
-<p>
-  alquilados-create works!
-</p>
+<h3>
+    <a class="btn btn-default" [routerLink]="['/taller', 'valores', { outlets: { tabs: ['alquilados'] } }]">
+      <i class="fa fa-chevron-left"></i>
+    </a>
+    Creando valores de equipos alquilados
+  </h3>
+
+  <div class="row">
+    <div class="col-sm-12" *ngIf="is_loading" >
+      <i class="fa fa-2x fa-spin fa-spinner"></i>
+    </div>
+    <div class="col-sm-12" *ngIf="!is_loading" >
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th style="text-align: right;">Vigente desde:</th>
+            <th colspan="2">
+              <select class="form-control input-sm" name="valido_desde" [(ngModel)]="sel_periodo" required>
+                  <option *ngFor="let p of get_periodos_disponibles" [ngValue]='p'>
+                    {{p.descripcion}}
+                  </option>
+                  <option value="" *ngIf="get_periodos_disponibles.length == 0">No hay periodos disponibles</option>
+                </select>
+            </th>
+          </tr>
+
+          <tr>
+            <th>Equipo</th>
+            <th>Nuevo valor ($)</th>
+            <th>Comentarios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of nuevos_valores; let idx = index; trackBy:trackByIndex">
+            <td><b>{{ item.equipo.n_interno }}</b> {{ item.equipo.equipo }} {{ item.equipo.marca}} {{ item.equipo.dominio }}</td>
+            <td>
+              <input type="tel" class="form-control input-sm" step="0.01" [(ngModel)]="nuevos_valores[idx].alquiler" appMyCurrencyFormatter #newV />
+            </td>
+            <td>
+                <input type="text" class="form-control input-sm"  [(ngModel)]="nuevos_valores[idx].comentarios" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <a class="btn btn-block btn-primary" *ngIf="sel_periodo" (click)="crearNuevosValoresModal()">
+        Calcular nuevos valores de de equipos alquilados
+      </a>
+      <p class="alert alert-warning" *ngIf="!sel_periodo">
+        Seleccione un periodo de destino
+      </p>
+    </div>
+  </div>
+

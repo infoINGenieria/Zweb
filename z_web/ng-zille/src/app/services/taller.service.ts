@@ -46,6 +46,13 @@ export class TallerService {
     );
   }
 
+  get_equipos_alquilados_activos_list(): Observable<IEquipo[]> {
+    return this.http.get('/api/equipos/alquilados-taller/')
+    .pipe(
+      map((r: Response) => r.json())
+    );
+  }
+
   get_equipo(pk: number): Observable<IEquipo> {
     return this.http.get(`/api/equipos/${pk}/`)
       .pipe(
@@ -326,6 +333,15 @@ export class TallerService {
     put_alquilados_valor(item: IEquipoAlquiladoValores) {
       const bodyString = JSON.stringify(item);
       return this.http.put(`/api/taller/valores/alquilados/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    get_last_values_from_alquilados() {
+      return this.http.get('/api/taller/valores/alquilados/latest/').pipe(map((r: Response) => r.json()));
+    }
+    create_new_values_alquilados(periodo: IPeriodo, values: any) {
+      const bodyString = JSON.stringify(values);
+      return this.http.post(`/api/taller/valores/alquilados/crear-nuevos/?periodo_id=${periodo.pk}`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
 

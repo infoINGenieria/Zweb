@@ -164,8 +164,8 @@ export class TrenRodajeCreateComponent implements OnInit {
     this.modal.setUp(
       '¿Continuar?',
       'Crear nuevos valores de tren de rodaje',
-    () => this.crearNuevosValores()
-  ).open();
+      () => this.crearNuevosValores()
+    ).open();
   }
 
 

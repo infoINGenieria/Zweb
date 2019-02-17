@@ -347,6 +347,16 @@ class EquiposViewSet(ModelViewSet, AuthView):
             'equipos': EquipoSerializer(qs, many=True).data
         })
 
+    @list_route(methods=['get'], url_path='alquilados-taller')
+    def alquilados_en_taller(self, request):
+        qs = Equipos.objects.exclude(
+            (Q(fecha_baja__isnull=False) | Q(excluir_costos_taller=True)) | Q(pk=1)
+        ).filter(es_alquilado=True).order_by('n_interno')
+        return Response({
+            'count': qs.count(),
+            'equipos': EquipoSerializer(qs, many=True).data
+        })
+
 
 class FamiliaEquipoViewSet(ModelViewSet, AuthView):
     serializer_class = FamiliaEquipoSerializer
@@ -566,7 +576,7 @@ class PosesionTallerViewSet(ModelViewSet, AuthView):
             if valor:
                 valores.append(valor)
         if not valores:
-            return Response([])
+            return Response({})
         parametros =  ParametrosGenerales.vigente(valores[0].valido_desde)
         param_serializer = ParametrosGeneralesTallerSerializer(parametros)
         serializer = ValoresPosesionTallerSerializer(valores, many=True)
@@ -579,7 +589,6 @@ class PosesionTallerViewSet(ModelViewSet, AuthView):
     @atomic
     @list_route(methods=['post'], url_path='crear-nuevos')
     def crear_nuevos(self, request):
-        import ipdb ; ipdb.set_trace()
         periodo = get_object_or_404(Periodo, pk=request.GET.get('periodo_id'))
         serializer = ValoresPosesionTallerSerializer(data=request.data, many=True)
         serializer.is_valid()
@@ -608,7 +617,7 @@ class ReparacionesTallerViewSet(ModelViewSet, AuthView):
         for equipo in equipos:
             valores.append(ReparacionesValores.objects.vigente_actual(equipo=equipo))
         if not valores:
-            return Response([])
+            return Response({})
         parametros =  ParametrosGenerales.vigente(valores[0].valido_desde)
         param_serializer = ParametrosGeneralesTallerSerializer(parametros)
         serializer = ValoresReparacionesTallerSerializer(valores, many=True)
@@ -636,6 +645,44 @@ class EquipoAlquiladoTallerViewSet(ModelViewSet, AuthView):
     serializer_class = ValoresEquipoAlquiladoTallerSerializer
     queryset = EquipoAlquiladoValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = EquipoAlquiladoValoresTallerFilter
+
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        equipos = Equipos.objects.actives_in_cost().filter(es_alquilado=True).order_by("n_interno")
+        valores = []
+        for equipo in equipos:
+            valor = EquipoAlquiladoValores.objects.vigente_actual(equipo=equipo)
+            if valor:
+                valores.append(valor)
+        if not valores:
+            return Response({})
+        parametros =  ParametrosGenerales.vigente(valores[0].valido_desde)
+        param_serializer = ParametrosGeneralesTallerSerializer(parametros)
+        serializer = ValoresEquipoAlquiladoTallerSerializer(valores, many=True)
+        return Response({
+            'latest': serializer.data,
+            'parametros': param_serializer.data,
+            'count': len(valores)
+        })
+
+    @atomic
+    @list_route(methods=['post'], url_path='crear-nuevos')
+    def crear_nuevos(self, request):
+        periodo = get_object_or_404(Periodo, pk=request.GET.get('periodo_id'))
+        serializer = ValoresEquipoAlquiladoTallerSerializer(data=request.data, many=True)
+        serializer.is_valid()
+        try:
+            for item in serializer.data:
+                val_dict = dict(item)
+                val_dict.pop('pk', None)
+                new_val = EquipoAlquiladoValores(**val_dict)
+                new_val.equipo_id = item.get("equipo_id")
+                new_val.valido_desde = periodo
+                new_val.save()
+            return Response({'status': 'ok', 'message': 'Valores creados correctamente.'})
+        except Exception as ex:
+            return Response({'status': 'error', 'message': str(ex)})
+
 
 
 class ManoObraTallerViewSet(ModelViewSet, AuthView):
