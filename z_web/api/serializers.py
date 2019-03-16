@@ -725,7 +725,7 @@ class ReportAsistenciaItemCCSerializer(serializers.Serializer):
 class CostoEquipoValoresTallerSerializer(serializers.ModelSerializer):
     pk = serializers.IntegerField(required=False, read_only=False)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField(source='equipo.pk')
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     costo_mensual_mo_logistico = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)

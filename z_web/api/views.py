@@ -357,6 +357,15 @@ class EquiposViewSet(ModelViewSet, AuthView):
             'equipos': EquipoSerializer(qs, many=True).data
         })
 
+    @list_route(methods=['get'], url_path='propios-taller')
+    def propios_en_taller(self, request):
+        qs = Equipos.objects.exclude(
+            (Q(fecha_baja__isnull=False) | Q(excluir_costos_taller=True)) | Q(pk=1)
+        ).filter(es_alquilado=False).order_by('n_interno')
+        return Response({
+            'count': qs.count(),
+            'equipos': EquipoSerializer(qs, many=True).data
+        })
 
 class FamiliaEquipoViewSet(ModelViewSet, AuthView):
     serializer_class = FamiliaEquipoSerializer
@@ -429,6 +438,43 @@ class CostoEquipoValoresTallerViewSet(ModelViewSet, AuthView):
     serializer_class = CostoEquipoValoresTallerSerializer
     queryset = CostoEquipoValores.objects.order_by('-valido_desde__fecha_inicio', 'equipo__n_interno')
     filter_class = CostoEquipoValoresTallerFilter
+
+    @list_route(methods=['get'], url_path='latest')
+    def latest(self, request):
+        equipos = Equipos.objects.actives_in_cost().filter(es_alquilado=False).order_by("n_interno")
+        valores = []
+        for equipo in equipos:
+            valor = CostoEquipoValores.objects.vigente_actual(equipo=equipo)
+            if valor:
+                valores.append(valor)
+        if not valores:
+            return Response({})
+        parametros =  ParametrosGenerales.vigente(valores[0].valido_desde)
+        param_serializer = ParametrosGeneralesTallerSerializer(parametros)
+        serializer = CostoEquipoValoresTallerSerializer(valores, many=True)
+        return Response({
+            'latest': serializer.data,
+            'parametros': param_serializer.data,
+            'count': len(valores)
+        })
+
+    @atomic
+    @list_route(methods=['post'], url_path='crear-nuevos')
+    def crear_nuevos(self, request):
+        periodo = get_object_or_404(Periodo, pk=request.GET.get('periodo_id'))
+        serializer = CostoEquipoValoresTallerSerializer(data=request.data, many=True)
+        serializer.is_valid()
+        try:
+            # uso el request porque no sé porque intenta serializer un equipo, y solo tengo el id
+            for item in request.data:
+                new_val = CostoEquipoValores()
+                new_val.markup = D(item.get("markup"))
+                new_val.equipo_id = item.get("equipo_id")
+                new_val.valido_desde = periodo
+                new_val.save()
+            return Response({'status': 'ok', 'message': 'Valores creados correctamente.'})
+        except Exception as ex:
+            return Response({'status': 'error', 'message': str(ex)})
 
 
 class TableroControlTallerView(ReadOnlyModelViewSet, AuthView):

@@ -53,6 +53,13 @@ export class TallerService {
     );
   }
 
+  get_equipos_propios_activos_list(): Observable<IEquipo[]> {
+    return this.http.get('/api/equipos/propios-taller/')
+    .pipe(
+      map((r: Response) => r.json())
+    );
+  }
+
   get_equipo(pk: number): Observable<IEquipo> {
     return this.http.get(`/api/equipos/${pk}/`)
       .pipe(
@@ -359,6 +366,15 @@ export class TallerService {
     put_markup_valor(item: IEquipoMarkupValores) {
       const bodyString = JSON.stringify(item);
       return this.http.put(`/api/taller/valores/markup/${item.pk}/`, bodyString)
+        .pipe(map((r: Response) => r.json()));
+    }
+
+    get_last_values_from_markup() {
+      return this.http.get('/api/taller/valores/markup/latest/').pipe(map((r: Response) => r.json()));
+    }
+    create_new_values_markup(periodo: IPeriodo, values: any) {
+      const bodyString = JSON.stringify(values);
+      return this.http.post(`/api/taller/valores/markup/crear-nuevos/?periodo_id=${periodo.pk}`, bodyString)
         .pipe(map((r: Response) => r.json()));
     }
   }
