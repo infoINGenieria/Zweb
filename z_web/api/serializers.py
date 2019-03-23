@@ -19,6 +19,7 @@ from equipos.models import (
     ReparacionesParametros, ReparacionesValores,
     ManoObraValores, EquipoAlquiladoValores
 )
+from equipos.tasks import copy_cost_structure
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from registro.models import CertificacionItem, Certificacion, TableroControlOS
@@ -576,20 +577,25 @@ class EquipoSerializer(serializers.ModelSerializer):
     familia_equipo_id = serializers.IntegerField(source='familia_equipo.pk')
     fecha_baja = serializers.DateField(read_only=True)
 
+    copy_costo_from = serializers.IntegerField(required=False)
+
     class Meta:
         model = Equipos
         fields = (
             'id', 'n_interno', 'equipo', 'marca', 'modelo',
             'anio', 'dominio', 'nro_serie', 'familia_equipo',
             'familia_equipo_id', 'es_alquilado', 'fecha_baja',
-            'excluir_costos_taller', 'implica_mo_logistica'
+            'excluir_costos_taller', 'implica_mo_logistica',
+            'copy_costo_from'
         )
 
     def create(self, validated_data):
         familia_equipo = validated_data.pop('familia_equipo')
+        copy_costo_from = validated_data.pop('copy_costo_from')
         equipo = Equipos(**validated_data)
         equipo.familia_equipo_id = familia_equipo["pk"]
         equipo.save()
+        copy_cost_structure(equipo.pk, copy_costo_from)
         return equipo
 
     def update(self, instance, validated_data):

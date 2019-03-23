@@ -274,6 +274,8 @@ export interface IEquipo {
     fecha_baja?: Date;
     excluir_costos_taller: boolean;
     implica_mo_logistica: boolean;
+
+    copy_costo_from?: number;
 }
 
 export interface IParametrosGenerales {
