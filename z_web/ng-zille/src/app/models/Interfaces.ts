@@ -305,7 +305,8 @@ export interface IRegistroAsistencia {
 export interface IAsistencia {
     pk?: number;
     dia: string;
-    registros: Array<IRegistroAsistencia>;
+    registros?: Array<IRegistroAsistencia>;
+    cantidad_registros: number;
 }
 
 

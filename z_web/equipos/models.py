@@ -592,6 +592,10 @@ class AsistenciaEquipo(BaseModel):
     def __str__(self):
         return self.dia.strftime("%d/%m/%Y")
 
+    @property
+    def cantidad_registros(self):
+        return self.registros.count()
+
 
 class RegistroAsistenciaEquipo(BaseModel):
     """

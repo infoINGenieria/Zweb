@@ -662,12 +662,18 @@ class RegistroAsistenciaEquipoSerializer(serializers.ModelSerializer):
         return instance
 
 
+class AsistenciaEquiposSerializerThin(serializers.ModelSerializer):
+    class Meta:
+        model = AsistenciaEquipo
+        fields = ('pk', 'dia', 'cantidad_registros')
+
+
 class AsistenciaEquipoSerializer(serializers.ModelSerializer):
     registros = RegistroAsistenciaEquipoSerializer(many=True)
 
     class Meta:
         model = AsistenciaEquipo
-        fields = ('pk', 'dia', 'registros')
+        fields = ('pk', 'dia', 'registros', 'cantidad_registros')
 
     @atomic
     def create(self, validated_data):

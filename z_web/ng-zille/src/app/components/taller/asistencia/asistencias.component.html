@@ -49,7 +49,7 @@
           </td>
           <td>{{ asist.dia }}</td>
           <td>{{ get_nombre(asist.dia) }}</td>
-          <td>{{ asist.registros.length }}</td>
+          <td>{{ asist.cantidad_registros }}</td>
           <td>
             <a class="btn btn-warning btn-sm" [routerLink]="['/taller', 'asistencia', asist.pk]">Editar</a>
             <a class="btn btn-primary btn-sm" [routerLink]="['/taller', 'asistencia', asist.pk, 'clone']">Clonar</a>

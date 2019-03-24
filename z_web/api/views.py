@@ -28,7 +28,7 @@ from api.serializers import (
     ValoresTrenRodajeTallerSerializer, ValoresPosesionTallerSerializer,
     ValoresReparacionesTallerSerializer, ValoresManoObraTallerSerializer,
     ValoresEquipoAlquiladoTallerSerializer, CostoEquipoValoresTallerSerializer,
-    LubricanteItemSerializer, ValoresByItemSerializer)
+    LubricanteItemSerializer, ValoresByItemSerializer, AsistenciaEquiposSerializerThin)
 from api.filters import (
     PresupuestoFilter, CertificacionFilter, AvanceObraFilter,
     ProyeccionAvanceObraFilter, ProyeccionCertificacionFilter,
@@ -387,11 +387,16 @@ class ParametrosGeneralesTallerViewSet(ModelViewSet, AuthView):
 
 
 class AsistenciaEquipoViewSet(ModelViewSet, AuthView):
-    serializer_class = AsistenciaEquipoSerializer
+    serializer_class = AsistenciaEquiposSerializerThin
     filter_class = AsistenciaEquipoFilter
 
     def get_queryset(self):
         return AsistenciaEquipo.objects.all().order_by('-dia')
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return AsistenciaEquiposSerializerThin
+        return AsistenciaEquipoSerializer
 
 
 class RegistroAsistenciaEquipoViewSet(ModelViewSet, AuthView):
