@@ -1,3 +1,90 @@
-<p>
-  posesion-create works!
-</p>
+<h3>
+  <a class="btn btn-default" [routerLink]="['/taller', 'valores', { outlets: { tabs: ['posesion'] } }]">
+    <i class="fa fa-chevron-left"></i>
+  </a>
+  Creando valores de posesión
+</h3>
+
+<div class="row">
+  <div class="col-sm-12" *ngIf="is_loading" >
+    <i class="fa fa-2x fa-spin fa-spinner"></i>
+  </div>
+  <div class="col-sm-12" *ngIf="!is_loading" >
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th colspan="4">Valor dolar actual: {{ currentDolar | moneda }}</th>
+          <th colspan="2" style="text-align: right;">Vigente desde:</th>
+          <th colspan="3">
+            <select class="form-control input-sm" name="valido_desde" [(ngModel)]="sel_periodo" required>
+                <option *ngFor="let p of get_periodos_disponibles" [ngValue]='p'>
+                  {{p.descripcion}}
+                </option>
+                <option value="" *ngIf="get_periodos_disponibles.length == 0">No hay periodos disponibles</option>
+              </select>
+          </th>
+          <th colspan="2">Nuevo USD: {{ targetDolar | moneda }}</th>
+        </tr>
+        <tr>
+          <th>Equipo</th>
+          <th>P. Activo</th>
+          <th>Seguros</th>
+          <th>R.U.T.A.</th>
+          <th>V.T.V.</th>
+          <th>Certific.</th>
+          <th>Habilitac.</th>
+          <th>R.S.V.</th>
+          <th>V.H.F</th>
+          <th>Impuestos</th>
+          <th>Total (Año)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of nuevos_valores; let idx = index; trackBy:trackByIndex">
+          <td class="equipo"><b>{{ item.equipo.n_interno }}</b> {{ item.equipo.equipo }} {{ item.equipo.marca}} {{ item.equipo.dominio }}</td>
+          <td class="dinero">{{ nuevos_valores[idx].costo_del_activo(targetDolar) | moneda }}</td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].seguros" appMyCurrencyFormatter #seguros />
+          </td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].ruta" appMyCurrencyFormatter #ruta />
+          </td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].vtv" appMyCurrencyFormatter #vtv />
+          </td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].certificacion" appMyCurrencyFormatter #certificacion />
+          </td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].habilitaciones" appMyCurrencyFormatter #habilitaciones />
+          </td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].rsv" appMyCurrencyFormatter #rsv />
+          </td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].vhf" appMyCurrencyFormatter #vhf />
+          </td>
+          <td>
+            <input type="tel" class="form-control input-sm" step="0.01"
+              [(ngModel)]="nuevos_valores[idx].impuestos" appMyCurrencyFormatter #impuestos />
+          </td>
+          <td class="dinero">{{ getTotal(idx) | moneda }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <a class="btn btn-block btn-primary" *ngIf="sel_periodo" (click)="crearNuevosValoresModal()">
+      Calcular nuevos valores de posesión
+    </a>
+    <p class="alert alert-warning" *ngIf="!sel_periodo">
+      Seleccione un periodo de destino
+    </p>
+  </div>
+</div>

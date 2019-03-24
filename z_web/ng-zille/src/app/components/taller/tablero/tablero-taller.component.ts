@@ -36,20 +36,22 @@ export class TableroTallerComponent implements OnInit {
     if (this.filtro_equipo) {
       return this.data.filter(a => {
         // tslint:disable-next-line:max-line-length
-        return a.equipo.n_interno.toLowerCase().startsWith(this.filtro_equipo.toLowerCase()) ||
-        a.equipo.n_interno.toLowerCase().endsWith(this.filtro_equipo.toLowerCase()) ||
+        return a.equipo != null && (
+          a.equipo.n_interno.toLowerCase().startsWith(this.filtro_equipo.toLowerCase()) ||
+          a.equipo.n_interno.toLowerCase().endsWith(this.filtro_equipo.toLowerCase()) ||
           a.equipo.dominio.toLowerCase().startsWith(this.filtro_equipo.toLowerCase()) ||
-          a.equipo.dominio.toLowerCase().endsWith(this.filtro_equipo.toLowerCase());
+          a.equipo.dominio.toLowerCase().endsWith(this.filtro_equipo.toLowerCase()
+          ));
       });
     } else {
-      return this.data;
+      return this.data.filter(eq => eq.equipo != null);
     }
   }
 
   calcularMonto() {
     let monto = 0;
     for (let i = 0; i < this.data.length; i++) {
-      monto += Number.parseFloat('' + this.data[i].costo_mensual_del_activo_calculado);
+      monto += Number(this.data[i].costo_mensual_del_activo_calculado);
     }
     return monto;
   }
@@ -57,6 +59,7 @@ export class TableroTallerComponent implements OnInit {
   get_tablero_taller() {
     this.tallerServ.get_tablero_costo_taller(this.periodo).subscribe(
       data => {
+        console.log('data', data);
         this.data = data as IEquipoCostoTaller[];
         this.totalFLota = new Object as ITotalFlota;
         this.totalFLota.cantidad = this.data.length;
@@ -90,12 +93,4 @@ export class TableroTallerComponent implements OnInit {
       );
     }
   }
-
-
-  /**
-   * Armar interfaces para recibir la data del tablero  ---> OK
-   * Agregar los métodos en los providers.    ----> OK
-   * Armar la tabla del tablero
-   *
-  */
 }

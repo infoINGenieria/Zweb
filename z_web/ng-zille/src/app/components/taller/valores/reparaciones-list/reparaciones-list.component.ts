@@ -86,4 +86,15 @@ export class ReparacionesListComponent implements OnInit {
       outlets: {'details': ['reparaciones', this.selectedItem.pk]}
     }]);
   }
+
+  newOne() {
+    this.selectedItem = null;
+    this.router.navigate(['/taller/valores', {
+      outlets: {
+        'details': null,
+        'tabs': 'reparaciones_new'
+      }
+    }]);
+  }
+
 }

@@ -22,8 +22,8 @@
 <div id='tc-content' *ngIf="data.length > 0">
 
   <div class="well well-sm">
-    <span>Total:</span> <strong>{{ totalFLota?.monto | moneda }}</strong>
-    <span>Cantidad:</span> <strong>{{ totalFLota?.cantidad }}</strong>
+    <span>Total:</span> <strong>{{ totalFLota?.monto || 0 | moneda  }}</strong>
+    <span>Cantidad:</span> <strong>{{ totalFLota?.cantidad || 0 }}</strong>
     <button (click)="recalcularFlota()" [disabled]="refreshTotal" class="btn btn-warning btn-sm"
         [innerHTML]="refreshTotal ? 'Calculando...' : 'Recalcular total flota'"></button>
     <button type="button" (click)="cerrarTablero()" class="btn btn-default btn-sm">

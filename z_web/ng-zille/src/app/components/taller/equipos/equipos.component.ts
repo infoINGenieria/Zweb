@@ -54,7 +54,7 @@ export class EquiposComponent implements OnInit {
       equipos => {
         this.equipos = equipos['results'] as Array<IEquipo>;
         this.page.pageNumber = this.page.pageNumber;
-        this.page.totalElements = Number.parseInt(equipos.count);
+        this.page.totalElements = Number(equipos.count);
         this.page.totalPages = Math.ceil(this.page.totalElements / this.page.size) || 0;
         this.loaded = true;
       }

@@ -87,4 +87,14 @@ export class LubricantesListComponent implements OnInit {
       outlets: {'details': ['lubricantes', this.selectedItem.pk]}
     }]);
   }
+
+  newOne() {
+    this.selectedItem = null;
+    this.router.navigate(['/taller/valores', {
+      outlets: {
+        'details': null,
+        'tabs': 'lubricantes_new'
+      }
+    }]);
+  }
 }

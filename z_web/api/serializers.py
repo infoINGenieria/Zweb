@@ -19,6 +19,7 @@ from equipos.models import (
     ReparacionesParametros, ReparacionesValores,
     ManoObraValores, EquipoAlquiladoValores
 )
+from equipos.tasks import copy_cost_structure
 from presupuestos.models import (
     Presupuesto, Revision, ItemPresupuesto)
 from registro.models import CertificacionItem, Certificacion, TableroControlOS
@@ -576,20 +577,25 @@ class EquipoSerializer(serializers.ModelSerializer):
     familia_equipo_id = serializers.IntegerField(source='familia_equipo.pk')
     fecha_baja = serializers.DateField(read_only=True)
 
+    copy_costo_from = serializers.IntegerField(required=False)
+
     class Meta:
         model = Equipos
         fields = (
             'id', 'n_interno', 'equipo', 'marca', 'modelo',
             'anio', 'dominio', 'nro_serie', 'familia_equipo',
             'familia_equipo_id', 'es_alquilado', 'fecha_baja',
-            'excluir_costos_taller', 'implica_mo_logistica'
+            'excluir_costos_taller', 'implica_mo_logistica',
+            'copy_costo_from'
         )
 
     def create(self, validated_data):
         familia_equipo = validated_data.pop('familia_equipo')
+        copy_costo_from = validated_data.pop('copy_costo_from')
         equipo = Equipos(**validated_data)
         equipo.familia_equipo_id = familia_equipo["pk"]
         equipo.save()
+        copy_cost_structure(equipo.pk, copy_costo_from)
         return equipo
 
     def update(self, instance, validated_data):
@@ -725,7 +731,7 @@ class ReportAsistenciaItemCCSerializer(serializers.Serializer):
 class CostoEquipoValoresTallerSerializer(serializers.ModelSerializer):
     pk = serializers.IntegerField(required=False, read_only=False)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField(source='equipo.pk')
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     costo_mensual_mo_logistico = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
@@ -818,6 +824,11 @@ class LubricanteItemSerializer(serializers.ModelSerializer):
         fields = ('pk', 'descripcion', 'es_filtro', 'observaciones')
 
 
+class ValoresByItemSerializer(serializers.Serializer):
+    item_id = serializers.IntegerField()
+    nuevo_valor = serializers.DecimalField(max_digits=18, decimal_places=2)
+
+
 class LubricantesParametrosItemSerializer(serializers.ModelSerializer):
     item = LubricanteItemSerializer()
 
@@ -880,7 +891,7 @@ class ValoresLubricantesTallerSerializer(serializers.ModelSerializer):
             registro.valor_unitario = item_data.get('valor_unitario')
             registro.valor = valor
             registro.save()
-        return asistencia
+        return valor
 
     @atomic
     def update(self, instance, validated_data):
@@ -913,7 +924,7 @@ class TrenRodajeParametrosSerializer(serializers.ModelSerializer):
         model = TrenRodajeParametros
         fields = (
             'pk', 'vida_util_neumatico', 'cantidad_neumaticos', 'medidas',
-            'factor_basico', 'impacto', 'abracion', 'z'
+            'factor_basico', 'impacto', 'abracion', 'z', 'tiene_neumaticos'
         )
 
 
@@ -922,7 +933,7 @@ class ValoresTrenRodajeTallerSerializer(serializers.ModelSerializer):
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField()
 
     parametros = TrenRodajeParametrosSerializer(source='mis_parametros', read_only=True)
 
@@ -949,7 +960,7 @@ class ValoresPosesionTallerSerializer(serializers.ModelSerializer):
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField()
 
     parametros = PosesionParametrosSerializer(source='mis_parametros', read_only=True)
 
@@ -1031,7 +1042,7 @@ class ValoresEquipoAlquiladoTallerSerializer(serializers.ModelSerializer):
     valido_desde = PeriodoSerializer(read_only=True)
     valido_desde_id = serializers.IntegerField(source='valido_desde.pk', read_only=True)
     equipo = EquipoSerializer(read_only=True)
-    equipo_id = serializers.IntegerField(source='equipo.pk', read_only=True)
+    equipo_id = serializers.IntegerField()
 
     class Meta:
         model = EquipoAlquiladoValores

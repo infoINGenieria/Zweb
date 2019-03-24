@@ -25,6 +25,8 @@ export class EquipoDetailComponent implements OnInit {
 
   equipo: IEquipo = null;
   equipo_id: any;
+  equipos: IEquipo[] = [];
+  copyCostoFromEquipo: number;
   familia_equipo: IFamiliaEquipo[] = null;
 
   initialLoading = true;
@@ -33,6 +35,12 @@ export class EquipoDetailComponent implements OnInit {
     this.tallerServ.get_familia_equipos().subscribe(
       res => this.familia_equipo = res['results'] as IFamiliaEquipo[],
       error => this.handleError(error)
+    );
+    this.tallerServ.get_equipos_propios_activos_list().subscribe(
+      equipos => {
+        this.equipos = equipos['equipos'] as IEquipo[];
+      },
+      err => console.error(err)
     );
     this.route.params.subscribe(val => {
       this.equipo_id = val['pk'];
@@ -63,6 +71,7 @@ export class EquipoDetailComponent implements OnInit {
   }
 
   create_equipo() {
+    this.equipo.copy_costo_from = Number(this.copyCostoFromEquipo);
     this.tallerServ.create_equipo(this.equipo).subscribe(
       equipo => {
         this.equipo = equipo;

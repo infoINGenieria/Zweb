@@ -86,4 +86,14 @@ export class MarkupListComponent implements OnInit {
       outlets: {'details': ['markup', this.selectedItem.pk]}
     }]);
   }
+
+  newOne() {
+    this.selectedItem = null;
+    this.router.navigate(['/taller/valores', {
+      outlets: {
+        'details': null,
+        'tabs': 'markup_new'
+      }
+    }]);
+  }
 }
