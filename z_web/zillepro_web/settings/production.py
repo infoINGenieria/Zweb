@@ -1,11 +1,17 @@
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 from .base import *  # noqa
-
 
 DEBUG = False
 
+sentry_sdk.init(
+    dsn="https://26ac04f9217e42e3aced0c61e395300c@sentry.io/1207772",
+    integrations=[DjangoIntegration()]
+)
+
 INSTALLED_APPS += (
     'gunicorn',
-    'raven.contrib.django.raven_compat',
+    # 'raven.contrib.django.raven_compat',
 )
 
 ALLOWED_HOSTS = ['127.0.0.1', ]
@@ -19,7 +25,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'root': {
         'level': 'WARNING',
-        'handlers': ['sentry'],
+        'handlers': ['logfile'],
     },
     'handlers': {
         'logfile': {
@@ -34,11 +40,11 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
         },
-        'sentry': {
-            'level': 'ERROR',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-            'tags': {'custom-tag': 'x'},
-        },
+        # 'sentry': {
+        #     'level': 'ERROR',
+        #     'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        #     'tags': {'custom-tag': 'x'},
+        # },
     },
     'loggers': {
         'django': {
