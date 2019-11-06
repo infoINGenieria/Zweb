@@ -51,7 +51,7 @@
                     <td>{{ reg.equipo.es_alquilado ? 'Alquilado' : 'Propio' }}</td>
                     <td>{{ reg.equipo.equipo }}</td>
                     <td class="data">
-                      <input type="tel" name="reg_{{ reg.pk }}"
+                      <input type="text" name="reg_{{ reg.pk }}"
                         tabindex="{{ i + 1 }}"
                         (input)="set_cc_by_deposito($event.target.value, i)"
                         class="form-control input-sm"

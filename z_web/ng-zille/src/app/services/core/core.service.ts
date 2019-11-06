@@ -34,7 +34,7 @@ export class CoreService {
   }
 
   get_centro_costos_by_deposito(): Observable<Array<ICentroCostoByDeposito>> {
-    return this.http.get(`/api/centro_costos/by-deposito`)
+    return this.http.get(`/api/centro_costos/by-deposito/`)
       .pipe(map((r: Response) => {
         return r.json() as ICentroCostoByDeposito[];
       }));

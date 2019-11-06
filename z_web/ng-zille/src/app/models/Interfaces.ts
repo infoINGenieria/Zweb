@@ -53,7 +53,7 @@ export interface ICentroCostoByDeposito {
     id: number;
     obra: string;
     codigo: string;
-    deposito: number;
+    deposito: string;
 }
 
 export interface IRevision {

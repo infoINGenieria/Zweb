@@ -129,8 +129,12 @@ export class AsistenciaFormComponent implements OnInit {
   }
 
 
-  get_cc_by_deposito(deposito: number) {
-    return this.centros_costos.find(a => a.deposito == deposito);
+  get_cc_by_deposito(deposito: string) {
+    const cc_match = this.centros_costos.filter(a => a.deposito.toUpperCase().startsWith(deposito.toUpperCase()));
+    if (cc_match.length === 1) {
+      return cc_match[0];
+    }
+    return null;
   }
   /*
   cc_selected(deposito: number, indx: number) {
