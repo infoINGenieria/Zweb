@@ -85,7 +85,7 @@ class ObrasAdmin(admin.ModelAdmin):
         if unidades_negocio.count() == 1:
             # si tiene, ocultamos el campo
             self.fieldsets[0][1]["fields"] = (
-                ('codigo', 'obra', 'fecha_inicio', 'fecha_fin'),
+                ('codigo', 'obra', 'deposito', 'fecha_inicio', 'fecha_fin'),
                 ('cuit', 'lugar', 'plazo'),
                 ('contrato', 'comitente', 'responsable',)
             )
