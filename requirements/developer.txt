@@ -2,7 +2,7 @@
 django-extensions==1.5.9
 django-debug-toolbar==1.6
 ipdb==0.8.1
-Werkzeug==0.11.2
+Werkzeug==0.15.3
 django-template-repl
 django-fixture-magic
 pip-tools==1.11.0
