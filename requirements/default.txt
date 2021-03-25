@@ -52,7 +52,7 @@ pillow==4.2.1             # via cairosvg, reportlab
 pycparser==2.18           # via cffi
 pyphen==0.9.4             # via weasyprint
 python-dateutil==2.6.1    # via faker
-pyyaml==3.12              # via tablib
+pyyaml==5.4              # via tablib
 rcssmin==1.0.6            # via django-compressor
 reportlab==3.4.0
 rjsmin==1.0.12            # via django-compressor
