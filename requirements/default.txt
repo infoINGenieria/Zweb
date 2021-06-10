@@ -29,7 +29,7 @@ django-simple-history==1.9.0
 django-suit==0.2.25
 django-tables2==1.10.0
 django-weasyprint==0.5.0
-django==1.8.18
+django==2.2.24
 djangorestframework==3.6.4
 dnspython==1.15.0         # via email-validator
 email-validator==1.0.2    # via faker
