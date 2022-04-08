@@ -26,7 +26,7 @@
     "@angular/router": "^6.0.0",
     "core-js": "^2.4.1",
     "file-saver": "^2.0.0-rc.4",
-    "moment": "^2.19.1",
+    "moment": "^2.29.2",
     "ng2-currency-mask": "^5.3.1",
     "ng2-date-picker": "^2.7.0",
     "ng2-nvd3": "^2.0.0",
