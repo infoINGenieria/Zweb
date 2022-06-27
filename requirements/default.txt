@@ -54,7 +54,7 @@ pyphen==0.9.4             # via weasyprint
 python-dateutil==2.6.1    # via faker
 pyyaml==3.12              # via tablib
 rcssmin==1.0.6            # via django-compressor
-reportlab==3.4.0
+reportlab==3.5.55
 rjsmin==1.0.12            # via django-compressor
 six==1.10.0               # via django-autocomplete-light, django-bower, faker, html5lib, libsass, python-dateutil
 tablib==0.11.5            # via django-import-export
