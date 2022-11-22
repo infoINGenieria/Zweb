@@ -48,7 +48,7 @@ odfpy==1.3.5              # via tablib
 olefile==0.44             # via pillow
 openpyxl==2.4.8           # via tablib
 pdfrw==0.4                # via weasyprint
-pillow==4.2.1             # via cairosvg, reportlab
+pillow==9.3.0             # via cairosvg, reportlab
 pycparser==2.18           # via cffi
 pyphen==0.9.4             # via weasyprint
 python-dateutil==2.6.1    # via faker
